@@ -3,7 +3,7 @@ $ontext
 Name: VSPDReport.gms
 Function: Creates the detailed reports
 Developed by: Ramu Naidoo  (Electricity Authority, New Zealand)
-Last modified: 29 November 2011
+Last modified: 13 May 2013
 ===================================================================================
 $offtext
 
@@ -97,6 +97,10 @@ o_DefGenericConst_TP(*)       'Deficit generic constraint for each time period'
 o_SurpGenericConst_TP(*)      'Surplus generic constraint for each time period'
 o_DefResv_TP(*)               'Deficit reserve violation for each time period'
 o_TotalViolation_TP(*)        'Total violation for each time period'
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+o_OFV_TP(*)                   'Objective function value for each time period'
+o_PenaltyCost_TP(*)           'Penalty cost for each time period'
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
 
 *Trade period level
 o_IslandGen_TP(*,*)              'Island generation (MW) for each time period'
@@ -213,6 +217,10 @@ $if %TradePeriodReports%==1 $LOAD o_SolveOK_TP o_SystemCost_TP o_DefGenViolation
 $if %TradePeriodReports%==1 $LOAD o_DefRampRate_TP o_SurpRampRate_TP o_SurpBranchGroupConst_TP o_DefBranchGroupConst_TP o_DefMNodeConst_TP
 $if %TradePeriodReports%==1 $LOAD o_SurpMNodeConst_TP o_DefACNodeConst_TP o_SurpACNodeConst_TP o_DefT1MixedConst_TP o_SurpT1MixedConst_TP
 $if %TradePeriodReports%==1 $LOAD o_DefGenericConst_TP o_SurpGenericConst_TP o_DefResv_TP o_TotalViolation_TP
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+$if %TradePeriodReports%==1 $LOAD o_OFV_TP o_PenaltyCost_TP
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+
 *Close the gdx
 $if %TradePeriodReports%==1 $GDXIN
 
@@ -304,7 +312,7 @@ ObjResults_Audit            / "%OutputPath%%runName%\%runName%_ObjResults_Audit.
 SystemResults.pc = 5;           SystemResults.lw = 0;          SystemResults.pw = 9999;               SystemResults.ap = 1;
 OfferResults.pc = 5;            OfferResults.lw = 0;           OfferResults.pw = 9999;                OfferResults.ap = 1;
 TraderResults.pc = 5;           TraderResults.lw = 0;          TraderResults.pw = 9999;               TraderResults.ap = 1;
-SummaryResults_TP.pc = 5;       SummaryResults_TP.lw = 0;      SummaryResults_TP.pw = 9999;           SummaryResults_TP.ap = 1;
+SummaryResults_TP.pc = 5;       SummaryResults_TP.lw = 0;      SummaryResults_TP.pw = 9999;           SummaryResults_TP.ap = 1;          SummaryResults_TP.nd = 5;
 IslandResults_TP.pc = 5;        IslandResults_TP.lw = 0;       IslandResults_TP.pw = 9999;            IslandResults_TP.ap = 1;
 BusResults_TP.pc = 5;           BusResults_TP.lw = 0;          BusResults_TP.pw = 9999;               BusResults_TP.ap = 1;
 NodeResults_TP.pc = 5;          NodeResults_TP.lw = 0;         NodeResults_TP.pw = 9999;              NodeResults_TP.ap = 1;             NodeResults_TP.nd = 5;
@@ -363,10 +371,14 @@ $if %TradePeriodReports%==0 $goto SkipTradePeriodReports
 
 put SummaryResults_TP;
 loop(dim1 $ o_DateTime(dim1),
-  put dim1.tl, o_SolveOK_TP(dim1), o_SystemCost_TP(dim1), o_DefGenViolation_TP(dim1), o_SurpGenViolation_TP(dim1), o_DefResv_TP(dim1), o_SurpBranchFlow_TP(dim1)
-      o_DefRampRate_TP(dim1), o_SurpRampRate_TP(dim1), o_SurpBranchGroupConst_TP(dim1), o_DefBranchGroupConst_TP(dim1), o_DefMNodeConst_TP(dim1)
-      o_SurpMNodeConst_TP(dim1), o_DefACNodeConst_TP(dim1), o_SurpACNodeConst_TP(dim1), o_DefT1MixedConst_TP(dim1), o_SurpT1MixedConst_TP(dim1)
-      o_DefGenericConst_TP(dim1), o_SurpGenericConst_TP(dim1) /;
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+*  put dim1.tl, o_SolveOK_TP(dim1), o_SystemCost_TP(dim1), o_DefGenViolation_TP(dim1), o_SurpGenViolation_TP(dim1), o_DefResv_TP(dim1), o_SurpBranchFlow_TP(dim1)
+  put dim1.tl, o_SolveOK_TP(dim1), o_OFV_TP(dim1), o_SystemCost_TP(dim1), o_PenaltyCost_TP(dim1), o_DefGenViolation_TP(dim1), o_SurpGenViolation_TP(dim1)
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+      o_DefResv_TP(dim1), o_SurpBranchFlow_TP(dim1), o_DefRampRate_TP(dim1), o_SurpRampRate_TP(dim1)
+      o_SurpBranchGroupConst_TP(dim1), o_DefBranchGroupConst_TP(dim1), o_DefMNodeConst_TP(dim1)
+      o_SurpMNodeConst_TP(dim1), o_DefACNodeConst_TP(dim1), o_SurpACNodeConst_TP(dim1)
+      o_DefT1MixedConst_TP(dim1), o_SurpT1MixedConst_TP(dim1), o_DefGenericConst_TP(dim1), o_SurpGenericConst_TP(dim1) /;
 );
 
 put IslandResults_TP;

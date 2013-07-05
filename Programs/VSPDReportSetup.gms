@@ -3,7 +3,7 @@ $ontext
 Name: VSPDReport.gms
 Function: Creates the report templates
 Developed by: Ramu Naidoo  (Electricity Authority, New Zealand)
-Last modified: 29 November 2011
+Last modified: 13 May 2013
 ===================================================================================
 $offtext
 
@@ -96,7 +96,10 @@ $if not %DWMode%==0 $goto SkipvSPDReportSetup
 $if %TradePeriodReports%==0 $goto SkipTradePeriodReports
 
    put SummaryResults_TP;
-   put 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)', 'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)'
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+*   put 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)', 'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)'
+    put 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV ($)', 'SystemCost ($)', 'ViolationCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)', 'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)'
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
        'DeficitBranchGroupConstraintViol (MW)', 'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)', 'DeficitACNodeConstraintViol(MW)', 'SurplusACNodeConstraintViol (MW)', 'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)'
       'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)';
 

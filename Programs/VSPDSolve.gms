@@ -3,7 +3,7 @@ $ontext
 Name: VSPDModel.gms
 Function: Base and override data read, data prepare and model solve.
 Developed by: Ramu Naidoo  (Electricity Authority, New Zealand)
-Last modified: 11 Mar 2013
+Last modified: 13 May 2013
 ===================================================================================
 $offtext
 
@@ -212,6 +212,10 @@ o_MNodeConstraintPrice_TP(i_DateTime,i_MNodeConstraint)                         
 *TradePeriod summary report
 o_SolveOK_TP(i_DateTime)                                                         'Solve status for summary report (1=OK)'
 o_SystemCost_TP(i_DateTime)                                                      'System cost for summary report'
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+o_OFV_TP(i_DateTime)                                                             'Objective function value for summary report'
+o_PenaltyCost_TP(i_DateTime)                                                     'Penalty cost for summary report'
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
 o_DefGenViolation_TP(i_DateTime)                                                 'Deficit generation violation for summary report'
 o_SurpGenViolation_TP(i_DateTime)                                                'Surplus generaiton violation for summary report'
 o_SurpBranchFlow_TP(i_DateTime)                                                  'Surplus branch flow violation for summary report'
@@ -2423,9 +2427,12 @@ $OFFTEXT
 *Summary reporting
       o_SolveOK_TP(i_DateTime) = ModelSolved;
 
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+*o_SystemCost now represents the system costs only (excluding the penalty costs). See o_Penalty and o_OFV for penalty and total cost
       o_SystemCost_TP(i_DateTime) = sum((i_Offer,i_TradeBlock) $ ValidGenerationOfferBlock(CurrentTradePeriod,i_Offer,i_TradeBlock), GENERATIONBLOCK.l(CurrentTradePeriod,i_Offer,i_TradeBlock) * GenerationOfferPrice(CurrentTradePeriod,i_Offer,i_TradeBlock))
                                   + sum((i_Offer,i_TradeBlock,i_ReserveClass,i_ReserveType) $ ValidReserveOfferBlock(CurrentTradePeriod,i_Offer,i_TradeBlock,i_ReserveClass,i_ReserveType), RESERVEBLOCK.l(CurrentTradePeriod,i_Offer,i_TradeBlock,i_ReserveClass,i_ReserveType) * ReserveOfferPrice(CurrentTradePeriod,i_Offer,i_TradeBlock,i_ReserveClass,i_ReserveType))
-                                  + sum((i_Bid,i_TradeBlock,i_ReserveClass) $ ValidPurchaseBidILRBlock(CurrentTradePeriod,i_Bid,i_TradeBlock,i_ReserveClass), PURCHASEILRBLOCK.l(CurrentTradePeriod,i_Bid,i_TradeBlock,i_ReserveClass))
+                                  + sum((i_Bid,i_TradeBlock,i_ReserveClass) $ ValidPurchaseBidILRBlock(CurrentTradePeriod,i_Bid,i_TradeBlock,i_ReserveClass), PURCHASEILRBLOCK.l(CurrentTradePeriod,i_Bid,i_TradeBlock,i_ReserveClass));
+$ONTEXT
 *Penalty costs
                                   + sum(i_Bus $ Bus(CurrentTradePeriod,i_Bus), DeficitBusGenerationPenalty * DEFICITBUSGENERATION.l(CurrentTradePeriod,i_Bus))
                                   + sum(i_Bus $ Bus(CurrentTradePeriod,i_Bus), SurplusBusGenerationPenalty * SURPLUSBUSGENERATION.l(CurrentTradePeriod,i_Bus))
@@ -2445,6 +2452,32 @@ $OFFTEXT
                                   + sum((i_Island,i_ReserveClass) $ DiffCeECeCVP, DeficitReservePenalty_CE(i_ReserveClass) * DEFICITRESERVE_CE.l(CurrentTradePeriod,i_Island,i_ReserveClass))
                                   + sum((i_Island,i_ReserveClass) $ DiffCeECeCVP, DeficitReservePenalty_ECE(i_ReserveClass) * DEFICITRESERVE_ECE.l(CurrentTradePeriod,i_Island,i_ReserveClass))
                                   - sum((i_Bid,i_TradeBlock) $ ValidPurchaseBidBlock(CurrentTradePeriod,i_Bid,i_TradeBlock), PURCHASEBLOCK.l(CurrentTradePeriod,i_Bid,i_TradeBlock) * PurchaseBidPrice(CurrentTradePeriod,i_Bid,i_TradeBlock));
+$OFFTEXT
+      o_PenaltyCost_TP(i_DateTime) = sum(i_Bus $ Bus(CurrentTradePeriod,i_Bus), DeficitBusGenerationPenalty * DEFICITBUSGENERATION.l(CurrentTradePeriod,i_Bus))
+                                   + sum(i_Bus $ Bus(CurrentTradePeriod,i_Bus), SurplusBusGenerationPenalty * SURPLUSBUSGENERATION.l(CurrentTradePeriod,i_Bus))
+                                   + sum(i_Branch $ Branch(CurrentTradePeriod,i_Branch), SurplusBranchFlowPenalty * SURPLUSBRANCHFLOW.l(CurrentTradePeriod,i_Branch))
+                                   + sum(i_Offer $ Offer(CurrentTradePeriod,i_Offer), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(CurrentTradePeriod,i_Offer)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(CurrentTradePeriod,i_Offer)))
+                                   + sum(i_ACNodeConstraint $ ACNodeConstraint(CurrentTradePeriod,i_ACNodeConstraint), DeficitACNodeConstraintPenalty * DEFICITACNODECONSTRAINT.l(CurrentTradePeriod,i_ACNodeConstraint))
+                                   + sum(i_ACNodeConstraint $ ACNodeConstraint(CurrentTradePeriod,i_ACNodeConstraint), SurplusACNodeConstraintPenalty * SURPLUSACNODECONSTRAINT.l(CurrentTradePeriod,i_ACNodeConstraint))
+                                   + sum(i_BranchConstraint $ BranchConstraint(CurrentTradePeriod,i_BranchConstraint), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(CurrentTradePeriod,i_BranchConstraint))
+                                   + sum(i_BranchConstraint $ BranchConstraint(CurrentTradePeriod,i_BranchConstraint), DeficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT.l(CurrentTradePeriod,i_BranchConstraint))
+                                   + sum(i_MNodeConstraint $ MNodeConstraint(CurrentTradePeriod,i_MNodeConstraint), DeficitMnodeConstraintPenalty * DEFICITMNODECONSTRAINT.l(CurrentTradePeriod,i_MNodeConstraint))
+                                   + sum(i_MNodeConstraint $ MNodeConstraint(CurrentTradePeriod,i_MNodeConstraint), SurplusMnodeConstraintPenalty * SURPLUSMNODECONSTRAINT.l(CurrentTradePeriod,i_MNodeConstraint))
+                                   + sum(i_Type1MixedConstraint $ Type1MixedConstraint(CurrentTradePeriod,i_Type1MixedConstraint), Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT.l(CurrentTradePeriod,i_Type1MixedConstraint))
+                                   + sum(i_Type1MixedConstraint $ Type1MixedConstraint(CurrentTradePeriod,i_Type1MixedConstraint), Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT.l(CurrentTradePeriod,i_Type1MixedConstraint))
+                                   + sum(i_GenericConstraint $ GenericConstraint(CurrentTradePeriod,i_GenericConstraint), DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT.l(CurrentTradePeriod,i_GenericConstraint))
+                                   + sum(i_GenericConstraint $ GenericConstraint(CurrentTradePeriod,i_GenericConstraint), SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT.l(CurrentTradePeriod,i_GenericConstraint))
+                                   + sum((i_Island,i_ReserveClass) $ (not DiffCeECeCVP), DeficitReservePenalty(i_ReserveClass) * DEFICITRESERVE.l(CurrentTradePeriod,i_Island,i_ReserveClass))
+                                   + sum((i_Island,i_ReserveClass) $ DiffCeECeCVP, DeficitReservePenalty_CE(i_ReserveClass) * DEFICITRESERVE_CE.l(CurrentTradePeriod,i_Island,i_ReserveClass))
+                                   + sum((i_Island,i_ReserveClass) $ DiffCeECeCVP, DeficitReservePenalty_ECE(i_ReserveClass) * DEFICITRESERVE_ECE.l(CurrentTradePeriod,i_Island,i_ReserveClass))
+                                   - sum((i_Bid,i_TradeBlock) $ ValidPurchaseBidBlock(CurrentTradePeriod,i_Bid,i_TradeBlock), PURCHASEBLOCK.l(CurrentTradePeriod,i_Bid,i_TradeBlock) * PurchaseBidPrice(CurrentTradePeriod,i_Bid,i_TradeBlock));
+
+
+      o_OFV_TP(i_DateTime) = o_SystemCost_TP(i_DateTime) + o_PenaltyCost_TP(i_DateTime);
+
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+
+
 
 *Separete violation reporting at trade period level
       o_DefGenViolation_TP(i_DateTime) = sum(i_Bus $ Bus(CurrentTradePeriod,i_Bus),  DEFICITBUSGENERATION.l(CurrentTradePeriod,i_Bus));
@@ -2588,7 +2621,10 @@ if (%TradePeriodReports% = 1,
    execute_unload '%OutputPath%%runName%\RunNum%VSPDRunNum%_SummaryOutput_TP.gdx', o_DateTime, o_SolveOK_TP, o_SystemCost_TP, o_DefGenViolation_TP, o_SurpGenViolation_TP, o_SurpBranchFlow_TP
                                                                                    o_DefRampRate_TP, o_SurpRampRate_TP, o_SurpBranchGroupConst_TP, o_DefBranchGroupConst_TP, o_DefMNodeConst_TP
                                                                                    o_SurpMNodeConst_TP, o_DefACNodeConst_TP, o_SurpACNodeConst_TP, o_DefT1MixedConst_TP, o_SurpT1MixedConst_TP
-                                                                                   o_DefGenericConst_TP, o_SurpGenericConst_TP, o_DefResv_TP, o_TotalViolation_TP;
+                                                                                   o_DefGenericConst_TP, o_SurpGenericConst_TP, o_DefResv_TP, o_TotalViolation_TP
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
+                                                                                   o_OFV_TP, o_PenaltyCost_TP;
+*RDN - 20130513 - Additional reporting on system objective function and penalty cost
 
    execute_unload '%OutputPath%%runName%\RunNum%VSPDRunNum%_IslandOutput_TP.gdx', o_IslandGen_TP, o_IslandLoad_TP, o_IslandEnergyRevenue_TP
                                                                                o_IslandLoadCost_TP, o_IslandLoadRevenue_TP
