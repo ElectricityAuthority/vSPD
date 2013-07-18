@@ -1,10 +1,10 @@
 $setglobal    runName     Test
 $setglobal    Mode        0
  
-$setglobal    ProgramPath     C:\vSPD\Test\Programs\
-$setglobal    InputPath       C:\vSPD\Test\Programs\..\Input\
-$setglobal    OvrdPath        C:\vSPD\Test\Programs\
-$setglobal    OutputPath      C:\vSPD\Test\Programs\..\Output\
+$setglobal    ProgramPath     /home/humed/vSPD/Programs/
+$setglobal    InputPath       /home/humed/vSPD/Input/
+$setglobal    OvrdPath        /home/humed/vSPD/Programs/
+$setglobal    OutputPath      /home/humed/vSPD/Output/
  
 $setglobal       VSPDInputOvrdData      'VSPDRunFile'
 $setglobal       VSPDInputOvrdFormat    2
