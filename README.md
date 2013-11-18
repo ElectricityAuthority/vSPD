@@ -15,11 +15,13 @@ Contact: emi@ea.govt.nz
 
 TODO:
 - One day, alias the frequently-used sets with short labels
-  i_dateTime(*)    as dt
-  i_tradePeriod(*) as tp
-  i_offer(*)       as o
-  i_trader(*)      as trdr
-  i_bid(*)         as bid ???
-  i_node(*)        as n
-  i_bus(*)         as b
-  i_branch(*)      as br
+  i_dateTime(*)    as dt,
+  i_tradePeriod(*) as tp,
+  i_offer(*)       as o,
+  i_trader(*)      as trdr,
+  i_bid(*)         as bid ???,
+  i_node(*)        as n,
+  i_bus(*)         as b,
+  i_branch(*)      as br,
+- blah blah blah
+
