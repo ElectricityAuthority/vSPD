@@ -551,9 +551,8 @@ $offtext
 
 $if not %suppressOverrides%==1 $include vSPDsolveOverrides.gms
 
-*FTR include file 1 - override vSPD settings and parameters to calculate branch and constraint participation loading----------------------------------------------------------------------
-$If exist FTR_1.ins $Include FTR_1.ins
-*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*FTR include file 1 - override vSPD settings and parameters to calculate branch and constraint participation loading
+*$if exist FTR_1.ins $Include FTR_1.ins
 
 
 
@@ -1584,9 +1583,10 @@ for(iterationCount = 1 to numTradePeriods,
 * Solve the model
 *=====================================================================================
 
-*FTR --> Skip normal vSPD model solve when an extreme flow pattern is applied ------------------------------------------------------------------------------------------------------------
-$If exist FTR_1.ins $goto FTR_process
-*FTR --> a snippet of code for simplified vSPD model solving and reporting will be included with file FTR_2.ins --------------------------------------------------------------------------
+
+** Do this skip if solving either pattern - i.e. 2 and 3
+*FTR --> Skip normal vSPD model solve when an extreme flow pattern is applied
+*$if exist FTR_1.ins $goto FTR_process
 
 * Set the bratio to 1 i.e. do not use advanced basis for LP
     option bratio = 1 ;
@@ -2162,10 +2162,8 @@ $OFFTEXT
 *  Collect and store results from the current model solve in the output (o_xxx) parameters
 *=====================================================================================
 
-*FTR --> Skip normal vSPD reporting process ----------------------------------------------------------------------------------------------------------------------------------------------
-$If exist FTR_2.ins $goto FTR_process
-*FTR --> Skip normal vSPD process --------------------------------------------------------------------------------------------------------------------------------------------------------
-
+* Skip the usual vSPD reporting if calculating FTR rentals
+*$if not %calcFTRrentals%==1 $goto FTR_process
 
 *  Check if reporting at trading period level or for audit purposes is required...
     if((tradePeriodReports = 1) or (opMode = -1),
@@ -2679,10 +2677,11 @@ if(tradePeriodReports = 1,
 
 ) ;
 
+
 $label FTR_process
-*FTR include file 2-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$If exist FTR_2.ins $include FTR_2.ins
-*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* If calculating FTR rentals, do the FTR rental reporting
+*$if %calcFTRrentals%==1 $include FTR_2.ins
+
 
 * Post a progress message for use by EMI.
 putclose runlog / 'The case: %vSPDinputData% is complete. (', system.time, ').' //// ;
@@ -2693,4 +2692,4 @@ $label nextInput
 
 
 * Post a progress message for use by EMI.
-$if not exist "%inputPath%\%vSPDinputData%.gdx" putclose runlog / 'The file %programPath%Input\%vSPDinputData%.gdx could not be found (', system.time, ').' // ;
+$ if not exist "%inputPath%\%vSPDinputData%.gdx" putclose runlog / 'The file %programPath%Input\%vSPDinputData%.gdx could not be found (', system.time, ').' // ;

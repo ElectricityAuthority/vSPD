@@ -1,8 +1,10 @@
 *=====================================================================================
 * Name:                 runvSPD.gms
 * Function:             This file is invoked to control the operation of everything else
-* Developed by:         Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:     Tuong Nguyen on 17 April 2013
+* Developed by:         Electricity Authority, New Zealand
+* Source:               https://github.com/ElectricityAuthority/vSPD
+*                       http://reports.ea.govt.nz/EMIIntro.htm
+* Last modified on:     18 November 2013
 *=====================================================================================
 
 
@@ -21,20 +23,22 @@ $include vSPDsettings.inc
 
 
 * Define external files
-File temp     "A temporary, recyclable batch file" ;
-File vSPDcase "The current input case file" / "vSPDcase.inc" / ; vSPDcase.lw = 0 ; vSPDcase.sw = 0 ;
+Files
+  temp     "A temporary, recyclable batch file"
+  vSPDcase "The current input case file"    / "vSPDcase.inc" / ; vSPDcase.lw = 0 ; vSPDcase.sw = 0 ;
 
 
 * Perform integrity checks on operating mode and trade period reporting switches
-* Notes: Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vPSD mode.
+* Notes: Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vSPD mode.
 *        tradePeriodReports must be 0 or 1 (default = 1) - a value of 1 implies reports by trade period are generated
-*        A value of zero will supress them. tradePeriodReports must be 1 if opMode is 1 or -1, ie data warehouse or audit modes.
+*        A value of zero will suppress them. tradePeriodReports must be 1 if opMode is 1 or -1, ie data warehouse or audit modes.
 if(tradePeriodReports < 0 or tradePeriodReports > 1, tradePeriodReports = 1 ) ;
 if( (opMode = -1) or (opMode = 1), tradePeriodReports = 1 ) ;
 *Display opMode, tradePeriodReports ;
 
 
 * Create the set of input GDX file names over which the solve and reporting loops will operate
+* This process differs according to interfaceMode.
 $if %interfaceMode%==1 $goto skipReadIncFile
 * a) If not using the Excel interface, create the set of input GDX file names by reading fileNameList.inc
 Set i_fileName 'Input GDX file names' /
@@ -51,7 +55,7 @@ $offecho
 Set i_fileName(*) 'Input GDX file names' ;
 $call 'gdxxrw "%programPath%%vSPDinputFileName%.xls" o=inputFileName.gdx "@gdxInputFileName.ins"'
 $gdxin inputFileName.gdx
-$load i_FileName
+$load i_fileName
 $gdxin
 $label skipReadExcelFile
 
@@ -60,7 +64,7 @@ $label skipReadExcelFile
 put_utility temp 'exec' / 'gams runvSPDsetup' ;
 
 
-* Execute vSPD - loop over the designated input files and solve each one
+* Execute vSPD - loop over the designated input GDX files and solve each one in turn
 Scalar runNum 'Scalar to keep track of the run number' / 1 / ;
 loop(i_fileName,
 
@@ -80,13 +84,11 @@ loop(i_fileName,
 
 
 *=====================================================================================
-* Solving vSPD is now finished. Begin process of generating report.
+* Solving vSPD is now finished. Begin process of generating reports.
 *=====================================================================================
 
-*FTR --> Skip normal reporting process ---------------------------------------------------------------------------------------------------------------------------------------------------
-$If exist FTR_2.ins $goto Cleanup
-*FTR --> Skip normal reporting process end -----------------------------------------------------------------------------------------------------------------------------------------------
-
+* Skip the usual reporting if calculating FTR rentals
+$if not %calcFTRrentals%==1 $goto cleanUp
 
 * Call vSPDreportSetup to establish the report files ready for writing results into
 put_utility temp 'exec' / 'gams runvSPDreportSetup' ;
@@ -133,8 +135,9 @@ loop(i_fileName,
 
 
 *=====================================================================================
-$label Cleanup
+* Clean up
 *=====================================================================================
+$label cleanUp
 execute 'del *.ins' ;
 execute 'del inputFileName.gdx' ;
 $if not %interfaceMode%==2 execute 'del TPsToSolve.gdx' ;
