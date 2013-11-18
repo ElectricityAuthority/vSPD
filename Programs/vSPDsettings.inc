@@ -1,51 +1,57 @@
 *+++ vSPD settings +++
+$inlinecom { }
+$eolcom !
 
-$inlinecom { } eolcom #
 
 *+++ Model +++
-Scalar i_sequentialSolve              / 0 / ;   # Vectorisation: Yes <-> i_SequentialSolve: 0
+Scalar i_sequentialSolve                 / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+
 
 *+++ Network +++
-Scalar i_useACLossModel               / 1 / ;
-Scalar i_useHVDCLossModel             / 1 / ;
-Scalar i_useACBranchLimits            / 1 / ;
-Scalar i_useHVDCBranchLimits          / 1 / ;
-Scalar i_resolveCircularBranchFlows   / 1 / ;
-Scalar i_resolveHVDCNonPhysicalLosses / 1 / ;
-Scalar i_resolveACNonPhysicalLosses   / 0 / ;   # Placeholder for future code development
-Scalar circularBranchFlowTolerance    / 0.000001 / ;
-Scalar nonPhysicalLossTolerance       / 0.000001 / ;
-Scalar useBranchFlowMIPTolerance      / 0.000001 / ;
+Scalar i_useACLossModel                  / 1 / ;
+Scalar i_useHVDCLossModel                / 1 / ;
+Scalar i_useACBranchLimits               / 1 / ;
+Scalar i_useHVDCBranchLimits             / 1 / ;
+Scalar i_resolveCircularBranchFlows      / 1 / ;
+Scalar i_resolveHVDCNonPhysicalLosses    / 1 / ;
+Scalar i_resolveACNonPhysicalLosses      / 0 / ;   ! Placeholder for future code development
+Scalar circularBranchFlowTolerance       / 0.000001 / ;
+Scalar nonPhysicalLossTolerance          / 0.000001 / ;
+Scalar useBranchFlowMIPTolerance         / 0.000001 / ;
+
 
 *+++ Constraints +++
-Scalar i_useReserveModel              / 1 / ;
-Scalar i_useMixedConstraint           / 1 / ;
-Scalar mixedMIPtolerance              / 0.000001 / ;
+Scalar i_useReserveModel                 / 1 / ;
+Scalar i_useMixedConstraint              / 1 / ;
+Scalar mixedMIPtolerance                 / 0.000001 / ;
 
 *+++ Solver +++
-$setglobal Solver                       CPLEX
-Scalar LPtimeLimit                    / 600 / ;
-Scalar LPiterationLimit               / 1000000 / ;
-Scalar MIPtimeLimit                   / 600 / ;
-Scalar MIPoptimality                  / 0 / ;
-Scalar MIPiterationLimit              / 1000000 / ;
+$setglobal Solver                          Cplex
+Scalar LPtimeLimit                       / 600 / ;
+Scalar LPiterationLimit                  / 1000000 / ;
+Scalar MIPtimeLimit                      / 600 / ;
+Scalar MIPoptimality                     / 0 / ;
+Scalar MIPiterationLimit                 / 1000000 / ;
+
 
 *+++ Misc +++
 Scalar i_disconnectedNodePriceCorrection / 1 / ;
-$setglobal varResv                       -1
+$setglobal varResv                        -1
+
 
 *+++ External loss model from Transpower +++
-Scalar i_useExternalLossModel  / 1 / ;
-Scalar lossCoeff_A             / 0.3101 / ;
-Scalar lossCoeff_C             / 0.14495 / ;
-Scalar lossCoeff_D             / 0.32247 / ;
-Scalar lossCoeff_E             / 0.46742 / ;
-Scalar lossCoeff_F             / 0.82247 / ;
-Scalar maxFlowSegment          / 10000 / ;
+Scalar i_useExternalLossModel            / 1 / ;
+Scalar lossCoeff_A                       / 0.3101 / ;
+Scalar lossCoeff_C                       / 0.14495 / ;
+Scalar lossCoeff_D                       / 0.32247 / ;
+Scalar lossCoeff_E                       / 0.46742 / ;
+Scalar lossCoeff_F                       / 0.82247 / ;
+Scalar maxFlowSegment                    / 10000 / ;
 
-*+++ Flags for interface mode, override supression, operating mode, and reports by trading period +++
-* interfaceMode: Specify 0 for EMI; 1 for Excel; and 2 for Standalone
-$setglobal interfaceMode         0
-$setglobal suppressOverrides     0
-Scalar opMode                  / 2 / ;   # Specify 1 for data warehouse; -1 for audit; otherwise usual vSPD mode
-Scalar tradePeriodReports      / 1 / ;   # Specify 1 for reports at trading period level, 0 otherwise
+
+*+++ Various switches +++
+$setglobal interfaceMode                   2       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
+$setglobal suppressOverrides               0       !
+$setglobal calcFTRrentals                  0       ! Specify 1 to calculate FTR rentals, 0 otherwise
+Scalar     opMode                        / 2 / ;   ! Specify 1 for data warehouse; -1 for audit; otherwise usual vSPD mode
+Scalar     tradePeriodReports            / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
