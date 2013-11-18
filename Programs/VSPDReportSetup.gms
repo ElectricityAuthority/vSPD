@@ -1,169 +1,150 @@
-$ontext
-===================================================================================
-Name: VSPDReport.gms
-Function: Creates the report templates
-Developed by: Ramu Naidoo  (Electricity Authority, New Zealand)
-Last modified: 13 May 2013
-===================================================================================
-$offtext
+*=====================================================================================
+* Name:                 vSPDreportSetup.gms
+* Function:             Creates the report templates
+* Developed by:         Ramu Naidoo (Electricity Authority, New Zealand)
+* Last modified by:     Ramu Naidoo on 30 July 2013
+*=====================================================================================
 
-*===================================================================================
-*Include some settings
-*===================================================================================
 
 $include vSPDpaths.inc
 $include vSPDsettings.inc
 
-*===================================================================================
-*Create the reports
-*===================================================================================
 
-*Define output files
-FILES
-SystemResults            / "%OutputPath%%runName%\%runName%_SystemResults.csv" /
-OfferResults             / "%OutputPath%%runName%\%runName%_OfferResults.csv" /
-TraderResults            / "%OutputPath%%runName%\%runName%_TraderResults.csv" /
-SummaryResults_TP        / "%OutputPath%%runName%\%runName%_SummaryResults_TP.csv" /
-IslandResults_TP         / "%OutputPath%%runName%\%runName%_IslandResults_TP.csv" /
-BusResults_TP            / "%OutputPath%%runName%\%runName%_BusResults_TP.csv" /
-NodeResults_TP           / "%OutputPath%%runName%\%runName%_NodeResults_TP.csv" /
-OfferResults_TP          / "%OutputPath%%runName%\%runName%_OfferResults_TP.csv" /
-ReserveResults_TP        / "%OutputPath%%runName%\%runName%_ReserveResults_TP.csv" /
-BranchResults_TP         / "%OutputPath%%runName%\%runName%_BranchResults_TP.csv" /
-BrCnstrResults_TP        / "%OutputPath%%runName%\%runName%_BrConstraintResults_TP.csv" /
-MNodeCnstrResults_TP     / "%OutputPath%%runName%\%runName%_MNodeConstraintResults_TP.csv" /
+* Perform integrity checks on operating mode and trade period reporting switches
+* Notes: Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vPSD mode.
+*        tradePeriodReports must be 0 or 1 (default = 1) - a value of 1 implies reports by trade period are generated
+*        A value of zero will supress them. tradePeriodReports must be 1 if opMode is 1 or -1, ie data warehouse or audit modes.
+if(tradePeriodReports < 0 or tradePeriodReports > 1, tradePeriodReports = 1 ) ;
+if( (opMode = -1) or (opMode = 1), tradePeriodReports = 1 ) ;
+Display opMode, tradePeriodReports ;
 
-*Datawarehouse reports
-DWSummaryResults         / "%OutputPath%%runName%\%runName%_DWSummaryResults.csv" /
-DWEnergyResults          / "%OutputPath%%runName%\%runName%_DWEnergyResults.csv" /
-DWReserveResults         / "%OutputPath%%runName%\%runName%_DWReserveResults.csv" /
 
-*TN - Audit reports
-BranchLoss_Audit            / "%OutputPath%%runName%\%runName%_BranchLoss_Audit.csv" /
-BusResults_Audit            / "%OutputPath%%runName%\%runName%_BusResults_Audit.csv" /
-MarketNodeResults_Audit     / "%OutputPath%%runName%\%runName%_MarketNodeResults_Audit.csv" /
-BranchResults_Audit         / "%OutputPath%%runName%\%runName%_BranchResults_Audit.csv" /
-RiskResults_Audit           / "%OutputPath%%runName%\%runName%_RiskResults_Audit.csv" /
-ObjResults_Audit            / "%OutputPath%%runName%\%runName%_ObjResults_Audit.csv" /
-*TN - Audit reports - End
-;
+Files
+* Define output files
+  systemResults            / "%outputPath%\%runName%\%runName%_SystemResults.csv" /
+  offerResults             / "%outputPath%\%runName%\%runName%_OfferResults.csv" /
+  traderResults            / "%outputPath%\%runName%\%runName%_TraderResults.csv" /
+  summaryResults_TP        / "%outputPath%\%runName%\%runName%_SummaryResults_TP.csv" /
+  islandResults_TP         / "%outputPath%\%runName%\%runName%_IslandResults_TP.csv" /
+  busResults_TP            / "%outputPath%\%runName%\%runName%_BusResults_TP.csv" /
+  nodeResults_TP           / "%outputPath%\%runName%\%runName%_NodeResults_TP.csv" /
+  offerResults_TP          / "%outputPath%\%runName%\%runName%_OfferResults_TP.csv" /
+  reserveResults_TP        / "%outputPath%\%runName%\%runName%_ReserveResults_TP.csv" /
+  branchResults_TP         / "%outputPath%\%runName%\%runName%_BranchResults_TP.csv" /
+  brCnstrResults_TP        / "%outputPath%\%runName%\%runName%_BrConstraintResults_TP.csv" /
+  MNodeCnstrResults_TP     / "%outputPath%\%runName%\%runName%_MNodeConstraintResults_TP.csv" /
 
-*Set output file format
-SystemResults.pc = 5;                    SystemResults.lw = 0;                   SystemResults.pw = 9999;
-OfferResults.pc = 5;                     OfferResults.lw = 0;                    OfferResults.pw = 9999;
-TraderResults.pc = 5;                    TraderResults.lw = 0;                   TraderResults.pw = 9999;
-SummaryResults_TP.pc = 5;                SummaryResults_TP.lw = 0;               SummaryResults_TP.pw = 9999;
-IslandResults_TP.pc = 5;                 IslandResults_TP.lw = 0;                IslandResults_TP.pw = 9999;
-BusResults_TP.pc = 5;                    BusResults_TP.lw = 0;                   BusResults_TP.pw = 9999;
-NodeResults_TP.pc = 5;                   NodeResults_TP.lw = 0;                  NodeResults_TP.pw = 9999;
-OfferResults_TP.pc = 5;                  OfferResults_TP.lw = 0;                 OfferResults_TP.pw = 9999;
-ReserveResults_TP.pc = 5;                ReserveResults_TP.lw = 0;               ReserveResults_TP.pw = 9999;
-BranchResults_TP.pc = 5;                 BranchResults_TP.lw = 0;                BranchResults_TP.pw = 9999;
-BrCnstrResults_TP.pc = 5;                BrCnstrResults_TP.lw = 0;               BrCnstrResults_TP.pw = 9999;
-MNodeCnstrResults_TP.pc = 5;             MNodeCnstrResults_TP.lw = 0;            MNodeCnstrResults_TP.pw = 9999;
+* Define data warehouse output files
+  DWsummaryResults         / "%outputPath%\%runName%\%runName%_DWSummaryResults.csv" /
+  DWenergyResults          / "%outputPath%\%runName%\%runName%_DWEnergyResults.csv" /
+  DWreserveResults         / "%outputPath%\%runName%\%runName%_DWReserveResults.csv" /
 
-*Datawarehouse reports
-DWSummaryResults.pc = 5;                 DWSummaryResults.lw = 0;                DWSummaryResults.pw = 9999;
-DWEnergyResults.pc = 5;                  DWEnergyResults.lw = 0;                 DWEnergyResults.pw = 9999;
-DWReserveResults.pc = 5;                 DWReserveResults.lw = 0;                DWReserveResults.pw = 9999;
+* Define audit output files
+  branchLoss_Audit         / "%outputPath%\%runName%\%runName%_BranchLoss_Audit.csv" /
+  busResults_Audit         / "%outputPath%\%runName%\%runName%_BusResults_Audit.csv" /
+  marketNodeResults_Audit  / "%outputPath%\%runName%\%runName%_MarketNodeResults_Audit.csv" /
+  branchResults_Audit      / "%outputPath%\%runName%\%runName%_BranchResults_Audit.csv" /
+  riskResults_Audit        / "%outputPath%\%runName%\%runName%_RiskResults_Audit.csv" /
+  objResults_Audit         / "%outputPath%\%runName%\%runName%_ObjResults_Audit.csv" /
+  ;
 
-*TN - Audit reports
-BranchLoss_Audit.pc = 5;                 BranchLoss_Audit.lw = 0;                BranchLoss_Audit.pw = 9999;
-BusResults_Audit.pc = 5;                 BusResults_Audit.lw = 0;                BusResults_Audit.pw = 9999;
-MarketNodeResults_Audit.pc = 5;          MarketNodeResults_Audit.lw = 0;         MarketNodeResults_Audit.pw = 9999;
-BranchResults_Audit.pc = 5;              BranchResults_Audit.lw = 0;             BranchResults_Audit.pw = 9999;
-RiskResults_Audit.pc = 5;                RiskResults_Audit.lw = 0;               RiskResults_Audit.pw = 9999;
-ObjResults_Audit.pc = 5;                 ObjResults_Audit.lw = 0;                ObjResults_Audit.pw = 9999;
 
-*TN - If NOT in normal vSPD report setup
-$if not %DWMode%==0 $goto SkipvSPDReportSetup
+* Set output file formats
+systemResults.pc = 5 ;             systemResults.lw = 0 ;                systemResults.pw = 9999 ;
+offerResults.pc = 5 ;              offerResults.lw = 0 ;                 offerResults.pw = 9999 ;
+traderResults.pc = 5 ;             traderResults.lw = 0 ;                traderResults.pw = 9999 ;
+summaryResults_TP.pc = 5 ;         summaryResults_TP.lw = 0 ;            summaryResults_TP.pw = 9999 ;
+islandResults_TP.pc = 5 ;          islandResults_TP.lw = 0 ;             islandResults_TP.pw = 9999 ;
+busResults_TP.pc = 5 ;             busResults_TP.lw = 0 ;                busResults_TP.pw = 9999 ;
+nodeResults_TP.pc = 5 ;            nodeResults_TP.lw = 0 ;               nodeResults_TP.pw = 9999 ;
+offerResults_TP.pc = 5 ;           offerResults_TP.lw = 0 ;              offerResults_TP.pw = 9999 ;
+reserveResults_TP.pc = 5 ;         reserveResults_TP.lw = 0 ;            reserveResults_TP.pw = 9999 ;
+branchResults_TP.pc = 5 ;          branchResults_TP.lw = 0 ;             branchResults_TP.pw = 9999 ;
+brCnstrResults_TP.pc = 5 ;         brCnstrResults_TP.lw = 0 ;            brCnstrResults_TP.pw = 9999 ;
+MNodeCnstrResults_TP.pc = 5 ;      MNodeCnstrResults_TP.lw = 0 ;         MNodeCnstrResults_TP.pw = 9999 ;
 
-*Write out summary reports
-*System level
-   put SystemResults;
-   put 'Date', 'NumTradePeriodsStudied', 'ObjectiveFunctionValue ($)', 'SystemGen (MW(half)h)', 'SystemLoad (MW(half)h)', 'SystemLoss (MW(half)h)', 'SystemViolation (MW(half)h)', 'SystemFIR (MW(half)h)'
-       'SystemSIR (MW(half)h)', 'SystemGenerationRevenue ($)', 'SystemLoadCost ($)', 'SystemNegativeLoadRevenue ($)', 'SystemSurplus ($)';
+* Set data warehouse output file formats
+DWsummaryResults.pc = 5 ;          DWsummaryResults.lw = 0 ;             DWsummaryResults.pw = 9999 ;
+DWenergyResults.pc = 5 ;           DWenergyResults.lw = 0 ;              DWenergyResults.pw = 9999 ;
+DWreserveResults.pc = 5 ;          DWreserveResults.lw = 0 ;             DWreserveResults.pw = 9999 ;
 
-*Offer level
-   put OfferResults;
-   put 'Date', 'NumTradePeriodsStudied', 'Offer', 'Trader', 'Generation (MWh)', 'FIR (MWh)', 'SIR (MWh)';
+* Set audit output file formats
+branchLoss_Audit.pc = 5 ;          branchLoss_Audit.lw = 0 ;             branchLoss_Audit.pw = 9999 ;
+busResults_Audit.pc = 5 ;          busResults_Audit.lw = 0 ;             busResults_Audit.pw = 9999 ;
+marketNodeResults_Audit.pc = 5 ;   marketNodeResults_Audit.lw = 0 ;      marketNodeResults_Audit.pw = 9999 ;
+branchResults_Audit.pc = 5 ;       branchResults_Audit.lw = 0 ;          branchResults_Audit.pw = 9999 ;
+riskResults_Audit.pc = 5 ;         riskResults_Audit.lw = 0 ;            riskResults_Audit.pw = 9999 ;
+objResults_Audit.pc = 5 ;          objResults_Audit.lw = 0 ;             objResults_Audit.pw = 9999 ;
 
-*Trader level
-   put TraderResults;
-   put 'Date', 'NumTradePeriodsStudied', 'Trader', 'Generation (MWh)', 'FIR (MWh)', 'SIR (MWh)';
+* If opMode is anything but 1 or -1, ie data warehouse or audit mode, write the following report templates
+if( (opMode <> 1) and (opMode <> -1 ),
+* System level summary
+  put systemResults 'Date', 'NumTradePeriodsStudied', 'ObjectiveFunctionValue ($)', 'SystemGen (MW(half)h)', 'SystemLoad (MW(half)h)'
+     'SystemLoss (MW(half)h)', 'SystemViolation (MW(half)h)', 'SystemFIR (MW(half)h)', 'SystemSIR (MW(half)h)', 'SystemGenerationRevenue ($)'
+     'SystemLoadCost ($)', 'SystemNegativeLoadRevenue ($)', 'SystemSurplus ($)' ;
 
-*TradePeriod reports
-$if %TradePeriodReports%==0 $goto SkipTradePeriodReports
+* Offer level summary
+  put offerResults 'Date', 'NumTradePeriodsStudied', 'Offer', 'Trader', 'Generation (MWh)', 'FIR (MWh)', 'SIR (MWh)' ;
 
-   put SummaryResults_TP;
-*RDN - 20130513 - Additional reporting on system objective function and penalty cost
-*   put 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)', 'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)'
-    put 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV ($)', 'SystemCost ($)', 'ViolationCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)', 'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)'
-*RDN - 20130513 - Additional reporting on system objective function and penalty cost
-       'DeficitBranchGroupConstraintViol (MW)', 'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)', 'DeficitACNodeConstraintViol(MW)', 'SurplusACNodeConstraintViol (MW)', 'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)'
-      'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)';
+* Trader level summary
+  put traderResults 'Date', 'NumTradePeriodsStudied', 'Trader', 'Generation (MWh)', 'FIR (MWh)', 'SIR (MWh)' ;
 
-   put IslandResults_TP;
-   put 'DateTime', 'Island', 'Gen (MW)', 'Load (MW)', 'IslandACLoss (MW)', 'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)'
-       'FIR (MW)', 'SIR (MW)', 'FIR Price ($/MWh)', 'SIR Price ($/MWh)', 'GenerationRevenue ($)', 'LoadCost ($)', 'NegativeLoadRevenue ($)';
+* In addition to the summary report templates above, write out the trade period report templates provided tradePeriodReports is set to 1
+  if(tradePeriodReports = 1,
 
-   put BusResults_TP;
-   put 'DateTime', 'Bus', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)';
+*RDN - 20130730 - Additional reporting on system objective function and penalty cost
+*  put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
+    put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV ($)', 'SystemCost ($)', 'ViolationCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
+*RDN - 20130730 - Additional reporting on system objective function and penalty cost
+     'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)', 'DeficitBranchGroupConstraintViol (MW)'
+     'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)', 'DeficitACNodeConstraintViol(MW)', 'SurplusACNodeConstraintViol (MW)'
+     'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)', 'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)' ;
 
-   put NodeResults_TP;
-   put 'DateTime', 'Node', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)';
+    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Load (MW)', 'IslandACLoss (MW)', 'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)'
+     'FIR (MW)', 'SIR (MW)', 'FIR Price ($/MWh)', 'SIR Price ($/MWh)', 'GenerationRevenue ($)', 'LoadCost ($)', 'NegativeLoadRevenue ($)' ;
 
-   put OfferResults_TP;
-   put 'DateTime', 'Offer', 'Generation (MW)', 'FIR (MW)', 'SIR (MW)';
+    put busResults_TP 'DateTime', 'Bus', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
 
-   put ReserveResults_TP;
-   put 'DateTime', 'Island', 'FIR Reqd (MW)', 'SIR Reqd (MW)', 'FIR Price ($/MW)', 'SIR Price ($/MW)', 'FIR Violation (MW)', 'SIR Violation (MW)';
+    put nodeResults_TP 'DateTime', 'Node', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
 
-   put BranchResults_TP;
-   put 'DateTime', 'Branch', 'FromBus', 'ToBus', 'Flow (MW) (From->To)', 'Capacity (MW)', 'DynamicLoss (MW)', 'FixedLoss (MW)', 'FromBusPrice ($/MWh)', 'ToBusPrice ($/MWh)', 'BranchPrice ($/MWh)', 'BranchRentals ($)';
+    put offerResults_TP 'DateTime', 'Offer', 'Generation (MW)', 'FIR (MW)', 'SIR (MW)' ;
 
-   put BrCnstrResults_TP;
-   put 'DateTime', 'BranchConstraint', 'LHS (MW)', 'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)';
+    put reserveResults_TP 'DateTime', 'Island', 'FIR Reqd (MW)', 'SIR Reqd (MW)', 'FIR Price ($/MW)', 'SIR Price ($/MW)', 'FIR Violation (MW)', 'SIR Violation (MW)' ;
 
-   put MNodeCnstrResults_TP;
-   put 'DateTime', 'MNodeConstraint', 'LHS (MW)', 'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)';
+    put branchResults_TP 'DateTime', 'Branch', 'FromBus', 'ToBus', 'Flow (MW) (From->To)', 'Capacity (MW)', 'DynamicLoss (MW)', 'FixedLoss (MW)'
+     'FromBusPrice ($/MWh)', 'ToBusPrice ($/MWh)', 'BranchPrice ($/MWh)', 'BranchRentals ($)' ;
 
-$label SkipTradePeriodReports
-$label SkipvSPDReportSetup
+    put brCnstrResults_TP 'DateTime', 'BranchConstraint', 'LHS (MW)', 'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
 
-*TN - If NOT in datawarehouse mode skip the DW report setup
-$if not %DWMode%==1 $goto SkipDWReportSetup
+    put MNodeCnstrResults_TP 'DateTime', 'MNodeConstraint', 'LHS (MW)', 'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
 
-   put DWSummaryResults;
-   put 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'TotalViol (MW)';
+  ) ;
 
-   put DWEnergyResults;
-   put 'DateTime', 'Node', 'Price ($/MWh)';
+) ;
 
-   put DWReserveResults;
-   put 'DateTime', 'Island', 'FIR Price ($/MW/h)', 'SIR Price ($/MW/h)';
+* Write out the data warehouse mode report templates
+if(opMode = 1,
+  put DWsummaryResults 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'TotalViol (MW)' ;
 
-$label SkipDWReportSetup
+  put DWenergyResults  'DateTime', 'Node', 'Price ($/MWh)' ;
 
-*TN - Check if in Audit mode
-$if not %DWMode%==-1 $goto SkipAuditReportSetup
+  put DWreserveResults 'DateTime', 'Island', 'FIR Price ($/MW/h)', 'SIR Price ($/MW/h)' ;
 
-   put BranchLoss_Audit;
-   put 'DateTime', 'Branch Name', 'LS1_MW', 'LS1_Factor', 'LS2_MW', 'LS2_Factor', 'LS3_MW', 'LS3_Factor', 'LS4_MW', 'LS4_Factor', 'LS5_MW', 'LS5_Factor', 'LS6_MW', 'LS6_Factor';
+) ;
 
-   put BusResults_Audit;
-   put 'DateTime', 'Island', 'Bus', 'Angle', 'Price', 'Load', 'Cleared ILRO 6s', 'Cleared ILRO 60s' ;
+* Write out the audit mode report templates
+if(opMode = -1,
+  put branchLoss_Audit 'DateTime', 'Branch Name', 'LS1_MW', 'LS1_Factor', 'LS2_MW', 'LS2_Factor', 'LS3_MW', 'LS3_Factor', 'LS4_MW', 'LS4_Factor', 'LS5_MW'
+     'LS5_Factor', 'LS6_MW', 'LS6_Factor' ;
 
-   put MarketNodeResults_Audit;
-   put 'DateTime', 'Island', 'Generator', 'Cleared GenMW', 'Cleared PLRO 6s',  'Cleared PLRO 60s', 'Cleared TWRO 6s', 'Cleared TWRO 60s';
+  put busResults_Audit 'DateTime', 'Island', 'Bus', 'Angle', 'Price', 'Load', 'Cleared ILRO 6s', 'Cleared ILRO 60s'  ;
 
-   put BranchResults_Audit;
-   put 'DateTime', 'Branch Name', 'Flow', 'Variable Loss', 'Fixed Loss', 'Total Losses', 'Constrained', 'Shadow Price', 'NonPhysicalLoss';
+  put marketNodeResults_Audit 'DateTime', 'Island', 'Generator', 'Cleared GenMW', 'Cleared PLRO 6s',  'Cleared PLRO 60s', 'Cleared TWRO 6s', 'Cleared TWRO 60s' ;
 
-   put RiskResults_Audit;
-   put 'DateTime', 'Island', 'ReserveClass', 'Risk Setter', 'RiskClass', 'Max Risk', 'Reserve Cleared', 'Violation', 'Reserve Price';
+  put branchResults_Audit 'DateTime', 'Branch Name', 'Flow', 'Variable Loss', 'Fixed Loss', 'Total Losses', 'Constrained', 'Shadow Price', 'NonPhysicalLoss' ;
 
-   put ObjResults_Audit;
-   put 'DateTime', 'Objective Function';
+  put riskResults_Audit 'DateTime', 'Island', 'ReserveClass', 'Risk Setter', 'RiskClass', 'Max Risk', 'Reserve Cleared', 'Violation', 'Reserve Price' ;
 
-$label SkipAuditReportSetup
+  put objResults_Audit 'DateTime', 'Objective Function' ;
+
+) ;
