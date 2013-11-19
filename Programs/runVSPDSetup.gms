@@ -1,10 +1,12 @@
 *=====================================================================================
 * Name:                 runvSPDsetup.gms
-* Function:             Creates the output directories and cleans up the working directory.
+* Function:             Invokes vSPDmodel if required, creates the output directory for
+*                       the current run, and cleans up the working directory.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
-* Last modified on:     18 November 2013
+* Contact:              emi@ea.govt.nz
+* Last modified on:     19 November 2013
 *=====================================================================================
 
 * Include paths and settings files
@@ -12,7 +14,7 @@ $include vSPDpaths.inc
 $include vSPDsettings.inc
 
 
-* Invoke vSPDmodel if license type is developer (i.e. licenseMode=1)
+* Invoke vSPDmodel if license type is developer (licenseMode=1)
 $if %licenseMode%==1 $call gams vSPDmodel.gms s=vSPDmodel
 $if errorlevel 1     $abort +++ Check vSPDmodel.lst for errors +++
 

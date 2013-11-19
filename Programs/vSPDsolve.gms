@@ -5,43 +5,46 @@
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
-* Last modified on:     18 November 2013
+* Contact:              emi@ea.govt.nz
+* Last modified on:     19 November 2013
 *=====================================================================================
 
-
 $ontext
-  Directory of sections in vSPDsolve.gms (each new section begins with a *======= line)
-  - Data load and initialisation
-  - Manage model and data compatability
-  - Establish the trading periods to be solved
-  - Input data overrides - declare and apply (code to do this is included from vSPDsolveOverrides.gms)
-  - Initialise CVPs
-  - The solve vSPD loop
-    - Reset all sets, parameters and variables before proceeding with the next study trade period
-    - Initialise current trade period and model data for the current trade period
-    - Additional pre-processing on parameters and variables before model solve
-    - Solve the model
-    - Check if the LP results are valid
-    - Resolve the model if required
-    - Check for disconnected nodes and adjust prices accordingly
-    - Collect and store results from the current model solve in the output (o_xxx) parameters
-  - End of the solve vSPD loop
-  - Write results to GDX files
+  Directory of code sections in vSPDsolve.gms:
+  1. Declare symbols and initialise some of them
+  2. Load data from GDX file
+  3. Manage model and data compatability
+  4. Establish which trading periods are to be solved
+  5. Input data overrides - declare and apply (include vSPDsolveOverrides.gms)
+  6. Initialise constraint violation penalties (CVPs)
+  7. The vSPD solve loop
+     a) Reset all sets, parameters and variables before proceeding with the next study trade period
+     b) Initialise current trade period and model data for the current trade period
+     c) Additional pre-processing on parameters and variables before model solve
+     d) Solve the model
+     e) Check if the LP results are valid
+     f) Resolve the model if required
+     g) Check for disconnected nodes and adjust prices accordingly
+     h) Collect and store results from the current model solve in the output (o_xxx) parameters
+     i) End of the solve vSPD loop
+  8. Write results to GDX files
 $offtext
 
 
-* Include the run paths, settings and case name
+* Include paths, settings and case name files
 $include vSPDpaths.inc
 $include vSPDsettings.inc
 $include vSPDcase.inc
 
-* Perform integrity checks on operating mode and trade period reporting switches
-* Notes: Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vPSD mode.
-*        tradePeriodReports must be 0 or 1 (default = 1) - a value of 1 implies reports by trade period are generated
-*        A value of zero will supress them. tradePeriodReports must be 1 if opMode is 1 or -1, ie data warehouse or audit modes.
+
+* Perform integrity checks on operating mode (opMode) and trade period reporting (tradePeriodReports) switches.
+* Notes: - Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vSPD mode.
+*        - tradePeriodReports must be 0 or 1 (default = 1) - a value of 1 implies reports by trade period are
+*          generated. A value of zero will suppress them. tradePeriodReports must be 1 if opMode is 1 or -1,
+*          i.e. data warehouse or audit modes.
 if(tradePeriodReports < 0 or tradePeriodReports > 1, tradePeriodReports = 1 ) ;
 if( (opMode = -1) or (opMode = 1), tradePeriodReports = 1 ) ;
-Display opMode, tradePeriodReports ;
+*Display opMode, tradePeriodReports ;
 
 
 * Update the runlog file
@@ -72,53 +75,55 @@ $onempty
 
 
 *=====================================================================================
-* Data load and initialisation
+* 1. Declare symbols and initialise some of them
 *=====================================================================================
 
 Sets
 * Initialise 21 fundamental sets by hard-coding (these sets can also be found in the daily GDX files)
-  i_island                  / NI, SI /
-  i_reserveClass            / FIR, SIR /
-  i_reserveType             / PLSR, TWDR, ILR /
-  i_riskClass               / genRisk, DCCE, DCECE, manual, genRisk_ECE, manual_ECE, HVDCsecRisk_CE, HVDCsecRisk_ECE /
-  i_riskParameter           / i_freeReserve, i_riskAdjustmentFactor, i_HVDCpoleRampUp /
+  i_island                    / NI, SI /
+  i_reserveClass              / FIR, SIR /
+  i_reserveType               / PLSR, TWDR, ILR /
+  i_riskClass                 / genRisk, DCCE, DCECE, manual, genRisk_ECE, manual_ECE, HVDCsecRisk_CE, HVDCsecRisk_ECE /
+  i_riskParameter             / i_freeReserve, i_riskAdjustmentFactor, i_HVDCpoleRampUp /
 
-  i_offerType               / energy, PLSR, TWDR, ILR /
-  i_offerParam              / i_initialMW, i_rampUpRate, i_rampDnRate, i_reserveGenerationMaximum, i_windOffer, i_FKbandMW /
-  i_energyOfferComponent    / i_generationMWoffer, i_generationMWofferPrice /
-  i_PLSRofferComponent      / i_PLSRofferPercentage, i_PLSRofferMax, i_PLSRofferPrice /
-  i_TWDRofferComponent      / i_TWDRofferMax, i_TWDRofferPrice /
-  i_ILRofferComponent       / i_ILRofferMax, i_ILRofferPrice /
+  i_offerType                 / energy, PLSR, TWDR, ILR /
+  i_offerParam                / i_initialMW, i_rampUpRate, i_rampDnRate, i_reserveGenerationMaximum, i_windOffer, i_FKbandMW /
+  i_energyOfferComponent      / i_generationMWoffer, i_generationMWofferPrice /
+  i_PLSRofferComponent        / i_PLSRofferPercentage, i_PLSRofferMax, i_PLSRofferPrice /
+  i_TWDRofferComponent        / i_TWDRofferMax, i_TWDRofferPrice /
+  i_ILRofferComponent         / i_ILRofferMax, i_ILRofferPrice /
 
-  i_energyBidComponent      / i_bidMW, i_bidPrice /
-  i_ILRbidComponent         / i_ILRbidMax, i_ILRbidPrice /
+  i_energyBidComponent        / i_bidMW, i_bidPrice /
+  i_ILRbidComponent           / i_ILRbidMax, i_ILRbidPrice /
 
-  i_tradeBlock              / t1*t20 /
-  i_branchParameter         / i_branchResistance, i_branchSusceptance, i_branchFixedLosses, i_numLossTranches /
-  i_lossSegment             / ls1*ls10 /
-  i_lossParameter           / i_MWbreakPoint, i_lossCoefficient /
-  i_constraintRHS           / i_constraintSense, i_constraintLimit /
-  i_type1MixedConstraintRHS / i_mixedConstraintSense, i_mixedConstraintLimit1, i_mixedConstraintLimit2 /
-  i_flowDirection           / Forward, Backward /
-  i_CVP                     / i_deficitBusGeneration, i_surplusBusGeneration, i_deficit6sReserve_CE, i_deficit60sReserve_CE, i_deficitBranchGroupConstraint
-                              i_surplusBranchGroupConstraint, i_deficitGenericConstraint, i_surplusGenericConstraint, i_deficitRampRate, i_surplusRampRate
-                              i_deficitACnodeConstraint, i_surplusACnodeConstraint, i_deficitBranchFlow, i_surplusBranchFlow, i_deficitMnodeConstraint
-                              i_surplusMnodeConstraint, i_type1DeficitMixedConstraint, i_type1SurplusMixedConstraint, i_deficit6sReserve_ECE, i_deficit60sReserve_ECE /
+  i_tradeBlock                / t1*t20 /
+  i_branchParameter           / i_branchResistance, i_branchSusceptance, i_branchFixedLosses, i_numLossTranches /
+  i_lossSegment               / ls1*ls10 /
+  i_lossParameter             / i_MWbreakPoint, i_lossCoefficient /
+  i_constraintRHS             / i_constraintSense, i_constraintLimit /
+  i_type1MixedConstraintRHS   / i_mixedConstraintSense, i_mixedConstraintLimit1, i_mixedConstraintLimit2 /
+  i_flowDirection             / forward, backward /
+  i_CVP                       / i_deficitBusGeneration, i_surplusBusGeneration, i_deficit6sReserve_CE, i_deficit60sReserve_CE
+                                i_deficitBranchGroupConstraint, i_surplusBranchGroupConstraint, i_deficitGenericConstraint
+                                i_surplusGenericConstraint, i_deficitRampRate, i_surplusRampRate, i_deficitACnodeConstraint
+                                i_surplusACnodeConstraint, i_deficitBranchFlow, i_surplusBranchFlow, i_deficitMnodeConstraint
+                                i_surplusMnodeConstraint, i_type1DeficitMixedConstraint, i_type1SurplusMixedConstraint
+                                i_deficit6sReserve_ECE, i_deficit60sReserve_ECE /
 * Initialise the set called pole
-  pole  'HVDC poles'        / pole1, pole2 /
+  pole  'HVDC poles'          / pole1, pole2 /
 
 * Initialise sets used when applying overrides. Declared and initialised now (ahead of input GDX load) so as to preserve orderedness of elements
-  tradePeriodNodeIslandTemp(i_tradePeriod,i_node,i_Island) 'Temporary mapping set of nodes to islands for island demand override'
-  i_ovrd           'Number of overrides per parameter'    / 1*100 /
+  tradePeriodNodeIslandTemp(i_tradePeriod,i_node,i_island) 'Temporary mapping set of nodes to islands for island demand override'
+  ovrd             'Number of overrides per parameter'    / 1*100 /
   i_dayNum         'Day number'                           / 1*31 /
   i_monthNum       'Month number'                         / 1*12 /
   i_yearNum        'Year number'                          / 1900*2200 /
   ;
 
-Alias (i_dayNum,i_fromDay,i_toDay), (i_monthNum,i_fromMonth,i_toMonth), (i_yearNum,i_fromYear,i_toYear) ;
+Alias (i_dayNum,i_fromDay,frDay,i_toDay,toDay), (i_monthNum,i_fromMonth,frMth,i_toMonth,toMth), (i_yearNum,i_fromYear,frYr,i_toYear,toYr) ;
 
 Sets
-* Dispatch Results Reporting
+* Dispatch results reporting
   o_fromDateTime(i_dateTime)                                                       'Start period for summary reports'
   o_dateTime(i_dateTime)                                                           'Date and time for reporting'
   o_bus(i_dateTime,i_bus)                                                          'Set of buses for output report'
@@ -332,13 +337,17 @@ Scalars
   i_useExtendedRiskClass           'Use the extended set of risk classes (1 = Yes)'                                                                            / 0 /
   ;
 
-* RDN - Temporary file name
+* Declare a temporary file
 File temp ;
 
-* Start data load
+
+
+*=====================================================================================
+* 2. Load data from GDX file
+*=====================================================================================
 * Call the GDX routine and load the input data:
-* Include gdx extension within the code to facilitate standalone mode - need to ensure that the extension is omitted from the vSPDcase.inc file
-* If file does not exist then go to the next input file
+* - include .gdx extension to facilitate standalone mode (implies the .gdx extension is omitted from the vSPDcase.inc file)
+* - if file does not exist then go to the next input file
 $if not exist "%inputPath%\%vSPDinputData%.gdx" $goto nextInput
 $gdxin "%inputPath%\%vSPDinputData%.gdx"
 * 30 sets
@@ -366,15 +375,14 @@ $gdxin
 
 
 *=====================================================================================
-* Manage model and data compatability
+* 3. Manage model and data compatability
 *=====================================================================================
-* This section manages to changes to model flags to ensure backward compatibility of vSPD
-* given changes in the SPD model formulation
-* RDN - Conditional load of some GDX data depending on when they were included into the GDX files
-* Data loaded at execution time whereas the previous load is at compile time
-Parameter inputGDXGDate 'Gregorian date of input GDX file' ;
+* This section manages the changes to model flags to ensure backward compatibility given
+* changes in the SPD model formulation:
+* - some data loading from GDX file is conditioned on date of inclusion of symbol in question
+* - data symbols below are loaded at execution time whereas the main load above is at compile time.
 
-* Gregorian date of when parameters have been included into the GDX files and therefore conditionally loaded
+* Gregorian date of when symbols have been included into the GDX files and therefore conditionally loaded
 * 17 Oct 2011 = 40832
 * 01 May 2012 = 41029
 * 28 Jun 2012 = 41087
@@ -383,6 +391,7 @@ Parameter inputGDXGDate 'Gregorian date of input GDX file' ;
 * 24 Feb 2013 = 41328
 
 Scalars
+  inputGDXGDate 'Gregorian date of input GDX file'
   mixedConstraintRiskOffsetGDXGDate        / 40832 /
   primarySecondaryGDXGDate                 / 41029 /
 * RDN - Change to demand bid
@@ -455,7 +464,7 @@ else
 ) ;
 
 * RDN - Switch off the mixed constraint based risk offset calculation after 17 October 2011 (data stopped being populated in GDX file)
-useMixedConstraintRiskOffset = 1 $(inputGDXGDate < mixedConstraintRiskOffsetGDXGDate) ;
+useMixedConstraintRiskOffset = 1$(inputGDXGDate < mixedConstraintRiskOffsetGDXGDate) ;
 
 * RDN - Switch off mixed constraint formulation if no data coming through
 * i_useMixedConstraint$(sum(i_type1MixedConstraint, i_type1MixedConstraintVarWeight(i_type1MixedConstraint))=0) = 0 ;
@@ -465,11 +474,11 @@ useMixedConstraint(i_tradePeriod)$(i_useMixedConstraint and (sum(i_type1MixedCon
 i_useExtendedRiskClass$(sum((i_tradePeriod,i_island,i_reserveClass,i_riskClass,i_riskParameter)$(ord(i_riskClass) > 4), i_tradePeriodRiskParameter(i_tradePeriod,i_island,i_reserveClass,i_riskClass,i_riskParameter))=0) = 0 ;
 
 * RDN - Change to demand bid
-useDSBFDemandBidModel = 1 $( inputGDXGDate >= demandBidChangeGDXGDate ) ;
+useDSBFDemandBidModel = 1$( inputGDXGDate >= demandBidChangeGDXGDate ) ;
 * RDN - Change to demand bid - End
 
 * RDN - Use the risk model that accounts for multiple offers per generating unit
-usePrimSecGenRiskModel = 1 $( inputGDXGDate >= primSecGenRiskModelGDXGDate ) ;
+usePrimSecGenRiskModel = 1$( inputGDXGDate >= primSecGenRiskModelGDXGDate ) ;
 
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - Start--------
 * Introduce i_useBusNetworkModel to account for MSP change-over date when for half of the day the old
@@ -482,7 +491,7 @@ i_useBusNetworkModel(i_tradePeriod) = 1$( ( inputGDXGDate >= MSPchangeOverGDXGDa
 
 
 *=====================================================================================
-* Establish the trading periods to be solved
+* 4. Establish which trading periods are to be solved
 *=====================================================================================
 $ontext
   The symbol called i_tradePeriodSolve is used to change the values of i_studyTradePeriod, which
@@ -535,7 +544,7 @@ i_studyTradePeriod(i_tradePeriod)$i_tradePeriodSolve(i_tradePeriod) = 1 ;
 
 
 *=====================================================================================
-* Input data overrides - declare and apply
+* 5. Input data overrides - declare and apply (include vSPDsolveOverrides.gms)
 *=====================================================================================
 
 $ontext
@@ -561,11 +570,10 @@ $if not %suppressOverrides%==1 $include vSPDsolveOverrides.gms
 
 
 *=====================================================================================
-* Initialise CVPs
+* 6. Initialise constraint violation penalties (CVPs)
 *=====================================================================================
-* Allocation of constraint violation penalties from input data
 
-Parameter CVPchangeGDate 'Gregorian date of CE and ECE CVP change' ;
+Scalar CVPchangeGDate 'Gregorian date of CE and ECE CVP change' ;
 
 * Set the flag for the application of the different CVPs for CE and ECE
 * If the user selects No (0), this default value of the diffCeECeCVP flag will be used.
@@ -657,23 +665,21 @@ busNodeAllocationFactor(i_dateTime,i_bus,i_node) = 0 ;
 * Determine the number of trade periods
 numTradePeriods = card(i_tradePeriod) ;
 
-* End data load and initialisation
-
 
 
 *=====================================================================================
-* The solve vSPD loop
+* 7. The vSPD solve loop
 *=====================================================================================
 
 for(iterationCount = 1 to numTradePeriods,
   skipResolve = 0 ;
 
-* If statement to determine which trading periods to solve when in sequential solve mode
+* Determine which trading periods to solve when in sequential solve mode
   if(((i_sequentialSolve and sum(i_tradePeriod$(ord(i_tradePeriod) = iterationCount), i_studyTradePeriod(i_tradePeriod))) or (not i_sequentialSolve)),
 
 *=====================================================================================
-*   Reset all sets, parameters and variables before proceeding with the next study trade period
-*=====================================================================================
+*   a) Reset all sets, parameters and variables before proceeding with the next study trade period
+
 *   Model Variables
 *   Reset bounds
 *   Offers
@@ -944,11 +950,9 @@ for(iterationCount = 1 to numTradePeriods,
     option clear = busPrice ;
 *   Run logic
     option clear = skipResolve ;
-*   End reset
 
 *   ========================================================================================
-*   Initialise current trade period and model data for the current trade period
-*   ========================================================================================
+*   b) Initialise current trade period and model data for the current trade period
 
 *   Set the currentTradePeriod
 *   For sequential solve
@@ -1410,8 +1414,7 @@ for(iterationCount = 1 to numTradePeriods,
     GenericConstraintLimit(GenericConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodGenericConstraintRHS(GenericConstraint,i_ConstraintRHS)) ;
 
 *=====================================================================================
-* Additional pre-processing on parameters and variables before model solve
-*=====================================================================================
+* c) Additional pre-processing on parameters and variables before model solve
 
 * Calculation of generation limits due to ramp rate limits (See 5.3.1. and 5.3.2. of SPD formulation document)
 
@@ -1583,10 +1586,9 @@ for(iterationCount = 1 to numTradePeriods,
 * Mixed constraint
     MIXEDCONSTRAINTVARIABLE.fx(currentTradePeriod,i_type1MixedConstraint)$(not (i_type1MixedConstraintVarWeight(i_type1MixedConstraint))) = 0 ;
 
-*=====================================================================================
-* Solve the model
-*=====================================================================================
 
+*=====================================================================================
+* d) Solve the model
 
 ** Do this skip if solving either pattern - i.e. 2 and 3
 *FTR --> Skip normal vSPD model solve when an extreme flow pattern is applied
@@ -1621,9 +1623,9 @@ for(iterationCount = 1 to numTradePeriods,
       ) ;
     ) ;
 
+
 *=====================================================================================
-* Check if the LP results are valid
-*=====================================================================================
+* e) Check if the LP results are valid
     if((ModelSolved = 1),
 * Check if there are circulating branch flows on loss AC branches and HVDC links
        circularBranchFlowExist(ACbranch)$(LossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
@@ -1696,8 +1698,7 @@ for(iterationCount = 1 to numTradePeriods,
 
 
 *=====================================================================================
-* Resolve the model if required
-*=====================================================================================
+* f) Resolve the model if required
        if( not skipResolve,
 
          if((sum(currentTradePeriod, UseBranchFlowMIP(currentTradePeriod)) * sum(currentTradePeriod,UseMixedConstraintMIP(currentTradePeriod))) >= 1,
@@ -2062,8 +2063,7 @@ for(iterationCount = 1 to numTradePeriods,
 
 
 *=====================================================================================
-* Check for disconnected nodes and adjust prices accordingly
-*=====================================================================================
+* g) Check for disconnected nodes and adjust prices accordingly
 
 * See Rule Change Proposal August 2008 - Disconnected nodes available at www.systemoperator.co.nz/reports-papers
 
@@ -2159,12 +2159,10 @@ $OFFTEXT
 *  Set price at identified disconnected buses to 0
        busPrice(bus)$busDisconnected(bus) = 0 ;
     ) ;
-*  RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End-------------
 
 
 *=====================================================================================
-*  Collect and store results from the current model solve in the output (o_xxx) parameters
-*=====================================================================================
+* h) Collect and store results from the current model solve in the output (o_xxx) parameters
 
 * Skip the usual vSPD reporting if calculating FTR rentals
 *$if not %calcFTRrentals%==1 $goto FTR_process
@@ -2598,14 +2596,13 @@ $OFFTEXT
 
 
 *=====================================================================================
-* End of the solve vSPD loop
-*=====================================================================================
-
+* i) End of the solve vSPD loop
 ) ;
 
 
+
 *=====================================================================================
-* Write results to GDX files
+* 8. Write results to GDX files
 *=====================================================================================
 * Report the results from the solves
 

@@ -1,8 +1,11 @@
 *=====================================================================================
-* Name:			runvSPDsolve.gms
-* Function:		Invokes vSPDsolve.gms and creates a progress report file
-* Developed by:		Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:	Tuong Nguyen on 9 April 2013
+* Name:                 runvSPDsolve.gms
+* Function:             Invokes vSPDsolve.gms and creates a progress report file.
+* Developed by:         Electricity Authority, New Zealand
+* Source:               https://github.com/ElectricityAuthority/vSPD
+*                       http://reports.ea.govt.nz/EMIIntro.htm
+* Contact:              emi@ea.govt.nz
+* Last modified on:     19 November 2013
 *=====================================================================================
 
 $include vSPDpaths.inc

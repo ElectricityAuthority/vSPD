@@ -1,13 +1,22 @@
 *=====================================================================================
 * Name:                 vSPDmodel.gms
-* Function:             Mathematical formulation.  Based on the SPD model formulation v7.0
-* Developed by:         Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:     Ramu Naidoo on 6 May 2013
+* Function:             Mathematical formulation - based on the SPD formulation v7.0
+* Developed by:         Electricity Authority, New Zealand
+* Source:               https://github.com/ElectricityAuthority/vSPD
+*                       http://reports.ea.govt.nz/EMIIntro.htm
+* Contact:              emi@ea.govt.nz
+* Last modified on:     19 November 2013
 *=====================================================================================
+
+* Code sections:
+* 1. Declare sets and parameters for all symbols to be loaded from daily GDX files
+* 2. Additional declarations of sets and parameters used throughout the model
+* 3. Declare model variables and constraints, and initialise constraints
+
 
 
 *===================================================================================
-* Section 1: Declare sets and parameters for all symbols to be loaded from daily GDX files
+* 1. Declare sets and parameters for all symbols to be loaded from daily GDX files
 *===================================================================================
 
 Sets
@@ -170,7 +179,7 @@ Parameters
 
 
 *===================================================================================
-* Section 2: Additional declarations of sets and parameters used throughout the model
+* 2. Additional declarations of sets and parameters used throughout the model
 *===================================================================================
 
 Scalars
@@ -425,8 +434,11 @@ Scalars
 
 
 *===================================================================================
-* Section 3: Define model variables and constraints
+* 3. Declare model variables and constraints, and initialise constraints
 *===================================================================================
+
+* VARIABLES - UPPER CASE
+* Equations, parameters and everything else - lower or mixed case
 
 * Model formulation originally based on the SPD model formulation version 4.3 (15 Feb 2008) and amended as indicated
 
@@ -1488,17 +1500,15 @@ Model vSPD_MixedConstraintMIP /
   HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS
   / ;
 
-Model VSPD_FTR /
-*Objective function
-ObjectiveFunction
-*Offer and purchase definitions
-GenerationOfferDefintion
-*Network
-HVDCLinkMaximumFlow, DCNodeNetInjection
-ACNodeNetInjectionDefinition1, ACNodeNetInjectionDefinition2
-ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow
-*Branch security constraints
-BranchSecurityConstraintLE
-*ViolationCost
-TotalViolationCostDefinition
-/;
+Model vSPD_FTR /
+* Objective function
+  ObjectiveFunction
+* Offer and purchase definitions
+  GenerationOfferDefintion
+* Network
+  HVDCLinkMaximumFlow, DCNodeNetInjection, ACNodeNetInjectionDefinition1, ACNodeNetInjectionDefinition2
+  ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow
+* Branch security constraints
+  BranchSecurityConstraintLE
+* ViolationCost
+  TotalViolationCostDefinition / ;

@@ -1,2 +1,2 @@
 $setglobal  vSPDinputData  FP_20131020
-$setglobal  vSPDrunNum     1.00
+$setglobal  vSPDrunNum     1

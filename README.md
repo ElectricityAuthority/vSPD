@@ -22,6 +22,6 @@ TODO:
   i_bid(*)         as bid ???,
   i_node(*)        as n,
   i_bus(*)         as b,
-  i_branch(*)      as br,
+  i_branch(*)      as br
 - blah blah blah
 

@@ -2,8 +2,11 @@
 * Name:                 vSPDsolveOverrides.gms
 * Function:             Code to be included in vSPDsolve to take care of input data
 *                       overrides.
-* Developed by:         Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:     Ramu Naidoo on 17 April 2013
+* Developed by:         Electricity Authority, New Zealand
+* Source:               https://github.com/ElectricityAuthority/vSPD
+*                       http://reports.ea.govt.nz/EMIIntro.htm
+* Contact:              emi@ea.govt.nz
+* Last modified on:     19 November 2013
 *=====================================================================================
 
 $ontext
@@ -76,7 +79,7 @@ i_tradePeriodOfferParameter(i_tradePeriod,i_offer,i_offerParam)$( i_offerParamOv
 
 $label skipOverridesWithExcel
 
-
+***** 'edit' from here
 * EMI and Standalone interface - declare override symbols
 $if %interfaceMode%==1 $goto skipEMIandStandaloneOverrides
 * Declare override symbols to be used for both EMI and standalone interface types
@@ -322,6 +325,7 @@ $load i_islandNegPercDemandOvrd i_islandNetMWDemandOvrd i_islandNetPercDemandOvr
 $load i_branchOpenStatusOvrd i_branchConstraintFactorOvrd i_branchConstraintRHSOvrd i_MnodeEnergyConstraintFactorOvrd i_MnodeReserveConstraintFactorOvrd i_MnodeConstraintRHSOvrd
 $load i_contingentEventRAFovrd i_extendedContingentEventRAFovrd i_contingentEventNFRovrd i_HVDCriskParamOvrd
 $gdxin
+***** 'edit' to here
 
 * Comment out the above $gdxin/$load statements and write some alternative statements to install override data from
 * a source other than a GDX file when in standalone mode. But note that all declared override symbols must get initialised
