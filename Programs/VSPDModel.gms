@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     19 November 2013
+* Last modified on:     20 November 2013
 *=====================================================================================
 
 * Code sections:
@@ -20,10 +20,9 @@
 *===================================================================================
 
 Sets
-* 22 sets - although these 22 sets are in the daily input GDX file, they are not loaded from the GDX file.
-* Rather, all but caseName are initialsed via hard-coding in vSPDsolve.gms prior to loading data from the
-* GDX file. They are declared at this point because they appear in the domain of other symbols that are
-* declared below.
+* 22 hard-coded sets. Although these 22 sets exist in the vSPD input GDX file, they are not loaded from
+* the GDX file. Rather, all but caseName are initialsed via hard-coding in vSPDsolve.gms prior to data
+* beling loaded from the GDX file. They are declared now because they're used in the domain of other symbols.
   i_island(*)                              'Island definition'
   i_reserveClass(*)                        'Definition of fast and sustained instantaneous reserve'
   i_reserveType(*)                         'Definition of the different reserve types (PLSR, TWDR, ILR)'
@@ -46,7 +45,6 @@ Sets
   i_flowDirection(*)                       'Directional flow definition used in the formulation'
   i_CVP(*)                                 'Constraint violation penalties used in the model'
   caseName(*)                              'Final pricing case name used to create the GDX file'
-
 * 14 fundamental sets - membership is populated via loading from GDX file in vSPDsolve.gms
   i_dateTime(*)                            'Date and time for the trade periods'
   i_tradePeriod(*)                         'Trade periods for which input data is defined'
@@ -64,30 +62,30 @@ Sets
   i_genericConstraint(*)                   'Generic constraint names for all the trading periods'
   ;
 
-* 7 Aliases
-Alias (i_island,island), (i_bus,i_toBus,i_FromBus,i_bus1), (i_lossSegment,i_lossSegment1), (i_branch,i_branch1), (i_offer,i_offer1) ;
+* Aliases
+Alias (i_tradeBlock, trdBlk), (i_offer,o,o1), (i_tradePeriod,tp), (i_island,island), (i_bus,i_toBus,i_FromBus,i_bus1), (i_lossSegment,i_lossSegment1), (i_branch,i_branch1) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  i_dateTimeTradePeriodMap(i_dateTime,i_tradePeriod)                       'Mapping of date time set to the trade period set'
-  i_tradePeriodOfferTrader(i_tradePeriod,i_offer,i_trader)                 'Offers and the corresponding trader for the different trading periods'
-  i_tradePeriodOfferNode(i_tradePeriod,i_offer,i_node)                     'Offers and the corresponding offer node for the different trading periods'
-  i_tradePeriodBidTrader(i_tradePeriod,i_bid,i_trader)                     'Bids and the corresponding trader for the different trading periods'
-  i_tradePeriodBidNode(i_tradePeriod,i_bid,i_node)                         'Bids and the corresponding node for the different trading periods'
-  i_tradePeriodNode(i_tradePeriod,i_node)                                  'Node definition for the different trading periods'
-  i_tradePeriodBusIsland(i_tradePeriod,i_bus,i_island)                     'Bus island mapping for the different trade periods'
-  i_tradePeriodBus(i_tradePeriod,i_bus)                                    'Bus definition for the different trading periods'
-  i_tradePeriodNodeBus(i_tradePeriod,i_node,i_bus)                         'Node bus mapping for the different trading periods'
-  i_tradePeriodBranchDefn(i_tradePeriod,i_branch,i_fromBus,i_toBus)        'Branch definition for the different trading periods'
-  i_tradePeriodRiskGenerator(i_tradePeriod,i_offer)                        'Set of generators (offers) that can set the risk in the different trading periods'
+  i_dateTimeTradePeriodMap(i_dateTime,tp)                       'Mapping of date time set to the trade period set'
+  i_tradePeriodOfferTrader(tp,o,i_trader)                 'Offers and the corresponding trader for the different trading periods'
+  i_tradePeriodOfferNode(tp,o,i_node)                     'Offers and the corresponding offer node for the different trading periods'
+  i_tradePeriodBidTrader(tp,i_bid,i_trader)                     'Bids and the corresponding trader for the different trading periods'
+  i_tradePeriodBidNode(tp,i_bid,i_node)                         'Bids and the corresponding node for the different trading periods'
+  i_tradePeriodNode(tp,i_node)                                  'Node definition for the different trading periods'
+  i_tradePeriodBusIsland(tp,i_bus,i_island)                     'Bus island mapping for the different trade periods'
+  i_tradePeriodBus(tp,i_bus)                                    'Bus definition for the different trading periods'
+  i_tradePeriodNodeBus(tp,i_node,i_bus)                         'Node bus mapping for the different trading periods'
+  i_tradePeriodBranchDefn(tp,i_branch,i_fromBus,i_toBus)        'Branch definition for the different trading periods'
+  i_tradePeriodRiskGenerator(tp,o)                        'Set of generators (offers) that can set the risk in the different trading periods'
   i_type1MixedConstraintReserveMap(i_type1MixedConstraint,i_island,i_reserveClass,i_riskClass) 'Mapping of mixed constraint variables to reserve-related data'
-  i_tradePeriodType1MixedConstraint(i_tradePeriod,i_type1MixedConstraint)  'Set of mixed constraints defined for the different trading periods'
-  i_tradePeriodType2MixedConstraint(i_tradePeriod,i_type2MixedConstraint)  'Set of mixed constraints defined for the different trading periods'
+  i_tradePeriodType1MixedConstraint(tp,i_type1MixedConstraint)  'Set of mixed constraints defined for the different trading periods'
+  i_tradePeriodType2MixedConstraint(tp,i_type2MixedConstraint)  'Set of mixed constraints defined for the different trading periods'
   i_type1MixedConstraintBranchCondition(i_type1MixedConstraint,i_branch)   'Set of mixed constraints that have limits conditional on branch flows'
-  i_tradePeriodGenericConstraint(i_tradePeriod,i_genericConstraint)        'Generic constraints defined for the different trading periods'
+  i_tradePeriodGenericConstraint(tp,i_genericConstraint)        'Generic constraints defined for the different trading periods'
 
 * 1 set loaded from GDX with conditional load statement in vSPDsolve.gms at execution time
-  i_tradePeriodPrimarySecondaryOffer(i_tradePeriod,i_offer,i_offer1)       'Primary-secondary offer mapping for the different trading periods'
+  i_tradePeriodPrimarySecondaryOffer(tp,o,o1)       'Primary-secondary offer mapping for the different trading periods'
   ;
 
 Parameters
@@ -100,78 +98,78 @@ Parameters
   i_branchReceivingEndLossProportion       'Proportion of losses to be allocated to the receiving end of a branch'
 
 * 49 parameters - values are loaded from GDX file in vSPDsolve.gms
-  i_StudyTradePeriod(i_tradePeriod)        'Trade periods that are to be studied'
+  i_StudyTradePeriod(tp)        'Trade periods that are to be studied'
   i_CVPvalues(i_CVP)                       'Values for the constraint violation penalties'
 * Offer data
-  i_tradePeriodOfferParameter(i_tradePeriod,i_offer,i_offerParam)                          'InitialMW for each offer for the different trading periods'
-  i_tradePeriodEnergyOffer(i_tradePeriod,i_offer,i_tradeBlock,i_energyOfferComponent)      'Energy offers for the different trading periods'
-  i_tradePeriodSustainedPLSRoffer(i_tradePeriod,i_offer,i_tradeBlock,i_PLSRofferComponent) 'Sustained (60s) PLSR offers for the different trading periods'
-  i_tradePeriodFastPLSRoffer(i_tradePeriod,i_offer,i_tradeBlock,i_PLSRofferComponent)      'Fast (6s) PLSR offers for the different trading periods'
-  i_tradePeriodSustainedTWDRoffer(i_tradePeriod,i_offer,i_tradeBlock,i_TWDRofferComponent) 'Sustained (60s) TWDR offers for the different trading periods'
-  i_tradePeriodFastTWDRoffer(i_tradePeriod,i_offer,i_tradeBlock,i_TWDRofferComponent)      'Fast (6s) TWDR offers for the different trading periods'
-  i_tradePeriodSustainedILRoffer(i_tradePeriod,i_offer,i_tradeBlock,i_ILRofferComponent)   'Sustained (60s) ILR offers for the different trading periods'
-  i_tradePeriodFastILRoffer(i_tradePeriod,i_offer,i_tradeBlock,i_ILRofferComponent)        'Fast (6s) ILR offers for the different trading periods'
+  i_tradePeriodOfferParameter(tp,o,i_offerParam)                          'InitialMW for each offer for the different trading periods'
+  i_tradePeriodEnergyOffer(tp,o,trdBlk,i_energyOfferComponent)      'Energy offers for the different trading periods'
+  i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent) 'Sustained (60s) PLSR offers for the different trading periods'
+  i_tradePeriodFastPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)      'Fast (6s) PLSR offers for the different trading periods'
+  i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent) 'Sustained (60s) TWDR offers for the different trading periods'
+  i_tradePeriodFastTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent)      'Fast (6s) TWDR offers for the different trading periods'
+  i_tradePeriodSustainedILRoffer(tp,o,trdBlk,i_ILRofferComponent)   'Sustained (60s) ILR offers for the different trading periods'
+  i_tradePeriodFastILRoffer(tp,o,trdBlk,i_ILRofferComponent)        'Fast (6s) ILR offers for the different trading periods'
 * Demand data
-  i_tradePeriodNodeDemand(i_tradePeriod,i_node)                                            'MW demand at each node for all trading periods'
+  i_tradePeriodNodeDemand(tp,i_node)                                            'MW demand at each node for all trading periods'
 * Bid data
-  i_tradePeriodEnergyBid(i_tradePeriod,i_bid,i_tradeBlock,i_energyBidComponent)            'Energy bids for the different trading periods'
-  i_tradePeriodSustainedILRbid(i_tradePeriod,i_bid,i_tradeBlock,i_ILRbidComponent)         'Sustained ILR bids for the different trading periods'
-  i_tradePeriodFastILRbid(i_tradePeriod,i_bid,i_tradeBlock,i_ILRbidComponent)              'Fast ILR bids for the different trading periods'
+  i_tradePeriodEnergyBid(tp,i_bid,trdBlk,i_energyBidComponent)            'Energy bids for the different trading periods'
+  i_tradePeriodSustainedILRbid(tp,i_bid,trdBlk,i_ILRbidComponent)         'Sustained ILR bids for the different trading periods'
+  i_tradePeriodFastILRbid(tp,i_bid,trdBlk,i_ILRbidComponent)              'Fast ILR bids for the different trading periods'
 * Network data
-  i_tradePeriodHVDCNode(i_tradePeriod,i_node)                                              'HVDC node for the different trading periods'
-  i_tradePeriodReferenceNode(i_tradePeriod,i_node)                                         'Reference nodes for the different trading periods'
-  i_tradePeriodHVDCBranch(i_tradePeriod,i_branch)                                          'HVDC branch indicator for the different trading periods'
-  i_tradePeriodBranchParameter(i_tradePeriod,i_branch,i_branchParameter)                   'Branch resistance, reactance, fixed losses and number of loss tranches for the different time periods'
-  i_tradePeriodBranchCapacity(i_tradePeriod,i_branch)                                      'Branch capacity for the different trading periods in MW'
-  i_tradePeriodBranchOpenStatus(i_tradePeriod,i_branch)                                    'Branch open status for the different trading periods, 1 = Open'
+  i_tradePeriodHVDCNode(tp,i_node)                                              'HVDC node for the different trading periods'
+  i_tradePeriodReferenceNode(tp,i_node)                                         'Reference nodes for the different trading periods'
+  i_tradePeriodHVDCBranch(tp,i_branch)                                          'HVDC branch indicator for the different trading periods'
+  i_tradePeriodBranchParameter(tp,i_branch,i_branchParameter)                   'Branch resistance, reactance, fixed losses and number of loss tranches for the different time periods'
+  i_tradePeriodBranchCapacity(tp,i_branch)                                      'Branch capacity for the different trading periods in MW'
+  i_tradePeriodBranchOpenStatus(tp,i_branch)                                    'Branch open status for the different trading periods, 1 = Open'
   i_noLossBranch(i_lossSegment,i_lossParameter)                                            'Loss parameters for no loss branches'
   i_AClossBranch(i_lossSegment,i_lossParameter)                                            'Loss parameters for AC loss branches'
   i_HVDClossBranch(i_lossSegment,i_lossParameter)                                          'Loss parameters for HVDC loss branches'
-  i_tradePeriodNodeBusAllocationFactor(i_tradePeriod,i_node,i_bus)                         'Allocation factor of market node quantities to bus for the different trading periods'
-  i_tradePeriodBusElectricalIsland(i_tradePeriod,i_bus)                                    'Electrical island status of each bus for the different trading periods (0 = Dead)'
+  i_tradePeriodNodeBusAllocationFactor(tp,i_node,i_bus)                         'Allocation factor of market node quantities to bus for the different trading periods'
+  i_tradePeriodBusElectricalIsland(tp,i_bus)                                    'Electrical island status of each bus for the different trading periods (0 = Dead)'
 * Risk/Reserve data
-  i_tradePeriodRiskParameter(i_tradePeriod,i_island,i_reserveClass,i_riskClass,i_riskParameter) 'Risk parameters for the different trading periods (From RMT)'
-  i_tradePeriodManualRisk(i_tradePeriod,i_island,i_reserveClass)                           'Manual risk set for the different trading periods'
+  i_tradePeriodRiskParameter(tp,i_island,i_reserveClass,i_riskClass,i_riskParameter) 'Risk parameters for the different trading periods (From RMT)'
+  i_tradePeriodManualRisk(tp,i_island,i_reserveClass)                           'Manual risk set for the different trading periods'
 * Branch constraint data
-  i_tradePeriodBranchConstraintFactors(i_tradePeriod,i_branchConstraint,i_branch)          'Branch constraint factors (sensitivities) for the different trading periods'
-  i_tradePeriodBranchConstraintRHS(i_tradePeriod,i_branchConstraint,i_constraintRHS)       'Branch constraint sense and limit for the different trading periods'
+  i_tradePeriodBranchConstraintFactors(tp,i_branchConstraint,i_branch)          'Branch constraint factors (sensitivities) for the different trading periods'
+  i_tradePeriodBranchConstraintRHS(tp,i_branchConstraint,i_constraintRHS)       'Branch constraint sense and limit for the different trading periods'
 * AC node constraint data
-  i_tradePeriodACnodeConstraintFactors(i_tradePeriod,i_ACnodeConstraint,i_node)            'AC node constraint factors (sensitivities) for the different trading periods'
-  i_tradePeriodACnodeConstraintRHS(i_tradePeriod,i_ACnodeConstraint,i_constraintRHS)       'AC node constraint sense and limit for the different trading periods'
+  i_tradePeriodACnodeConstraintFactors(tp,i_ACnodeConstraint,i_node)            'AC node constraint factors (sensitivities) for the different trading periods'
+  i_tradePeriodACnodeConstraintRHS(tp,i_ACnodeConstraint,i_constraintRHS)       'AC node constraint sense and limit for the different trading periods'
 * Market node constraint data
-  i_tradePeriodMNodeEnergyOfferConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_offer)                                  'Market node energy offer constraint factors for the different trading periods'
-  i_tradePeriodMNodeReserveOfferConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType)    'Market node reserve offer constraint factors for the different trading periods'
-  i_tradePeriodMNodeEnergyBidConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_bid)                                      'Market node energy bid constraint factors for the different trading periods'
-  i_tradePeriodMNodeILReserveBidConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_bid,i_reserveClass)                    'Market node IL reserve bid constraint factors for the different trading periods'
-  i_tradePeriodMNodeConstraintRHS(i_tradePeriod,i_MNodeConstraint,i_constraintRHS)                                         'Market node constraint sense and limit for the different trading periods'
+  i_tradePeriodMNodeEnergyOfferConstraintFactors(tp,i_MNodeConstraint,o)                                  'Market node energy offer constraint factors for the different trading periods'
+  i_tradePeriodMNodeReserveOfferConstraintFactors(tp,i_MNodeConstraint,o,i_reserveClass,i_reserveType)    'Market node reserve offer constraint factors for the different trading periods'
+  i_tradePeriodMNodeEnergyBidConstraintFactors(tp,i_MNodeConstraint,i_bid)                                      'Market node energy bid constraint factors for the different trading periods'
+  i_tradePeriodMNodeILReserveBidConstraintFactors(tp,i_MNodeConstraint,i_bid,i_reserveClass)                    'Market node IL reserve bid constraint factors for the different trading periods'
+  i_tradePeriodMNodeConstraintRHS(tp,i_MNodeConstraint,i_constraintRHS)                                         'Market node constraint sense and limit for the different trading periods'
 * Mixed constraint data
   i_type1MixedConstraintVarWeight(i_type1MixedConstraint)                                                                  'Type 1 mixed constraint variable weights'
-  i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer)                                                          'Type 1 mixed constraint generator weights'
-  i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType)                             'Type 1 mixed constraint reserve weights'
+  i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o)                                                          'Type 1 mixed constraint generator weights'
+  i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType)                             'Type 1 mixed constraint reserve weights'
   i_type1MixedConstraintHVDClineWeight(i_type1MixedConstraint,i_branch)                                                    'Type 1 mixed constraint HVDC branch flow weights'
-  i_tradePeriodType1MixedConstraintRHSParameters(i_tradePeriod,i_type1MixedConstraint,i_type1MixedConstraintRHS)           'Type 1 mixed constraint RHS parameters'
+  i_tradePeriodType1MixedConstraintRHSParameters(tp,i_type1MixedConstraint,i_type1MixedConstraintRHS)           'Type 1 mixed constraint RHS parameters'
   i_type2MixedConstraintLHSParameters(i_type2MixedConstraint,i_type1MixedConstraint)                                       'Type 2 mixed constraint LHS weights'
-  i_tradePeriodType2MixedConstraintRHSParameters(i_tradePeriod,i_type2MixedConstraint,i_constraintRHS)                     'Type 2 mixed constraint RHS parameters'
+  i_tradePeriodType2MixedConstraintRHSParameters(tp,i_type2MixedConstraint,i_constraintRHS)                     'Type 2 mixed constraint RHS parameters'
 * Generic constraint data
-  i_tradePeriodGenericEnergyOfferConstraintFactors(i_tradePeriod,i_genericConstraint,i_offer)                              'Generic constraint offer constraint factors for the different trading periods'
-  i_tradePeriodGenericReserveOfferConstraintFactors(i_tradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType)'Generic constraint reserve offer constraint factors for the different trading periods'
-  i_tradePeriodGenericEnergyBidConstraintFactors(i_tradePeriod,i_genericConstraint,i_bid)                                  'Generic constraint energy bid constraint factors for the different trading periods'
-  i_tradePeriodGenericILReserveBidConstraintFactors(i_tradePeriod,i_genericConstraint,i_bid,i_reserveClass)                'Generic constraint IL reserve bid constraint factors for the different trading periods'
-  i_tradePeriodGenericBranchConstraintFactors(i_tradePeriod,i_genericConstraint,i_branch)                                  'Generic constraint energy offer constraint factors for the different trading periods'
-  i_tradePeriodGenericConstraintRHS(i_tradePeriod,i_genericConstraint,i_constraintRHS)                                     'Generic constraint sense and limit for the different trading periods'
+  i_tradePeriodGenericEnergyOfferConstraintFactors(tp,i_genericConstraint,o)                              'Generic constraint offer constraint factors for the different trading periods'
+  i_tradePeriodGenericReserveOfferConstraintFactors(tp,i_genericConstraint,o,i_reserveClass,i_reserveType)'Generic constraint reserve offer constraint factors for the different trading periods'
+  i_tradePeriodGenericEnergyBidConstraintFactors(tp,i_genericConstraint,i_bid)                                  'Generic constraint energy bid constraint factors for the different trading periods'
+  i_tradePeriodGenericILReserveBidConstraintFactors(tp,i_genericConstraint,i_bid,i_reserveClass)                'Generic constraint IL reserve bid constraint factors for the different trading periods'
+  i_tradePeriodGenericBranchConstraintFactors(tp,i_genericConstraint,i_branch)                                  'Generic constraint energy offer constraint factors for the different trading periods'
+  i_tradePeriodGenericConstraintRHS(tp,i_genericConstraint,i_constraintRHS)                                     'Generic constraint sense and limit for the different trading periods'
 
 * 11 parameters loaded from GDX with conditional load statement at execution time
-  i_tradePeriodAllowHVDCRoundpower(i_tradePeriod)                                          'Flag to allow roundpower on the HVDC (1 = Yes)'
-  i_tradePeriodManualRisk_ECE(i_tradePeriod,i_island,i_reserveClass)                       'Manual ECE risk set for the different trading periods'
-  i_tradePeriodHVDCSecRiskEnabled(i_tradePeriod,i_island,i_riskClass)                      'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
-  i_tradePeriodHVDCSecRiskSubtractor(i_tradePeriod,i_island)                               'Ramp up capability on the HVDC pole that is not the secondary risk'
+  i_tradePeriodAllowHVDCRoundpower(tp)                                          'Flag to allow roundpower on the HVDC (1 = Yes)'
+  i_tradePeriodManualRisk_ECE(tp,i_island,i_reserveClass)                       'Manual ECE risk set for the different trading periods'
+  i_tradePeriodHVDCSecRiskEnabled(tp,i_island,i_riskClass)                      'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
+  i_tradePeriodHVDCSecRiskSubtractor(tp,i_island)                               'Ramp up capability on the HVDC pole that is not the secondary risk'
   i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch)                      'Type 1 mixed constraint AC branch flow weights'
   i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch)                  'Type 1 mixed constraint AC branch loss weights'
   i_type1MixedConstraintAClineFixedLossWeight(i_type1MixedConstraint,i_branch)             'Type 1 mixed constraint AC branch fixed losses weight'
   i_type1MixedConstraintHVDClineLossWeight(i_type1MixedConstraint,i_branch)                'Type 1 mixed constraint HVDC branch loss weights'
   i_type1MixedConstraintHVDClineFixedLossWeight(i_type1MixedConstraint,i_branch)           'Type 1 mixed constraint HVDC branch fixed losses weight'
   i_type1MixedConstraintPurWeight(i_type1MixedConstraint,i_bid)                            'Type 1 mixed constraint demand bid weights'
-  i_tradePeriodReserveClassGenerationMaximum(i_tradePeriod,i_offer,i_reserveClass)         'MW used to determine factor to adjust maximum reserve of a reserve class'
+  i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)         'MW used to determine factor to adjust maximum reserve of a reserve class'
   ;
 
 * End of GDX declarations
@@ -217,54 +215,54 @@ Scalars
 Sets
 * Global
   pole                                                                                       'HVDC poles'
-  currentTradePeriod(i_tradePeriod)                                                          'Current trading period'
+  currentTradePeriod(tp)                                                          'Current trading period'
 * Offer
-  offer(i_tradePeriod,i_offer)                                                               'Offers defined for the current trading period'
-  offerNode(i_tradePeriod,i_offer,i_node)                                                    'Mapping of the offers to the nodes for the current trading period'
-  validGenerationOfferBlock(i_tradePeriod,i_offer,i_tradeBlock)                              'Valid trade blocks for the respective generation offers'
-  validReserveOfferBlock(i_tradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType)    'Valid trade blocks for the respective reserve offers by class and type'
-  PreviousMW(i_offer)                                                                        'MW output of offer to be used as initial MW of the next trading period if necessary'
-  PositiveEnergyOffer(i_tradePeriod,i_offer)                                                 'Postive energy offers defined for the current trading period'
+  offer(tp,o)                                                               'Offers defined for the current trading period'
+  offerNode(tp,o,i_node)                                                    'Mapping of the offers to the nodes for the current trading period'
+  validGenerationOfferBlock(tp,o,trdBlk)                              'Valid trade blocks for the respective generation offers'
+  validReserveOfferBlock(tp,o,trdBlk,i_reserveClass,i_reserveType)    'Valid trade blocks for the respective reserve offers by class and type'
+  PreviousMW(o)                                                                        'MW output of offer to be used as initial MW of the next trading period if necessary'
+  PositiveEnergyOffer(tp,o)                                                 'Postive energy offers defined for the current trading period'
 * RDN - Additional set for primary secondary offers
-  PrimarySecondaryOffer(i_tradePeriod,i_offer,i_offer1)                                      'Primary-secondary offer mapping for the current trading period'
+  PrimarySecondaryOffer(tp,o,o1)                                      'Primary-secondary offer mapping for the current trading period'
 * Bid
-  Bid(i_tradePeriod,i_bid)                                                                   'Bids defined for the current trading period'
-  BidNode(i_tradePeriod,i_bid,i_node)                                                        'Mapping of the bids to the nodes for the current trading period'
-  ValidPurchaseBidBlock(i_tradePeriod,i_bid,i_tradeBlock)                                    'Valid trade blocks for the respective purchase bids'
-  ValidPurchaseBidILRBlock(i_tradePeriod,i_bid,i_tradeBlock,i_reserveClass)                  'Valid trade blocks for the respective purchase bids ILR'
+  Bid(tp,i_bid)                                                                   'Bids defined for the current trading period'
+  BidNode(tp,i_bid,i_node)                                                        'Mapping of the bids to the nodes for the current trading period'
+  ValidPurchaseBidBlock(tp,i_bid,trdBlk)                                    'Valid trade blocks for the respective purchase bids'
+  ValidPurchaseBidILRBlock(tp,i_bid,trdBlk,i_reserveClass)                  'Valid trade blocks for the respective purchase bids ILR'
 * Network
-  Node(i_tradePeriod,i_node)                                               'Nodes defined for the current trading period'
-  Bus(i_tradePeriod,i_bus)                                                 'Buses defined for the current trading period'
-  NodeBus(i_tradePeriod,i_node,i_bus)                                      'Mapping of the nodes to the buses for the current trading period'
-  NodeIsland(i_tradePeriod,i_node,i_island)                                'Mapping of the node to the island for the current trading period'
-  BusIsland(i_tradePeriod,i_bus,i_island)                                  'Mapping of the bus to the island for the current trading period'
-  HVDCNode(i_tradePeriod,i_node)                                           'HVDC node for the current trading period'
-  ACnode(i_tradePeriod,i_node)                                             'AC nodes for the current trading period'
-  ReferenceNode(i_tradePeriod,i_node)                                      'Reference node for the current trading period'
-  DCBus(i_tradePeriod,i_bus)                                               'Buses corresponding to HVDC nodes'
-  ACBus(i_tradePeriod,i_bus)                                               'Buses corresponding to AC nodes'
-  Branch(i_tradePeriod,i_branch)                                           'Branches defined for the current trading period'
-  BranchBusDefn(i_tradePeriod,i_branch,i_fromBus,i_toBus)                  'Branch bus connectivity for the current trading period'
-  BranchBusConnect(i_tradePeriod,i_branch,i_bus)                           'Indication if a branch is connected to a bus for the current trading period'
-  ACBranchSendingBus(i_tradePeriod,i_branch,i_bus,i_flowDirection)         'Sending (From) bus of AC branch in forward and backward direction'
-  ACBranchReceivingBus(i_tradePeriod,i_branch,i_bus,i_flowDirection)       'Receiving (To) bus of AC branch in forward and backward direction'
-  HVDClinkSendingBus(i_tradePeriod,i_branch,i_bus)                         'Sending (From) bus of HVDC link'
-  HVDClinkReceivingBus(i_tradePeriod,i_branch,i_toBus)                     'Receiving (To) bus of HVDC link'
-  HVDClinkBus(i_tradePeriod,i_branch,i_bus)                                'Sending or Receiving bus of HVDC link'
-  HVDClink(i_tradePeriod,i_branch)                                         'HVDC links (branches) defined for the current trading period'
-  HVDCPoles(i_tradePeriod,i_branch)                                        'DC transmission between Benmore and Hayward'
-  HVDCHalfPoles(i_tradePeriod,i_branch)                                    'Connection DC Pole 1 between AC and DC systems at Benmore and Haywards'
-  HVDCPoleDirection(i_tradePeriod,i_branch,i_flowDirection)                'Direction defintion for HVDC poles S->N : Forward and N->S : Southward'
-  ACBranch(i_tradePeriod,i_branch)                                         'AC branches defined for the current trading period'
-  ClosedBranch(i_tradePeriod,i_branch)                                     'Set of branches that are closed'
-  OpenBranch(i_tradePeriod,i_branch)                                       'Set of branches that are open'
-  ValidLossSegment(i_tradePeriod,i_branch,i_lossSegment)                   'Valid loss segments for a branch'
-  LossBranch(i_tradePeriod,i_branch)                                       'Subset of branches that have non-zero loss factors'
+  Node(tp,i_node)                                               'Nodes defined for the current trading period'
+  Bus(tp,i_bus)                                                 'Buses defined for the current trading period'
+  NodeBus(tp,i_node,i_bus)                                      'Mapping of the nodes to the buses for the current trading period'
+  NodeIsland(tp,i_node,i_island)                                'Mapping of the node to the island for the current trading period'
+  BusIsland(tp,i_bus,i_island)                                  'Mapping of the bus to the island for the current trading period'
+  HVDCNode(tp,i_node)                                           'HVDC node for the current trading period'
+  ACnode(tp,i_node)                                             'AC nodes for the current trading period'
+  ReferenceNode(tp,i_node)                                      'Reference node for the current trading period'
+  DCBus(tp,i_bus)                                               'Buses corresponding to HVDC nodes'
+  ACBus(tp,i_bus)                                               'Buses corresponding to AC nodes'
+  Branch(tp,i_branch)                                           'Branches defined for the current trading period'
+  BranchBusDefn(tp,i_branch,i_fromBus,i_toBus)                  'Branch bus connectivity for the current trading period'
+  BranchBusConnect(tp,i_branch,i_bus)                           'Indication if a branch is connected to a bus for the current trading period'
+  ACBranchSendingBus(tp,i_branch,i_bus,i_flowDirection)         'Sending (From) bus of AC branch in forward and backward direction'
+  ACBranchReceivingBus(tp,i_branch,i_bus,i_flowDirection)       'Receiving (To) bus of AC branch in forward and backward direction'
+  HVDClinkSendingBus(tp,i_branch,i_bus)                         'Sending (From) bus of HVDC link'
+  HVDClinkReceivingBus(tp,i_branch,i_toBus)                     'Receiving (To) bus of HVDC link'
+  HVDClinkBus(tp,i_branch,i_bus)                                'Sending or Receiving bus of HVDC link'
+  HVDClink(tp,i_branch)                                         'HVDC links (branches) defined for the current trading period'
+  HVDCPoles(tp,i_branch)                                        'DC transmission between Benmore and Hayward'
+  HVDCHalfPoles(tp,i_branch)                                    'Connection DC Pole 1 between AC and DC systems at Benmore and Haywards'
+  HVDCPoleDirection(tp,i_branch,i_flowDirection)                'Direction defintion for HVDC poles S->N : Forward and N->S : Southward'
+  ACBranch(tp,i_branch)                                         'AC branches defined for the current trading period'
+  ClosedBranch(tp,i_branch)                                     'Set of branches that are closed'
+  OpenBranch(tp,i_branch)                                       'Set of branches that are open'
+  ValidLossSegment(tp,i_branch,i_lossSegment)                   'Valid loss segments for a branch'
+  LossBranch(tp,i_branch)                                       'Subset of branches that have non-zero loss factors'
 * RDN - Mapping set of branches to HVDC pole
   HVDCPoleBranchMap(pole,i_branch)                                         'Mapping of HVDC  branch to pole number'
 * Risk/Reserve
-  RiskGenerator(i_tradePeriod,i_offer)                                     'Set of generators that can set the risk in the current trading period'
-  islandRiskGenerator(i_tradePeriod,i_island,i_offer)                      'Mapping of risk generator to island in the current trading period'
+  RiskGenerator(tp,o)                                     'Set of generators that can set the risk in the current trading period'
+  islandRiskGenerator(tp,i_island,o)                      'Mapping of risk generator to island in the current trading period'
   HVDCrisk(i_riskClass)                                                    'Subset containing DCCE and DCECE risks'
   GenRisk(i_riskClass)                                                     'Subset containing generator risks'
   ManualRisk(i_riskClass)                                                  'Subset containting manual risks'
@@ -272,135 +270,135 @@ Sets
   HVDCSecRisk(i_riskClass)                                                 'Subset containing secondary risk of the HVDC for CE and ECE events'
   PLSRReserveType(i_reserveType)                                           'PLSR reserve type'
   ILReserveType(i_reserveType)                                             'IL reserve type'
-  IslandOffer(i_tradePeriod,i_island,i_offer)                              'Mapping of reserve offer to island for the current trading period'
-  IslandBid(i_tradePeriod,i_island,i_bid)                                  'Mapping of purchase bid ILR to island for the current trading period'
+  IslandOffer(tp,i_island,o)                              'Mapping of reserve offer to island for the current trading period'
+  IslandBid(tp,i_island,i_bid)                                  'Mapping of purchase bid ILR to island for the current trading period'
 * RDN - Definition of CE and ECE events to support different CE and ECE CVPs
   ContingentEvents(i_riskClass)                                            'Subset of Risk Classes containing contigent event risks'
   ExtendedContingentEvent(i_riskClass)                                     'Subset of Risk Classes containing extended contigent event risk'
 * Branch constraint
-  BranchConstraint(i_tradePeriod,i_branchConstraint)                       'Set of branch constraints defined for the current trading period'
+  BranchConstraint(tp,i_branchConstraint)                       'Set of branch constraints defined for the current trading period'
 * AC node constraint
-  ACnodeConstraint(i_tradePeriod,i_ACnodeConstraint)                       'Set of AC node constraints defined for the current trading period'
+  ACnodeConstraint(tp,i_ACnodeConstraint)                       'Set of AC node constraints defined for the current trading period'
 * Market node constraint
-  MNodeConstraint(i_tradePeriod,i_MNodeConstraint)                         'Set of market node constraints defined for the current trading period'
+  MNodeConstraint(tp,i_MNodeConstraint)                         'Set of market node constraints defined for the current trading period'
 * Mixed constraint
-  Type1MixedConstraint(i_tradePeriod,i_type1MixedConstraint)               'Set of type 1 mixed constraints defined for the current trading period'
-  Type2MixedConstraint(i_tradePeriod,i_type2MixedConstraint)               'Set of type 2 mixed constraints defined for the current trading period'
-  Type1MixedConstraintCondition(i_tradePeriod,i_type1MixedConstraint)      'Subset of type 1 mixed constraints that have a condition to check for the use of the alternate limit'
+  Type1MixedConstraint(tp,i_type1MixedConstraint)               'Set of type 1 mixed constraints defined for the current trading period'
+  Type2MixedConstraint(tp,i_type2MixedConstraint)               'Set of type 2 mixed constraints defined for the current trading period'
+  Type1MixedConstraintCondition(tp,i_type1MixedConstraint)      'Subset of type 1 mixed constraints that have a condition to check for the use of the alternate limit'
 * Generic constraint
-  GenericConstraint(i_tradePeriod,i_genericConstraint)                     'Generic constraint defined for the current trading period'
+  GenericConstraint(tp,i_genericConstraint)                     'Generic constraint defined for the current trading period'
   ;
 
 Parameters
 * Offers
-  RampRateUp(i_tradePeriod,i_offer)                          'The ramping up rate in MW per minute associated with the generation offer (MW/min)'
-  RampRateDown(i_tradePeriod,i_offer)                        'The ramping down rate in MW per minute associated with the generation offer (MW/min)'
-  GenerationStart(i_tradePeriod,i_offer)                     'The MW generation level associated with the offer at the start of a trading period'
-  ReserveGenerationMaximum(i_tradePeriod,i_offer)            'Maximum generation and reserve capability for the current trading period (MW)'
-  WindOffer(i_tradePeriod,i_offer)                           'Flag to indicate if offer is from wind generator (1 = Yes)'
+  RampRateUp(tp,o)                          'The ramping up rate in MW per minute associated with the generation offer (MW/min)'
+  RampRateDown(tp,o)                        'The ramping down rate in MW per minute associated with the generation offer (MW/min)'
+  GenerationStart(tp,o)                     'The MW generation level associated with the offer at the start of a trading period'
+  ReserveGenerationMaximum(tp,o)            'Maximum generation and reserve capability for the current trading period (MW)'
+  WindOffer(tp,o)                           'Flag to indicate if offer is from wind generator (1 = Yes)'
 * RDN - Primary-secondary offer parameters
-  HasSecondaryOffer(i_tradePeriod,i_offer)                   'Flag to indicate if offer has a secondary offer (1 = Yes)'
-  HasPrimaryOffer(i_tradePeriod,i_offer)                     'Flag to indicate if offer has a primary offer (1 = Yes)'
+  HasSecondaryOffer(tp,o)                   'Flag to indicate if offer has a secondary offer (1 = Yes)'
+  HasPrimaryOffer(tp,o)                     'Flag to indicate if offer has a primary offer (1 = Yes)'
 * RDN - Frequency keeper band MW
-  FKBand(i_tradePeriod,i_offer)                              'Frequency keeper band MW which is set when the risk setter is selected as the frequency keeper'
-  GenerationMaximum(i_tradePeriod,i_offer)                   'Maximum generation level associated with the generation offer (MW)'
-  GenerationMinimum(i_tradePeriod,i_offer)                   'Minimum generation level associated with the generation offer (MW)'
-  GenerationEndUp(i_tradePeriod,i_offer)                     'MW generation level associated with the offer at the end of the trading period assuming ramp rate up'
-  GenerationEndDown(i_tradePeriod,i_offer)                   'MW generation level associated with the offer at the end of the trading period assuming ramp rate down'
-  RampTimeUp(i_tradePeriod,i_offer)                          'Minimum of the trading period length and time to ramp up to maximum (Minutes)'
-  RampTimeDown(i_tradePeriod,i_offer)                        'Minimum of the trading period length and time to ramp down to minimum (Minutes)'
+  FKBand(tp,o)                              'Frequency keeper band MW which is set when the risk setter is selected as the frequency keeper'
+  GenerationMaximum(tp,o)                   'Maximum generation level associated with the generation offer (MW)'
+  GenerationMinimum(tp,o)                   'Minimum generation level associated with the generation offer (MW)'
+  GenerationEndUp(tp,o)                     'MW generation level associated with the offer at the end of the trading period assuming ramp rate up'
+  GenerationEndDown(tp,o)                   'MW generation level associated with the offer at the end of the trading period assuming ramp rate down'
+  RampTimeUp(tp,o)                          'Minimum of the trading period length and time to ramp up to maximum (Minutes)'
+  RampTimeDown(tp,o)                        'Minimum of the trading period length and time to ramp down to minimum (Minutes)'
 * Energy offer
-  GenerationOfferMW(i_tradePeriod,i_offer,i_tradeBlock)      'Generation offer block (MW)'
-  GenerationOfferPrice(i_tradePeriod,i_offer,i_tradeBlock)   'Generation offer price ($/MW)'
+  GenerationOfferMW(tp,o,trdBlk)      'Generation offer block (MW)'
+  GenerationOfferPrice(tp,o,trdBlk)   'Generation offer price ($/MW)'
 * Reserve offer
-  ReserveOfferProportion(i_tradePeriod,i_offer,i_tradeBlock,i_reserveClass)             'The percentage of the MW block available for PLSR of class FIR or SIR'
-  ReserveOfferPrice(i_tradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType)    'The price of the reserve of the different reserve classes and types ($/MW)'
-  ReserveOfferMaximum(i_tradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType)  'The maximum MW offered reserve for the different reserve classes and types (MW)'
+  ReserveOfferProportion(tp,o,trdBlk,i_reserveClass)             'The percentage of the MW block available for PLSR of class FIR or SIR'
+  ReserveOfferPrice(tp,o,trdBlk,i_reserveClass,i_reserveType)    'The price of the reserve of the different reserve classes and types ($/MW)'
+  ReserveOfferMaximum(tp,o,trdBlk,i_reserveClass,i_reserveType)  'The maximum MW offered reserve for the different reserve classes and types (MW)'
 * Demand
-  NodeDemand(i_tradePeriod,i_node)                                                      'Nodal demand for the current trading period in MW'
+  NodeDemand(tp,i_node)                                                      'Nodal demand for the current trading period in MW'
 * Bid
-  PurchaseBidMW(i_tradePeriod,i_bid,i_tradeBlock)                                       'Purchase bid block in MW'
-  PurchaseBidPrice(i_tradePeriod,i_bid,i_tradeBlock)                                    'Purchase bid price in $/MW'
-  PurchaseBidILRMW(i_tradePeriod,i_bid,i_tradeBlock,i_reserveClass)                     'Purchase bid ILR block in MW for the different reserve classes'
-  PurchaseBidILRPrice(i_tradePeriod,i_bid,i_tradeBlock,i_reserveClass)                  'Purchase bid ILR price in $/MW for the different reserve classes'
+  PurchaseBidMW(tp,i_bid,trdBlk)                                       'Purchase bid block in MW'
+  PurchaseBidPrice(tp,i_bid,trdBlk)                                    'Purchase bid price in $/MW'
+  PurchaseBidILRMW(tp,i_bid,trdBlk,i_reserveClass)                     'Purchase bid ILR block in MW for the different reserve classes'
+  PurchaseBidILRPrice(tp,i_bid,trdBlk,i_reserveClass)                  'Purchase bid ILR price in $/MW for the different reserve classes'
 * Network
-  ACBranchCapacity(i_tradePeriod,i_branch)                   'MW capacity of AC branch for the current trading period'
-  ACBranchResistance(i_tradePeriod,i_branch)                 'Resistance of the AC branch for the current trading period in per unit'
-  ACBranchSusceptance(i_tradePeriod,i_branch)                'Susceptance (inverse of reactance) of the AC branch for the current trading period in per unit'
-  ACBranchFixedLoss(i_tradePeriod,i_branch)                  'Fixed loss of the AC branch for the current trading period in MW'
-  ACBranchLossBlocks(i_tradePeriod,i_branch)                 'Number of blocks in the loss curve for the AC branch in the current trading period'
-  ACBranchLossMW(i_tradePeriod,i_branch,i_lossSegment)       'MW element of the loss segment curve in MW'
-  ACBranchLossFactor(i_tradePeriod,i_branch,i_lossSegment)   'Loss factor element of the loss segment curve'
-  ACBranchOpenStatus(i_tradePeriod,i_branch)                 'Flag indicating if the AC branch is open (1 = Open)'
-  ACBranchClosedStatus(i_tradePeriod,i_branch)               'Flag indicating if the AC branch is closed (1 = Closed)'
+  ACBranchCapacity(tp,i_branch)                   'MW capacity of AC branch for the current trading period'
+  ACBranchResistance(tp,i_branch)                 'Resistance of the AC branch for the current trading period in per unit'
+  ACBranchSusceptance(tp,i_branch)                'Susceptance (inverse of reactance) of the AC branch for the current trading period in per unit'
+  ACBranchFixedLoss(tp,i_branch)                  'Fixed loss of the AC branch for the current trading period in MW'
+  ACBranchLossBlocks(tp,i_branch)                 'Number of blocks in the loss curve for the AC branch in the current trading period'
+  ACBranchLossMW(tp,i_branch,i_lossSegment)       'MW element of the loss segment curve in MW'
+  ACBranchLossFactor(tp,i_branch,i_lossSegment)   'Loss factor element of the loss segment curve'
+  ACBranchOpenStatus(tp,i_branch)                 'Flag indicating if the AC branch is open (1 = Open)'
+  ACBranchClosedStatus(tp,i_branch)               'Flag indicating if the AC branch is closed (1 = Closed)'
 
-  HVDClinkCapacity(i_tradePeriod,i_branch)                   'MW capacity of the HVDC link for the current trading period'
-  HVDClinkResistance(i_tradePeriod,i_branch)                 'Resistance of the HVDC link for the current trading period in Ohms'
-  HVDClinkFixedLoss(i_tradePeriod,i_branch)                  'Fixed loss of the HVDC link for the current trading period in MW'
-  HVDClinkLossBlocks(i_tradePeriod,i_branch)                 'Number of blocks in the loss curve for the HVDC link in the current trading period'
-  HVDCBreakPointMWFlow(i_tradePeriod,i_branch,i_lossSegment) 'Value of power flow on the HVDC at the break point'
-  HVDCBreakPointMWLoss(i_tradePeriod,i_branch,i_lossSegment) 'Value of variable losses on the HVDC at the break point'
-  HVDClinkOpenStatus(i_tradePeriod,i_branch)                 'Flag indicating if the HVDC link is open (1 = Open)'
-  HVDClinkClosedStatus(i_tradePeriod,i_branch)               'Flag indicating if the HVDC link is closed (1 = Closed)'
+  HVDClinkCapacity(tp,i_branch)                   'MW capacity of the HVDC link for the current trading period'
+  HVDClinkResistance(tp,i_branch)                 'Resistance of the HVDC link for the current trading period in Ohms'
+  HVDClinkFixedLoss(tp,i_branch)                  'Fixed loss of the HVDC link for the current trading period in MW'
+  HVDClinkLossBlocks(tp,i_branch)                 'Number of blocks in the loss curve for the HVDC link in the current trading period'
+  HVDCBreakPointMWFlow(tp,i_branch,i_lossSegment) 'Value of power flow on the HVDC at the break point'
+  HVDCBreakPointMWLoss(tp,i_branch,i_lossSegment) 'Value of variable losses on the HVDC at the break point'
+  HVDClinkOpenStatus(tp,i_branch)                 'Flag indicating if the HVDC link is open (1 = Open)'
+  HVDClinkClosedStatus(tp,i_branch)               'Flag indicating if the HVDC link is closed (1 = Closed)'
 
-  LossSegmentMW(i_tradePeriod,i_branch,i_lossSegment)        'MW capacity of each loss segment'
-  LossSegmentFactor(i_tradePeriod,i_branch,i_lossSegment)    'Loss factor of each loss segment'
+  LossSegmentMW(tp,i_branch,i_lossSegment)        'MW capacity of each loss segment'
+  LossSegmentFactor(tp,i_branch,i_lossSegment)    'Loss factor of each loss segment'
 
-  NodeBusAllocationFactor(i_tradePeriod,i_node,i_bus)        'Allocation factor of market node to bus for the current trade period'
-  BusElectricalIsland(i_tradePeriod,i_bus)                   'Bus electrical island status for the current trade period (0 = Dead)'
+  NodeBusAllocationFactor(tp,i_node,i_bus)        'Allocation factor of market node to bus for the current trade period'
+  BusElectricalIsland(tp,i_bus)                   'Bus electrical island status for the current trade period (0 = Dead)'
 * RDN - Flag to allow roundpower on the HVDC link
-  AllowHVDCRoundpower(i_tradePeriod)                         'Flag to allow roundpower on the HVDC (1 = Yes)'
+  AllowHVDCRoundpower(tp)                         'Flag to allow roundpower on the HVDC (1 = Yes)'
 * Risk/Reserve
-  ReserveClassGenerationMaximum(i_tradePeriod,i_offer,i_reserveClass)            'MW used to determine factor to adjust maximum reserve of a reserve class'
-  ReserveMaximumFactor(i_tradePeriod,i_offer,i_reserveClass)                     'Factor to adjust the maximum reserve of the different classes for the different offers'
-  IslandRiskAdjustmentFactor(i_tradePeriod,i_island,i_reserveClass,i_riskClass)  'Risk adjustment factor for each island, reserve class and risk class'
-  FreeReserve(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                 'MW free reserve for each island, reserve class and risk class'
-  HVDCPoleRampUp(i_tradePeriod,i_island,i_reserveClass,i_riskClass)              'HVDC pole MW ramp up capability for each island, reserve class and risk class'
+  ReserveClassGenerationMaximum(tp,o,i_reserveClass)            'MW used to determine factor to adjust maximum reserve of a reserve class'
+  ReserveMaximumFactor(tp,o,i_reserveClass)                     'Factor to adjust the maximum reserve of the different classes for the different offers'
+  IslandRiskAdjustmentFactor(tp,i_island,i_reserveClass,i_riskClass)  'Risk adjustment factor for each island, reserve class and risk class'
+  FreeReserve(tp,i_island,i_reserveClass,i_riskClass)                 'MW free reserve for each island, reserve class and risk class'
+  HVDCPoleRampUp(tp,i_island,i_reserveClass,i_riskClass)              'HVDC pole MW ramp up capability for each island, reserve class and risk class'
 * RDN - Index IslandMinimumRisk to cater for CE and ECE minimum risk
-* IslandMinimumRisk(i_tradePeriod,i_island,i_reserveClass)                       'Minimum MW risk level for each island for each reserve class'
-  IslandMinimumRisk(i_tradePeriod,i_island,i_reserveClass,i_riskClass)           'Minimum MW risk level for each island for each reserve class and risk class'
+* IslandMinimumRisk(tp,i_island,i_reserveClass)                       'Minimum MW risk level for each island for each reserve class'
+  IslandMinimumRisk(tp,i_island,i_reserveClass,i_riskClass)           'Minimum MW risk level for each island for each reserve class and risk class'
 * RDN - HVDC secondary risk parameters
-  HVDCSecRiskEnabled(i_tradePeriod,i_island,i_riskClass)                          'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
-  HVDCSecRiskSubtractor(i_tradePeriod,i_island)                                   'Ramp up capability on the HVDC pole that is not the secondary risk'
-  HVDCSecIslandMinimumRisk(i_tradePeriod,i_island,i_reserveClass,i_riskClass)     'Minimum risk in each island for the HVDC secondary risk'
+  HVDCSecRiskEnabled(tp,i_island,i_riskClass)                          'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
+  HVDCSecRiskSubtractor(tp,i_island)                                   'Ramp up capability on the HVDC pole that is not the secondary risk'
+  HVDCSecIslandMinimumRisk(tp,i_island,i_reserveClass,i_riskClass)     'Minimum risk in each island for the HVDC secondary risk'
 * Branch constraint
-  BranchConstraintFactors(i_tradePeriod,i_branchConstraint,i_branch)              'Branch security constraint factors (sensitivities) for the current trading period'
-  BranchConstraintSense(i_tradePeriod,i_branchConstraint)                         'Branch security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
-  BranchConstraintLimit(i_tradePeriod,i_branchConstraint)                         'Branch security constraint limit for the current trading period'
+  BranchConstraintFactors(tp,i_branchConstraint,i_branch)              'Branch security constraint factors (sensitivities) for the current trading period'
+  BranchConstraintSense(tp,i_branchConstraint)                         'Branch security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
+  BranchConstraintLimit(tp,i_branchConstraint)                         'Branch security constraint limit for the current trading period'
 * AC node constraint
-  ACnodeConstraintFactors(i_tradePeriod,i_ACnodeConstraint,i_node)                'AC node security constraint factors (sensitivities) for the current trading period'
-  ACnodeConstraintSense(i_tradePeriod,i_ACnodeConstraint)                         'AC node security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
-  ACnodeConstraintLimit(i_tradePeriod,i_ACnodeConstraint)                         'AC node security constraint limit for the current trading period'
+  ACnodeConstraintFactors(tp,i_ACnodeConstraint,i_node)                'AC node security constraint factors (sensitivities) for the current trading period'
+  ACnodeConstraintSense(tp,i_ACnodeConstraint)                         'AC node security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
+  ACnodeConstraintLimit(tp,i_ACnodeConstraint)                         'AC node security constraint limit for the current trading period'
 * Market node constraint
-  MNodeEnergyOfferConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_offer)                               'Market node energy offer constraint factors for the current trading period'
-  MNodeReserveOfferConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) 'Market node reserve offer constraint factors for the current trading period'
-  MNodeEnergyBidConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_bid)                                   'Market node energy bid constraint factors for the current trading period'
-  MNodeILReserveBidConstraintFactors(i_tradePeriod,i_MNodeConstraint,i_bid,i_reserveClass)                 'Market node IL reserve bid constraint factors for the current trading period'
-  MNodeConstraintSense(i_tradePeriod,i_MNodeConstraint)                                                    'Market node constraint sense for the current trading period'
-  MNodeConstraintLimit(i_tradePeriod,i_MNodeConstraint)                                                    'Market node constraint limit for the current trading period'
+  MNodeEnergyOfferConstraintFactors(tp,i_MNodeConstraint,o)                               'Market node energy offer constraint factors for the current trading period'
+  MNodeReserveOfferConstraintFactors(tp,i_MNodeConstraint,o,i_reserveClass,i_reserveType) 'Market node reserve offer constraint factors for the current trading period'
+  MNodeEnergyBidConstraintFactors(tp,i_MNodeConstraint,i_bid)                                   'Market node energy bid constraint factors for the current trading period'
+  MNodeILReserveBidConstraintFactors(tp,i_MNodeConstraint,i_bid,i_reserveClass)                 'Market node IL reserve bid constraint factors for the current trading period'
+  MNodeConstraintSense(tp,i_MNodeConstraint)                                                    'Market node constraint sense for the current trading period'
+  MNodeConstraintLimit(tp,i_MNodeConstraint)                                                    'Market node constraint limit for the current trading period'
 * Mixed constraint
-  useMixedConstraint(i_tradePeriod)                                                                        'Flag indicating use of the mixed constraint formulation (1 = Yes)'
-  Type1MixedConstraintSense(i_tradePeriod,i_type1MixedConstraint)                                          'Type 1 mixed constraint sense'
-  Type1MixedConstraintLimit1(i_tradePeriod,i_type1MixedConstraint)                                         'Type 1 mixed constraint limit 1'
-  Type1MixedConstraintLimit2(i_tradePeriod,i_type1MixedConstraint)                                         'Type 1 mixed constraint alternate limit (limit 2)'
-  Type2MixedConstraintSense(i_tradePeriod,i_type2MixedConstraint)                                          'Type 2 mixed constraint sense'
-  Type2MixedConstraintLimit(i_tradePeriod,i_type2MixedConstraint)                                          'Type 2 mixed constraint limit'
+  useMixedConstraint(tp)                                                                        'Flag indicating use of the mixed constraint formulation (1 = Yes)'
+  Type1MixedConstraintSense(tp,i_type1MixedConstraint)                                          'Type 1 mixed constraint sense'
+  Type1MixedConstraintLimit1(tp,i_type1MixedConstraint)                                         'Type 1 mixed constraint limit 1'
+  Type1MixedConstraintLimit2(tp,i_type1MixedConstraint)                                         'Type 1 mixed constraint alternate limit (limit 2)'
+  Type2MixedConstraintSense(tp,i_type2MixedConstraint)                                          'Type 2 mixed constraint sense'
+  Type2MixedConstraintLimit(tp,i_type2MixedConstraint)                                          'Type 2 mixed constraint limit'
 * Generic constraint
-  GenericEnergyOfferConstraintFactors(i_tradePeriod,i_genericConstraint,i_offer)                           'Generic constraint energy offer factors for the current trading period'
-  GenericReserveOfferConstraintFactors(i_tradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) 'Generic constraint reserve offer factors for the current trading period'
-  GenericEnergyBidConstraintFactors(i_tradePeriod,i_genericConstraint,i_bid)                               'Generic constraint energy bid factors for the current trading period'
-  GenericILReserveBidConstraintFactors(i_tradePeriod,i_genericConstraint,i_bid,i_reserveClass)             'Generic constraint IL reserve bid factors for the current trading period'
-  GenericBranchConstraintFactors(i_tradePeriod,i_genericConstraint,i_branch)                               'Generic constraint branch factors for the current trading period'
-  GenericConstraintSense(i_tradePeriod,i_genericConstraint)                                                'Generic constraint sense for the current trading period'
-  GenericConstraintLimit(i_tradePeriod,i_genericConstraint)                                                'Generic constraint limit for the current trading period'
+  GenericEnergyOfferConstraintFactors(tp,i_genericConstraint,o)                           'Generic constraint energy offer factors for the current trading period'
+  GenericReserveOfferConstraintFactors(tp,i_genericConstraint,o,i_reserveClass,i_reserveType) 'Generic constraint reserve offer factors for the current trading period'
+  GenericEnergyBidConstraintFactors(tp,i_genericConstraint,i_bid)                               'Generic constraint energy bid factors for the current trading period'
+  GenericILReserveBidConstraintFactors(tp,i_genericConstraint,i_bid,i_reserveClass)             'Generic constraint IL reserve bid factors for the current trading period'
+  GenericBranchConstraintFactors(tp,i_genericConstraint,i_branch)                               'Generic constraint branch factors for the current trading period'
+  GenericConstraintSense(tp,i_genericConstraint)                                                'Generic constraint sense for the current trading period'
+  GenericConstraintLimit(tp,i_genericConstraint)                                                'Generic constraint limit for the current trading period'
 * Violation penalties
   DeficitReservePenalty(i_reserveClass)                      '6s and 60s reserve deficit violation penalty'
 * RDN - Different CVPs defined for CE and ECE
   DeficitReservePenalty_CE(i_reserveClass)                   '6s and 60s CE reserve deficit violation penalty'
   DeficitReservePenalty_ECE(i_reserveClass)                  '6s and 60s ECE reserve deficit violation penalty'
 * Post-processing
-  useBranchFlowMIP(i_tradePeriod)                            'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
-  useMixedConstraintMIP(i_tradePeriod)                       'Flag to indicate if integer constraints are needed in the mixed constraint formulation: 1 = Yes'
+  useBranchFlowMIP(tp)                            'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
+  useMixedConstraintMIP(tp)                       'Flag to indicate if integer constraints are needed in the mixed constraint formulation: 1 = Yes'
   ;
 
 Scalars
@@ -445,180 +443,180 @@ Scalars
 Variables
   NETBENEFIT                                                                       'Defined as the difference between the consumer surplus and producer costs adjusted for penalty costs'
 * Reserves
-  ISLANDRISK(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                    'Island MW risk for the different reserve and risk classes'
-  HVDCREC(i_tradePeriod,i_island)                                                  'Total net pre-contingent HVDC MW flow received at each island'
-  RISKOFFSET(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                    'MW offset applied to the raw risk to account for HVDC pole rampup, AUFLS, free reserve and non-compliant generation'
+  ISLANDRISK(tp,i_island,i_reserveClass,i_riskClass)                    'Island MW risk for the different reserve and risk classes'
+  HVDCREC(tp,i_island)                                                  'Total net pre-contingent HVDC MW flow received at each island'
+  RISKOFFSET(tp,i_island,i_reserveClass,i_riskClass)                    'MW offset applied to the raw risk to account for HVDC pole rampup, AUFLS, free reserve and non-compliant generation'
 * Network
-  ACnodeNETINJECTION(i_tradePeriod,i_bus)                                          'MW injection at buses corresponding to AC nodes'
-  ACBRANCHFLOW(i_tradePeriod,i_branch)                                             'MW flow on undirected AC branch'
-  ACnodeANGLE(i_tradePeriod,i_bus)                                                 'Bus voltage angle'
+  ACnodeNETINJECTION(tp,i_bus)                                          'MW injection at buses corresponding to AC nodes'
+  ACBRANCHFLOW(tp,i_branch)                                             'MW flow on undirected AC branch'
+  ACnodeANGLE(tp,i_bus)                                                 'Bus voltage angle'
 * Mixed constraint variables
-  MIXEDCONSTRAINTVARIABLE(i_tradePeriod,i_type1MixedConstraint)                    'Mixed constraint variable'
+  MIXEDCONSTRAINTVARIABLE(tp,i_type1MixedConstraint)                    'Mixed constraint variable'
 * RDN - Change to demand bids
 * Demand bids were only positive but can be both positive and negative from v6.0 of SPD formulation (with DSBF)
 * This change will be managed with the update of the lower bound of the free variable in vSPDSolve.gms to allow
 * backward compatibility
 * Note the formulation now refers to this as Demand. So Demand (in SPD formulation) = Purchase (in vSPD code)
-  PURCHASE(i_tradePeriod,i_bid)                                                    'Total MW purchase scheduled'
-  PURCHASEBLOCK(i_tradePeriod,i_bid,i_tradeBlock)                                  'MW purchase scheduled from the individual trade blocks of a bid'
+  PURCHASE(tp,i_bid)                                                    'Total MW purchase scheduled'
+  PURCHASEBLOCK(tp,i_bid,trdBlk)                                  'MW purchase scheduled from the individual trade blocks of a bid'
 * RDN - Change to demand bids - End
   ;
 
 Positive variables
 * Generation
-  GENERATION(i_tradePeriod,i_offer)                                                'Total MW generation scheduled from an offer'
-  GENERATIONBLOCK(i_tradePeriod,i_offer,i_tradeBlock)                              'MW generation scheduled from the individual trade blocks of an offer'
+  GENERATION(tp,o)                                                'Total MW generation scheduled from an offer'
+  GENERATIONBLOCK(tp,o,trdBlk)                              'MW generation scheduled from the individual trade blocks of an offer'
 * Purchase
-* PURCHASE(i_tradePeriod,i_bid)                                                    'Total MW purchase scheduled'
-* PURCHASEBLOCK(i_tradePeriod,i_bid,i_tradeBlock)                                  'MW purchase scheduled from the individual trade blocks of a bid'
-  PURCHASEILR(i_tradePeriod,i_bid,i_reserveClass)                                  'Total MW ILR provided by purchase bid for the different reserve classes'
-  PURCHASEILRBLOCK(i_tradePeriod,i_bid,i_tradeBlock,i_reserveClass)                'MW ILR provided by purchase bid for individual trade blocks for the different reserve classes'
+* PURCHASE(tp,i_bid)                                                    'Total MW purchase scheduled'
+* PURCHASEBLOCK(tp,i_bid,trdBlk)                                  'MW purchase scheduled from the individual trade blocks of a bid'
+  PURCHASEILR(tp,i_bid,i_reserveClass)                                  'Total MW ILR provided by purchase bid for the different reserve classes'
+  PURCHASEILRBLOCK(tp,i_bid,trdBlk,i_reserveClass)                'MW ILR provided by purchase bid for individual trade blocks for the different reserve classes'
 * Reserve
-  RESERVE(i_tradePeriod,i_offer,i_reserveClass,i_reserveType)                      'MW Reserve scheduled from an offer'
-  RESERVEBLOCK(i_tradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType)    'MW Reserve scheduled from the individual trade blocks of an offer'
-  MAXISLANDRISK(i_tradePeriod,i_island,i_reserveClass)                             'Maximum MW island risk for the different reserve classes'
+  RESERVE(tp,o,i_reserveClass,i_reserveType)                      'MW Reserve scheduled from an offer'
+  RESERVEBLOCK(tp,o,trdBlk,i_reserveClass,i_reserveType)    'MW Reserve scheduled from the individual trade blocks of an offer'
+  MAXISLANDRISK(tp,i_island,i_reserveClass)                             'Maximum MW island risk for the different reserve classes'
 * Network
-  HVDCLINKFLOW(i_tradePeriod,i_branch)                                             'MW flow at the sending end scheduled for the HVDC link'
-  HVDCLINKLOSSES(i_tradePeriod,i_branch)                                           'MW losses on the HVDC link'
-  LAMBDA(i_tradePeriod,i_branch,i_lossSegment)                                     'Non-negative weight applied to the breakpoint of the HVDC link'
-  ACBRANCHFLOWDIRECTED(i_tradePeriod,i_branch,i_flowDirection)                     'MW flow on the directed branch'
-  ACBRANCHLOSSESDIRECTED(i_tradePeriod,i_branch,i_flowDirection)                   'MW losses on the directed branch'
-  ACBRANCHFLOWBLOCKDIRECTED(i_tradePeriod,i_branch,i_lossSegment,i_flowDirection)  'MW flow on the different blocks of the loss curve'
-  ACBRANCHLOSSESBLOCKDIRECTED(i_tradePeriod,i_branch,i_lossSegment,i_flowDirection)'MW losses on the different blocks of the loss curve'
+  HVDCLINKFLOW(tp,i_branch)                                             'MW flow at the sending end scheduled for the HVDC link'
+  HVDCLINKLOSSES(tp,i_branch)                                           'MW losses on the HVDC link'
+  LAMBDA(tp,i_branch,i_lossSegment)                                     'Non-negative weight applied to the breakpoint of the HVDC link'
+  ACBRANCHFLOWDIRECTED(tp,i_branch,i_flowDirection)                     'MW flow on the directed branch'
+  ACBRANCHLOSSESDIRECTED(tp,i_branch,i_flowDirection)                   'MW losses on the directed branch'
+  ACBRANCHFLOWBLOCKDIRECTED(tp,i_branch,i_lossSegment,i_flowDirection)  'MW flow on the different blocks of the loss curve'
+  ACBRANCHLOSSESBLOCKDIRECTED(tp,i_branch,i_lossSegment,i_flowDirection)'MW losses on the different blocks of the loss curve'
 * Violations
   TOTALPENALTYCOST                                                                 'Total violation costs'
-  DEFICITBUSGENERATION(i_tradePeriod,i_bus)                                        'Deficit generation at a bus in MW'
-  SURPLUSBUSGENERATION(i_tradePeriod,i_bus)                                        'Surplus generation at a bus in MW'
-  DEFICITRESERVE(i_tradePeriod,i_island,i_reserveClass)                            'Deficit reserve generation in each island for each reserve class in MW'
-  DEFICITBRANCHSECURITYCONSTRAINT(i_tradePeriod,i_branchConstraint)                'Deficit branch security constraint in MW'
-  SURPLUSBRANCHSECURITYCONSTRAINT(i_tradePeriod,i_branchConstraint)                'Surplus branch security constraint in MW'
-  DEFICITRAMPRATE(i_tradePeriod,i_offer)                                           'Deficit ramp rate in MW'
-  SURPLUSRAMPRATE(i_tradePeriod,i_offer)                                           'Surplus ramp rate in MW'
-  DEFICITACnodeCONSTRAINT(i_tradePeriod,i_ACnodeConstraint)                        'Deficit in AC node constraint in MW'
-  SURPLUSACnodeCONSTRAINT(i_tradePeriod,i_ACnodeConstraint)                        'Surplus in AC node constraint in MW'
-  DEFICITBRANCHFLOW(i_tradePeriod,i_branch)                                        'Deficit branch flow in MW'
-  SURPLUSBRANCHFLOW(i_tradePeriod,i_branch)                                        'Surplus branch flow in MW'
-  DEFICITMNODECONSTRAINT(i_tradePeriod,i_MNodeConstraint)                          'Deficit market node constraint in MW'
-  SURPLUSMNODECONSTRAINT(i_tradePeriod,i_MNodeConstraint)                          'Surplus market node constraint in MW'
-  DEFICITTYPE1MIXEDCONSTRAINT(i_tradePeriod,i_type1MixedConstraint)                'Type 1 deficit mixed constraint in MW'
-  SURPLUSTYPE1MIXEDCONSTRAINT(i_tradePeriod,i_type1MixedConstraint)                'Type 1 surplus mixed constraint in MW'
-  SURPLUSGENERICCONSTRAINT(i_tradePeriod,i_genericConstraint)                      'Surplus generic constraint in MW'
-  DEFICITGENERICCONSTRAINT(i_tradePeriod,i_genericConstraint)                      'Deficit generic constraint in MW'
+  DEFICITBUSGENERATION(tp,i_bus)                                        'Deficit generation at a bus in MW'
+  SURPLUSBUSGENERATION(tp,i_bus)                                        'Surplus generation at a bus in MW'
+  DEFICITRESERVE(tp,i_island,i_reserveClass)                            'Deficit reserve generation in each island for each reserve class in MW'
+  DEFICITBRANCHSECURITYCONSTRAINT(tp,i_branchConstraint)                'Deficit branch security constraint in MW'
+  SURPLUSBRANCHSECURITYCONSTRAINT(tp,i_branchConstraint)                'Surplus branch security constraint in MW'
+  DEFICITRAMPRATE(tp,o)                                           'Deficit ramp rate in MW'
+  SURPLUSRAMPRATE(tp,o)                                           'Surplus ramp rate in MW'
+  DEFICITACnodeCONSTRAINT(tp,i_ACnodeConstraint)                        'Deficit in AC node constraint in MW'
+  SURPLUSACnodeCONSTRAINT(tp,i_ACnodeConstraint)                        'Surplus in AC node constraint in MW'
+  DEFICITBRANCHFLOW(tp,i_branch)                                        'Deficit branch flow in MW'
+  SURPLUSBRANCHFLOW(tp,i_branch)                                        'Surplus branch flow in MW'
+  DEFICITMNODECONSTRAINT(tp,i_MNodeConstraint)                          'Deficit market node constraint in MW'
+  SURPLUSMNODECONSTRAINT(tp,i_MNodeConstraint)                          'Surplus market node constraint in MW'
+  DEFICITTYPE1MIXEDCONSTRAINT(tp,i_type1MixedConstraint)                'Type 1 deficit mixed constraint in MW'
+  SURPLUSTYPE1MIXEDCONSTRAINT(tp,i_type1MixedConstraint)                'Type 1 surplus mixed constraint in MW'
+  SURPLUSGENERICCONSTRAINT(tp,i_genericConstraint)                      'Surplus generic constraint in MW'
+  DEFICITGENERICCONSTRAINT(tp,i_genericConstraint)                      'Deficit generic constraint in MW'
 * RDN - Seperate CE and ECE violation variables to support different CVPs for CE and ECE
-  DEFICITRESERVE_CE(i_tradePeriod,i_island,i_reserveClass)                         'Deficit CE reserve generation in each island for each reserve class in MW'
-  DEFICITRESERVE_ECE(i_tradePeriod,i_island,i_reserveClass)                        'Deficit ECE reserve generation in each island for each reserve class in MW'
+  DEFICITRESERVE_CE(tp,i_island,i_reserveClass)                         'Deficit CE reserve generation in each island for each reserve class in MW'
+  DEFICITRESERVE_ECE(tp,i_island,i_reserveClass)                        'Deficit ECE reserve generation in each island for each reserve class in MW'
   ;
 
 Binary variables
-  MIXEDCONSTRAINTLIMIT2SELECT(i_tradePeriod,i_type1MixedConstraint)                'Binary decision variable used to detect if limit 2 should be selected for mixed constraints'
+  MIXEDCONSTRAINTLIMIT2SELECT(tp,i_type1MixedConstraint)                'Binary decision variable used to detect if limit 2 should be selected for mixed constraints'
   ;
 
 SOS1 Variables
-  ACBRANCHFLOWDIRECTED_INTEGER(i_tradePeriod,i_branch,i_flowDirection)             'Integer variables used to select branch flow direction in the event of circular branch flows (3.8.1)'
-  HVDCLINKFLOWDIRECTION_INTEGER(i_tradePeriod,i_flowDirection)                     'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
+  ACBRANCHFLOWDIRECTED_INTEGER(tp,i_branch,i_flowDirection)             'Integer variables used to select branch flow direction in the event of circular branch flows (3.8.1)'
+  HVDCLINKFLOWDIRECTION_INTEGER(tp,i_flowDirection)                     'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
 * RDN - Integer varaible to prevent intra-pole circulating branch flows
-  HVDCPOLEFLOW_INTEGER(i_tradePeriod,pole,i_flowDirection)                         'Integer variables used to select the HVDC pole flow direction on in the event of circulating branch flows within a pole'
+  HVDCPOLEFLOW_INTEGER(tp,pole,i_flowDirection)                         'Integer variables used to select the HVDC pole flow direction on in the event of circulating branch flows within a pole'
   ;
 
 SOS2 Variables
-  LAMBDAINTEGER(i_tradePeriod,i_branch,i_lossSegment)                              'Integer variables used to enforce the piecewise linear loss approxiamtion on the HVDC links'
+  LAMBDAINTEGER(tp,i_branch,i_lossSegment)                              'Integer variables used to enforce the piecewise linear loss approxiamtion on the HVDC links'
   ;
 
 Equations
   ObjectiveFunction                                                                'Objective function of the dispatch model (4.1.1.1)'
 * Offer and purchase definitions
-  GenerationOfferDefintion(i_tradePeriod,i_offer)                                  'Definition of generation provided by an offer (3.1.1.2)'
-  GenerationRampUp(i_tradePeriod,i_offer)                                          'Maximum movement of the generator upwards due to up ramp rate (3.7.1.1)'
-  GenerationRampDown(i_tradePeriod,i_offer)                                        'Maximum movement of the generator downwards due to down ramp rate (3.7.1.2)'
+  GenerationOfferDefintion(tp,o)                                  'Definition of generation provided by an offer (3.1.1.2)'
+  GenerationRampUp(tp,o)                                          'Maximum movement of the generator upwards due to up ramp rate (3.7.1.1)'
+  GenerationRampDown(tp,o)                                        'Maximum movement of the generator downwards due to down ramp rate (3.7.1.2)'
 * RDN - Primary-secondary ramp constraints
-  GenerationRampUp_PS(i_tradePeriod,i_offer)                                       'Maximum movement of the primary-secondary offers upwards due to up ramp rate (3.7.1.1)'
-  GenerationRampDown_PS(i_tradePeriod,i_offer)                                     'Maximum movement of the primary-secondary offers downwards due to down ramp rate (3.7.1.2)'
+  GenerationRampUp_PS(tp,o)                                       'Maximum movement of the primary-secondary offers upwards due to up ramp rate (3.7.1.1)'
+  GenerationRampDown_PS(tp,o)                                     'Maximum movement of the primary-secondary offers downwards due to down ramp rate (3.7.1.2)'
 * RDN - Change to demand bids
-* PurchaseBidDefintion(i_tradePeriod,i_bid)                                        'Definition of purchase provided by a bid (3.1.1.4)'
-  PurchaseBidDefintion(i_tradePeriod,i_bid)                                        'Definition of purchase provided by a bid (3.1.1.5)'
+* PurchaseBidDefintion(tp,i_bid)                                        'Definition of purchase provided by a bid (3.1.1.4)'
+  PurchaseBidDefintion(tp,i_bid)                                        'Definition of purchase provided by a bid (3.1.1.5)'
 * RDN - Change to demand bids - End
 * Network
-  HVDCLinkMaximumFlow(i_tradePeriod,i_branch)                                      'Maximum flow on each HVDC link (3.2.1.1)'
-  HVDCLinkLossDefinition(i_tradePeriod,i_branch)                                   'Definition of losses on the HVDC link (3.2.1.2)'
-  HVDCLinkFlowDefinition(i_tradePeriod,i_branch)                                   'Definition of MW flow on the HVDC link (3.2.1.3)'
-  HVDCLinkFlowIntegerDefinition1(i_tradePeriod)                                    'Definition of the integer HVDC link flow variable (3.8.2a)'
-  HVDCLinkFlowIntegerDefinition2(i_tradePeriod,i_flowDirection)                    'Definition of the integer HVDC link flow variable (3.8.2b)'
+  HVDCLinkMaximumFlow(tp,i_branch)                                      'Maximum flow on each HVDC link (3.2.1.1)'
+  HVDCLinkLossDefinition(tp,i_branch)                                   'Definition of losses on the HVDC link (3.2.1.2)'
+  HVDCLinkFlowDefinition(tp,i_branch)                                   'Definition of MW flow on the HVDC link (3.2.1.3)'
+  HVDCLinkFlowIntegerDefinition1(tp)                                    'Definition of the integer HVDC link flow variable (3.8.2a)'
+  HVDCLinkFlowIntegerDefinition2(tp,i_flowDirection)                    'Definition of the integer HVDC link flow variable (3.8.2b)'
 * RDN - Additional constraints for the intra-pole circulating branch flows
-  HVDCLinkFlowIntegerDefinition3(i_tradePeriod,pole)                               'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2c)'
-  HVDCLinkFlowIntegerDefinition4(i_tradePeriod,pole,i_flowDirection)               'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2d)'
+  HVDCLinkFlowIntegerDefinition3(tp,pole)                               'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2c)'
+  HVDCLinkFlowIntegerDefinition4(tp,pole,i_flowDirection)               'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2d)'
 
-  LambdaDefinition(i_tradePeriod,i_branch)                                         'Definition of weighting factor (3.2.1.4)'
-  LambdaIntegerDefinition1(i_tradePeriod,i_branch)                                 'Definition of weighting factor when branch integer constraints are needed (3.8.3a)'
-  LambdaIntegerDefinition2(i_tradePeriod,i_branch,i_lossSegment)                   'Definition of weighting factor when branch integer constraints are needed (3.8.3b)'
+  LambdaDefinition(tp,i_branch)                                         'Definition of weighting factor (3.2.1.4)'
+  LambdaIntegerDefinition1(tp,i_branch)                                 'Definition of weighting factor when branch integer constraints are needed (3.8.3a)'
+  LambdaIntegerDefinition2(tp,i_branch,i_lossSegment)                   'Definition of weighting factor when branch integer constraints are needed (3.8.3b)'
 
-  DCNodeNetInjection(i_tradePeriod,i_bus)                                          'Definition of the net injection at buses corresponding to HVDC nodes (3.2.1.6)'
-  ACnodeNetInjectionDefinition1(i_tradePeriod,i_bus)                               '1st definition of the net injection at buses corresponding to AC nodes (3.3.1.1)'
-  ACnodeNetInjectionDefinition2(i_tradePeriod,i_bus)                               '2nd definition of the net injection at buses corresponding to AC nodes (3.3.1.2)'
-  ACBranchMaximumFlow(i_tradePeriod,i_branch,i_flowDirection)                      'Maximum flow on the AC branch (3.3.1.3)'
-  ACBranchFlowDefinition(i_tradePeriod,i_branch)                                   'Relationship between directed and undirected branch flow variables (3.3.1.4)'
-  LinearLoadFlow(i_tradePeriod,i_branch)                                           'Equation that describes the linear load flow (3.3.1.5)'
-  ACBranchBlockLimit(i_tradePeriod,i_branch,i_lossSegment,i_flowDirection)         'Limit on each AC branch flow block (3.3.1.6)'
-  ACDirectedBranchFlowDefinition(i_tradePeriod,i_branch,i_flowDirection)           'Composition of the directed branch flow from the block branch flow (3.3.1.7)'
-  ACBranchLossCalculation(i_tradePeriod,i_branch,i_lossSegment,i_flowDirection)    'Calculation of the losses in each loss segment (3.3.1.8)'
-  ACDirectedBranchLossDefinition(i_tradePeriod,i_branch,i_flowDirection)           'Composition of the directed branch losses from the block branch losses (3.3.1.9)'
-  ACDirectedBranchFlowIntegerDefinition1(i_tradePeriod,i_branch)                   'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)'
-  ACDirectedBranchFlowIntegerDefinition2(i_tradePeriod,i_branch,i_flowDirection)   'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)'
+  DCNodeNetInjection(tp,i_bus)                                          'Definition of the net injection at buses corresponding to HVDC nodes (3.2.1.6)'
+  ACnodeNetInjectionDefinition1(tp,i_bus)                               '1st definition of the net injection at buses corresponding to AC nodes (3.3.1.1)'
+  ACnodeNetInjectionDefinition2(tp,i_bus)                               '2nd definition of the net injection at buses corresponding to AC nodes (3.3.1.2)'
+  ACBranchMaximumFlow(tp,i_branch,i_flowDirection)                      'Maximum flow on the AC branch (3.3.1.3)'
+  ACBranchFlowDefinition(tp,i_branch)                                   'Relationship between directed and undirected branch flow variables (3.3.1.4)'
+  LinearLoadFlow(tp,i_branch)                                           'Equation that describes the linear load flow (3.3.1.5)'
+  ACBranchBlockLimit(tp,i_branch,i_lossSegment,i_flowDirection)         'Limit on each AC branch flow block (3.3.1.6)'
+  ACDirectedBranchFlowDefinition(tp,i_branch,i_flowDirection)           'Composition of the directed branch flow from the block branch flow (3.3.1.7)'
+  ACBranchLossCalculation(tp,i_branch,i_lossSegment,i_flowDirection)    'Calculation of the losses in each loss segment (3.3.1.8)'
+  ACDirectedBranchLossDefinition(tp,i_branch,i_flowDirection)           'Composition of the directed branch losses from the block branch losses (3.3.1.9)'
+  ACDirectedBranchFlowIntegerDefinition1(tp,i_branch)                   'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)'
+  ACDirectedBranchFlowIntegerDefinition2(tp,i_branch,i_flowDirection)   'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)'
 * Risk and Reserve
-  HVDCIslandRiskCalculation(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                     'Calculation of the island risk for a DCCE and DCECE (3.4.1.1)'
-  HVDCRecCalculation(i_tradePeriod,i_island)                                                       'Calculation of the net received HVDC MW flow into an island (3.4.1.5)'
-  GenIslandRiskCalculation(i_tradePeriod,i_island,i_offer,i_reserveClass,i_riskClass)              'Calculation of the island risk for risk setting generators (3.4.1.6)'
-  ManualIslandRiskCalculation(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                   'Calculation of the island risk based on manual specifications (3.4.1.7)'
-  PLSRReserveProportionMaximum(i_tradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType)    'Maximum PLSR as a proportion of the block MW (3.4.2.1)'
-  ReserveOfferDefinition(i_tradePeriod,i_offer,i_reserveClass,i_reserveType)                       'Definition of the reserve offers of different classes and types (3.4.2.3a)'
-  ReserveDefinitionPurchaseBid(i_tradePeriod,i_bid,i_reserveClass)                                 'Definition of the ILR reserve provided by purchase bids (3.4.2.3b)'
-  EnergyAndReserveMaximum(i_tradePeriod,i_offer,i_reserveClass)                                    'Definition of maximum energy and reserves from each generator (3.4.2.4)'
-  PurchaseBidReserveMaximum(i_tradePeriod,i_bid,i_reserveClass)                                    'Maximum ILR provided by purchase bids (3.4.2.5)'
-  MaximumIslandRiskDefinition(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                   'Definition of the maximum risk in each island (3.4.3.1)'
-  SupplyDemandReserveRequirement(i_tradePeriod,i_island,i_reserveClass)                            'Matching of reserve supply and demand (3.4.3.2)'
+  HVDCIslandRiskCalculation(tp,i_island,i_reserveClass,i_riskClass)                     'Calculation of the island risk for a DCCE and DCECE (3.4.1.1)'
+  HVDCRecCalculation(tp,i_island)                                                       'Calculation of the net received HVDC MW flow into an island (3.4.1.5)'
+  GenIslandRiskCalculation(tp,i_island,o,i_reserveClass,i_riskClass)              'Calculation of the island risk for risk setting generators (3.4.1.6)'
+  ManualIslandRiskCalculation(tp,i_island,i_reserveClass,i_riskClass)                   'Calculation of the island risk based on manual specifications (3.4.1.7)'
+  PLSRReserveProportionMaximum(tp,o,trdBlk,i_reserveClass,i_reserveType)    'Maximum PLSR as a proportion of the block MW (3.4.2.1)'
+  ReserveOfferDefinition(tp,o,i_reserveClass,i_reserveType)                       'Definition of the reserve offers of different classes and types (3.4.2.3a)'
+  ReserveDefinitionPurchaseBid(tp,i_bid,i_reserveClass)                                 'Definition of the ILR reserve provided by purchase bids (3.4.2.3b)'
+  EnergyAndReserveMaximum(tp,o,i_reserveClass)                                    'Definition of maximum energy and reserves from each generator (3.4.2.4)'
+  PurchaseBidReserveMaximum(tp,i_bid,i_reserveClass)                                    'Maximum ILR provided by purchase bids (3.4.2.5)'
+  MaximumIslandRiskDefinition(tp,i_island,i_reserveClass,i_riskClass)                   'Definition of the maximum risk in each island (3.4.3.1)'
+  SupplyDemandReserveRequirement(tp,i_island,i_reserveClass)                            'Matching of reserve supply and demand (3.4.3.2)'
 * RDN - Risk calculation for generators with more than one offer - Primary and secondary offers
-  GenIslandRiskCalculation_NonPS(i_tradePeriod,i_island,i_offer,i_reserveClass,i_riskClass)        'Calculation of the island risk for risk setting generators with only one offer (3.4.1.6)'
-  GenIslandRiskCalculation_PS(i_tradePeriod,i_island,i_offer,i_reserveClass,i_riskClass)           'Calculation of the island risk for risk setting generators with more than one offer (3.4.1.6)'
+  GenIslandRiskCalculation_NonPS(tp,i_island,o,i_reserveClass,i_riskClass)        'Calculation of the island risk for risk setting generators with only one offer (3.4.1.6)'
+  GenIslandRiskCalculation_PS(tp,i_island,o,i_reserveClass,i_riskClass)           'Calculation of the island risk for risk setting generators with more than one offer (3.4.1.6)'
 * RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* RiskOffSetCalculationApproximation(i_tradePeriod,i_island,i_reserveClass,i_riskClass)            'Approximate calculation of the risk offset variable.  This will be used when the i_useMixedConstraint flag is false'
-  RiskOffsetCalculation_DCCE(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                    'Calculation of the risk offset variable for the DCCE risk class.  This will be used when the i_useMixedConstraint flag is false (3.4.1.2)'
-  RiskOffsetCalculation_DCECE(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                   'Calculation of the risk offset variable for the DCECE risk class.  This will be used when the i_useMixedConstraint flag is false (3.4.1.4)'
-  RiskOffsetCalculation(i_tradePeriod,i_type1MixedConstraint,i_island,i_reserveClass,i_riskClass)  'Risk offset definition. This will be used when the i_useMixedConstraint flag is true (3.4.1.5 - v4.4)'
+* RiskOffSetCalculationApproximation(tp,i_island,i_reserveClass,i_riskClass)            'Approximate calculation of the risk offset variable.  This will be used when the i_useMixedConstraint flag is false'
+  RiskOffsetCalculation_DCCE(tp,i_island,i_reserveClass,i_riskClass)                    'Calculation of the risk offset variable for the DCCE risk class.  This will be used when the i_useMixedConstraint flag is false (3.4.1.2)'
+  RiskOffsetCalculation_DCECE(tp,i_island,i_reserveClass,i_riskClass)                   'Calculation of the risk offset variable for the DCECE risk class.  This will be used when the i_useMixedConstraint flag is false (3.4.1.4)'
+  RiskOffsetCalculation(tp,i_type1MixedConstraint,i_island,i_reserveClass,i_riskClass)  'Risk offset definition. This will be used when the i_useMixedConstraint flag is true (3.4.1.5 - v4.4)'
 * RDN - Need to seperate the maximum island risk definition constraint to support the different CVPs defined for CE and ECE
-  MaximumIslandRiskDefinition_CE(i_tradePeriod,i_island,i_reserveClass,i_riskClass)                'Definition of the maximum CE risk in each island (3.4.3.1a)'
-  MaximumIslandRiskDefinition_ECE(i_tradePeriod,i_island,i_reserveClass,i_riskClass)               'Definition of the maximum ECE risk in each island (3.4.3.1b)'
+  MaximumIslandRiskDefinition_CE(tp,i_island,i_reserveClass,i_riskClass)                'Definition of the maximum CE risk in each island (3.4.3.1a)'
+  MaximumIslandRiskDefinition_ECE(tp,i_island,i_reserveClass,i_riskClass)               'Definition of the maximum ECE risk in each island (3.4.3.1b)'
 * RDN - HVDC secondary risk calculation
-  HVDCIslandSecRiskCalculation_GEN(i_tradePeriod,i_island,i_offer,i_reserveClass,i_riskClass)      'Calculation of the island risk for an HVDC secondary risk to an AC risk (3.4.1.8)'
-  HVDCIslandSecRiskCalculation_Manual(i_tradePeriod,i_island,i_reserveClass,i_riskClass)           'Calculation of the island risk for an HVDC secondary risk to a manual risk (3.4.1.9)'
+  HVDCIslandSecRiskCalculation_GEN(tp,i_island,o,i_reserveClass,i_riskClass)      'Calculation of the island risk for an HVDC secondary risk to an AC risk (3.4.1.8)'
+  HVDCIslandSecRiskCalculation_Manual(tp,i_island,i_reserveClass,i_riskClass)           'Calculation of the island risk for an HVDC secondary risk to a manual risk (3.4.1.9)'
 * RDN - HVDC secondary risk calculation for generators with more than one offer - Primary and secondary offers
-  HVDCIslandSecRiskCalculation_GEN_NonPS(i_tradePeriod,i_island,i_offer,i_reserveClass,i_riskClass)
-  HVDCIslandSecRiskCalculation_GEN_PS(i_tradePeriod,i_island,i_offer,i_reserveClass,i_riskClass)
+  HVDCIslandSecRiskCalculation_GEN_NonPS(tp,i_island,o,i_reserveClass,i_riskClass)
+  HVDCIslandSecRiskCalculation_GEN_PS(tp,i_island,o,i_reserveClass,i_riskClass)
 * Branch security constraints
-  BranchSecurityConstraintLE(i_tradePeriod,i_branchConstraint)                           'Branch security constraint with LE sense (3.5.1.5a)'
-  BranchSecurityConstraintGE(i_tradePeriod,i_branchConstraint)                           'Branch security constraint with GE sense (3.5.1.5b)'
-  BranchSecurityConstraintEQ(i_tradePeriod,i_branchConstraint)                           'Branch security constraint with EQ sense (3.5.1.5c)'
+  BranchSecurityConstraintLE(tp,i_branchConstraint)                           'Branch security constraint with LE sense (3.5.1.5a)'
+  BranchSecurityConstraintGE(tp,i_branchConstraint)                           'Branch security constraint with GE sense (3.5.1.5b)'
+  BranchSecurityConstraintEQ(tp,i_branchConstraint)                           'Branch security constraint with EQ sense (3.5.1.5c)'
 * AC node security constraints
-  ACnodeSecurityConstraintLE(i_tradePeriod,i_ACnodeConstraint)                           'AC node security constraint with LE sense (3.5.1.6a)'
-  ACnodeSecurityConstraintGE(i_tradePeriod,i_ACnodeConstraint)                           'AC node security constraint with GE sense (3.5.1.6b)'
-  ACnodeSecurityConstraintEQ(i_tradePeriod,i_ACnodeConstraint)                           'AC node security constraint with EQ sense (3.5.1.6c)'
+  ACnodeSecurityConstraintLE(tp,i_ACnodeConstraint)                           'AC node security constraint with LE sense (3.5.1.6a)'
+  ACnodeSecurityConstraintGE(tp,i_ACnodeConstraint)                           'AC node security constraint with GE sense (3.5.1.6b)'
+  ACnodeSecurityConstraintEQ(tp,i_ACnodeConstraint)                           'AC node security constraint with EQ sense (3.5.1.6c)'
 * Market node security constraints
-  MNodeSecurityConstraintLE(i_tradePeriod,i_MNodeConstraint)                             'Market node security constraint with LE sense (3.5.1.7a)'
-  MNodeSecurityConstraintGE(i_tradePeriod,i_MNodeConstraint)                             'Market node security constraint with GE sense (3.5.1.7b)'
-  MNodeSecurityConstraintEQ(i_tradePeriod,i_MNodeConstraint)                             'Market node security constraint with EQ sense (3.5.1.7c)'
+  MNodeSecurityConstraintLE(tp,i_MNodeConstraint)                             'Market node security constraint with LE sense (3.5.1.7a)'
+  MNodeSecurityConstraintGE(tp,i_MNodeConstraint)                             'Market node security constraint with GE sense (3.5.1.7b)'
+  MNodeSecurityConstraintEQ(tp,i_MNodeConstraint)                             'Market node security constraint with EQ sense (3.5.1.7c)'
 * Mixed constraints
-  Type1MixedConstraintLE(i_tradePeriod,i_type1MixedConstraint)                           'Type 1 mixed constraint definition with LE sense (3.6.1.1a)'
-  Type1MixedConstraintGE(i_tradePeriod,i_type1MixedConstraint)                           'Type 1 mixed constraint definition with GE sense (3.6.1.1b)'
-  Type1MixedConstraintEQ(i_tradePeriod,i_type1MixedConstraint)                           'Type 1 mixed constraint definition with EQ sense (3.6.1.1c)'
-  Type2MixedConstraintLE(i_tradePeriod,i_type2MixedConstraint)                           'Type 2 mixed constraint definition with LE sense (3.6.1.2a)'
-  Type2MixedConstraintGE(i_tradePeriod,i_type2MixedConstraint)                           'Type 2 mixed constraint definition with GE sense (3.6.1.2b)'
-  Type2MixedConstraintEQ(i_tradePeriod,i_type2MixedConstraint)                           'Type 2 mixed constraint definition with EQ sense (3.6.1.2c)'
-  Type1MixedConstraintLE_MIP(i_tradePeriod,i_type1MixedConstraint)                       'Integer equivalent of type 1 mixed constraint definition with LE sense (3.6.1.1a_MIP)'
-  Type1MixedConstraintGE_MIP(i_tradePeriod,i_type1MixedConstraint)                       'Integer equivalent of type 1 mixed constraint definition with GE sense (3.6.1.1b_MIP)'
-  Type1MixedConstraintEQ_MIP(i_tradePeriod,i_type1MixedConstraint)                       'Integer equivalent of type 1 mixed constraint definition with EQ sense (3.6.1.1c_MIP)'
-  Type1MixedConstraintMIP(i_tradePeriod,i_type1MixedConstraint,i_branch)                 'Type 1 mixed constraint definition of alternate limit selection (integer)'
+  Type1MixedConstraintLE(tp,i_type1MixedConstraint)                           'Type 1 mixed constraint definition with LE sense (3.6.1.1a)'
+  Type1MixedConstraintGE(tp,i_type1MixedConstraint)                           'Type 1 mixed constraint definition with GE sense (3.6.1.1b)'
+  Type1MixedConstraintEQ(tp,i_type1MixedConstraint)                           'Type 1 mixed constraint definition with EQ sense (3.6.1.1c)'
+  Type2MixedConstraintLE(tp,i_type2MixedConstraint)                           'Type 2 mixed constraint definition with LE sense (3.6.1.2a)'
+  Type2MixedConstraintGE(tp,i_type2MixedConstraint)                           'Type 2 mixed constraint definition with GE sense (3.6.1.2b)'
+  Type2MixedConstraintEQ(tp,i_type2MixedConstraint)                           'Type 2 mixed constraint definition with EQ sense (3.6.1.2c)'
+  Type1MixedConstraintLE_MIP(tp,i_type1MixedConstraint)                       'Integer equivalent of type 1 mixed constraint definition with LE sense (3.6.1.1a_MIP)'
+  Type1MixedConstraintGE_MIP(tp,i_type1MixedConstraint)                       'Integer equivalent of type 1 mixed constraint definition with GE sense (3.6.1.1b_MIP)'
+  Type1MixedConstraintEQ_MIP(tp,i_type1MixedConstraint)                       'Integer equivalent of type 1 mixed constraint definition with EQ sense (3.6.1.1c_MIP)'
+  Type1MixedConstraintMIP(tp,i_type1MixedConstraint,i_branch)                 'Type 1 mixed constraint definition of alternate limit selection (integer)'
 * Generic constraints
-  GenericSecurityConstraintLE(i_tradePeriod,i_genericConstraint)                         'Generic security constraint with LE sense'
-  GenericSecurityConstraintGE(i_tradePeriod,i_genericConstraint)                         'Generic security constraint with GE sense'
-  GenericSecurityConstraintEQ(i_tradePeriod,i_genericConstraint)                         'Generic security constraint with EQ sense'
+  GenericSecurityConstraintLE(tp,i_genericConstraint)                         'Generic security constraint with LE sense'
+  GenericSecurityConstraintGE(tp,i_genericConstraint)                         'Generic security constraint with GE sense'
+  GenericSecurityConstraintEQ(tp,i_genericConstraint)                         'Generic security constraint with EQ sense'
 * Violation cost
   TotalViolationCostDefinition                                                           'Defined as the sum of the individual violation costs'
   ;
@@ -661,7 +659,7 @@ TOTALPENALTYCOST =e=
 * Definition of generation provided by an offer (3.1.1.2)
 GenerationOfferDefintion(Offer)..
 GENERATION(Offer) =e=
-sum(validGenerationOfferBlock(Offer,i_tradeBlock), GENERATIONBLOCK(Offer,i_tradeBlock))
+sum(validGenerationOfferBlock(Offer,trdBlk), GENERATIONBLOCK(Offer,trdBlk))
   ;
 
 * RDN - Change to demand bid
@@ -670,7 +668,7 @@ sum(validGenerationOfferBlock(Offer,i_tradeBlock), GENERATIONBLOCK(Offer,i_trade
 * RDN - Change to demand bid - End
 PurchaseBidDefintion(Bid)..
 PURCHASE(Bid) =e=
-sum(ValidPurchaseBidBlock(Bid,i_tradeBlock), PURCHASEBLOCK(Bid,i_tradeBlock))
+sum(ValidPurchaseBidBlock(Bid,trdBlk), PURCHASEBLOCK(Bid,trdBlk))
   ;
 
 * Maximum flow on each HVDC link (3.2.1.1)
@@ -754,7 +752,7 @@ ACnodeNETINJECTION(currentTradePeriod,i_bus) =e=
 * 2nd definition of the net injection at buses corresponding to AC nodes (3.3.1.2)
 ACnodeNetInjectionDefinition2(ACBus(currentTradePeriod,i_bus))..
 ACnodeNETINJECTION(currentTradePeriod,i_bus) =e=
-  sum(offerNode(currentTradePeriod,i_offer,i_node) $ NodeBus(currentTradePeriod,i_node,i_bus), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION(currentTradePeriod,i_offer))
+  sum(offerNode(currentTradePeriod,o,i_node) $ NodeBus(currentTradePeriod,i_node,i_bus), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION(currentTradePeriod,o))
 - sum(BidNode(currentTradePeriod,i_bid,i_node) $ NodeBus(currentTradePeriod,i_node,i_bus), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * PURCHASE(currentTradePeriod,i_bid))
 - sum(NodeBus(currentTradePeriod,i_node,i_bus), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * NodeDemand(currentTradePeriod,i_node))
 + DEFICITBUSGENERATION(currentTradePeriod,i_bus) - SURPLUSBUSGENERATION(currentTradePeriod,i_bus)
@@ -848,16 +846,16 @@ GenerationEndDown(PositiveEnergyOffer)
 
 * RDN - Maximum movement of the primary offer that has a secondary offer upwards due to up ramp rate (3.7.1.1)
 * Define this constraint over positive energy offers
-GenerationRampUp_PS(currentTradePeriod,i_offer) $ (PositiveEnergyOffer(currentTradePeriod,i_offer) and HasSecondaryOffer(currentTradePeriod,i_offer))..
-GENERATION(currentTradePeriod,i_offer) + sum(i_offer1 $ PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), GENERATION(currentTradePeriod,i_offer1)) - DEFICITRAMPRATE(currentTradePeriod,i_offer) =l=
-GenerationEndUp(currentTradePeriod,i_offer)
+GenerationRampUp_PS(currentTradePeriod,o) $ (PositiveEnergyOffer(currentTradePeriod,o) and HasSecondaryOffer(currentTradePeriod,o))..
+GENERATION(currentTradePeriod,o) + sum(o1 $ PrimarySecondaryOffer(currentTradePeriod,o,o1), GENERATION(currentTradePeriod,o1)) - DEFICITRAMPRATE(currentTradePeriod,o) =l=
+GenerationEndUp(currentTradePeriod,o)
   ;
 
 * RDN - Maximum movement of the primary offer that has a secondary offer downwards due to down ramp rate (3.7.1.2)
 * Define this constraint over positive energy offers
-GenerationRampDown_PS(currentTradePeriod,i_offer) $ (PositiveEnergyOffer(currentTradePeriod,i_offer) and HasSecondaryOffer(currentTradePeriod,i_offer))..
-GENERATION(currentTradePeriod,i_offer) + sum(i_offer1 $ PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), GENERATION(currentTradePeriod,i_offer1)) + SURPLUSRAMPRATE(currentTradePeriod,i_offer) =g=
-GenerationEndDown(currentTradePeriod,i_offer)
+GenerationRampDown_PS(currentTradePeriod,o) $ (PositiveEnergyOffer(currentTradePeriod,o) and HasSecondaryOffer(currentTradePeriod,o))..
+GENERATION(currentTradePeriod,o) + sum(o1 $ PrimarySecondaryOffer(currentTradePeriod,o,o1), GENERATION(currentTradePeriod,o1)) + SURPLUSRAMPRATE(currentTradePeriod,o) =g=
+GenerationEndDown(currentTradePeriod,o)
   ;
 
 * RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
@@ -913,27 +911,27 @@ HVDCREC(currentTradePeriod,i_island) =e=
   ;
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
-GenIslandRiskCalculation(currentTradePeriod,i_island,i_offer,i_reserveClass,GenRisk) $ ((not (UsePrimSecGenRiskModel)) and IslandRiskGenerator(currentTradePeriod,i_island,i_offer))..
+GenIslandRiskCalculation(currentTradePeriod,i_island,o,i_reserveClass,GenRisk) $ ((not (UsePrimSecGenRiskModel)) and IslandRiskGenerator(currentTradePeriod,i_island,o))..
 ISLANDRISK(currentTradePeriod,i_island,i_reserveClass,GenRisk) =g=
 * RDN - Include FKBand into the calculation of the generator risk and replace RISKOFFSET variable by FreeReserve parameter. The FreeReserve parameter is the same as the RiskOffsetParameter.
-* IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * (GENERATION(currentTradePeriod,i_offer) - RISKOFFSET(currentTradePeriod,i_island,i_reserveClass,GenRisk) + sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) )
-IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * (GENERATION(currentTradePeriod,i_offer) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk) + FKBand(currentTradePeriod,i_offer) + sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) )
+* IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * (GENERATION(currentTradePeriod,o) - RISKOFFSET(currentTradePeriod,i_island,i_reserveClass,GenRisk) + sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)) )
+IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * (GENERATION(currentTradePeriod,o) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk) + FKBand(currentTradePeriod,o) + sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)) )
   ;
 
 *-----------------------------------------------
 * Calculation of the island risk for risk setting generators (3.4.1.6)
 * RDN - Generator island risk calculation with single offer
-GenIslandRiskCalculation_NonPS(currentTradePeriod,i_island,i_offer,i_reserveClass,GenRisk) $ (UsePrimSecGenRiskModel and IslandRiskGenerator(currentTradePeriod,i_island,i_offer) and (not (HasSecondaryOffer(currentTradePeriod,i_offer) or HasPrimaryOffer(currentTradePeriod,i_offer))))..
+GenIslandRiskCalculation_NonPS(currentTradePeriod,i_island,o,i_reserveClass,GenRisk) $ (UsePrimSecGenRiskModel and IslandRiskGenerator(currentTradePeriod,i_island,o) and (not (HasSecondaryOffer(currentTradePeriod,o) or HasPrimaryOffer(currentTradePeriod,o))))..
 ISLANDRISK(currentTradePeriod,i_island,i_reserveClass,GenRisk) =g=
-IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * (GENERATION(currentTradePeriod,i_offer) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk) + FKBand(currentTradePeriod,i_offer) + sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) )
+IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * (GENERATION(currentTradePeriod,o) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk) + FKBand(currentTradePeriod,o) + sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)) )
   ;
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
 * RDN - Risk calculation for generators with more than one offer - Primary and secondary offers
-GenIslandRiskCalculation_PS(currentTradePeriod,i_island,i_offer,i_reserveClass,GenRisk) $ (UsePrimSecGenRiskModel and IslandRiskGenerator(currentTradePeriod,i_island,i_offer) and HasSecondaryOffer(currentTradePeriod,i_offer))..
+GenIslandRiskCalculation_PS(currentTradePeriod,i_island,o,i_reserveClass,GenRisk) $ (UsePrimSecGenRiskModel and IslandRiskGenerator(currentTradePeriod,i_island,o) and HasSecondaryOffer(currentTradePeriod,o))..
 ISLANDRISK(currentTradePeriod,i_island,i_reserveClass,GenRisk) =g=
-IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * ((GENERATION(currentTradePeriod,i_offer) + sum(i_offer1 $ PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), GENERATION(currentTradePeriod,i_offer1))) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk) + FKBand(currentTradePeriod,i_offer)
-+ (sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) + sum((i_offer1,i_reserveType) $ PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), RESERVE(currentTradePeriod,i_offer1,i_reserveClass,i_reserveType))) )
+IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * ((GENERATION(currentTradePeriod,o) + sum(o1 $ PrimarySecondaryOffer(currentTradePeriod,o,o1), GENERATION(currentTradePeriod,o1))) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk) + FKBand(currentTradePeriod,o)
++ (sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)) + sum((o1,i_reserveType) $ PrimarySecondaryOffer(currentTradePeriod,o,o1), RESERVE(currentTradePeriod,o1,i_reserveClass,i_reserveType))) )
   ;
 *-----------------------------------------------
 
@@ -947,24 +945,24 @@ IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,ManualRisk
 
 * RDN - HVDC secondary risk calculation including the FKBand for generator primary risk
 * Calculation of the island risk for an HVDC secondary risk to a generator risk (3.4.1.8)
-HVDCIslandSecRiskCalculation_GEN(currentTradePeriod,i_island,i_offer,i_reserveClass,HVDCSecRisk) $ ((not (UsePrimSecGenRiskModel)) and HVDCSecRiskEnabled(currentTradePeriod,i_island,HVDCSecRisk) and IslandRiskGenerator(currentTradePeriod,i_island,i_offer))..
+HVDCIslandSecRiskCalculation_GEN(currentTradePeriod,i_island,o,i_reserveClass,HVDCSecRisk) $ ((not (UsePrimSecGenRiskModel)) and HVDCSecRiskEnabled(currentTradePeriod,i_island,HVDCSecRisk) and IslandRiskGenerator(currentTradePeriod,i_island,o))..
 ISLANDRISK(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) * (GENERATION(currentTradePeriod,i_offer) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) + HVDCREC(currentTradePeriod,i_island) - HVDCSecRiskSubtractor(currentTradePeriod,i_island) + FKBand(currentTradePeriod,i_offer) + sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)))
+IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) * (GENERATION(currentTradePeriod,o) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) + HVDCREC(currentTradePeriod,i_island) - HVDCSecRiskSubtractor(currentTradePeriod,i_island) + FKBand(currentTradePeriod,o) + sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)))
   ;
 
 *-----------------------------------------------
 * Calculation of the island risk for an HVDC secondary risk to a generator risk (3.4.1.8)
-HVDCIslandSecRiskCalculation_GEN_NonPS(currentTradePeriod,i_island,i_offer,i_reserveClass,HVDCSecRisk) $ (UsePrimSecGenRiskModel and HVDCSecRiskEnabled(currentTradePeriod,i_island,HVDCSecRisk) and IslandRiskGenerator(currentTradePeriod,i_island,i_offer) and (not (HasSecondaryOffer(currentTradePeriod,i_offer) or HasPrimaryOffer(currentTradePeriod,i_offer))))..
+HVDCIslandSecRiskCalculation_GEN_NonPS(currentTradePeriod,i_island,o,i_reserveClass,HVDCSecRisk) $ (UsePrimSecGenRiskModel and HVDCSecRiskEnabled(currentTradePeriod,i_island,HVDCSecRisk) and IslandRiskGenerator(currentTradePeriod,i_island,o) and (not (HasSecondaryOffer(currentTradePeriod,o) or HasPrimaryOffer(currentTradePeriod,o))))..
 ISLANDRISK(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) * (GENERATION(currentTradePeriod,i_offer) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) + HVDCREC(currentTradePeriod,i_island) - HVDCSecRiskSubtractor(currentTradePeriod,i_island) + FKBand(currentTradePeriod,i_offer) + sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)))
+IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) * (GENERATION(currentTradePeriod,o) - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) + HVDCREC(currentTradePeriod,i_island) - HVDCSecRiskSubtractor(currentTradePeriod,i_island) + FKBand(currentTradePeriod,o) + sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)))
   ;
 
 * Calculation of the island risk for an HVDC secondary risk to a generator risk (3.4.1.8)
-HVDCIslandSecRiskCalculation_GEN_PS(currentTradePeriod,i_island,i_offer,i_reserveClass,HVDCSecRisk) $ (UsePrimSecGenRiskModel and HVDCSecRiskEnabled(currentTradePeriod,i_island,HVDCSecRisk) and IslandRiskGenerator(currentTradePeriod,i_island,i_offer) and HasSecondaryOffer(currentTradePeriod,i_offer))..
+HVDCIslandSecRiskCalculation_GEN_PS(currentTradePeriod,i_island,o,i_reserveClass,HVDCSecRisk) $ (UsePrimSecGenRiskModel and HVDCSecRiskEnabled(currentTradePeriod,i_island,HVDCSecRisk) and IslandRiskGenerator(currentTradePeriod,i_island,o) and HasSecondaryOffer(currentTradePeriod,o))..
 ISLANDRISK(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) * ((GENERATION(currentTradePeriod,i_offer) + sum(i_offer1 $ PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), GENERATION(currentTradePeriod,i_offer1)))
-- FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) + HVDCREC(currentTradePeriod,i_island) - HVDCSecRiskSubtractor(currentTradePeriod,i_island) + FKBand(currentTradePeriod,i_offer)
-+ (sum(i_reserveType, RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) + sum((i_offer1,i_reserveType) $ PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), RESERVE(currentTradePeriod,i_offer1,i_reserveClass,i_reserveType))) )
+IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) * ((GENERATION(currentTradePeriod,o) + sum(o1 $ PrimarySecondaryOffer(currentTradePeriod,o,o1), GENERATION(currentTradePeriod,o1)))
+- FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCSecRisk) + HVDCREC(currentTradePeriod,i_island) - HVDCSecRiskSubtractor(currentTradePeriod,i_island) + FKBand(currentTradePeriod,o)
++ (sum(i_reserveType, RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType)) + sum((o1,i_reserveType) $ PrimarySecondaryOffer(currentTradePeriod,o,o1), RESERVE(currentTradePeriod,o1,i_reserveClass,i_reserveType))) )
   ;
 *-----------------------------------------------
 
@@ -976,21 +974,21 @@ IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCSecRis
   ;
 
 * Maximum PLSR as a proportion of the block MW (3.4.2.1)
-PLSRReserveProportionMaximum(validReserveOfferBlock(Offer,i_tradeBlock,i_reserveClass,PLSRReserveType))..
-RESERVEBLOCK(Offer,i_tradeBlock,i_reserveClass,PLSRReserveType) =l=
-ReserveOfferProportion(Offer,i_tradeBlock,i_reserveClass) * GENERATION(Offer)
+PLSRReserveProportionMaximum(validReserveOfferBlock(Offer,trdBlk,i_reserveClass,PLSRReserveType))..
+RESERVEBLOCK(Offer,trdBlk,i_reserveClass,PLSRReserveType) =l=
+ReserveOfferProportion(Offer,trdBlk,i_reserveClass) * GENERATION(Offer)
   ;
 
 * Definition of the reserve offers of different classes and types (3.4.2.3a)
 ReserveOfferDefinition(Offer,i_reserveClass,i_reserveType)..
 RESERVE(Offer,i_reserveClass,i_reserveType) =e=
-sum(i_tradeBlock, RESERVEBLOCK(Offer,i_tradeBlock,i_reserveClass,i_reserveType))
+sum(trdBlk, RESERVEBLOCK(Offer,trdBlk,i_reserveClass,i_reserveType))
   ;
 
 * Definition of the ILR reserve provided by purchase bids (3.4.2.3b)
 ReserveDefinitionPurchaseBid(Bid,i_reserveClass)..
 PURCHASEILR(Bid,i_reserveClass) =e=
-sum(i_tradeBlock, PURCHASEILRBLOCK(Bid,i_tradeBlock,i_reserveClass))
+sum(trdBlk, PURCHASEILRBLOCK(Bid,trdBlk,i_reserveClass))
   ;
 
 * Definition of maximum energy and reserves from each generator (3.4.2.4)
@@ -1039,7 +1037,7 @@ MAXISLANDRISK(currentTradePeriod,i_island,i_reserveClass) + DEFICITRESERVE_ECE(c
 * Matching of reserve supply and demand (3.4.3.2)
 SupplyDemandReserveRequirement(currentTradePeriod,i_island,i_reserveClass) $ i_useReserveModel..
 MAXISLANDRISK(currentTradePeriod,i_island,i_reserveClass) - (DEFICITRESERVE(currentTradePeriod,i_island,i_reserveClass) $ (not DiffCeECeCVP)) =l=
-  sum((i_offer,i_reserveType) $ (Offer(currentTradePeriod,i_offer) and IslandOffer(currentTradePeriod,i_island,i_offer)), RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum((o,i_reserveType) $ (Offer(currentTradePeriod,o) and IslandOffer(currentTradePeriod,i_island,o)), RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ (Bid(currentTradePeriod,i_bid) and IslandBid(currentTradePeriod,i_island,i_bid)), PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
   ;
 
@@ -1093,12 +1091,12 @@ ACnodeConstraintLimit(currentTradePeriod,i_ACnodeConstraint)
 * Market node security constraint with LE sense (3.5.1.7a)
 MNodeSecurityConstraintLE(currentTradePeriod,i_MNodeConstraint) $ (MNodeConstraintSense(currentTradePeriod,i_MNodeConstraint) = -1)..
 * RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* sum(i_offer, MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* sum(o, MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 * + sum(i_bid, MNodeEnergyBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 * + sum((i_bid,i_reserveClass), MNodeILReserveBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
-  sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum(o $ PositiveEnergyOffer(currentTradePeriod,o), MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ Bid(currentTradePeriod,i_bid), MNodeEnergyBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 + sum((i_bid,i_reserveClass) $ Bid(currentTradePeriod,i_bid), MNodeILReserveBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 - SURPLUSMNODECONSTRAINT(currentTradePeriod,i_MNodeConstraint) =l=
@@ -1108,12 +1106,12 @@ MNodeConstraintLimit(currentTradePeriod,i_MNodeConstraint)
 * Market node security constraint with GE sense (3.5.1.7b)
 MNodeSecurityConstraintGE(currentTradePeriod,i_MNodeConstraint) $ (MNodeConstraintSense(currentTradePeriod,i_MNodeConstraint) = 1)..
 * RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* sum(i_offer, MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* sum(o, MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 * + sum(i_bid, MNodeEnergyBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 * + sum((i_bid,i_reserveClass), MNodeILReserveBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
-  sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum(o $ PositiveEnergyOffer(currentTradePeriod,o), MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ Bid(currentTradePeriod,i_bid), MNodeEnergyBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 + sum((i_bid,i_reserveClass) $ Bid(currentTradePeriod,i_bid), MNodeILReserveBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 + DEFICITMNODECONSTRAINT(currentTradePeriod,i_MNodeConstraint) =g=
@@ -1123,12 +1121,12 @@ MNodeConstraintLimit(currentTradePeriod,i_MNodeConstraint)
 * Market node security constraint with EQ sense (3.5.1.7c)
 MNodeSecurityConstraintEQ(currentTradePeriod,i_MNodeConstraint) $ (MNodeConstraintSense(currentTradePeriod,i_MNodeConstraint) = 0)..
 * RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* sum(i_offer, MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* sum(o, MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 * + sum(i_bid, MNodeEnergyBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 * + sum((i_bid,i_reserveClass), MNodeILReserveBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
-  sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum(o $ PositiveEnergyOffer(currentTradePeriod,o), MNodeEnergyOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), MNodeReserveOfferConstraintFactors(currentTradePeriod,i_MNodeConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ Bid(currentTradePeriod,i_bid), MNodeEnergyBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 + sum((i_bid,i_reserveClass) $ Bid(currentTradePeriod,i_bid), MNodeILReserveBidConstraintFactors(currentTradePeriod,i_MNodeConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 + DEFICITMNODECONSTRAINT(currentTradePeriod,i_MNodeConstraint) - SURPLUSMNODECONSTRAINT(currentTradePeriod,i_MNodeConstraint) =e=
@@ -1140,10 +1138,10 @@ MNodeConstraintLimit(currentTradePeriod,i_MNodeConstraint)
 Type1MixedConstraintLE(currentTradePeriod,i_type1MixedConstraint) $ (UseMixedConstraint(currentTradePeriod) and (Type1MixedConstraintSense(currentTradePeriod,i_type1MixedConstraint) = -1) and (not useMixedConstraintMIP(currentTradePeriod)))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currentTradePeriod,i_type1MixedConstraint)
 * RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* + sum(i_offer, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
-+ sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* + sum(o, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
++ sum(o $ PositiveEnergyOffer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_branch $ HVDCLink(currentTradePeriod,i_branch), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,i_branch) * HVDCLINKFLOW(currentTradePeriod,i_branch))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
@@ -1161,10 +1159,10 @@ Type1MixedConstraintLimit1(currentTradePeriod,i_type1MixedConstraint)
 Type1MixedConstraintGE(currentTradePeriod,i_type1MixedConstraint) $ (UseMixedConstraint(currentTradePeriod) and (Type1MixedConstraintSense(currentTradePeriod,i_type1MixedConstraint) = 1) and (not useMixedConstraintMIP(currentTradePeriod)))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currentTradePeriod,i_type1MixedConstraint)
 * RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* + sum(i_offer, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
-+ sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* + sum(o, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
++ sum(o $ PositiveEnergyOffer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_branch $ HVDCLink(currentTradePeriod,i_branch), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,i_branch) * HVDCLINKFLOW(currentTradePeriod,i_branch))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
@@ -1181,10 +1179,10 @@ Type1MixedConstraintLimit1(currentTradePeriod,i_type1MixedConstraint)
 Type1MixedConstraintEQ(currentTradePeriod,i_type1MixedConstraint) $ (UseMixedConstraint(currentTradePeriod) and (Type1MixedConstraintSense(currentTradePeriod,i_type1MixedConstraint) = 0) and (not useMixedConstraintMIP(currentTradePeriod)))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currentTradePeriod,i_type1MixedConstraint)
 * RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* + sum(i_offer, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
-+ sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* + sum(o, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
++ sum(o $ PositiveEnergyOffer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_branch $ HVDCLink(currentTradePeriod,i_branch), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,i_branch) * HVDCLINKFLOW(currentTradePeriod,i_branch))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
@@ -1233,9 +1231,9 @@ MIXEDCONSTRAINTLIMIT2SELECT(currentTradePeriod,i_type1MixedConstraint) * MixedCo
 Type1MixedConstraintLE_MIP(Type1MixedConstraint(currentTradePeriod,i_type1MixedConstraint)) $ (UseMixedConstraint(currentTradePeriod) and (Type1MixedConstraintSense(currentTradePeriod,i_type1MixedConstraint) = -1) and useMixedConstraintMIP(currentTradePeriod))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currentTradePeriod,i_type1MixedConstraint)
 * RDN - 20130226 - Only positive energy offers are included in the constraint
-* + sum(i_offer $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* + sum(o $ offer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum(o $ PositiveEnergyOffer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_branch $ HVDCLink(currentTradePeriod,i_branch), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,i_branch) * HVDCLINKFLOW(currentTradePeriod,i_branch))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
@@ -1253,9 +1251,9 @@ Type1MixedConstraintLimit1(currentTradePeriod,i_type1MixedConstraint) * (1 - MIX
 Type1MixedConstraintGE_MIP(Type1MixedConstraint(currentTradePeriod,i_type1MixedConstraint)) $ (UseMixedConstraint(currentTradePeriod) and (Type1MixedConstraintSense(currentTradePeriod,i_type1MixedConstraint) = 1) and useMixedConstraintMIP(currentTradePeriod))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currentTradePeriod,i_type1MixedConstraint)
 * RDN - 20130226 - Only positive energy offers are included in the constraint
-* + sum(i_offer $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* + sum(o $ offer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum(o $ PositiveEnergyOffer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_branch $ HVDCLink(currentTradePeriod,i_branch), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,i_branch) * HVDCLINKFLOW(currentTradePeriod,i_branch))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
@@ -1273,9 +1271,9 @@ Type1MixedConstraintLimit1(currentTradePeriod,i_type1MixedConstraint) * (1 - MIX
 Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currentTradePeriod,i_type1MixedConstraint)) $ (UseMixedConstraint(currentTradePeriod) and (Type1MixedConstraintSense(currentTradePeriod,i_type1MixedConstraint) = 0) and useMixedConstraintMIP(currentTradePeriod))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currentTradePeriod,i_type1MixedConstraint)
 * RDN - 20130226 - Only positive energy offers are included in the constraint
-* + sum(i_offer $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), i_type1MixedConstraintResWeight(i_type1MixedConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* + sum(o $ offer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum(o $ PositiveEnergyOffer(currentTradePeriod,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_branch $ HVDCLink(currentTradePeriod,i_branch), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,i_branch) * HVDCLINKFLOW(currentTradePeriod,i_branch))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
 + sum(i_branch $ ACBranch(currentTradePeriod,i_branch), i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,i_branch) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currentTradePeriod,i_branch,i_flowDirection)))
@@ -1291,13 +1289,13 @@ Type1MixedConstraintLimit1(currentTradePeriod,i_type1MixedConstraint) * (1 - MIX
 * Generic security constraint with LE sense
 GenericSecurityConstraintLE(currentTradePeriod,i_genericConstraint) $ (GenericConstraintSense(currentTradePeriod,i_genericConstraint) = -1)..
 * RDN - 20130226 - Include only valid energy offers, bids and branch flows
-* sum(i_offer, GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* sum(o, GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 * + sum(i_bid, GenericEnergyBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 * + sum((i_bid,i_reserveClass), GenericILReserveBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 * + sum(i_branch, GenericBranchConstraintFactors(currentTradePeriod,i_genericConstraint,i_branch) * (ACBRANCHFLOW(currentTradePeriod,i_branch) + HVDCLINKFLOW(currentTradePeriod,i_branch)))
-  sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum(o $ PositiveEnergyOffer(currentTradePeriod,o), GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ Bid(currentTradePeriod,i_bid), GenericEnergyBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 + sum((i_bid,i_reserveClass) $ Bid(currentTradePeriod,i_bid), GenericILReserveBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 + sum(i_branch $ ((ACBranch(currentTradePeriod,i_branch) or HVDCLink(currentTradePeriod,i_branch)) and ClosedBranch(currentTradePeriod,i_branch)), GenericBranchConstraintFactors(currentTradePeriod,i_genericConstraint,i_branch) * (ACBRANCHFLOW(currentTradePeriod,i_branch) + HVDCLINKFLOW(currentTradePeriod,i_branch)))
@@ -1308,13 +1306,13 @@ GenericConstraintLimit(currentTradePeriod,i_genericConstraint)
 * Generic security constraint with GE sense
 GenericSecurityConstraintGE(currentTradePeriod,i_genericConstraint) $ (GenericConstraintSense(currentTradePeriod,i_genericConstraint) = 1)..
 * RDN - 20130226 - Include only valid energy offers, bids and branch flows
-* sum(i_offer, GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* sum(o, GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 * + sum(i_bid, GenericEnergyBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 * + sum((i_bid,i_reserveClass), GenericILReserveBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 * + sum(i_branch, GenericBranchConstraintFactors(currentTradePeriod,i_genericConstraint,i_branch) * (ACBRANCHFLOW(currentTradePeriod,i_branch) + HVDCLINKFLOW(currentTradePeriod,i_branch)))
-  sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum(o $ PositiveEnergyOffer(currentTradePeriod,o), GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ Bid(currentTradePeriod,i_bid), GenericEnergyBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 + sum((i_bid,i_reserveClass) $ Bid(currentTradePeriod,i_bid), GenericILReserveBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 + sum(i_branch $ ((ACBranch(currentTradePeriod,i_branch) or HVDCLink(currentTradePeriod,i_branch)) and ClosedBranch(currentTradePeriod,i_branch)), GenericBranchConstraintFactors(currentTradePeriod,i_genericConstraint,i_branch) * (ACBRANCHFLOW(currentTradePeriod,i_branch) + HVDCLINKFLOW(currentTradePeriod,i_branch)))
@@ -1325,13 +1323,13 @@ GenericConstraintLimit(currentTradePeriod,i_genericConstraint)
 * Generic security constraint with EQ sense
 GenericSecurityConstraintEQ(currentTradePeriod,i_genericConstraint) $ (GenericConstraintSense(currentTradePeriod,i_genericConstraint) = 0)..
 * RDN - 20130226 - Include only valid energy offers, bids and branch flows
-* sum(i_offer, GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-* + sum((i_offer,i_reserveClass,i_reserveType), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+* sum(o, GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o) * GENERATION(currentTradePeriod,o))
+* + sum((o,i_reserveClass,i_reserveType), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 * + sum(i_bid, GenericEnergyBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 * + sum((i_bid,i_reserveClass), GenericILReserveBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 * + sum(i_branch, GenericBranchConstraintFactors(currentTradePeriod,i_genericConstraint,i_branch) * (ACBRANCHFLOW(currentTradePeriod,i_branch) + HVDCLINKFLOW(currentTradePeriod,i_branch)))
-  sum(i_offer $ PositiveEnergyOffer(currentTradePeriod,i_offer), GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer) * GENERATION(currentTradePeriod,i_offer))
-+ sum((i_offer,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,i_offer), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,i_offer,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+  sum(o $ PositiveEnergyOffer(currentTradePeriod,o), GenericEnergyOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o) * GENERATION(currentTradePeriod,o))
++ sum((o,i_reserveClass,i_reserveType) $ offer(currentTradePeriod,o), GenericReserveOfferConstraintFactors(currentTradePeriod,i_genericConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currentTradePeriod,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ Bid(currentTradePeriod,i_bid), GenericEnergyBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid) * PURCHASE(currentTradePeriod,i_bid))
 + sum((i_bid,i_reserveClass) $ Bid(currentTradePeriod,i_bid), GenericILReserveBidConstraintFactors(currentTradePeriod,i_genericConstraint,i_bid,i_reserveClass) * PURCHASEILR(currentTradePeriod,i_bid,i_reserveClass))
 + sum(i_branch $ ((ACBranch(currentTradePeriod,i_branch) or HVDCLink(currentTradePeriod,i_branch)) and ClosedBranch(currentTradePeriod,i_branch)), GenericBranchConstraintFactors(currentTradePeriod,i_genericConstraint,i_branch) * (ACBRANCHFLOW(currentTradePeriod,i_branch) + HVDCLINKFLOW(currentTradePeriod,i_branch)))

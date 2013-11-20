@@ -51,7 +51,7 @@ Scalar maxFlowSegment                    / 10000 / ;
 
 *+++ Various switches +++
 $setglobal interfaceMode                   2       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
-$setglobal suppressOverrides               0       !
+$setglobal suppressOverrides               1       ! Specify 1 to suppress reading and implementing the selected override file
 $setglobal calcFTRrentals                  0       ! Specify 1 to calculate FTR rentals, 0 otherwise
 Scalar     opMode                        / 2 / ;   ! Specify 1 for data warehouse; -1 for audit; otherwise usual vSPD mode
 Scalar     tradePeriodReports            / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise

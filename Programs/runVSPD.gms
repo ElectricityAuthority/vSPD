@@ -94,7 +94,7 @@ loop(i_fileName,
 *=====================================================================================
 
 * Skip the usual reporting if calculating FTR rentals
-$if not %calcFTRrentals%==1 $goto cleanUp
+$if %calcFTRrentals%==1 $goto cleanUp
 
 * Call vSPDreportSetup to establish the report files ready to write results into
 put_utility temp 'exec' / 'gams runvSPDreportSetup' ;
@@ -110,26 +110,26 @@ loop(i_fileName,
   put_utility temp 'exec' / 'gams runvSPDreport';
 
 * Remove the temporary output GDX files
-  put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_systemOutput.gdx"' ;
-  put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_offerOutput.gdx"' ;
-  put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_traderOutput.gdx"' ;
+  put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_systemOutput.gdx"' ;
+  put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_offerOutput.gdx"' ;
+  put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_traderOutput.gdx"' ;
 
 * Remove the temporary output GDX files for trading period reports
   if(tradePeriodReports = 1,
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_summaryOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_islandOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_busOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_branchOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_nodeOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_offerOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_reserveOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_brConstraintOutput_TP.gdx"' ;
-    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_MnodeConstraintOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_summaryOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_islandOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_busOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_branchOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_nodeOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_offerOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_reserveOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_brConstraintOutput_TP.gdx"' ;
+    put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_MnodeConstraintOutput_TP.gdx"' ;
 
 *   If in audit operating mode, remove the temporary output GDX file associated with audit output
 *  (Note that we're inside the tradePeriodReports loop at this point)
     if(opMode = -1,
-      put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0'_auditOutput_TP.gdx"' ;
+      put_utility temp 'shell' / 'del "%outputPath%%runName%\runNum'runNum:0:0'_auditOutput_TP.gdx"' ;
     ) ;
 
   ) ;

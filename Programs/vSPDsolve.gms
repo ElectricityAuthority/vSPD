@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     19 November 2013
+* Last modified on:     20 November 2013
 *=====================================================================================
 
 $ontext
@@ -113,23 +113,27 @@ Sets
   pole  'HVDC poles'          / pole1, pole2 /
 
 * Initialise sets used when applying overrides. Declared and initialised now (ahead of input GDX load) so as to preserve orderedness of elements
-  tradePeriodNodeIslandTemp(i_tradePeriod,i_node,i_island) 'Temporary mapping set of nodes to islands for island demand override'
+  tradePeriodNodeIslandTemp(tp,i_node,i_island) 'Temporary mapping set of nodes to islands for island demand override'
   ovrd             'Number of overrides per parameter'    / 1*100 /
   i_dayNum         'Day number'                           / 1*31 /
   i_monthNum       'Month number'                         / 1*12 /
   i_yearNum        'Year number'                          / 1900*2200 /
+  fromTo           'From/To - for override dates'         / frm, to /
   ;
 
-Alias (i_dayNum,i_fromDay,frDay,i_toDay,toDay), (i_monthNum,i_fromMonth,frMth,i_toMonth,toMth), (i_yearNum,i_fromYear,frYr,i_toYear,toYr) ;
+Alias (i_dayNum,day), (i_monthNum,mth), (i_yearNum,yr) ;
+
+* 'startyear' must be modified if you ever decide it is clever to change the first element of i_yearnum.
+Scalar startYear 'Start year - used in computing Gregorian date for override years'  / 1899 / ;
 
 Sets
 * Dispatch results reporting
   o_fromDateTime(i_dateTime)                                                       'Start period for summary reports'
   o_dateTime(i_dateTime)                                                           'Date and time for reporting'
   o_bus(i_dateTime,i_bus)                                                          'Set of buses for output report'
-  o_offer(i_dateTime,i_offer)                                                      'Set of offers for output report'
+  o_offer(i_dateTime,o)                                                      'Set of offers for output report'
   o_island(i_dateTime,i_Island)                                                    'Island definition for trade period reserve output report'
-  o_offerTrader(i_offer,i_trader)                                                  'Mapping of offers to traders for offer summary reports'
+  o_offerTrader(o,i_trader)                                                  'Mapping of offers to traders for offer summary reports'
   o_trader(i_trader)                                                               'Set of traders for trader summary output report'
   o_node(i_dateTime,i_node)                                                        'Set of nodes for output report'
   o_branch(i_dateTime,i_branch)                                                    'Set of branches for output report'
@@ -139,10 +143,10 @@ Sets
   o_MnodeConstraint_TP(i_dateTime,i_MnodeConstraint)                               'Set of Mnode constraints for output report'
 * TN - Audit report
   o_busIsland_TP(i_dateTime,i_bus,i_Island)                                        'Bus Island Mapping for audit report'
-  o_marketNodeIsland_TP(i_dateTime,i_offer,i_Island)                               'Generation offer Island Mapping for audit reporting'
+  o_marketNodeIsland_TP(i_dateTime,o,i_Island)                               'Generation offer Island Mapping for audit reporting'
 * TN - Audit report - End
 * RDN - Additional output for audit report - Start------------------------------
-  o_offerIsland_TP(i_dateTime,i_offer,i_Island)                                    'Mapping of offers to island for audit reporting'
+  o_offerIsland_TP(i_dateTime,o,i_Island)                                    'Mapping of offers to island for audit reporting'
 * RDN - Additional output for audit report - End--------------------------------
   ;
 
@@ -150,28 +154,28 @@ Parameters
 * Main iteration counter
   iterationCount                                                                   'Iteration counter for the solve'
 * MIP logic
-  branchFlowMIPInvoked(i_tradePeriod)                                              'Flag to detect if branch flow MIP is needed'
-  circularBranchFlowExist(i_tradePeriod,i_branch)                                  'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
+  branchFlowMIPInvoked(tp)                                              'Flag to detect if branch flow MIP is needed'
+  circularBranchFlowExist(tp,i_branch)                                  'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
 * RDN - Introduce flag to detect circular branch flows on each HVDC pole
-  poleCircularBranchFlowExist(i_tradePeriod,pole)                                'Flag to indicate if circulating branch flows exist on each an HVDC pole: 1 = Yes'
+  poleCircularBranchFlowExist(tp,pole)                                'Flag to indicate if circulating branch flows exist on each an HVDC pole: 1 = Yes'
 
-  northHVDC(i_tradePeriod)                                                         'HVDC MW sent from from SI to NI'
-  southHVDC(i_tradePeriod)                                                         'HVDC MW sent from from NI to SI'
-  nonPhysicalLossExist(i_tradePeriod,i_branch)                                     'Flag to indicate if non-physical losses exist on branch: 1 = Yes'
-  manualBranchSegmentMWFlow(i_tradePeriod,i_branch,i_lossSegment)                  'Manual calculation of the branch loss segment MW flow'
-  manualLossCalculation(i_tradePeriod,i_branch)                                    'MW losses calculated manually from the solution for each loss branch'
-  HVDChalfPoleSouthFlow(i_tradePeriod)                                             'Flag to indicate if south flow on HVDC halfpoles'
-  type1MixedConstraintLimit2Violation(i_tradePeriod, i_type1MixedConstraint)       'Type 1 mixed constraint MW violaton of the alternate limit value'
+  northHVDC(tp)                                                         'HVDC MW sent from from SI to NI'
+  southHVDC(tp)                                                         'HVDC MW sent from from NI to SI'
+  nonPhysicalLossExist(tp,i_branch)                                     'Flag to indicate if non-physical losses exist on branch: 1 = Yes'
+  manualBranchSegmentMWFlow(tp,i_branch,i_lossSegment)                  'Manual calculation of the branch loss segment MW flow'
+  manualLossCalculation(tp,i_branch)                                    'MW losses calculated manually from the solution for each loss branch'
+  HVDChalfPoleSouthFlow(tp)                                             'Flag to indicate if south flow on HVDC halfpoles'
+  type1MixedConstraintLimit2Violation(tp, i_type1MixedConstraint)       'Type 1 mixed constraint MW violaton of the alternate limit value'
 
 * RDN - Parameters to calculate circular branch flow on each HVDC pole
-  TotalHVDCpoleFlow(i_tradePeriod,pole)                                          'Total flow on an HVDC pole'
-  MaxHVDCpoleFlow(i_tradePeriod,pole)                                            'Maximum flow on an HVDC pole'
+  TotalHVDCpoleFlow(tp,pole)                                          'Total flow on an HVDC pole'
+  MaxHVDCpoleFlow(tp,pole)                                            'Maximum flow on an HVDC pole'
 
 * Disconnected bus post-processing
-  busGeneration(i_tradePeriod,i_bus)                                               'MW generation at each bus for the study trade periods'
-  busLoad(i_tradePeriod,i_bus)                                                     'MW load at each bus for the study trade periods'
-  busPrice(i_tradePeriod,i_bus)                                                    '$/MW price at each bus for the study trade periods'
-  busDisconnected(i_tradePeriod,i_bus)                                             'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
+  busGeneration(tp,i_bus)                                               'MW generation at each bus for the study trade periods'
+  busLoad(tp,i_bus)                                                     'MW load at each bus for the study trade periods'
+  busPrice(tp,i_bus)                                                    '$/MW price at each bus for the study trade periods'
+  busDisconnected(tp,i_bus)                                             'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
 * Dispatch Results Outputs for reporting
 * Trade period level
   o_islandGen_TP(i_dateTime,i_island)                                              'Island MW generation for the different time periods'
@@ -205,9 +209,9 @@ Parameters
   o_branchDynamicRentals_TP(i_dateTime,i_branch)                                   'Output $ rentals on transmission branches using dynamic losses for the different time periods'
   o_branchTotalRentals_TP(i_dateTime,i_branch)                                     'Output $ rentals on transmission branches using total (dynamic + fixed) for the different time periods'
   o_branchCapacity_TP(i_dateTime,i_branch)                                         'Output MW branch capacity for branch reporting'
-  o_offerEnergy_TP(i_dateTime,i_offer)                                             'Output MW cleared for each energy offer for each trade period'
-  o_offerFIR_TP(i_dateTime,i_offer)                                                'Output MW cleared for FIR for each trade period'
-  o_offerSIR_TP(i_dateTime,i_offer)                                                'Output MW cleared for SIR for each trade period'
+  o_offerEnergy_TP(i_dateTime,o)                                             'Output MW cleared for each energy offer for each trade period'
+  o_offerFIR_TP(i_dateTime,o)                                                'Output MW cleared for FIR for each trade period'
+  o_offerSIR_TP(i_dateTime,o)                                                'Output MW cleared for SIR for each trade period'
   o_bidEnergy_TP(i_dateTime,i_bid)                                                 'Output MW cleared for each energy bid for each trade period'
   o_bidReserve_TP(i_dateTime,i_bid,i_reserveClass)                                 'Output MW cleared for each reserve bid for each trade period'
   o_FIRreqd_TP(i_dateTime,i_island)                                                'Output MW required FIR for each trade period'
@@ -274,12 +278,12 @@ Parameters
   o_systemACrentals                                                                'Output system AC rentals $'
   o_systemDCrentals                                                                'Output system DC rentals $'
 * Offer level
-  o_offerGen(i_offer)                                                              'Output offer generation (MWh)'
-  o_offerFIR(i_offer)                                                              'Output offer FIR (MWh)'
-  o_offerSIR(i_offer)                                                              'Output offer SIR (MWh)'
-  o_offerGenRevenue(i_offer)                                                       'Output offer energy revenue ($)'
-  o_offerFIRrevenue(i_offer)                                                       'Output offer FIR revenue ($)'
-  o_offerSIRrevenue(i_offer)                                                       'Output offer SIR revenue ($)'
+  o_offerGen(o)                                                              'Output offer generation (MWh)'
+  o_offerFIR(o)                                                              'Output offer FIR (MWh)'
+  o_offerSIR(o)                                                              'Output offer SIR (MWh)'
+  o_offerGenRevenue(o)                                                       'Output offer energy revenue ($)'
+  o_offerFIRrevenue(o)                                                       'Output offer FIR revenue ($)'
+  o_offerSIRrevenue(o)                                                       'Output offer SIR revenue ($)'
 * Trader level
   o_traderGen(i_trader)                                                            'Output trader generation (MWh)'
   o_traderFIR(i_trader)                                                            'Output trader FIR (MWh)'
@@ -293,24 +297,24 @@ Parameters
   o_ACbusAngle(i_dateTime,i_bus)                                                   'Bus voltage angle for audit reporting'
   o_nonPhysicalLoss(i_dateTime,i_branch)                                           'MW losses calculated manually from the solution for each loss branch'
   o_branchConstrained_TP(i_dateTime,i_branch)                                      'Output flag if branch constrained'
-  o_ILRO_FIR_TP(i_dateTime,i_offer)                                                'Output IL offer FIR (MWh)'
-  o_ILRO_SIR_TP(i_dateTime,i_offer)                                                'Output IL offer SIR (MWh)'
+  o_ILRO_FIR_TP(i_dateTime,o)                                                'Output IL offer FIR (MWh)'
+  o_ILRO_SIR_TP(i_dateTime,o)                                                'Output IL offer SIR (MWh)'
   o_ILbus_FIR_TP(i_dateTime,i_bus)                                                 'Output IL offer at bus FIR (MWh)'
   o_ILbus_SIR_TP(i_dateTime,i_bus)                                                 'Output IL offer at bus SIR (MWh)'
-  o_PLRO_FIR_TP(i_dateTime,i_offer)                                                'Output PLSR offer FIR (MWh)'
-  o_PLRO_SIR_TP(i_dateTime,i_offer)                                                'Output PLSR SIR (MWh)'
-  o_TWRO_FIR_TP(i_dateTime,i_offer)                                                'Output TWR FIR (MWh)'
-  o_TWRO_SIR_TP(i_dateTime,i_offer)                                                'Output TWR SIR (MWh)'
-  o_generationRiskSetter(i_dateTime,i_island,i_offer,i_reserveClass,i_riskClass)   'For Audit'
-  o_generationRiskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass)            'For Audit'
-  o_genHVDCriskSetter(i_dateTime,i_island,i_offer,i_reserveClass,i_riskClass)      'For Audit'
+  o_PLRO_FIR_TP(i_dateTime,o)                                                'Output PLSR offer FIR (MWh)'
+  o_PLRO_SIR_TP(i_dateTime,o)                                                'Output PLSR SIR (MWh)'
+  o_TWRO_FIR_TP(i_dateTime,o)                                                'Output TWR FIR (MWh)'
+  o_TWRO_SIR_TP(i_dateTime,o)                                                'Output TWR SIR (MWh)'
+  o_generationRiskSetter(i_dateTime,i_island,o,i_reserveClass,i_riskClass)   'For Audit'
+  o_generationRiskSetterMax(i_dateTime,i_island,o,i_reserveClass)            'For Audit'
+  o_genHVDCriskSetter(i_dateTime,i_island,o,i_reserveClass,i_riskClass)      'For Audit'
   o_HVDCriskSetter(i_dateTime,i_island,i_reserveClass,i_riskClass)                 'For Audit'
   o_manuRiskSetter(i_dateTime,i_island,i_reserveClass,i_riskClass)                 'For Audit'
   o_manuHVDCriskSetter(i_dateTime,i_island,i_reserveClass,i_riskClass)             'For Audit'
 * TN - Additional output for audit reporting - End
 * RDN - Additional output for Audit risk report - Start--------------------------
   o_HVDCriskSetterMax(i_dateTime,i_island,i_reserveClass)                          'For Audit'
-  o_genHVDCriskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass)               'For Audit'
+  o_genHVDCriskSetterMax(i_dateTime,i_island,o,i_reserveClass)               'For Audit'
   o_manuHVDCriskSetterMax(i_dateTime,i_island,i_reserveClass)                      'For Audit'
   o_manuRiskSetterMax(i_dateTime,i_island,i_reserveClass)                          'For Audit'
   o_FIRcleared_TP(i_dateTime,i_island)                                             'For Audit'
@@ -322,7 +326,7 @@ Parameters
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - Start-----------
 * Introduce i_useBusNetworkModel to account for MSP change-over date when for half of the day the old
 * market node model and the other half the bus network model was used.
-  i_useBusNetworkModel(i_tradePeriod)                                              'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
+  i_useBusNetworkModel(tp)                                              'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End-----------
   ;
 
@@ -416,7 +420,7 @@ put_utility temp 'gdxin' / '%inputPath%\%vSPDinputData%.gdx' ;
 if(inputGDXGDate >= primarySecondaryGDXGDate,
   execute_load i_tradePeriodPrimarySecondaryOffer ;
 else
-  i_tradePeriodPrimarySecondaryOffer(i_tradePeriod,i_offer,i_offer1) = no ;
+  i_tradePeriodPrimarySecondaryOffer(tp,o,o1) = no ;
 ) ;
 
 * Conditional load of i_tradePeriodManualRisk_ECE parameter
@@ -425,22 +429,22 @@ if(inputGDXGDate >= minimumRiskECEGDXGDate,
   i_useExtendedRiskClass = 1 ;
   execute_load i_tradePeriodManualRisk_ECE ;
 else
-  i_tradePeriodManualRisk_ECE(i_tradePeriod,i_island,i_reserveClass) = 0 ;
+  i_tradePeriodManualRisk_ECE(tp,i_island,i_reserveClass) = 0 ;
 ) ;
 
 * Conditional load of HVDC secondary risk parameters
 if(inputGDXGDate >= HVDCsecRiskGDXGDate,
   execute_load i_tradePeriodHVDCsecRiskEnabled, i_tradePeriodHVDCsecRiskSubtractor ;
 else
-  i_tradePeriodHVDCsecRiskEnabled(i_tradePeriod,i_island,i_riskClass) = 0 ;
-  i_tradePeriodHVDCsecRiskSubtractor(i_tradePeriod,i_island) = 0 ;
+  i_tradePeriodHVDCsecRiskEnabled(tp,i_island,i_riskClass) = 0 ;
+  i_tradePeriodHVDCsecRiskSubtractor(tp,i_island) = 0 ;
 ) ;
 
 * Conditional load of i_tradePeriodAllowHVDCroundpower parameter
 if(inputGDXGDate >= HVDCroundPowerGDXGDate,
   execute_load i_tradePeriodAllowHVDCroundpower ;
 else
-  i_tradePeriodAllowHVDCroundpower(i_tradePeriod) = 0 ;
+  i_tradePeriodAllowHVDCroundpower(tp) = 0 ;
 ) ;
 
 * Conditional load of additional mixed constraint parameters
@@ -460,7 +464,7 @@ else
 if(inputGDXGDate >= reserveClassGenMaxGDXGDate,
   execute_load i_tradePeriodReserveClassGenerationMaximum ;
 else
-  i_tradePeriodReserveClassGenerationMaximum(i_tradePeriod,i_offer,i_reserveClass) = 0 ;
+  i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass) = 0 ;
 ) ;
 
 * RDN - Switch off the mixed constraint based risk offset calculation after 17 October 2011 (data stopped being populated in GDX file)
@@ -468,10 +472,10 @@ useMixedConstraintRiskOffset = 1$(inputGDXGDate < mixedConstraintRiskOffsetGDXGD
 
 * RDN - Switch off mixed constraint formulation if no data coming through
 * i_useMixedConstraint$(sum(i_type1MixedConstraint, i_type1MixedConstraintVarWeight(i_type1MixedConstraint))=0) = 0 ;
-useMixedConstraint(i_tradePeriod)$(i_useMixedConstraint and (sum(i_type1MixedConstraint$i_tradePeriodType1MixedConstraint(i_tradePeriod,i_type1MixedConstraint),1))) = 1 ;
+useMixedConstraint(tp)$(i_useMixedConstraint and (sum(i_type1MixedConstraint$i_tradePeriodType1MixedConstraint(tp,i_type1MixedConstraint),1))) = 1 ;
 
 * RDN - Do not use the extended risk class if no data coming through
-i_useExtendedRiskClass$(sum((i_tradePeriod,i_island,i_reserveClass,i_riskClass,i_riskParameter)$(ord(i_riskClass) > 4), i_tradePeriodRiskParameter(i_tradePeriod,i_island,i_reserveClass,i_riskClass,i_riskParameter))=0) = 0 ;
+i_useExtendedRiskClass$(sum((tp,i_island,i_reserveClass,i_riskClass,i_riskParameter)$(ord(i_riskClass) > 4), i_tradePeriodRiskParameter(tp,i_island,i_reserveClass,i_riskClass,i_riskParameter))=0) = 0 ;
 
 * RDN - Change to demand bid
 useDSBFDemandBidModel = 1$( inputGDXGDate >= demandBidChangeGDXGDate ) ;
@@ -486,7 +490,7 @@ usePrimSecGenRiskModel = 1$( inputGDXGDate >= primSecGenRiskModelGDXGDate ) ;
 * have the i_tradePeriodBusElectrical island paramter specified since it uses the market node network
 * model. This flag is introduced to allow the i_tradePeriodBusElectricalIsland parameter to be used
 * in the post-MSP solves to indentify 'dead' electrical buses.
-i_useBusNetworkModel(i_tradePeriod) = 1$( ( inputGDXGDate >= MSPchangeOverGDXGDate ) and sum(i_bus, i_tradePeriodBusElectricalIsland(i_tradePeriod,i_bus) ) ) ;
+i_useBusNetworkModel(tp) = 1$( ( inputGDXGDate >= MSPchangeOverGDXGDate ) and sum(i_bus, i_tradePeriodBusElectricalIsland(tp,i_bus) ) ) ;
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End----------
 
 
@@ -502,7 +506,7 @@ $ontext
   values imply standalone interface mode (although ideally users should set it equal to 2 for standalone).
 $offtext
 
-Parameter i_tradePeriodSolve(i_tradePeriod) 'Trading periods to be solved' ;
+Parameter i_tradePeriodSolve(tp) 'Trading periods to be solved' ;
 
 * EMI interface
 $if not %interfaceMode%==0 $goto skipEMIReadTPsToSolve
@@ -529,8 +533,8 @@ $label skipExcelReadTPsToSolve
 $if %interfaceMode%==0 $goto skipStandaloneReadTPsToSolve
 $if %interfaceMode%==1 $goto skipStandaloneReadTPsToSolve
 * Users need to edit the next few lines to suit their own purposes. The default is to solve for all trading periods
-  i_tradePeriodSolve(i_tradePeriod) = 1 ;
-* i_tradePeriodSolve(i_tradePeriod)$[(ord(i_tradePeriod) > 28) or (ord(i_tradePeriod) < 41)] = 1 ;
+  i_tradePeriodSolve(tp) = 1 ;
+* i_tradePeriodSolve(tp)$[(ord(tp) > 28) or (ord(tp) < 41)] = 1 ;
 * $include tradePeriodsToSolve.inc
 *$gdxin "%programPath%\TPsToSolve.gdx"
 *$load i_tradePeriodSolve
@@ -538,8 +542,8 @@ $if %interfaceMode%==1 $goto skipStandaloneReadTPsToSolve
 $label skipStandaloneReadTPsToSolve
 
 * Regardless of interface type, now use i_tradePeriodSolve to change the values of i_studyTradePeriod
-i_studyTradePeriod(i_tradePeriod) = 0 ;
-i_studyTradePeriod(i_tradePeriod)$i_tradePeriodSolve(i_tradePeriod) = 1 ;
+i_studyTradePeriod(tp) = 0 ;
+i_studyTradePeriod(tp)$i_tradePeriodSolve(tp) = 1 ;
 *Display i_tradePeriodSolve ;
 
 
@@ -566,7 +570,6 @@ $if not %suppressOverrides%==1 $include vSPDsolveOverrides.gms
 
 *FTR include file 1 - override vSPD settings and parameters to calculate branch and constraint participation loading
 *$if exist FTR_1.ins $Include FTR_1.ins
-
 
 
 *=====================================================================================
@@ -628,12 +631,12 @@ o_systemLoadRevenue = 0 ;
 o_systemSurplus = 0 ;
 o_systemACrentals = 0 ;
 o_systemDCrentals = 0 ;
-o_offerGen(i_offer) = 0 ;
-o_offerFIR(i_offer) = 0 ;
-o_offerSIR(i_offer) = 0 ;
-o_offerGenRevenue(i_offer) = 0 ;
-o_offerFIRrevenue(i_offer) = 0 ;
-o_offerSIRrevenue(i_offer) = 0 ;
+o_offerGen(o) = 0 ;
+o_offerFIR(o) = 0 ;
+o_offerSIR(o) = 0 ;
+o_offerGenRevenue(o) = 0 ;
+o_offerFIRrevenue(o) = 0 ;
+o_offerSIRrevenue(o) = 0 ;
 
 o_solveOK_TP(i_dateTime) = 0 ;
 
@@ -641,14 +644,14 @@ o_solveOK_TP(i_dateTime) = 0 ;
 * RDN - Initialise some of the Audit reporting parameters to zero - Start--------
 o_FIRreqd_TP(i_dateTime,i_island) = 0 ;
 o_SIRreqd_TP(i_dateTime,i_island) = 0 ;
-o_generationRiskSetter(i_dateTime,i_island,i_offer,i_reserveClass,i_riskClass) = 0 ;
-o_generationRiskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass) = 0 ;
-o_genHVDCriskSetter(i_dateTime,i_island,i_offer,i_reserveClass,i_riskClass) = 0 ;
+o_generationRiskSetter(i_dateTime,i_island,o,i_reserveClass,i_riskClass) = 0 ;
+o_generationRiskSetterMax(i_dateTime,i_island,o,i_reserveClass) = 0 ;
+o_genHVDCriskSetter(i_dateTime,i_island,o,i_reserveClass,i_riskClass) = 0 ;
 o_HVDCriskSetter(i_dateTime,i_island,i_reserveClass,i_riskClass) = 0 ;
 o_manuRiskSetter(i_dateTime,i_island,i_reserveClass,i_riskClass) = 0 ;
 o_manuHVDCriskSetter(i_dateTime,i_island,i_reserveClass,i_riskClass) = 0 ;
 o_HVDCriskSetterMax(i_dateTime,i_island,i_reserveClass) = 0 ;
-o_genHVDCriskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass) = 0 ;
+o_genHVDCriskSetterMax(i_dateTime,i_island,o,i_reserveClass) = 0 ;
 o_manuHVDCriskSetterMax(i_dateTime,i_island,i_reserveClass) = 0 ;
 o_manuRiskSetterMax(i_dateTime,i_island,i_reserveClass) = 0 ;
 o_FIRcleared_TP(i_dateTime,i_island) = 0 ;
@@ -663,7 +666,7 @@ busNodeAllocationFactor(i_dateTime,i_bus,i_node) = 0 ;
 
 
 * Determine the number of trade periods
-numTradePeriods = card(i_tradePeriod) ;
+numTradePeriods = card(tp) ;
 
 
 
@@ -675,7 +678,7 @@ for(iterationCount = 1 to numTradePeriods,
   skipResolve = 0 ;
 
 * Determine which trading periods to solve when in sequential solve mode
-  if(((i_sequentialSolve and sum(i_tradePeriod$(ord(i_tradePeriod) = iterationCount), i_studyTradePeriod(i_tradePeriod))) or (not i_sequentialSolve)),
+  if(((i_sequentialSolve and sum(tp$( ord(tp) = iterationCount), i_studyTradePeriod(tp))) or (not i_sequentialSolve)),
 
 *=====================================================================================
 *   a) Reset all sets, parameters and variables before proceeding with the next study trade period
@@ -785,7 +788,7 @@ for(iterationCount = 1 to numTradePeriods,
     option clear = generationOfferMW ;
     option clear = generationOfferPrice ;
 *   Don't reset the previous MW value otherwise it serves no purpose
-*   PreviousMW(i_offer) = 0 ;
+*   PreviousMW(o) = 0 ;
     option clear = validGenerationOfferBlock ;
 *   RDN - 20130227 - Clear the positive energy offer set
     option clear = positiveEnergyOffer ;
@@ -956,32 +959,32 @@ for(iterationCount = 1 to numTradePeriods,
 
 *   Set the currentTradePeriod
 *   For sequential solve
-    currentTradePeriod(i_tradePeriod)$(i_sequentialSolve and (ord(i_tradePeriod) eq iterationCount)) = yes$i_studyTradePeriod(i_tradePeriod) ;
+    currentTradePeriod(tp)$(i_sequentialSolve and (ord(tp) eq iterationCount)) = yes$i_studyTradePeriod(tp) ;
 *   For simultaneous solve
-    currentTradePeriod(i_tradePeriod)$( not (i_sequentialSolve) ) = yes$i_studyTradePeriod(i_tradePeriod) ;
+    currentTradePeriod(tp)$( not (i_sequentialSolve) ) = yes$i_studyTradePeriod(tp) ;
     iterationCount$( not (i_sequentialSolve) ) = numTradePeriods ;
 
 *   RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - Start-----------
 *   Updated offer initialisation - offer must be mapped to a node that is mapped to a bus that is not in electrical island = 0 when the i_useBusNetworkModel flag is set to true
 *   Pre MSP case
-    offer(currentTradePeriod,i_offer)$( not ( i_useBusNetworkModel(currentTradePeriod) ) and
-                                        ( sum((i_node,i_bus)$( i_tradePeriodOfferNode(currentTradePeriod,i_offer,i_node) and i_tradePeriodNodeBus(currentTradePeriod,i_node,i_bus) ), 1 ) )
+    offer(currentTradePeriod,o)$( not ( i_useBusNetworkModel(currentTradePeriod) ) and
+                                        ( sum((i_node,i_bus)$( i_tradePeriodOfferNode(currentTradePeriod,o,i_node) and i_tradePeriodNodeBus(currentTradePeriod,i_node,i_bus) ), 1 ) )
                                       ) = yes ;
 *   Post MSP case
-    offer(currentTradePeriod,i_offer)$( i_useBusNetworkModel(currentTradePeriod) and
-                                        ( sum((i_node,i_bus)$( i_tradePeriodOfferNode(currentTradePeriod,i_offer,i_node) and i_tradePeriodNodeBus(currentTradePeriod,i_node,i_bus) and
+    offer(currentTradePeriod,o)$( i_useBusNetworkModel(currentTradePeriod) and
+                                        ( sum((i_node,i_bus)$( i_tradePeriodOfferNode(currentTradePeriod,o,i_node) and i_tradePeriodNodeBus(currentTradePeriod,i_node,i_bus) and
                                           i_tradePeriodBusElectricalIsland(currentTradePeriod,i_bus) ), 1 )
                                         )
                                       ) = yes ;
 *   RDN - Updated offer initialisation - offer must be mapped to a node that is mapped to a bus with non-zero allocation factor
-*   offer(currentTradePeriod,i_offer)$(sum((i_node,i_bus)$(i_tradePeriodOfferNode(currentTradePeriod,i_offer,i_node) and
+*   offer(currentTradePeriod,o)$(sum((i_node,i_bus)$(i_tradePeriodOfferNode(currentTradePeriod,o,i_node) and
 *   i_tradePeriodNodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodNodeBusAllocationFactor(currentTradePeriod,i_node,i_bus)),1)) = yes ;
 *   Initialise offer data for the current trade period
-*   Offer(currentTradePeriod,i_offer)$(sum(i_node$i_tradePeriodOfferNode(currentTradePeriod,i_offer,i_node),1)) = yes ;
+*   Offer(currentTradePeriod,o)$(sum(i_node$i_tradePeriodOfferNode(currentTradePeriod,o,i_node),1)) = yes ;
 *   RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End-------------
 
     node(currentTradePeriod,i_node)$i_tradePeriodNode(currentTradePeriod,i_node) = yes ;
-    offerNode(currentTradePeriod,i_offer,i_node)$i_tradePeriodOfferNode(currentTradePeriod,i_offer,i_node) = yes ;
+    offerNode(currentTradePeriod,o,i_node)$i_tradePeriodOfferNode(currentTradePeriod,o,i_node) = yes ;
 
     generationStart(offer) = sum(i_offerParam$( ord(i_offerParam) = 1 ), i_tradePeriodOfferParameter(offer,i_offerParam) ) ;
     rampRateUp(offer)      = sum(i_offerParam$( ord(i_offerParam) = 2 ), i_tradePeriodOfferParameter(offer,i_offerParam) ) ;
@@ -994,57 +997,57 @@ for(iterationCount = 1 to numTradePeriods,
     FKband(offer) = sum(i_offerParam$( ord(i_offerParam) = 6 ), i_tradePeriodOfferParameter(offer,i_offerParam) ) ;
 
 *   RDN - Set the primary-secondary offer combinations
-    primarySecondaryOffer(currentTradePeriod,i_offer,i_offer1) = i_tradePeriodPrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1) ;
+    primarySecondaryOffer(currentTradePeriod,o,o1) = i_tradePeriodPrimarySecondaryOffer(currentTradePeriod,o,o1) ;
 
-    generationOfferMW(offer,i_tradeBlock)    = sum(i_energyOfferComponent$( ord(i_energyOfferComponent) = 1 ), i_tradePeriodEnergyOffer(offer,i_tradeBlock,i_energyOfferComponent) ) ;
-    generationOfferPrice(offer,i_tradeBlock) = sum(i_energyOfferComponent$( ord(i_energyOfferComponent) = 2 ), i_tradePeriodEnergyOffer(offer,i_tradeBlock,i_energyOfferComponent) ) ;
+    generationOfferMW(offer,trdBlk)    = sum(i_energyOfferComponent$( ord(i_energyOfferComponent) = 1 ), i_tradePeriodEnergyOffer(offer,trdBlk,i_energyOfferComponent) ) ;
+    generationOfferPrice(offer,trdBlk) = sum(i_energyOfferComponent$( ord(i_energyOfferComponent) = 2 ), i_tradePeriodEnergyOffer(offer,trdBlk,i_energyOfferComponent) ) ;
 
 *   Valid generation offer blocks are defined as those with a non-zero block capacity or a non-zero price
 *   Re-define valid generation offer block to be a block with a positive block limit
-*   validGenerationOfferBlock(offer,i_tradeBlock)$( generationOfferMW(offer,i_tradeBlock) + generationOfferPrice(offer,i_tradeBlock) ) = yes ;
-    validGenerationOfferBlock(offer,i_tradeBlock)$( generationOfferMW(offer,i_tradeBlock) > 0 ) = yes ;
+*   validGenerationOfferBlock(offer,trdBlk)$( generationOfferMW(offer,trdBlk) + generationOfferPrice(offer,trdBlk) ) = yes ;
+    validGenerationOfferBlock(offer,trdBlk)$( generationOfferMW(offer,trdBlk) > 0 ) = yes ;
 
 *   Define set of positive energy offers
-    positiveEnergyOffer(offer)$( sum(i_tradeBlock$validGenerationOfferBlock(offer,i_tradeBlock), 1 ) ) = yes ;
+    positiveEnergyOffer(offer)$( sum(trdBlk$validGenerationOfferBlock(offer,trdBlk), 1 ) ) = yes ;
 
-    reserveOfferProportion(offer,i_tradeBlock,i_reserveClass)$( ord(i_reserveClass) = 1 )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 1 ), i_tradePeriodFastPLSRoffer(offer,i_tradeBlock,i_PLSRofferComponent) / 100 ) ;
-    reserveOfferProportion(offer,i_tradeBlock,i_reserveClass)$( ord(i_reserveClass) = 2 )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 1 ), i_tradePeriodSustainedPLSRoffer(offer,i_tradeBlock,i_PLSRofferComponent) / 100 ) ;
+    reserveOfferProportion(offer,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 1 )
+      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 1 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,i_PLSRofferComponent) / 100 ) ;
+    reserveOfferProportion(offer,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 2 )
+      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 1 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,i_PLSRofferComponent) / 100 ) ;
 
-    reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 1 ) )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 2 ), i_tradePeriodFastPLSRoffer(offer,i_tradeBlock,i_PLSRofferComponent)) ;
-    reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2) and (ord(i_reserveType) = 1))
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 2 ), i_tradePeriodSustainedPLSRoffer(offer,i_tradeBlock,i_PLSRofferComponent)) ;
+    reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 1 ) )
+      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 2 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
+    reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2) and (ord(i_reserveType) = 1))
+      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 2 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
 
-    reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 1 ), i_tradePeriodFastTWDRoffer(offer,i_tradeBlock,i_TWDRofferComponent) ) ;
-    reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 1 ), i_tradePeriodSustainedTWDRoffer(offer,i_tradeBlock,i_TWDRofferComponent)) ;
+    reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 2 ) )
+      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 1 ), i_tradePeriodFastTWDRoffer(offer,trdBlk,i_TWDRofferComponent) ) ;
+    reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 2 ) )
+      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 1 ), i_tradePeriodSustainedTWDRoffer(offer,trdBlk,i_TWDRofferComponent)) ;
 
-    reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 1 ), i_tradePeriodFastILRoffer(offer,i_tradeBlock,i_ILRofferComponent) ) ;
-    reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 1 ), i_tradePeriodSustainedILRoffer(offer,i_tradeBlock,i_ILRofferComponent)) ;
+    reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 3 ) )
+      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 1 ), i_tradePeriodFastILRoffer(offer,trdBlk,i_ILRofferComponent) ) ;
+    reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 3 ) )
+      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 1 ), i_tradePeriodSustainedILRoffer(offer,trdBlk,i_ILRofferComponent)) ;
 
-    reserveOfferPrice(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 1 ) )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 3 ), i_tradePeriodFastPLSRoffer(offer,i_tradeBlock,i_PLSRofferComponent)) ;
-    reserveOfferPrice(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 1 ) )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 3 ), i_tradePeriodSustainedPLSRoffer(offer,i_tradeBlock,i_PLSRofferComponent)) ;
+    reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 1 ) )
+      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 3 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
+    reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 1 ) )
+      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 3 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
 
-    reserveOfferPrice(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 2 ), i_tradePeriodFastTWDRoffer(offer,i_tradeBlock,i_TWDRofferComponent)) ;
-    reserveOfferPrice(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 2 ), i_tradePeriodSustainedTWDRoffer(offer,i_tradeBlock,i_TWDRofferComponent)) ;
+    reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 2 ) )
+      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 2 ), i_tradePeriodFastTWDRoffer(offer,trdBlk,i_TWDRofferComponent)) ;
+    reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 2 ) )
+      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 2 ), i_tradePeriodSustainedTWDRoffer(offer,trdBlk,i_TWDRofferComponent)) ;
 
-    reserveOfferPrice(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 2 ), i_tradePeriodFastILRoffer(offer,i_tradeBlock,i_ILRofferComponent)) ;
-    reserveOfferPrice(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 2 ), i_tradePeriodSustainedILRoffer(offer,i_tradeBlock,i_ILRofferComponent)) ;
+    reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 3 ) )
+      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 2 ), i_tradePeriodFastILRoffer(offer,trdBlk,i_ILRofferComponent)) ;
+    reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 3 ) )
+      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 2 ), i_tradePeriodSustainedILRoffer(offer,trdBlk,i_ILRofferComponent)) ;
 
 *   Valid reserve offer block for each reserve class and reserve type are defined as those with a non-zero block capacity OR a non-zero block price
 *   Re-define valid reserve offer block to be a block with a positive block limit
-    validReserveOfferBlock(offer,i_tradeBlock,i_reserveClass,i_reserveType)$( reserveOfferMaximum(offer,i_tradeBlock,i_reserveClass,i_reserveType) > 0 )
+    validReserveOfferBlock(offer,trdBlk,i_reserveClass,i_reserveType)$( reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType) > 0 )
       = yes ;
 
 *   Initialise demand data for the current trade period
@@ -1063,39 +1066,39 @@ for(iterationCount = 1 to numTradePeriods,
 *   RDN - Updated bid initialisation in accordance with change made to the offer definition above - Bid must be mapped to a node that is mapped to a bus with non-zero allocation factor
 *     bid(currentTradePeriod,i_bid)$(sum((i_node,i_bus)$(i_tradePeriodBidNode(currentTradePeriod,i_bid,i_node) and i_tradePeriodNodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodNodeBusAllocationFactor(currentTradePeriod,i_node,i_bus)),1)) = yes ;
 *   Initialise bid data for the current trade period
-*     bid(i_tradePeriod,i_bid)$(sum(i_node$i_tradePeriodBidNode(i_tradePeriod,i_bid,i_node),1) and currentTradePeriod(i_tradePeriod)) = yes ;
+*     bid(tp,i_bid)$(sum(i_node$i_tradePeriodBidNode(tp,i_bid,i_node),1) and currentTradePeriod(tp)) = yes ;
 *   RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End-------------
 
     bidNode(bid,i_node)$i_tradePeriodBidNode(bid,i_node) = yes ;
 
-    purchaseBidMW(bid,i_tradeBlock)
-      = sum(i_energyBidComponent$( ord(i_energyBidComponent) = 1 ), i_tradePeriodEnergyBid(bid,i_tradeBlock,i_energyBidComponent)) ;
-    purchaseBidPrice(bid,i_tradeBlock)
-      = sum(i_energyBidComponent$( ord(i_energyBidComponent) = 2 ), i_tradePeriodEnergyBid(bid,i_tradeBlock,i_energyBidComponent)) ;
+    purchaseBidMW(bid,trdBlk)
+      = sum(i_energyBidComponent$( ord(i_energyBidComponent) = 1 ), i_tradePeriodEnergyBid(bid,trdBlk,i_energyBidComponent)) ;
+    purchaseBidPrice(bid,trdBlk)
+      = sum(i_energyBidComponent$( ord(i_energyBidComponent) = 2 ), i_tradePeriodEnergyBid(bid,trdBlk,i_energyBidComponent)) ;
 
 *   RDN - Change to demand bid
 *   Valid purchaser bid blocks are defined as those with a non-zero block capacity OR a non-zero block price
 *   Re-define valid purchase bid block to be a block with a positive block limit
-*      ValidPurchaseBidBlock(bid,i_tradeBlock)$(PurchaseBidMW(bid,i_tradeBlock) > 0) = yes ;
-*      ValidPurchaseBidBlock(bid,i_tradeBlock)$(PurchaseBidMW(bid,i_tradeBlock) + PurchaseBidPrice(bid,i_tradeBlock)) = yes ;
+*      ValidPurchaseBidBlock(bid,trdBlk)$(PurchaseBidMW(bid,trdBlk) > 0) = yes ;
+*      ValidPurchaseBidBlock(bid,trdBlk)$(PurchaseBidMW(bid,trdBlk) + PurchaseBidPrice(bid,trdBlk)) = yes ;
 *   Re-define valid purchase bid block to be a block with a non-zero block limit since both positive and negative limits are allowed
 *   with changes to the demand bids following DSBF implementation
-    validPurchaseBidBlock(bid,i_tradeBlock)$( ( not useDSBFDemandBidModel ) and ( purchaseBidMW(bid,i_tradeBlock) > 0 ) ) = yes ;
-    validPurchaseBidBlock(bid,i_tradeBlock)$( useDSBFDemandBidModel and ( purchaseBidMW(bid,i_tradeBlock) <> 0) ) = yes ;
+    validPurchaseBidBlock(bid,trdBlk)$( ( not useDSBFDemandBidModel ) and ( purchaseBidMW(bid,trdBlk) > 0 ) ) = yes ;
+    validPurchaseBidBlock(bid,trdBlk)$( useDSBFDemandBidModel and ( purchaseBidMW(bid,trdBlk) <> 0) ) = yes ;
 
 *   RDN - Change to demand bid - End
-    purchaseBidILRMW(bid,i_tradeBlock,i_reserveClass)$( ord(i_reserveClass) = 1 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent ) = 1), i_tradePeriodFastILRbid(bid,i_tradeBlock,i_ILRbidComponent) ) ;
-    purchaseBidILRPrice(bid,i_tradeBlock,i_reserveClass)$( ord(i_reserveClass) = 1 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 2 ), i_tradePeriodFastILRbid(bid,i_tradeBlock,i_ILRbidComponent) ) ;
+    purchaseBidILRMW(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 1 )
+      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent ) = 1), i_tradePeriodFastILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
+    purchaseBidILRPrice(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 1 )
+      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 2 ), i_tradePeriodFastILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
 
-    purchaseBidILRMW(bid,i_tradeBlock,i_reserveClass)$( ord(i_reserveClass) = 2 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 1 ), i_tradePeriodSustainedILRbid(bid,i_tradeBlock,i_ILRbidComponent) ) ;
-    purchaseBidILRPrice(bid,i_tradeBlock,i_reserveClass)$( ord(i_reserveClass) = 2 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 2 ), i_tradePeriodSustainedILRbid(bid,i_tradeBlock,i_ILRbidComponent) ) ;
+    purchaseBidILRMW(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 2 )
+      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 1 ), i_tradePeriodSustainedILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
+    purchaseBidILRPrice(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 2 )
+      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 2 ), i_tradePeriodSustainedILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
 *   Valid purchaser ILR blocks are defined as those with a non-zero block capacity OR a non-zero block price
 *   Re-define valid purchase ILR offer block to be a block with a positive block limit
-    validPurchaseBidILRBlock(bid,i_tradeBlock,i_reserveClass)$( purchaseBidILRMW(bid,i_tradeBlock,i_reserveClass) > 0 ) = yes ;
+    validPurchaseBidILRBlock(bid,trdBlk,i_reserveClass)$( purchaseBidILRMW(bid,trdBlk,i_reserveClass) > 0 ) = yes ;
 
 *   Initialise network data for the current trade period
     bus(currentTradePeriod,i_bus)$i_tradePeriodBus(currentTradePeriod,i_bus) = yes ;
@@ -1304,9 +1307,9 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Initialise Risk/Reserve data for the current trading period
     RiskGenerator(offer)$i_tradePeriodRiskGenerator(offer) = yes ;
-    IslandRiskGenerator(currentTradePeriod,i_island,i_offer)$(offer(currentTradePeriod,i_offer) and i_tradePeriodRiskGenerator(currentTradePeriod,i_offer) and sum(i_node$(offerNode(currentTradePeriod,i_offer,i_node) and NodeIsland(currentTradePeriod,i_node,i_island)),1))
+    IslandRiskGenerator(currentTradePeriod,i_island,o)$(offer(currentTradePeriod,o) and i_tradePeriodRiskGenerator(currentTradePeriod,o) and sum(i_node$(offerNode(currentTradePeriod,o,i_node) and NodeIsland(currentTradePeriod,i_node,i_island)),1))
        = yes ;
-    IslandOffer(currentTradePeriod,i_island,i_offer)$(offer(currentTradePeriod,i_offer) and sum(i_node$(offerNode(currentTradePeriod,i_offer,i_node) and NodeIsland(currentTradePeriod,i_node,i_island)),1))
+    IslandOffer(currentTradePeriod,i_island,o)$(offer(currentTradePeriod,o) and sum(i_node$(offerNode(currentTradePeriod,o,i_node) and NodeIsland(currentTradePeriod,i_node,i_island)),1))
        = yes ;
 
 * RDN - If the i_useExtendedRiskClass flag is set, update GenRisk and ManualRisk mapping to the RiskClass set since it now includes additional ECE risk classes associated with GenRisk and ManualRisk
@@ -1384,10 +1387,10 @@ for(iterationCount = 1 to numTradePeriods,
     ACnodeConstraintLimit(ACnodeConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodACnodeConstraintRHS(ACnodeConstraint,i_ConstraintRHS)) ;
 
 * Initialise market node constraint data for the current trading period
-    MnodeConstraint(currentTradePeriod,i_MnodeConstraint)$( (sum((i_offer,i_reserveType,i_reserveClass)$(offer(currentTradePeriod,i_offer) and (i_tradePeriodMnodeEnergyOfferConstraintFactors(currentTradePeriod,i_MnodeConstraint,i_offer) or i_tradePeriodMnodeReserveOfferConstraintFactors(currentTradePeriod,i_MnodeConstraint,i_offer,i_reserveClass,i_reserveType))),1))
+    MnodeConstraint(currentTradePeriod,i_MnodeConstraint)$( (sum((o,i_reserveType,i_reserveClass)$(offer(currentTradePeriod,o) and (i_tradePeriodMnodeEnergyOfferConstraintFactors(currentTradePeriod,i_MnodeConstraint,o) or i_tradePeriodMnodeReserveOfferConstraintFactors(currentTradePeriod,i_MnodeConstraint,o,i_reserveClass,i_reserveType))),1))
          or (sum((i_bid,i_reserveClass)$(bid(currentTradePeriod,i_bid) and (i_tradePeriodMnodeEnergyBidConstraintFactors(currentTradePeriod,i_MnodeConstraint,i_bid) or i_tradePeriodMnodeILReserveBidConstraintFactors(currentTradePeriod,i_MnodeConstraint,i_bid,i_reserveClass))),1)) ) = yes ;
-    MnodeEnergyOfferConstraintFactors(MnodeConstraint,i_offer) = i_tradePeriodMnodeEnergyOfferConstraintFactors(MnodeConstraint,i_offer) ;
-    MnodeReserveOfferConstraintFactors(MnodeConstraint,i_offer,i_reserveClass,i_reserveType) = i_tradePeriodMnodeReserveOfferConstraintFactors(MnodeConstraint,i_offer,i_reserveClass,i_reserveType) ;
+    MnodeEnergyOfferConstraintFactors(MnodeConstraint,o) = i_tradePeriodMnodeEnergyOfferConstraintFactors(MnodeConstraint,o) ;
+    MnodeReserveOfferConstraintFactors(MnodeConstraint,o,i_reserveClass,i_reserveType) = i_tradePeriodMnodeReserveOfferConstraintFactors(MnodeConstraint,o,i_reserveClass,i_reserveType) ;
     MnodeEnergyBidConstraintFactors(MnodeConstraint,i_bid) = i_tradePeriodMnodeEnergyBidConstraintFactors(MnodeConstraint,i_bid) ;
     MnodeILReserveBidConstraintFactors(MnodeConstraint,i_bid,i_reserveClass) = i_tradePeriodMnodeILReserveBidConstraintFactors(MnodeConstraint,i_bid,i_reserveClass) ;
     MnodeConstraintSense(MnodeConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 1), i_tradePeriodMnodeConstraintRHS(MnodeConstraint,i_ConstraintRHS)) ;
@@ -1405,8 +1408,8 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Initialise generic constraint data for the current trading period
     GenericConstraint(currentTradePeriod,i_GenericConstraint) = i_tradePeriodGenericConstraint(currentTradePeriod,i_GenericConstraint) ;
-    GenericEnergyOfferConstraintFactors(GenericConstraint,i_offer) = i_tradePeriodGenericEnergyOfferConstraintFactors(GenericConstraint,i_offer) ;
-    GenericReserveOfferConstraintFactors(GenericConstraint,i_offer,i_reserveClass,i_reserveType) = i_tradePeriodGenericReserveOfferConstraintFactors(GenericConstraint,i_offer,i_reserveClass,i_reserveType) ;
+    GenericEnergyOfferConstraintFactors(GenericConstraint,o) = i_tradePeriodGenericEnergyOfferConstraintFactors(GenericConstraint,o) ;
+    GenericReserveOfferConstraintFactors(GenericConstraint,o,i_reserveClass,i_reserveType) = i_tradePeriodGenericReserveOfferConstraintFactors(GenericConstraint,o,i_reserveClass,i_reserveType) ;
     GenericEnergyBidConstraintFactors(GenericConstraint,i_bid) = i_tradePeriodGenericEnergyBidConstraintFactors(GenericConstraint,i_bid) ;
     GenericILReserveBidConstraintFactors(GenericConstraint,i_bid,i_reserveClass) = i_tradePeriodGenericILReserveBidConstraintFactors(GenericConstraint,i_bid,i_reserveClass) ;
     GenericBranchConstraintFactors(GenericConstraint,i_branch) = i_tradePeriodGenericBranchConstraintFactors(GenericConstraint,i_branch) ;
@@ -1419,14 +1422,14 @@ for(iterationCount = 1 to numTradePeriods,
 * Calculation of generation limits due to ramp rate limits (See 5.3.1. and 5.3.2. of SPD formulation document)
 
 * RDN - Identification of primary and secondary units
-   HasSecondaryOffer(currentTradePeriod,i_offer)$sum(i_offer1$PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), 1) = 1 ;
-   HasPrimaryOffer(currentTradePeriod,i_offer)$sum(i_offer1$PrimarySecondaryOffer(currentTradePeriod,i_offer1,i_offer), 1) = 1 ;
+   HasSecondaryOffer(currentTradePeriod,o)$sum(o1$PrimarySecondaryOffer(currentTradePeriod,o,o1), 1) = 1 ;
+   HasPrimaryOffer(currentTradePeriod,o)$sum(o1$PrimarySecondaryOffer(currentTradePeriod,o1,o), 1) = 1 ;
 
 * Calculation 5.3.1.1.
-*    GenerationMaximum(offer) = sum(ValidGenerationOfferBlock(offer,i_tradeBlock), GenerationOfferMW(offer,i_tradeBlock)) ;
-    GenerationMaximum(offer)$(not (HasSecondaryOffer(offer) or HasPrimaryOffer(offer))) = sum(ValidGenerationOfferBlock(offer,i_tradeBlock), GenerationOfferMW(offer,i_tradeBlock)) ;
-    GenerationMaximum(currentTradePeriod,i_offer)$HasSecondaryOffer(currentTradePeriod,i_offer) = sum(i_tradeBlock$ValidGenerationOfferBlock(currentTradePeriod,i_offer,i_tradeBlock), GenerationOfferMW(currentTradePeriod,i_offer,i_tradeBlock))
-                                                                                                  + sum((i_offer1,i_tradeBlock)$(ValidGenerationOfferBlock(currentTradePeriod,i_offer1,i_tradeBlock) and PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1)), GenerationOfferMW(currentTradePeriod,i_offer1,i_tradeBlock)) ;
+*    GenerationMaximum(offer) = sum(ValidGenerationOfferBlock(offer,trdBlk), GenerationOfferMW(offer,trdBlk)) ;
+    GenerationMaximum(offer)$(not (HasSecondaryOffer(offer) or HasPrimaryOffer(offer))) = sum(ValidGenerationOfferBlock(offer,trdBlk), GenerationOfferMW(offer,trdBlk)) ;
+    GenerationMaximum(currentTradePeriod,o)$HasSecondaryOffer(currentTradePeriod,o) = sum(trdBlk$ValidGenerationOfferBlock(currentTradePeriod,o,trdBlk), GenerationOfferMW(currentTradePeriod,o,trdBlk))
+                                                                                                  + sum((o1,trdBlk)$(ValidGenerationOfferBlock(currentTradePeriod,o1,trdBlk) and PrimarySecondaryOffer(currentTradePeriod,o,o1)), GenerationOfferMW(currentTradePeriod,o1,trdBlk)) ;
 * Set the ramp time
     RampTimeUp(offer) = i_tradingPeriodLength ;
     RampTimeDown(offer) = i_tradingPeriodLength ;
@@ -1488,10 +1491,10 @@ for(iterationCount = 1 to numTradePeriods,
 * Offers and Bids
 * Constraint 3.1.1.2
     GENERATIONBLOCK.up(ValidGenerationOfferBlock) = GenerationOfferMW(ValidGenerationOfferBlock) ;
-    GENERATIONBLOCK.fx(offer,i_tradeBlock)$(not ValidGenerationOfferBlock(offer,i_tradeBlock)) = 0 ;
+    GENERATIONBLOCK.fx(offer,trdBlk)$(not ValidGenerationOfferBlock(offer,trdBlk)) = 0 ;
 
 * RDN - 20130226 - Fix the generation variable for generators that are not connected or do not have a non-zero energy offer
-    GENERATION.fx(currentTradePeriod,i_offer)$(not (PositiveEnergyOffer(currentTradePeriod,i_offer))) = 0 ;
+    GENERATION.fx(currentTradePeriod,o)$(not (PositiveEnergyOffer(currentTradePeriod,o))) = 0 ;
 
 * RDN - Change to demand bid
 * Constraint 3.1.1.3 and 3.1.1.4
@@ -1502,11 +1505,11 @@ for(iterationCount = 1 to numTradePeriods,
     PURCHASEBLOCK.up(validPurchaseBidBlock)$UseDSBFDemandBidModel = purchaseBidMW(validPurchaseBidBlock)$(purchaseBidMW(validPurchaseBidBlock) > 0) ;
     PURCHASEBLOCK.lo(validPurchaseBidBlock)$UseDSBFDemandBidModel = purchaseBidMW(validPurchaseBidBlock)$(purchaseBidMW(validPurchaseBidBlock) < 0) ;
 
-    PURCHASEBLOCK.fx(bid,i_tradeBlock)$(not validPurchaseBidBlock(bid,i_tradeBlock)) = 0 ;
+    PURCHASEBLOCK.fx(bid,trdBlk)$(not validPurchaseBidBlock(bid,trdBlk)) = 0 ;
 * RDN - Change to demand bid - End
 
 * RDN - 20130226 - Fix the purchase variable for purchasers that are not connected or do not have a non-zero purchase bid
-    PURCHASE.fx(currentTradePeriod,i_bid)$(not (sum(i_tradeBlock$validPurchaseBidBlock(currentTradePeriod,i_bid,i_tradeBlock),1))) = 0 ;
+    PURCHASE.fx(currentTradePeriod,i_bid)$(not (sum(trdBlk$validPurchaseBidBlock(currentTradePeriod,i_bid,trdBlk),1))) = 0 ;
 
 * Network
 * Ensure that variables used to specify flow and losses on HVDC link are zero for AC branches and for open HVDC links.
@@ -1563,16 +1566,16 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Risk/Reserve
 * Ensure that all the invalid reserve blocks are set to zero for offers and purchasers
-    RESERVEBLOCK.fx(offer,i_tradeBlock,i_reserveClass,i_reserveType)$(not (ValidReserveOfferBlock(offer,i_tradeBlock,i_reserveClass,i_reserveType))) = 0 ;
-    PURCHASEILRBLOCK.fx(bid,i_tradeBlock,i_reserveClass)$(not (validPurchaseBidILRBlock(bid,i_tradeBlock,i_reserveClass))) = 0 ;
+    RESERVEBLOCK.fx(offer,trdBlk,i_reserveClass,i_reserveType)$(not (ValidReserveOfferBlock(offer,trdBlk,i_reserveClass,i_reserveType))) = 0 ;
+    PURCHASEILRBLOCK.fx(bid,trdBlk,i_reserveClass)$(not (validPurchaseBidILRBlock(bid,trdBlk,i_reserveClass))) = 0 ;
 * Reserve block maximum for offers and purchasers - Constraint 3.4.2.2.
     RESERVEBLOCK.up(ValidReserveOfferBlock) = reserveOfferMaximum(ValidReserveOfferBlock) ;
     PURCHASEILRBLOCK.up(validPurchaseBidILRBlock) = purchaseBidILRMW(validPurchaseBidILRBlock) ;
 
 * RDN - 20130226 - Fix the reserve variable for invalid reserve offers. These are offers that are either not connected to the grid or have no reserve quantity offered.
-    RESERVE.fx(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)$(not (sum(i_tradeBlock$ValidReserveOfferBlock(currentTradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType),1))) = 0 ;
+    RESERVE.fx(currentTradePeriod,o,i_reserveClass,i_reserveType)$(not (sum(trdBlk$ValidReserveOfferBlock(currentTradePeriod,o,trdBlk,i_reserveClass,i_reserveType),1))) = 0 ;
 * RDN - 20130226 - Fix the purchase ILR variable for invalid purchase reserve offers. These are offers that are either not connected to the grid or have no reserve quantity offered.
-    PURCHASEILR.fx(currentTradePeriod,i_bid,i_reserveClass)$(not (sum(i_tradeBlock$validPurchaseBidILRBlock(currentTradePeriod,i_bid,i_tradeBlock,i_reserveClass),1))) = 0 ;
+    PURCHASEILR.fx(currentTradePeriod,i_bid,i_reserveClass)$(not (sum(trdBlk$validPurchaseBidILRBlock(currentTradePeriod,i_bid,trdBlk,i_reserveClass),1))) = 0 ;
 
 * Risk offset fixed to zero for those not mapped to corresponding mixed constraint variable
 *    RISKOFFSET.fx(currentTradePeriod,i_island,i_reserveClass,i_riskClass)$(useMixedConstraintRiskOffset and i_useMixedConstraint and (not sum(i_type1MixedConstraint$i_type1MixedConstraintReserveMap(i_type1MixedConstraint,i_island,i_reserveClass,i_riskClass),1))) = 0 ;
@@ -1613,12 +1616,12 @@ for(iterationCount = 1 to numTradePeriods,
 
 
     if((ModelSolved = 1) and (i_sequentialSolve = 1),
-      loop(currentTradePeriod(i_tradePeriod),
+      loop(currentTradePeriod(tp),
          putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') finished at ', system.time '. Solve successful.' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                             'Violations: ' TOTALPENALTYCOST.l:<12:1 /
       ) ;
     elseif((ModelSolved = 0) and (i_sequentialSolve = 1)),
-      loop(currentTradePeriod(i_tradePeriod),
+      loop(currentTradePeriod(tp),
          putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') finished at ', system.time '. Solve unsuccessful.' /
       ) ;
     ) ;
@@ -1691,7 +1694,7 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
        if((i_sequentialSolve and sum(currentTradePeriod, UseBranchFlowMIP(currentTradePeriod) + UseMixedConstraintMIP(currentTradePeriod))),
-         loop(currentTradePeriod(i_tradePeriod),
+         loop(currentTradePeriod(tp),
              putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') requires an integer resolve.' /
          ) ;
        ) ;
@@ -1738,12 +1741,12 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Post a progress message for use by EMI.
           if(ModelSolved = 1,
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') FULL integer solve finished at ', system.time '. Solve successful.' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                                      'Violations: ' TOTALPENALTYCOST.l:<12:1 /
              ) ;
           else
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') FULL integer solve finished at ', system.time '. Solve unsuccessful.' /
              ) ;
           )  ;
@@ -1781,12 +1784,12 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Post a progress message for use by EMI.
           if(ModelSolved = 1,
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') branch integer solve finished at ', system.time '. Solve successful.' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                                      'Violations: ' TOTALPENALTYCOST.l:<12:1 /
              ) ;
           else
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') branch integer solve finished at ', system.time '. Solve unsuccessful.' /
              ) ;
           ) ;
@@ -1809,12 +1812,12 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Post a progress message for use by EMI.
           if(ModelSolved = 1,
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') MIXED integer solve finished at ', system.time '. Solve successful.' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                                      'Violations: ' TOTALPENALTYCOST.l:<12:1 /
              ) ;
           else
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') MIXED integer solve finished at ', system.time '. Solve unsuccessful.' /
              ) ;
           ) ;
@@ -1837,7 +1840,7 @@ for(iterationCount = 1 to numTradePeriods,
 * RDN - Reset the pole circular branch flow flag
           poleCircularBranchFlowExist(currentTradePeriod,pole) = 0 ;
 
-          ManualBranchSegmentMWFlow(i_tradePeriod,i_branch,i_lossSegment) = 0 ;
+          ManualBranchSegmentMWFlow(tp,i_branch,i_lossSegment) = 0 ;
           ManualLossCalculation(branch) = 0 ;
           NonPhysicalLossExist(branch)= 0 ;
           UseBranchFlowMIP(currentTradePeriod) = 0 ;
@@ -1940,12 +1943,12 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Post a progress message for use by EMI.
           if(ModelSolved = 1,
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') FULL integer solve finished at ', system.time '. Solve successful.' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                                      'Violations: ' TOTALPENALTYCOST.l:<12:1 /
              ) ;
           else
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') FULL integer solve finished at ', system.time '. Solve unsuccessful.' /
              ) ;
           ) ;
@@ -1977,14 +1980,14 @@ for(iterationCount = 1 to numTradePeriods,
 
 * Post a progress message for use by EMI.
           if(LPModelSolved = 1,
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') integer resolve was unsuccessful. Reverting back to linear solve.' /
                                      'The case: %vSPDinputData% (' currentTradePeriod.tl ') linear solve finished at ', system.time '. Solve successful. ' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                                      'Violations: ' TOTALPENALTYCOST.l:<12:1 /
                                      'Solution may have circulating flows and/or non-physical losses.' /
              ) ;
           else
-             loop(currentTradePeriod(i_tradePeriod),
+             loop(currentTradePeriod(tp),
                   putclose runlog / 'The case: %vSPDinputData% (' currentTradePeriod.tl ') integer solve was unsuccessful.  Reverting back to linear solve. Linear solve unsuccessful.' /
              ) ;
           ) ;
@@ -1996,7 +1999,7 @@ for(iterationCount = 1 to numTradePeriods,
 * RDN - Reset the pole circular branch flow parameter
           poleCircularBranchFlowExist(currentTradePeriod,pole) = 0 ;
 
-          ManualBranchSegmentMWFlow(i_tradePeriod,i_branch,i_lossSegment) = 0 ;
+          ManualBranchSegmentMWFlow(tp,i_branch,i_lossSegment) = 0 ;
           ManualLossCalculation(branch) = 0 ;
           NonPhysicalLossExist(branch)= 0 ;
           UseBranchFlowMIP(currentTradePeriod) = 0 ;
@@ -2067,7 +2070,7 @@ for(iterationCount = 1 to numTradePeriods,
 
 * See Rule Change Proposal August 2008 - Disconnected nodes available at www.systemoperator.co.nz/reports-papers
 
-    busGeneration(bus(currentTradePeriod,i_bus)) = sum((i_offer,i_node)$(offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,i_offer)) ;
+    busGeneration(bus(currentTradePeriod,i_bus)) = sum((o,i_node)$(offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,o)) ;
     busLoad(bus(currentTradePeriod,i_bus)) = sum(NodeBus(currentTradePeriod,i_node,i_bus), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * NodeDemand(currentTradePeriod,i_node)) ;
     busPrice(bus(currentTradePeriod,i_bus))$(not (sum(NodeBus(HVDCnode(currentTradePeriod,i_node),i_bus), 1))) = ACnodeNetInjectionDefinition2.m(currentTradePeriod,i_bus) ;
     busPrice(bus(currentTradePeriod,i_bus))$(sum(NodeBus(HVDCnode(currentTradePeriod,i_node),i_bus), 1)) = DCNodeNetInjection.m(currentTradePeriod,i_bus) ;
@@ -2180,7 +2183,7 @@ $OFFTEXT
        o_busDeficit_TP(i_dateTime,i_bus)$bus(currentTradePeriod,i_bus) = DEFICITBUSGENERATION.l(currentTradePeriod,i_bus) ;
        o_busSurplus_TP(i_dateTime,i_bus)$bus(currentTradePeriod,i_bus) = SURPLUSBUSGENERATION.l(currentTradePeriod,i_bus) ;
        o_node(i_dateTime,i_node)$(Node(currentTradePeriod,i_node) and (not HVDCnode(currentTradePeriod,i_node))) = yes ;
-       o_nodeGeneration_TP(i_dateTime,i_node)$Node(currentTradePeriod,i_node) = sum(i_offer$(offerNode(currentTradePeriod,i_offer,i_node)), GENERATION.l(currentTradePeriod,i_offer)) ;
+       o_nodeGeneration_TP(i_dateTime,i_node)$Node(currentTradePeriod,i_node) = sum(o$(offerNode(currentTradePeriod,o,i_node)), GENERATION.l(currentTradePeriod,o)) ;
        o_nodeLoad_TP(i_dateTime,i_node)$Node(currentTradePeriod,i_node) = NodeDemand(currentTradePeriod,i_node) ;
        o_nodePrice_TP(i_dateTime,i_node)$Node(currentTradePeriod,i_node) = sum(i_bus$(NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * busPrice(currentTradePeriod,i_bus)) ;
        o_nodeRevenue_TP(i_dateTime,i_node)$Node(currentTradePeriod,i_node) = (i_tradingPeriodLength/60)*(o_nodeGeneration_TP(i_dateTime,i_node) * o_nodePrice_TP(i_dateTime,i_node)) ;
@@ -2219,10 +2222,10 @@ $OFFTEXT
        o_branchTotalRentals_TP(i_dateTime,i_branch)$(branch(currentTradePeriod,i_branch) and (o_branchFlow_TP(i_dateTime,i_branch) >= 0)) = (i_tradingPeriodLength/60)*((o_branchToBusPrice_TP(i_dateTime,i_branch)*(o_branchFlow_TP(i_dateTime,i_branch)-o_branchTotalLoss_TP(i_dateTime,i_branch))) - (o_branchFromBusPrice_TP(i_dateTime,i_branch)*o_branchFlow_TP(i_dateTime,i_branch))) ;
        o_branchTotalRentals_TP(i_dateTime,i_branch)$(branch(currentTradePeriod,i_branch) and (o_branchFlow_TP(i_dateTime,i_branch) < 0)) = (i_tradingPeriodLength/60)*((o_branchFromBusPrice_TP(i_dateTime,i_branch)*(abs(o_branchFlow_TP(i_dateTime,i_branch))-o_branchTotalLoss_TP(i_dateTime,i_branch))) -(o_branchToBusPrice_TP(i_dateTime,i_branch)*abs(o_branchFlow_TP(i_dateTime,i_branch)))) ;
        o_branchCapacity_TP(i_dateTime,i_branch)$branch(currentTradePeriod,i_branch) = i_tradePeriodBranchCapacity(currentTradePeriod,i_branch) ;
-       o_offer(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = yes ;
-       o_offerEnergy_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = GENERATION.l(currentTradePeriod,i_offer) ;
-       o_offerFIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum((i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 1), RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
-       o_offerSIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum((i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 2), RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
+       o_offer(i_dateTime,o)$offer(currentTradePeriod,o) = yes ;
+       o_offerEnergy_TP(i_dateTime,o)$offer(currentTradePeriod,o) = GENERATION.l(currentTradePeriod,o) ;
+       o_offerFIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum((i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 1), RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
+       o_offerSIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum((i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 2), RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
        o_bidEnergy_TP(i_dateTime,i_bid)$bid(currentTradePeriod,i_bid) = PURCHASE.l(currentTradePeriod,i_bid) ;
        o_bidReserve_TP(i_dateTime,i_bid,i_reserveClass)$bid(currentTradePeriod,i_bid) = PURCHASEILR.l(currentTradePeriod,i_bid,i_reserveClass) ;
        o_island(i_dateTime,i_island) = yes ;
@@ -2267,8 +2270,8 @@ $OFFTEXT
 * Island results at a trade period level
       o_islandGen_TP(i_dateTime,i_island) = sum(i_bus$busIsland(currentTradePeriod,i_bus,i_island), busGeneration(currentTradePeriod,i_bus)) ;
       o_islandLoad_TP(i_dateTime,i_island) = sum(i_bus$busIsland(currentTradePeriod,i_bus,i_island), busLoad(currentTradePeriod,i_bus)) ;
-      o_islandEnergyRevenue_TP(i_dateTime,i_island) = (i_tradingPeriodLength/60)*sum((i_offer,i_bus,i_node)$(offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and busIsland(currentTradePeriod,i_bus,i_island)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,i_offer) * busPrice(currentTradePeriod,i_bus)) ;
-      o_islandReserveRevenue_TP(i_dateTime,i_island) = (i_tradingPeriodLength/60)*sum((i_offer,i_node,i_bus,i_reserveClass,i_reserveType)$(offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and busIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
+      o_islandEnergyRevenue_TP(i_dateTime,i_island) = (i_tradingPeriodLength/60)*sum((o,i_bus,i_node)$(offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and busIsland(currentTradePeriod,i_bus,i_island)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,o) * busPrice(currentTradePeriod,i_bus)) ;
+      o_islandReserveRevenue_TP(i_dateTime,i_island) = (i_tradingPeriodLength/60)*sum((o,i_node,i_bus,i_reserveClass,i_reserveType)$(offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and busIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
       o_islandLoadCost_TP(i_dateTime,i_island) = (i_tradingPeriodLength/60)*sum((i_bus,i_node)$(NodeBus(currentTradePeriod,i_node,i_bus) and (NodeDemand(currentTradePeriod,i_node) >= 0) and busIsland(currentTradePeriod,i_bus,i_island)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * NodeDemand(currentTradePeriod,i_node) * busPrice(currentTradePeriod,i_bus)) ;
       o_islandLoadRevenue_TP(i_dateTime,i_island) = (i_tradingPeriodLength/60)*sum((i_bus,i_node)$(NodeBus(currentTradePeriod,i_node,i_bus) and (NodeDemand(currentTradePeriod,i_node) < 0) and busIsland(currentTradePeriod,i_bus,i_island)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * (-NodeDemand(currentTradePeriod,i_node)) * busPrice(currentTradePeriod,i_bus)) ;
 
@@ -2292,53 +2295,53 @@ $OFFTEXT
 
       o_busIsland_TP(i_dateTime,i_bus,i_island)$busIsland(currentTradePeriod,i_bus,i_island) = yes ;
 
-      o_PLRO_FIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and (ord(i_reserveType) = 1)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)] ;
-      o_PLRO_SIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and (ord(i_reserveType) = 1)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)] ;
-      o_TWRO_FIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and (ord(i_reserveType) = 2)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)] ;
-      o_TWRO_SIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and (ord(i_reserveType) = 2)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)] ;
-      o_ILRO_FIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and (ord(i_reserveType) = 3)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)] ;
-      o_ILRO_SIR_TP(i_dateTime,i_offer)$offer(currentTradePeriod,i_offer) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and (ord(i_reserveType) = 3)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)] ;
+      o_PLRO_FIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and (ord(i_reserveType) = 1)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)] ;
+      o_PLRO_SIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and (ord(i_reserveType) = 1)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)] ;
+      o_TWRO_FIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and (ord(i_reserveType) = 2)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)] ;
+      o_TWRO_SIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and (ord(i_reserveType) = 2)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)] ;
+      o_ILRO_FIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and (ord(i_reserveType) = 3)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)] ;
+      o_ILRO_SIR_TP(i_dateTime,o)$offer(currentTradePeriod,o) = sum[(i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and (ord(i_reserveType) = 3)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)] ;
 
-      o_ILbus_FIR_TP(i_dateTime,i_bus) = sum[i_offer$sameas(i_offer,i_bus), o_ILRO_FIR_TP(i_dateTime,i_offer)] ;
-      o_ILbus_SIR_TP(i_dateTime,i_bus) = sum[i_offer$sameas(i_offer,i_bus), o_ILRO_SIR_TP(i_dateTime,i_offer)] ;
+      o_ILbus_FIR_TP(i_dateTime,i_bus) = sum[o$sameas(o,i_bus), o_ILRO_FIR_TP(i_dateTime,o)] ;
+      o_ILbus_SIR_TP(i_dateTime,i_bus) = sum[o$sameas(o,i_bus), o_ILRO_SIR_TP(i_dateTime,o)] ;
 
-      o_marketNodeIsland_TP(i_dateTime,i_offer,i_island)$sum[(i_node,i_bus)$[BusIsland(currentTradePeriod,i_bus,i_island)
+      o_marketNodeIsland_TP(i_dateTime,o,i_island)$sum[(i_node,i_bus)$[BusIsland(currentTradePeriod,i_bus,i_island)
                                                                              and NodeBus(currentTradePeriod,i_node,i_bus)
-                                                                             and offerNode(currentTradePeriod,i_offer,i_node)
+                                                                             and offerNode(currentTradePeriod,o,i_node)
                                                                              and (o_nodeLoad_TP(i_dateTime,i_node)  = 0)
                                                                                 ],1] = yes ;
 
-      o_generationRiskSetter(i_dateTime,i_island,i_offer,i_reserveClass,GenRisk)$[not UsePrimSecGenRiskModel
-                                                                                 and IslandRiskGenerator(currentTradePeriod,i_island,i_offer)
+      o_generationRiskSetter(i_dateTime,i_island,o,i_reserveClass,GenRisk)$[not UsePrimSecGenRiskModel
+                                                                                 and IslandRiskGenerator(currentTradePeriod,i_island,o)
                                                                                     ] =
-            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * [GENERATION.l(currentTradePeriod,i_offer)
+            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * [GENERATION.l(currentTradePeriod,o)
                                                                                             - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk)
-                                                                                            + FKband(currentTradePeriod,i_offer)
-                                                                                            + sum(i_reserveType, RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+                                                                                            + FKband(currentTradePeriod,o)
+                                                                                            + sum(i_reserveType, RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType))
                                                                                              ] ;
 
-      o_generationRiskSetter(i_dateTime,i_island,i_offer,i_reserveClass,GenRisk)$[UsePrimSecGenRiskModel
-                                                                                and IslandRiskGenerator(currentTradePeriod,i_island,i_offer)
-                                                                                and ( not (HasSecondaryOffer(currentTradePeriod,i_offer) or HasPrimaryOffer(currentTradePeriod,i_offer))                                                                                          )
+      o_generationRiskSetter(i_dateTime,i_island,o,i_reserveClass,GenRisk)$[UsePrimSecGenRiskModel
+                                                                                and IslandRiskGenerator(currentTradePeriod,i_island,o)
+                                                                                and ( not (HasSecondaryOffer(currentTradePeriod,o) or HasPrimaryOffer(currentTradePeriod,o))                                                                                          )
                                                                                    ] =
-            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * [GENERATION.l(currentTradePeriod,i_offer)
+            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * [GENERATION.l(currentTradePeriod,o)
                                                                                             - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk)
-                                                                                            + FKband(currentTradePeriod,i_offer)
-                                                                                            + sum(i_reserveType, RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+                                                                                            + FKband(currentTradePeriod,o)
+                                                                                            + sum(i_reserveType, RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType))
                                                                                              ] ;
 
-      o_generationRiskSetter(i_dateTime,i_island,i_offer,i_reserveClass,GenRisk)$[UsePrimSecGenRiskModel
-                                                                                 and IslandRiskGenerator(currentTradePeriod,i_island,i_offer)
-                                                                                 and HasSecondaryOffer(currentTradePeriod,i_offer)
+      o_generationRiskSetter(i_dateTime,i_island,o,i_reserveClass,GenRisk)$[UsePrimSecGenRiskModel
+                                                                                 and IslandRiskGenerator(currentTradePeriod,i_island,o)
+                                                                                 and HasSecondaryOffer(currentTradePeriod,o)
                                                                                     ] =
-            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * [ GENERATION.l(currentTradePeriod,i_offer)
-                                                                                              + sum[i_offer1$PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), GENERATION.l(currentTradePeriod,i_offer1)]
+            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,GenRisk) * [ GENERATION.l(currentTradePeriod,o)
+                                                                                              + sum[o1$PrimarySecondaryOffer(currentTradePeriod,o,o1), GENERATION.l(currentTradePeriod,o1)]
                                                                                               - FreeReserve(currentTradePeriod,i_island,i_reserveClass,GenRisk)
-                                                                                              + FKband(currentTradePeriod,i_offer)
-                                                                                              + sum[i_reserveType, RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)]
-                                                                                              + sum[(i_offer1,i_reserveType)$PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), RESERVE.l(currentTradePeriod,i_offer1,i_reserveClass,i_reserveType)]
+                                                                                              + FKband(currentTradePeriod,o)
+                                                                                              + sum[i_reserveType, RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)]
+                                                                                              + sum[(o1,i_reserveType)$PrimarySecondaryOffer(currentTradePeriod,o,o1), RESERVE.l(currentTradePeriod,o1,i_reserveClass,i_reserveType)]
                                                                                               ] ;
-      o_generationRiskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass) = SMax[GenRisk, o_generationRiskSetter(i_dateTime,i_island,i_offer,i_reserveClass,GenRisk)] ;
+      o_generationRiskSetterMax(i_dateTime,i_island,o,i_reserveClass) = SMax[GenRisk, o_generationRiskSetter(i_dateTime,i_island,o,i_reserveClass,GenRisk)] ;
 
 
       o_HVDCriskSetter(i_dateTime,i_island,i_reserveClass,HVDCrisk) =
@@ -2351,15 +2354,15 @@ $OFFTEXT
                                                                                                - FreeReserve(currentTradePeriod,i_island,i_reserveClass,ManualRisk)
                                                                                                 ] ;
 
-      o_genHVDCriskSetter(i_dateTime,i_island,i_offer,i_reserveClass,HVDCsecRisk)$[ (not (UsePrimSecGenRiskModel)) and HVDCsecRiskEnabled(currentTradePeriod,i_island,HVDCsecRisk)
-                                                                                  and IslandRiskGenerator(currentTradePeriod,i_island,i_offer)
+      o_genHVDCriskSetter(i_dateTime,i_island,o,i_reserveClass,HVDCsecRisk)$[ (not (UsePrimSecGenRiskModel)) and HVDCsecRiskEnabled(currentTradePeriod,i_island,HVDCsecRisk)
+                                                                                  and IslandRiskGenerator(currentTradePeriod,i_island,o)
                                                                                     ] =
-            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk) * [ GENERATION.l(currentTradePeriod,i_offer)
+            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk) * [ GENERATION.l(currentTradePeriod,o)
                                                                                                  - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk)
                                                                                                  + HVDCREC.l(currentTradePeriod,i_island)
                                                                                                  - HVDCsecRiskSubtractor(currentTradePeriod,i_island)
-                                                                                                 + FKband(currentTradePeriod,i_offer)
-                                                                                                 + sum(i_reserveType, RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+                                                                                                 + FKband(currentTradePeriod,o)
+                                                                                                 + sum(i_reserveType, RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType))
                                                                                                  ] ;
 
 
@@ -2373,35 +2376,35 @@ $OFFTEXT
 * TN - Additional output for audit reporting - End
 
 * RDN - Included reporting of risk - Start-----------------
-      o_genHVDCriskSetter(i_dateTime,i_island,i_offer,i_reserveClass,HVDCsecRisk)$[ UsePrimSecGenRiskModel and HVDCsecRiskEnabled(currentTradePeriod,i_island,HVDCsecRisk)
-                                                                                  and IslandRiskGenerator(currentTradePeriod,i_island,i_offer)
-                                                                                  and (not (HasSecondaryOffer(currentTradePeriod,i_offer) or HasPrimaryOffer(currentTradePeriod,i_offer)))
+      o_genHVDCriskSetter(i_dateTime,i_island,o,i_reserveClass,HVDCsecRisk)$[ UsePrimSecGenRiskModel and HVDCsecRiskEnabled(currentTradePeriod,i_island,HVDCsecRisk)
+                                                                                  and IslandRiskGenerator(currentTradePeriod,i_island,o)
+                                                                                  and (not (HasSecondaryOffer(currentTradePeriod,o) or HasPrimaryOffer(currentTradePeriod,o)))
                                                                                     ] =
-            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk) * [ GENERATION.l(currentTradePeriod,i_offer)
+            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk) * [ GENERATION.l(currentTradePeriod,o)
                                                                                                  - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk)
                                                                                                  + HVDCREC.l(currentTradePeriod,i_island)
                                                                                                  - HVDCsecRiskSubtractor(currentTradePeriod,i_island)
-                                                                                                 + FKband(currentTradePeriod,i_offer)
-                                                                                                 + sum(i_reserveType, RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
+                                                                                                 + FKband(currentTradePeriod,o)
+                                                                                                 + sum(i_reserveType, RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType))
                                                                                                  ] ;
 
 
-      o_genHVDCriskSetter(i_dateTime,i_island,i_offer,i_reserveClass,HVDCsecRisk)$[ UsePrimSecGenRiskModel and HVDCsecRiskEnabled(currentTradePeriod,i_island,HVDCsecRisk)
-                                                                                  and IslandRiskGenerator(currentTradePeriod,i_island,i_offer)
-                                                                                  and HasSecondaryOffer(currentTradePeriod,i_offer)
+      o_genHVDCriskSetter(i_dateTime,i_island,o,i_reserveClass,HVDCsecRisk)$[ UsePrimSecGenRiskModel and HVDCsecRiskEnabled(currentTradePeriod,i_island,HVDCsecRisk)
+                                                                                  and IslandRiskGenerator(currentTradePeriod,i_island,o)
+                                                                                  and HasSecondaryOffer(currentTradePeriod,o)
                                                                                     ] =
-            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk) * [ GENERATION.l(currentTradePeriod,i_offer)
-                                                                                                 + sum[i_offer1$PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), GENERATION.l(currentTradePeriod,i_offer1)]
+            IslandRiskAdjustmentFactor(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk) * [ GENERATION.l(currentTradePeriod,o)
+                                                                                                 + sum[o1$PrimarySecondaryOffer(currentTradePeriod,o,o1), GENERATION.l(currentTradePeriod,o1)]
                                                                                                  - FreeReserve(currentTradePeriod,i_island,i_reserveClass,HVDCsecRisk)
                                                                                                  + HVDCREC.l(currentTradePeriod,i_island)
                                                                                                  - HVDCsecRiskSubtractor(currentTradePeriod,i_island)
-                                                                                                 + FKband(currentTradePeriod,i_offer)
-                                                                                                 + sum(i_reserveType, RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType))
-                                                                                                 + sum[(i_offer1,i_reserveType)$PrimarySecondaryOffer(currentTradePeriod,i_offer,i_offer1), RESERVE.l(currentTradePeriod,i_offer1,i_reserveClass,i_reserveType)]
+                                                                                                 + FKband(currentTradePeriod,o)
+                                                                                                 + sum(i_reserveType, RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType))
+                                                                                                 + sum[(o1,i_reserveType)$PrimarySecondaryOffer(currentTradePeriod,o,o1), RESERVE.l(currentTradePeriod,o1,i_reserveClass,i_reserveType)]
                                                                                                  ] ;
 
 
-      o_genHVDCriskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass) = SMax[HVDCsecRisk, o_genHVDCriskSetter(i_dateTime,i_island,i_offer,i_reserveClass,HVDCsecRisk)] ;
+      o_genHVDCriskSetterMax(i_dateTime,i_island,o,i_reserveClass) = SMax[HVDCsecRisk, o_genHVDCriskSetter(i_dateTime,i_island,o,i_reserveClass,HVDCsecRisk)] ;
 
 
       o_HVDCriskSetterMax(i_dateTime,i_island,i_reserveClass) = Smax[HVDCrisk, o_HVDCriskSetter(i_dateTime,i_island,i_reserveClass,HVDCrisk)] ;
@@ -2410,30 +2413,30 @@ $OFFTEXT
 
 * RDN - FIR and SIR required based on calculations of the island risk to overcome reporting issues of the risk setter under degenerate conditions when reserve price = 0 - See below
       o_FIRreqd_TP(i_dateTime,i_island) = Max [ 0,
-                                                Smax((i_reserveClass,i_offer)$(ord(i_reserveClass) = 1), o_generationRiskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass)),
+                                                Smax((i_reserveClass,o)$(ord(i_reserveClass) = 1), o_generationRiskSetterMax(i_dateTime,i_island,o,i_reserveClass)),
                                                 sum(i_reserveClass$(ord(i_reserveClass) = 1), o_HVDCriskSetterMax(i_dateTime,i_island,i_reserveClass)),
                                                 sum(i_reserveClass$(ord(i_reserveClass) = 1), o_manuRiskSetterMax(i_dateTime,i_island,i_reserveClass)),
-                                                Smax((i_reserveClass,i_offer)$(ord(i_reserveClass) = 1), o_genHVDCriskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass)),
+                                                Smax((i_reserveClass,o)$(ord(i_reserveClass) = 1), o_genHVDCriskSetterMax(i_dateTime,i_island,o,i_reserveClass)),
                                                 sum(i_reserveClass$(ord(i_reserveClass) = 1), o_manuHVDCriskSetterMax(i_dateTime,i_island,i_reserveClass))
                                               ] ;
 
 
       o_SIRreqd_TP(i_dateTime,i_island) = Max [ 0,
-                                                Smax((i_reserveClass,i_offer)$(ord(i_reserveClass) = 2), o_generationRiskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass)),
+                                                Smax((i_reserveClass,o)$(ord(i_reserveClass) = 2), o_generationRiskSetterMax(i_dateTime,i_island,o,i_reserveClass)),
                                                 sum(i_reserveClass$(ord(i_reserveClass) = 2), o_HVDCriskSetterMax(i_dateTime,i_island,i_reserveClass)),
                                                 sum(i_reserveClass$(ord(i_reserveClass) = 2), o_manuRiskSetterMax(i_dateTime,i_island,i_reserveClass)),
-                                                Smax((i_reserveClass,i_offer)$(ord(i_reserveClass) = 2), o_genHVDCriskSetterMax(i_dateTime,i_island,i_offer,i_reserveClass)),
+                                                Smax((i_reserveClass,o)$(ord(i_reserveClass) = 2), o_genHVDCriskSetterMax(i_dateTime,i_island,o,i_reserveClass)),
                                                 sum(i_reserveClass$(ord(i_reserveClass) = 2), o_manuHVDCriskSetterMax(i_dateTime,i_island,i_reserveClass))
                                               ] ;
 
 
-      o_offerIsland_TP(i_dateTime,i_offer,i_island)$sum[(i_node,i_bus)$[BusIsland(currentTradePeriod,i_bus,i_island)
+      o_offerIsland_TP(i_dateTime,o,i_island)$sum[(i_node,i_bus)$[BusIsland(currentTradePeriod,i_bus,i_island)
                                                                              and NodeBus(currentTradePeriod,i_node,i_bus)
-                                                                             and offerNode(currentTradePeriod,i_offer,i_node)
+                                                                             and offerNode(currentTradePeriod,o,i_node)
                                                                            ],1] = yes ;
 
-       o_FIRcleared_TP(i_dateTime,i_island) = sum((i_offer, i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and offer(currentTradePeriod,i_offer) and o_offerIsland_TP(i_dateTime,i_offer,i_island)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
-       o_SIRcleared_TP(i_dateTime,i_island) = sum((i_offer, i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and offer(currentTradePeriod,i_offer) and o_offerIsland_TP(i_dateTime,i_offer,i_island)], RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
+       o_FIRcleared_TP(i_dateTime,i_island) = sum((o, i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 1) and offer(currentTradePeriod,o) and o_offerIsland_TP(i_dateTime,o,i_island)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
+       o_SIRcleared_TP(i_dateTime,i_island) = sum((o, i_reserveClass,i_reserveType)$[(ord(i_reserveClass) = 2) and offer(currentTradePeriod,o) and o_offerIsland_TP(i_dateTime,o,i_island)], RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
 
 * RDN - Included reporting of risk - End-----------------
 
@@ -2444,15 +2447,15 @@ $OFFTEXT
 
 *RDN - 20130730 - Additional reporting on system objective function and penalty cost
 *o_systemcost now represents the system costs only (excluding the penalty costs). See o_penalty and o_ofv for penalty and total cost
-      o_systemCost_TP(i_dateTime) = sum((i_offer,i_tradeBlock)$ValidGenerationOfferBlock(currentTradePeriod,i_offer,i_tradeBlock), GENERATIONBLOCK.l(currentTradePeriod,i_offer,i_tradeBlock) * GenerationOfferPrice(currentTradePeriod,i_offer,i_tradeBlock))
-                                  + sum((i_offer,i_tradeBlock,i_reserveClass,i_reserveType)$ValidReserveOfferBlock(currentTradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType), RESERVEBLOCK.l(currentTradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType) * reserveOfferPrice(currentTradePeriod,i_offer,i_tradeBlock,i_reserveClass,i_reserveType))
-                                  + sum((i_bid,i_tradeBlock,i_reserveClass)$validPurchaseBidILRBlock(currentTradePeriod,i_bid,i_tradeBlock,i_reserveClass), PURCHASEILRBLOCK.l(currentTradePeriod,i_bid,i_tradeBlock,i_reserveClass)) ;
+      o_systemCost_TP(i_dateTime) = sum((o,trdBlk)$ValidGenerationOfferBlock(currentTradePeriod,o,trdBlk), GENERATIONBLOCK.l(currentTradePeriod,o,trdBlk) * GenerationOfferPrice(currentTradePeriod,o,trdBlk))
+                                  + sum((o,trdBlk,i_reserveClass,i_reserveType)$ValidReserveOfferBlock(currentTradePeriod,o,trdBlk,i_reserveClass,i_reserveType), RESERVEBLOCK.l(currentTradePeriod,o,trdBlk,i_reserveClass,i_reserveType) * reserveOfferPrice(currentTradePeriod,o,trdBlk,i_reserveClass,i_reserveType))
+                                  + sum((i_bid,trdBlk,i_reserveClass)$validPurchaseBidILRBlock(currentTradePeriod,i_bid,trdBlk,i_reserveClass), PURCHASEILRBLOCK.l(currentTradePeriod,i_bid,trdBlk,i_reserveClass)) ;
 $ONTEXT
 * Penalty costs
                                   + sum(i_bus$bus(currentTradePeriod,i_bus), DeficitBusGenerationPenalty * DEFICITBUSGENERATION.l(currentTradePeriod,i_bus))
                                   + sum(i_bus$bus(currentTradePeriod,i_bus), SurplusBusGenerationPenalty * SURPLUSBUSGENERATION.l(currentTradePeriod,i_bus))
                                   + sum(i_branch$branch(currentTradePeriod,i_branch), SurplusBranchFlowPenalty * SURPLUSBRANCHFLOW.l(currentTradePeriod,i_branch))
-                                  + sum(i_offer$offer(currentTradePeriod,i_offer), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(currentTradePeriod,i_offer)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(currentTradePeriod,i_offer)))
+                                  + sum(o$offer(currentTradePeriod,o), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(currentTradePeriod,o)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(currentTradePeriod,o)))
                                   + sum(i_ACnodeConstraint$ACnodeConstraint(currentTradePeriod,i_ACnodeConstraint), DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT.l(currentTradePeriod,i_ACnodeConstraint))
                                   + sum(i_ACnodeConstraint$ACnodeConstraint(currentTradePeriod,i_ACnodeConstraint), SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT.l(currentTradePeriod,i_ACnodeConstraint))
                                   + sum(i_branchConstraint$branchConstraint(currentTradePeriod,i_branchConstraint), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(currentTradePeriod,i_branchConstraint))
@@ -2466,12 +2469,12 @@ $ONTEXT
                                   + sum((i_island,i_reserveClass)$(not diffCeECeCVP), DeficitReservePenalty(i_reserveClass) * DEFICITRESERVE.l(currentTradePeriod,i_island,i_reserveClass))
                                   + sum((i_island,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_CE(i_reserveClass) * DEFICITRESERVE_CE.l(currentTradePeriod,i_island,i_reserveClass))
                                   + sum((i_island,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE.l(currentTradePeriod,i_island,i_reserveClass))
-                                  - sum((i_bid,i_tradeBlock)$validPurchaseBidBlock(currentTradePeriod,i_bid,i_tradeBlock), PURCHASEBLOCK.l(currentTradePeriod,i_bid,i_tradeBlock) * purchaseBidPrice(currentTradePeriod,i_bid,i_tradeBlock)) ;
+                                  - sum((i_bid,trdBlk)$validPurchaseBidBlock(currentTradePeriod,i_bid,trdBlk), PURCHASEBLOCK.l(currentTradePeriod,i_bid,trdBlk) * purchaseBidPrice(currentTradePeriod,i_bid,trdBlk)) ;
 $OFFTEXT
       o_penaltyCost_TP(i_DateTime) = sum(i_bus$bus(currentTradePeriod,i_bus), DeficitBusGenerationPenalty * DEFICITBUSGENERATION.l(currentTradePeriod,i_bus))
                                    + sum(i_bus$bus(currentTradePeriod,i_bus), SurplusBusGenerationPenalty * SURPLUSBUSGENERATION.l(currentTradePeriod,i_bus))
                                    + sum(i_branch$branch(currentTradePeriod,i_branch), SurplusBranchFlowPenalty * SURPLUSBRANCHFLOW.l(currentTradePeriod,i_branch))
-                                   + sum(i_offer$offer(currentTradePeriod,i_offer), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(currentTradePeriod,i_offer)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(currentTradePeriod,i_offer)))
+                                   + sum(o$offer(currentTradePeriod,o), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(currentTradePeriod,o)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(currentTradePeriod,o)))
                                    + sum(i_ACnodeConstraint$ACnodeConstraint(currentTradePeriod,i_ACnodeConstraint), DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT.l(currentTradePeriod,i_ACnodeConstraint))
                                    + sum(i_ACnodeConstraint$ACnodeConstraint(currentTradePeriod,i_ACnodeConstraint), SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT.l(currentTradePeriod,i_ACnodeConstraint))
                                    + sum(i_branchConstraint$branchConstraint(currentTradePeriod,i_branchConstraint), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(currentTradePeriod,i_branchConstraint))
@@ -2485,7 +2488,7 @@ $OFFTEXT
                                    + sum((i_island,i_reserveClass)$(not diffCeECeCVP), DeficitReservePenalty(i_reserveClass) * DEFICITRESERVE.l(currentTradePeriod,i_island,i_reserveClass))
                                    + sum((i_island,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_CE(i_reserveClass) * DEFICITRESERVE_CE.l(currentTradePeriod,i_island,i_reserveClass))
                                    + sum((i_island,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE.l(currentTradePeriod,i_island,i_reserveClass))
-                                   - sum((i_bid,i_tradeBlock)$validPurchaseBidBlock(currentTradePeriod,i_bid,i_tradeBlock), PURCHASEBLOCK.l(currentTradePeriod,i_bid,i_tradeBlock) * purchaseBidPrice(currentTradePeriod,i_bid,i_tradeBlock)) ;
+                                   - sum((i_bid,trdBlk)$validPurchaseBidBlock(currentTradePeriod,i_bid,trdBlk), PURCHASEBLOCK.l(currentTradePeriod,i_bid,trdBlk) * purchaseBidPrice(currentTradePeriod,i_bid,trdBlk)) ;
 
       o_ofv_TP(i_DateTime) = o_systemCost_TP(i_DateTime) + o_penaltyCost_TP(i_DateTime);
 *RDN - 20130730 - Additional reporting on system objective function and penalty cost
@@ -2494,8 +2497,8 @@ $OFFTEXT
       o_defGenViolation_TP(i_dateTime) = sum(i_bus$bus(currentTradePeriod,i_bus),  DEFICITBUSGENERATION.l(currentTradePeriod,i_bus)) ;
       o_surpGenViolation_TP(i_dateTime) = sum(i_bus$bus(currentTradePeriod,i_bus), SURPLUSBUSGENERATION.l(currentTradePeriod,i_bus)) ;
       o_surpBranchFlow_TP(i_dateTime) = sum(i_branch$branch(currentTradePeriod,i_branch), SURPLUSBRANCHFLOW.l(currentTradePeriod,i_branch)) ;
-      o_defRampRate_TP(i_dateTime) = sum(i_offer$offer(currentTradePeriod,i_offer), DEFICITRAMPRATE.l(currentTradePeriod,i_offer)) ;
-      o_surpRampRate_TP(i_dateTime) = sum(i_offer$offer(currentTradePeriod,i_offer), SURPLUSRAMPRATE.l(currentTradePeriod,i_offer)) ;
+      o_defRampRate_TP(i_dateTime) = sum(o$offer(currentTradePeriod,o), DEFICITRAMPRATE.l(currentTradePeriod,o)) ;
+      o_surpRampRate_TP(i_dateTime) = sum(o$offer(currentTradePeriod,o), SURPLUSRAMPRATE.l(currentTradePeriod,o)) ;
       o_surpBranchGroupConst_TP(i_dateTime) = sum(i_branchConstraint$branchConstraint(currentTradePeriod,i_branchConstraint), SURPLUSBRANCHSECURITYCONSTRAINT.l(currentTradePeriod,i_branchConstraint)) ;
       o_defBranchGroupConst_TP(i_dateTime) = sum(i_branchConstraint$branchConstraint(currentTradePeriod,i_branchConstraint), DEFICITBRANCHSECURITYCONSTRAINT.l(currentTradePeriod,i_branchConstraint)) ;
       o_defMnodeConst_TP(i_dateTime) = sum(i_MnodeConstraint$MnodeConstraint(currentTradePeriod,i_MnodeConstraint), DEFICITMnodeCONSTRAINT.l(currentTradePeriod,i_MnodeConstraint)) ;
@@ -2540,8 +2543,8 @@ $OFFTEXT
                           sum(GenericConstraint, SURPLUSGENERICCONSTRAINT.l(GenericConstraint) + DEFICITGENERICCONSTRAINT.l(GenericConstraint)) ;
       o_systemFIR = o_systemFIR + sum((offer,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 1), RESERVE.l(offer,i_reserveClass,i_reserveType)) + sum((bid,i_reserveClass)$(ord(i_reserveClass) = 1), PURCHASEILR.l(bid,i_reserveClass)) ;
       o_systemSIR = o_systemSIR + sum((offer,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 2), RESERVE.l(offer,i_reserveClass,i_reserveType)) + sum((bid,i_reserveClass)$(ord(i_reserveClass) = 2), PURCHASEILR.l(bid,i_reserveClass)) ;
-      o_systemEnergyRevenue = o_systemEnergyRevenue + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_offer,i_bus,i_node)$(offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,i_offer) * busPrice(currentTradePeriod,i_bus)) ;
-      o_systemReserveRevenue = o_systemReserveRevenue + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_island,i_offer,i_node,i_bus,i_reserveClass,i_reserveType)$(offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodBusIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
+      o_systemEnergyRevenue = o_systemEnergyRevenue + (i_tradingPeriodLength/60)*sum((currentTradePeriod,o,i_bus,i_node)$(offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,o) * busPrice(currentTradePeriod,i_bus)) ;
+      o_systemReserveRevenue = o_systemReserveRevenue + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_island,o,i_node,i_bus,i_reserveClass,i_reserveType)$(offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodBusIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
       o_systemLoadCost = o_systemLoadCost + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_bus,i_node)$(NodeBus(currentTradePeriod,i_node,i_bus) and (NodeDemand(currentTradePeriod,i_node) >= 0)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * NodeDemand(currentTradePeriod,i_node) * busPrice(currentTradePeriod,i_bus)) ;
       o_systemLoadRevenue = o_systemLoadRevenue + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_bus,i_node)$(NodeBus(currentTradePeriod,i_node,i_bus) and (NodeDemand(currentTradePeriod,i_node) < 0)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * (-NodeDemand(currentTradePeriod,i_node)) * busPrice(currentTradePeriod,i_bus)) ;
       o_systemACrentals = o_systemACrentals + sum((currentTradePeriod,i_dateTime,i_branch)$(i_dateTimeTradePeriodMap(i_dateTime,currentTradePeriod) and ACbranch(currentTradePeriod,i_branch)), o_branchTotalRentals_TP(i_dateTime,i_branch)) ;
@@ -2550,16 +2553,16 @@ $OFFTEXT
 * Offer level
 * This does not include revenue from wind generators for final pricing because the wind generation is netted off against load
 * at the particular bus for the final pricing solves
-      o_offerTrader(i_offer,i_trader)$sum(currentTradePeriod$i_tradePeriodOfferTrader(currentTradePeriod,i_offer,i_trader),1) = yes ;
-      o_offerGen(i_offer) = o_offerGen(i_offer) + (i_tradingPeriodLength/60)*sum(currentTradePeriod, GENERATION.l(currentTradePeriod,i_offer)) ;
-      o_offerFIR(i_offer) = o_offerFIR(i_offer) + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 1), RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
-      o_offerSIR(i_offer) = o_offerSIR(i_offer) + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 2), RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
-      o_offerGenRevenue(i_offer) = o_offerGenRevenue(i_offer)
-        + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_bus,i_node)$(offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,i_offer) * busPrice(currentTradePeriod,i_bus)) ;
-      o_offerFIRrevenue(i_offer) = o_offerFIRrevenue(i_offer)
-        + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_island,i_node,i_bus,i_reserveClass,i_reserveType)$((ord(i_reserveClass) = 1) and offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodBusIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
-      o_offerSIRrevenue(i_offer) = o_offerSIRrevenue(i_offer)
-        + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_island,i_node,i_bus,i_reserveClass,i_reserveType)$((ord(i_reserveClass) = 2) and offerNode(currentTradePeriod,i_offer,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodBusIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,i_offer,i_reserveClass,i_reserveType)) ;
+      o_offerTrader(o,i_trader)$sum(currentTradePeriod$i_tradePeriodOfferTrader(currentTradePeriod,o,i_trader),1) = yes ;
+      o_offerGen(o) = o_offerGen(o) + (i_tradingPeriodLength/60)*sum(currentTradePeriod, GENERATION.l(currentTradePeriod,o)) ;
+      o_offerFIR(o) = o_offerFIR(o) + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 1), RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
+      o_offerSIR(o) = o_offerSIR(o) + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 2), RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
+      o_offerGenRevenue(o) = o_offerGenRevenue(o)
+        + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_bus,i_node)$(offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus)), NodeBusAllocationFactor(currentTradePeriod,i_node,i_bus) * GENERATION.l(currentTradePeriod,o) * busPrice(currentTradePeriod,i_bus)) ;
+      o_offerFIRrevenue(o) = o_offerFIRrevenue(o)
+        + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_island,i_node,i_bus,i_reserveClass,i_reserveType)$((ord(i_reserveClass) = 1) and offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodBusIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
+      o_offerSIRrevenue(o) = o_offerSIRrevenue(o)
+        + (i_tradingPeriodLength/60)*sum((currentTradePeriod,i_island,i_node,i_bus,i_reserveClass,i_reserveType)$((ord(i_reserveClass) = 2) and offerNode(currentTradePeriod,o,i_node) and NodeBus(currentTradePeriod,i_node,i_bus) and i_tradePeriodBusIsland(currentTradePeriod,i_bus,i_island)), SupplyDemandReserveRequirement.m(currentTradePeriod,i_island,i_reserveClass) * RESERVE.l(currentTradePeriod,o,i_reserveClass,i_reserveType)) ;
 
 * End of if statement for the resolve skipped
   ) ;
@@ -2586,12 +2589,12 @@ $OFFTEXT
    o_systemLoadRevenue = 0 ;
    o_systemACrentals = 0 ;
    o_systemDCrentals = 0 ;
-   o_offerGen(i_offer) = 0 ;
-   o_offerFIR(i_offer) = 0 ;
-   o_offerSIR(i_offer) = 0 ;
-   o_offerGenRevenue(i_offer) = 0 ;
-   o_offerFIRrevenue(i_offer) = 0 ;
-   o_offerSIRrevenue(i_offer) = 0 ;
+   o_offerGen(o) = 0 ;
+   o_offerFIR(o) = 0 ;
+   o_offerSIR(o) = 0 ;
+   o_offerGenRevenue(o) = 0 ;
+   o_offerFIRrevenue(o) = 0 ;
+   o_offerSIRrevenue(o) = 0 ;
  ) ;
 
 
@@ -2622,12 +2625,12 @@ execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_OfferOutput.gdx', i_of
 * Trader level
 * Currently this does not include revenue from wind generators since wind generation in FP is represented as negative load
 o_trader(i_trader) = yes ;
-o_traderGen(i_trader) = sum(i_offer$o_offerTrader(i_offer,i_trader), o_offerGen(i_offer)) ;
-o_traderFIR(i_trader) = sum(i_offer$o_offerTrader(i_offer,i_trader), o_offerFIR(i_offer)) ;
-o_traderSIR(i_trader) = sum(i_offer$o_offerTrader(i_offer,i_trader), o_offerSIR(i_offer)) ;
-o_traderGenRevenue(i_trader) = sum(i_offer$o_offerTrader(i_offer,i_trader), o_offerGenRevenue(i_offer)) ;
-o_traderFIRrevenue(i_trader) = sum(i_offer$o_offerTrader(i_offer,i_trader), o_offerFIRrevenue(i_offer)) ;
-o_traderSIRrevenue(i_trader) = sum(i_offer$o_offerTrader(i_offer,i_trader), o_offerSIRrevenue(i_offer)) ;
+o_traderGen(i_trader) = sum(o$o_offerTrader(o,i_trader), o_offerGen(o)) ;
+o_traderFIR(i_trader) = sum(o$o_offerTrader(o,i_trader), o_offerFIR(o)) ;
+o_traderSIR(i_trader) = sum(o$o_offerTrader(o,i_trader), o_offerSIR(o)) ;
+o_traderGenRevenue(i_trader) = sum(o$o_offerTrader(o,i_trader), o_offerGenRevenue(o)) ;
+o_traderFIRrevenue(i_trader) = sum(o$o_offerTrader(o,i_trader), o_offerFIRrevenue(o)) ;
+o_traderSIRrevenue(i_trader) = sum(o$o_offerTrader(o,i_trader), o_offerSIRrevenue(o)) ;
 
 execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_TraderOutput.gdx', o_trader, o_traderGen, o_traderFIR, o_traderSIR ;
 
