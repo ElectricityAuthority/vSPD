@@ -1,10 +1,6 @@
 *+++ vSPD settings +++
-$inlinecom { }
+$inlinecom ## ##
 $eolcom !
-
-
-*+++ Model +++
-Scalar i_sequentialSolve                 / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
 
 
 *+++ Network +++
@@ -14,7 +10,7 @@ Scalar i_useACBranchLimits               / 1 / ;
 Scalar i_useHVDCBranchLimits             / 1 / ;
 Scalar i_resolveCircularBranchFlows      / 1 / ;
 Scalar i_resolveHVDCNonPhysicalLosses    / 1 / ;
-Scalar i_resolveACNonPhysicalLosses      / 0 / ;   ! Placeholder for future code development
+Scalar i_resolveACNonPhysicalLosses      / 0 / ;
 Scalar circularBranchFlowTolerance       / 0.000001 / ;
 Scalar nonPhysicalLossTolerance          / 0.000001 / ;
 Scalar useBranchFlowMIPTolerance         / 0.000001 / ;
@@ -25,18 +21,15 @@ Scalar i_useReserveModel                 / 1 / ;
 Scalar i_useMixedConstraint              / 1 / ;
 Scalar mixedMIPtolerance                 / 0.000001 / ;
 
-*+++ Solver +++
+
+*+++ Model and solver +++
+Scalar i_sequentialSolve                 / 0 / ;
 $setglobal Solver                          Cplex
 Scalar LPtimeLimit                       / 600 / ;
 Scalar LPiterationLimit                  / 1000000 / ;
 Scalar MIPtimeLimit                      / 600 / ;
 Scalar MIPoptimality                     / 0 / ;
 Scalar MIPiterationLimit                 / 1000000 / ;
-
-
-*+++ Misc +++
-Scalar i_disconnectedNodePriceCorrection / 1 / ;
-$setglobal varResv                        -1
 
 
 *+++ External loss model from Transpower +++
@@ -49,8 +42,13 @@ Scalar lossCoeff_F                       / 0.82247 / ;
 Scalar maxFlowSegment                    / 10000 / ;
 
 
-*+++ Various switches +++
-$setglobal interfaceMode                   2       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
+*+++ Misc +++
+Scalar i_disconnectedNodePriceCorrection / 1 / ;
+$setglobal varResv                        -1
+
+
+*+++ Operating switches +++
+$setglobal interfaceMode                   2       ! Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
 $setglobal suppressOverrides               0       ! Specify 1 to suppress reading and implementing the selected override file
 $setglobal calcFTRrentals                  0       ! Specify 1 to calculate FTR rentals, 0 otherwise
 Scalar     opMode                        / 2 / ;   ! Specify 1 for data warehouse; -1 for audit; otherwise usual vSPD mode

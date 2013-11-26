@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     22 November 2013
+* Last modified on:     26 November 2013
 *=====================================================================================
 
 $ontext
@@ -578,7 +578,7 @@ $ontext
   etc. But it probably makes sense to mimic the GDX file as used by EMI.
 $offtext
 
-$if not %suppressOverrides%==1 $include vSPDsolveOverrides.gms
+$if not %suppressOverrides%==1 $include vSPDoverrides.gms
 
 *FTR include file 1 - override vSPD settings and parameters to calculate branch and constraint participation loading
 *$if exist FTR_1.ins $Include FTR_1.ins
@@ -1234,88 +1234,88 @@ for(iterationCount = 1 to numTradePeriods,
 * The loss factor coefficients assume that the branch capacity is in MW and the resistance is in p.u.
 * Branches (AC and HVDC) with 1 loss segment
 * RDN - Ensure only the 1st loss segment is used for branches with <= 1 loss blocks - Start--------------------------
-*         LossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1)  and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
-*         LossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1) and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch)) ;
-*         LossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
-*         LossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink)) ;
+*         lossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1)  and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
+*         lossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1) and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch)) ;
+*         lossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
+*         lossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink)) ;
 
-         LossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1)  and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1) and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch)) ;
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink)) ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1)  and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) <= 1) and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch)) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_noLossBranch(los,i_lossParameter)) ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (not i_useExternalLossModel) and (ord(los) = 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_noLossBranch(los,i_lossParameter) * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink)) ;
 
 * RDN - Ensure only the 1st loss segment is used for branches with <= 1 loss blocks - End--------------------------
 
 * Use the external loss model as provided by Transpower
 * RDN - Ensure only the 1st loss segment is used for branches with 0 loss blocks - Start--------------------------
-*         LossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel) = maxFlowSegment ;
-*         LossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel) = 0 ;
-*         LossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel) = maxFlowSegment ;
-*         LossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel) = 0 ;
+*         lossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel) = maxFlowSegment ;
+*         lossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel) = 0 ;
+*         lossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel) = maxFlowSegment ;
+*         lossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel) = 0 ;
 
-         LossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel and (ord(los) = 1)) = 0 ;
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel and (ord(los) = 1)) = 0 ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 0) and i_useExternalLossModel and (ord(los) = 1)) = 0 ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 0) and i_useExternalLossModel and (ord(los) = 1)) = 0 ;
 * RDN - Ensure only the 1st loss segment is used for branches with 0 loss blocks - End----------------------------
 
 * Use the external loss model as provided by Transpower
-         LossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 1) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 1) and i_useExternalLossModel and (ord(los) = 1)) = ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) ;
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 1) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 1) and i_useExternalLossModel and (ord(los) = 1)) = HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 1) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$((ACbranchLossBlocks(ACbranch) = 1) and i_useExternalLossModel and (ord(los) = 1)) = ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 1) and i_useExternalLossModel and (ord(los) = 1)) = maxFlowSegment ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((HVDClinkLossBlocks(HVDClink) = 1) and i_useExternalLossModel and (ord(los) = 1)) = HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) ;
 
 * AC loss branches with more than one loss segment
-         LossSegmentMW(ClosedBranch(ACbranch),los)$((not i_useExternalLossModel) and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) < ACbranchLossBlocks(ACbranch))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_AClossBranch(los,i_lossParameter) * ACbranchCapacity(ACbranch)) ;
-         LossSegmentMW(ClosedBranch(ACbranch),los)$((not i_useExternalLossModel) and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = ACbranchLossBlocks(ACbranch))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_AClossBranch(los,i_lossParameter)) ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$((not i_useExternalLossModel) and (ACbranchLossBlocks(ACbranch) > 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_AClossBranch(los,i_lossParameter) * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch)) ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$((not i_useExternalLossModel) and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) < ACbranchLossBlocks(ACbranch))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_AClossBranch(los,i_lossParameter) * ACbranchCapacity(ACbranch)) ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$((not i_useExternalLossModel) and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = ACbranchLossBlocks(ACbranch))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_AClossBranch(los,i_lossParameter)) ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$((not i_useExternalLossModel) and (ACbranchLossBlocks(ACbranch) > 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_AClossBranch(los,i_lossParameter) * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch)) ;
 
 * Use the external loss model as provided by Transpower
 * Segment 1
-         LossSegmentMW(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 1)) = ACbranchCapacity(ACbranch) * lossCoeff_A ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 1)) = 0.01 * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) * 0.75 * lossCoeff_A ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 1)) = ACbranchCapacity(ACbranch) * lossCoeff_A ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 1)) = 0.01 * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) * 0.75 * lossCoeff_A ;
 * Segment 2
-         LossSegmentMW(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 2)) = ACbranchCapacity(ACbranch) * (1-lossCoeff_A) ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 2)) = 0.01 * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 2)) = ACbranchCapacity(ACbranch) * (1-lossCoeff_A) ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 2)) = 0.01 * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) ;
 * Segment 3
-         LossSegmentMW(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 3)) = maxFlowSegment ;
-         LossSegmentFactor(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 3)) = 0.01 * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) * (2 - (0.75*lossCoeff_A)) ;
+         lossSegmentMW(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 3)) = maxFlowSegment ;
+         lossSegmentFactor(ClosedBranch(ACbranch),los)$(i_useExternalLossModel and (ACbranchLossBlocks(ACbranch) > 1) and (ord(los) = 3)) = 0.01 * ACbranchResistance(ACbranch) * ACbranchCapacity(ACbranch) * (2 - (0.75*lossCoeff_A)) ;
 
 * HVDC loss branches with more than one loss segment
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((not i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) < HVDClinkLossBlocks(HVDClink))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_HVDClossBranch(los,i_lossParameter) * HVDClinkCapacity(HVDClink)) ;
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((not i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = HVDClinkLossBlocks(HVDClink))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_HVDClossBranch(los,i_lossParameter)) ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((not i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_HVDClossBranch(los,i_lossParameter) * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink)) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((not i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) < HVDClinkLossBlocks(HVDClink))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_HVDClossBranch(los,i_lossParameter) * HVDClinkCapacity(HVDClink)) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((not i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = HVDClinkLossBlocks(HVDClink))) = sum(i_lossParameter$(ord(i_lossParameter) = 1), i_HVDClossBranch(los,i_lossParameter)) ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((not i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1)) = sum(i_lossParameter$(ord(i_lossParameter) = 2), i_HVDClossBranch(los,i_lossParameter) * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink)) ;
 
 * Use the external loss model as provided by Transpower
 * Segment 1
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 1)) = HVDClinkCapacity(HVDClink) * lossCoeff_C ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 1)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * 0.75 * lossCoeff_C ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 1)) = HVDClinkCapacity(HVDClink) * lossCoeff_C ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 1)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * 0.75 * lossCoeff_C ;
 * Segment 2
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 2)) = HVDClinkCapacity(HVDClink) * lossCoeff_D ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 2)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * lossCoeff_E ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 2)) = HVDClinkCapacity(HVDClink) * lossCoeff_D ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 2)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * lossCoeff_E ;
 * Segment 3
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 3)) = HVDClinkCapacity(HVDClink) * 0.5 ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 3)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * lossCoeff_F ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 3)) = HVDClinkCapacity(HVDClink) * 0.5 ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 3)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * lossCoeff_F ;
 * Segment 4
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 4)) = HVDClinkCapacity(HVDClink) * (1 - lossCoeff_D) ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 4)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * (2 - lossCoeff_F) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 4)) = HVDClinkCapacity(HVDClink) * (1 - lossCoeff_D) ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 4)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * (2 - lossCoeff_F) ;
 * Segment 5
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 5)) = HVDClinkCapacity(HVDClink) * (1 - lossCoeff_C) ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 5)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * (2 - lossCoeff_E) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 5)) = HVDClinkCapacity(HVDClink) * (1 - lossCoeff_C) ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 5)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * (2 - lossCoeff_E) ;
 * Segment 6
-         LossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 6)) = maxFlowSegment ;
-         LossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 6)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * (2 - (0.75*lossCoeff_C)) ;
+         lossSegmentMW(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 6)) = maxFlowSegment ;
+         lossSegmentFactor(ClosedBranch(HVDClink),los)$((i_useExternalLossModel) and (HVDClinkLossBlocks(HVDClink) > 1) and (ord(los) = 6)) = 0.01 * HVDClinkResistance(HVDClink) * HVDClinkCapacity(HVDClink) * (2 - (0.75*lossCoeff_C)) ;
 
-* Valid loss segment for a branch is defined as a loss segment that has a non-zero LossSegmentMW OR a non-zero LossSegmentFactor
+* Valid loss segment for a branch is defined as a loss segment that has a non-zero lossSegmentMW OR a non-zero lossSegmentFactor
 * Every branch has at least one loss segment block
     ValidLossSegment(branch,los)$(ord(los) = 1) = yes ;
-    ValidLossSegment(branch,los)$((ord(los) > 1) and (LossSegmentMW(branch,los)+LossSegmentFactor(branch,los))) = yes ;
+    ValidLossSegment(branch,los)$((ord(los) > 1) and (lossSegmentMW(branch,los)+lossSegmentFactor(branch,los))) = yes ;
 * HVDC loss model requires at least two loss segments and an additional loss block due to cumulative loss formulation
     ValidLossSegment(HVDClink,los)$((HVDClinkLossBlocks(HVDClink) <= 1) and (ord(los) = 2)) = yes ;
-    ValidLossSegment(HVDClink,los)$((HVDClinkLossBlocks(HVDClink) > 1) and (sum(los1, LossSegmentMW(HVDClink,los1)+LossSegmentFactor(HVDClink,los1)) > 0) and (ord(los) = (HVDClinkLossBlocks(HVDClink) + 1))) = yes ;
+    ValidLossSegment(HVDClink,los)$((HVDClinkLossBlocks(HVDClink) > 1) and (sum(los1, lossSegmentMW(HVDClink,los1)+lossSegmentFactor(HVDClink,los1)) > 0) and (ord(los) = (HVDClinkLossBlocks(HVDClink) + 1))) = yes ;
 
 * branches that have non-zero loss factors
-    LossBranch(branch)$(sum(los, LossSegmentFactor(branch,los))) = yes ;
+    lossBranch(branch)$(sum(los, lossSegmentFactor(branch,los))) = yes ;
 
 * Initialise Risk/Reserve data for the current trading period
     RiskGenerator(offer)$i_tradePeriodRiskGenerator(offer) = yes ;
@@ -1482,20 +1482,20 @@ for(iterationCount = 1 to numTradePeriods,
    GenerationEndDown(offer)$HasSecondaryOffer(offer) = (GenerationStart(offer)-(RampRateDown(offer)*RampTimeDown(offer)))$((GenerationStart(offer)-(RampRateDown(offer)*RampTimeDown(offer))) >= 0) ;
 
 * Create branch loss segments
-    ACbranchLossMW(branch,los)$(ValidLossSegment(branch,los) and ACbranch(branch) and (ord(los) = 1) ) = LossSegmentMW(branch,los) ;
-    ACbranchLossMW(branch,los)$(ValidLossSegment(branch,los) and ACbranch(branch) and (ord(los) > 1) ) = LossSegmentMW(branch,los) - LossSegmentMW(branch,los-1) ;
-    ACbranchLossFactor(branch,los)$(ValidLossSegment(branch,los) and ACbranch(branch)) = LossSegmentFactor(branch,los) ;
+    ACbranchLossMW(branch,los)$(ValidLossSegment(branch,los) and ACbranch(branch) and (ord(los) = 1) ) = lossSegmentMW(branch,los) ;
+    ACbranchLossMW(branch,los)$(ValidLossSegment(branch,los) and ACbranch(branch) and (ord(los) > 1) ) = lossSegmentMW(branch,los) - lossSegmentMW(branch,los-1) ;
+    ACbranchLossFactor(branch,los)$(ValidLossSegment(branch,los) and ACbranch(branch)) = lossSegmentFactor(branch,los) ;
 
 * Let the first point on the HVDCBreakPointMWFlow and HVDCBreakPointMWLoss be 0
 * This allows zero losses and zero flow on the HVDC links otherwise model could be infeasible
     HVDCBreakPointMWFlow(HVDClink,los)$(ord(los) = 1) = 0 ;
     HVDCBreakPointMWLoss(HVDClink,los)$(ord(los) = 1) = 0 ;
 
-    HVDCBreakPointMWFlow(branch,los)$(ValidLossSegment(branch,los) and HVDClink(branch) and (ord(los) > 1)) = LossSegmentMW(branch,los-1) ;
-    HVDCBreakPointMWLoss(branch,los)$(ValidLossSegment(branch,los) and HVDClink(branch) and (ord(los) = 2)) = (LossSegmentMW(branch,los-1) * LossSegmentFactor(branch,los-1)) ;
+    HVDCBreakPointMWFlow(branch,los)$(ValidLossSegment(branch,los) and HVDClink(branch) and (ord(los) > 1)) = lossSegmentMW(branch,los-1) ;
+    HVDCBreakPointMWLoss(branch,los)$(ValidLossSegment(branch,los) and HVDClink(branch) and (ord(los) = 2)) = (lossSegmentMW(branch,los-1) * lossSegmentFactor(branch,los-1)) ;
 
     loop((HVDClink(branch),los)$(ord(los) > 2),
-       HVDCBreakPointMWLoss(branch,los)$ValidLossSegment(branch,los) = ((LossSegmentMW(branch,los-1) - LossSegmentMW(branch,los-2)) * LossSegmentFactor(branch,los-1)) + HVDCBreakPointMWLoss(branch,los-1) ;
+       HVDCBreakPointMWLoss(branch,los)$ValidLossSegment(branch,los) = ((lossSegmentMW(branch,los-1) - lossSegmentMW(branch,los-2)) * lossSegmentFactor(branch,los-1)) + HVDCBreakPointMWLoss(branch,los-1) ;
     ) ;
 
 *Update the variable bounds and fixing variable values
@@ -1618,7 +1618,7 @@ for(iterationCount = 1 to numTradePeriods,
 * Set the model solve status
     ModelSolved = 1$((vSPD.modelstat = 1) and (vSPD.solvestat = 1)) ;
 
-* Post a progress message to the console and for use by EMI.
+* Post a progress message to the console and for use by EMI tools.
     if((ModelSolved = 1) and (i_sequentialSolve = 0),
       putclose runlog / 'The case: %vSPDinputData% finished at ', system.time '. Solve successful.' / 'Objective function value: ' NETBENEFIT.l:<12:1 /
                          'Violation Cost: ' TOTALPENALTYCOST.l:<12:1 /
@@ -1643,7 +1643,7 @@ for(iterationCount = 1 to numTradePeriods,
 * e) Check if the LP results are valid
     if((ModelSolved = 1),
 * Check if there are circulating branch flows on loss AC branches and HVDC links
-       circularBranchFlowExist(ACbranch)$(LossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
+       circularBranchFlowExist(ACbranch)$(lossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
 
 * RDN - Determine the circular branch flow flag on each HVDC pole
        TotalHVDCpoleFlow(currTP,pole) =
@@ -1657,22 +1657,22 @@ for(iterationCount = 1 to numTradePeriods,
        NorthHVDC(currTP) = sum((ild,b,br)$((ord(ild) = 2) and i_tradePeriodBusIsland(currTP,b,ild) and HVDClinkSendingBus(currTP,br,b) and HVDCpoles(currTP,br)), HVDClINKFLOW.l(currTP,br)) ;
        SouthHVDC(currTP) = sum((ild,b,br)$((ord(ild) = 1) and i_tradePeriodBusIsland(currTP,b,ild) and HVDClinkSendingBus(currTP,br,b) and HVDCpoles(currTP,br)), HVDClINKFLOW.l(currTP,br)) ;
 
-       circularBranchFlowExist(currTP,br)$(HVDCpoles(currTP,br) and LossBranch(currTP,br) and (min(NorthHVDC(currTP), SouthHVDC(currTP)) > circularBranchFlowTolerance)) = 1 ;
+       circularBranchFlowExist(currTP,br)$(HVDCpoles(currTP,br) and lossBranch(currTP,br) and (min(NorthHVDC(currTP), SouthHVDC(currTP)) > circularBranchFlowTolerance)) = 1 ;
 
 * Check if there are non-physical losses on loss AC branches and HVDC links
-       ManualBranchSegmentMWFlow(ValidLossSegment(ACbranch,los))$LossBranch(ACbranch) = min(max((abs(ACBRANCHFLOW.l(ACbranch))-(LossSegmentMW(ACbranch,los-1))$(ord(los) > 1)),0),ACbranchLossMW(ACbranch,los)) ;
-       ManualBranchSegmentMWFlow(ValidLossSegment(HVDClink,los))$(LossBranch(HVDClink) and (ord(los) <= HVDClinkLossBlocks(HVDClink))) = min(max((abs(HVDClINKFLOW.l(HVDClink))-(LossSegmentMW(HVDClink,los-1))$(ord(los) > 1)),0),(LossSegmentMW(HVDClink,los) - (LossSegmentMW(HVDClink,los-1))$(ord(los) > 1))) ;
-       ManualLossCalculation(branch)$LossBranch(branch) = sum(los, LossSegmentFactor(branch,los) * ManualBranchSegmentMWFlow(branch,los)) ;
-       NonPhysicalLossExist(ACbranch)$(LossBranch(ACbranch) and (abs(ManualLossCalculation(ACbranch) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(ACbranch,i_flowDirection))) > NonPhysicalLossTolerance)) = 1 ;
-       NonPhysicalLossExist(HVDClink)$(LossBranch(HVDClink) and (abs(ManualLossCalculation(HVDClink) - HVDClINKLOSSES.l(HVDClink)) > NonPhysicalLossTolerance)) = 1 ;
+       ManualBranchSegmentMWFlow(ValidLossSegment(ACbranch,los))$lossBranch(ACbranch) = min(max((abs(ACBRANCHFLOW.l(ACbranch))-(lossSegmentMW(ACbranch,los-1))$(ord(los) > 1)),0),ACbranchLossMW(ACbranch,los)) ;
+       ManualBranchSegmentMWFlow(ValidLossSegment(HVDClink,los))$(lossBranch(HVDClink) and (ord(los) <= HVDClinkLossBlocks(HVDClink))) = min(max((abs(HVDClINKFLOW.l(HVDClink))-(lossSegmentMW(HVDClink,los-1))$(ord(los) > 1)),0),(lossSegmentMW(HVDClink,los) - (lossSegmentMW(HVDClink,los-1))$(ord(los) > 1))) ;
+       ManualLossCalculation(branch)$lossBranch(branch) = sum(los, LossSegmentFactor(branch,los) * ManualBranchSegmentMWFlow(branch,los)) ;
+       NonPhysicalLossExist(ACbranch)$(lossBranch(ACbranch) and (abs(ManualLossCalculation(ACbranch) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(ACbranch,i_flowDirection))) > NonPhysicalLossTolerance)) = 1 ;
+       NonPhysicalLossExist(HVDClink)$(lossBranch(HVDClink) and (abs(ManualLossCalculation(HVDClink) - HVDClINKLOSSES.l(HVDClink)) > NonPhysicalLossTolerance)) = 1 ;
 
 * Invoke the UseBranchFlowMIP flag if the number of circular branch flow and non-physical loss branches exceeds the specified tolerance
 * RDN - Test - update logic to include roundpower logic
-*       UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and LossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
-*         sum(br$(LossBranch(currTP,br) and HVDClink(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br)))
+*       UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and lossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
+*         sum(br$(lossBranch(currTP,br) and HVDClink(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br)))
 *         > UseBranchFlowMIPTolerance) = 1 ;
-       UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and LossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
-         sum(br$(LossBranch(currTP,br) and HVDClink(currTP,br)), (1-AllowHVDCroundpower(currTP))*i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br))) +
+       UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and lossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
+         sum(br$(lossBranch(currTP,br) and HVDClink(currTP,br)), (1-AllowHVDCroundpower(currTP))*i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br))) +
          sum(pole, i_resolveCircularBranchFlows*poleCircularBranchFlowExist(currTP,pole))
          > UseBranchFlowMIPTolerance) = 1 ;
 
@@ -1726,7 +1726,7 @@ for(iterationCount = 1 to numTradePeriods,
 
           LAMBDAINTEGER.fx(currTP,br,los)$(not UseBranchFlowMIP(currTP)) = 0 ;
 * Fix the values of these integer variables that are not needed
-          ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),i_flowDirection)$(UseBranchFlowMIP(currTP) and (HVDClink(branch) or (not LossBranch(branch)) or OpenBranch(branch))) = 0 ;
+          ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),i_flowDirection)$(UseBranchFlowMIP(currTP) and (HVDClink(branch) or (not lossBranch(branch)) or OpenBranch(branch))) = 0 ;
 * RDN - 20130227 - Fix the integer AC branch flow variable to zero for invalid branches
           ACBRANCHFLOWDIRECTED_INTEGER.fx(currTP,br,i_flowDirection)$(UseBranchFlowMIP(currTP) and (not branch(currTP,br))) = 0 ;
 
@@ -1774,7 +1774,7 @@ for(iterationCount = 1 to numTradePeriods,
 
              LAMBDAINTEGER.fx(currTP,br,los)$(not UseBranchFlowMIP(currTP)) = 0 ;
 * Fix the values of these integer variables that are not needed
-             ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),i_flowDirection)$(UseBranchFlowMIP(currTP) and (HVDClink(branch) or (not LossBranch(branch)) or OpenBranch(branch))) = 0 ;
+             ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),i_flowDirection)$(UseBranchFlowMIP(currTP) and (HVDClink(branch) or (not lossBranch(branch)) or OpenBranch(branch))) = 0 ;
 * RDN - 20130227 - Fix the integer AC branch flow variable to zero for invalid branches
              ACBRANCHFLOWDIRECTED_INTEGER.fx(currTP,br,i_flowDirection)$(UseBranchFlowMIP(currTP) and (not branch(currTP,br))) = 0 ;
 * Apply an upper bound on the integer weighting parameter based on its definition
@@ -1858,10 +1858,10 @@ for(iterationCount = 1 to numTradePeriods,
           UseBranchFlowMIP(currTP) = 0 ;
 
 * Check if there are circulating branch flows on loss AC branches and HVDC links
-          circularBranchFlowExist(ACbranch)$(LossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
+          circularBranchFlowExist(ACbranch)$(lossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
           NorthHVDC(currTP) = sum((ild,b,br)$((ord(ild) = 2) and i_tradePeriodBusIsland(currTP,b,ild) and HVDClinkSendingBus(currTP,br,b) and HVDCpoles(currTP,br)), HVDClINKFLOW.l(currTP,br)) ;
           SouthHVDC(currTP) = sum((ild,b,br)$((ord(ild) = 1) and i_tradePeriodBusIsland(currTP,b,ild) and HVDClinkSendingBus(currTP,br,b) and HVDCpoles(currTP,br)), HVDClINKFLOW.l(currTP,br)) ;
-          circularBranchFlowExist(currTP,br)$(HVDCpoles(currTP,br) and LossBranch(currTP,br) and (min(NorthHVDC(currTP), SouthHVDC(currTP)) > circularBranchFlowTolerance)) = 1 ;
+          circularBranchFlowExist(currTP,br)$(HVDCpoles(currTP,br) and lossBranch(currTP,br) and (min(NorthHVDC(currTP), SouthHVDC(currTP)) > circularBranchFlowTolerance)) = 1 ;
 
 * RDN - Determine the circular branch flow flag on each HVDC pole
           TotalHVDCpoleFlow(currTP,pole) =
@@ -1873,19 +1873,19 @@ for(iterationCount = 1 to numTradePeriods,
           poleCircularBranchFlowExist(currTP,pole)$((abs(TotalHVDCpoleFlow(currTP,pole)-MaxHVDCpoleFlow(currTP,pole)) > circularBranchFlowTolerance)) = 1 ;
 
 * Check if there are non-physical losses on loss AC branches and HVDC links
-          ManualBranchSegmentMWFlow(ValidLossSegment(ACbranch,los))$LossBranch(ACbranch) = min(max((abs(ACBRANCHFLOW.l(ACbranch))-(LossSegmentMW(ACbranch,los-1))$(ord(los) > 1)),0),ACbranchLossMW(ACbranch,los)) ;
-          ManualBranchSegmentMWFlow(ValidLossSegment(HVDClink,los))$(LossBranch(HVDClink) and (ord(los) <= HVDClinkLossBlocks(HVDClink))) = min(max((abs(HVDClINKFLOW.l(HVDClink))-(LossSegmentMW(HVDClink,los-1))$(ord(los) > 1)),0),(LossSegmentMW(HVDClink,los) - (LossSegmentMW(HVDClink,los-1))$(ord(los) > 1))) ;
-          ManualLossCalculation(branch)$LossBranch(branch) = sum(los, LossSegmentFactor(branch,los) * ManualBranchSegmentMWFlow(branch,los)) ;
-          NonPhysicalLossExist(ACbranch)$(LossBranch(ACbranch) and (abs(ManualLossCalculation(ACbranch) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(ACbranch,i_flowDirection))) > NonPhysicalLossTolerance)) = 1 ;
-          NonPhysicalLossExist(HVDClink)$(LossBranch(HVDClink) and (abs(ManualLossCalculation(HVDClink) - HVDClINKLOSSES.l(HVDClink)) > NonPhysicalLossTolerance)) = 1 ;
+          ManualBranchSegmentMWFlow(ValidLossSegment(ACbranch,los))$lossBranch(ACbranch) = min(max((abs(ACBRANCHFLOW.l(ACbranch))-(lossSegmentMW(ACbranch,los-1))$(ord(los) > 1)),0),ACbranchLossMW(ACbranch,los)) ;
+          ManualBranchSegmentMWFlow(ValidLossSegment(HVDClink,los))$(lossBranch(HVDClink) and (ord(los) <= HVDClinkLossBlocks(HVDClink))) = min(max((abs(HVDClINKFLOW.l(HVDClink))-(lossSegmentMW(HVDClink,los-1))$(ord(los) > 1)),0),(lossSegmentMW(HVDClink,los) - (lossSegmentMW(HVDClink,los-1))$(ord(los) > 1))) ;
+          ManualLossCalculation(branch)$lossBranch(branch) = sum(los, lossSegmentFactor(branch,los) * ManualBranchSegmentMWFlow(branch,los)) ;
+          NonPhysicalLossExist(ACbranch)$(lossBranch(ACbranch) and (abs(ManualLossCalculation(ACbranch) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(ACbranch,i_flowDirection))) > NonPhysicalLossTolerance)) = 1 ;
+          NonPhysicalLossExist(HVDClink)$(lossBranch(HVDClink) and (abs(ManualLossCalculation(HVDClink) - HVDClINKLOSSES.l(HVDClink)) > NonPhysicalLossTolerance)) = 1 ;
 
 * Invoke the UseBranchFlowMIP flag if the number of circular branch flow and non-physical loss branches exceeds the specified tolerance
 * RDN - Test - update logic to include roundpower logic
-*          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and LossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
-*            sum(br$(LossBranch(currTP,br) and HVDClink(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br)))
+*          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and lossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
+*            sum(br$(lossBranch(currTP,br) and HVDClink(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br)))
 *            > UseBranchFlowMIPTolerance) = 1 ;
-          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and LossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
-            sum(br$(LossBranch(currTP,br) and HVDClink(currTP,br)), (1-AllowHVDCroundpower(currTP))*i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br))) +
+          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and lossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
+            sum(br$(lossBranch(currTP,br) and HVDClink(currTP,br)), (1-AllowHVDCroundpower(currTP))*i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br))) +
             sum(pole, i_resolveCircularBranchFlows*poleCircularBranchFlowExist(currTP,pole))
             > UseBranchFlowMIPTolerance) = 1 ;
 
@@ -1931,7 +1931,7 @@ for(iterationCount = 1 to numTradePeriods,
 
              LAMBDAINTEGER.fx(currTP,br,los)$(not UseBranchFlowMIP(currTP)) = 0 ;
 * Fix the values of these integer variables that are not needed
-             ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),i_flowDirection)$(UseBranchFlowMIP(currTP) and (HVDClink(branch) or (not LossBranch(branch)) or OpenBranch(branch))) = 0 ;
+             ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),i_flowDirection)$(UseBranchFlowMIP(currTP) and (HVDClink(branch) or (not lossBranch(branch)) or OpenBranch(branch))) = 0 ;
 * RDN - 20130227 - Fix the AC branch flow integer variable for invalid branches
              ACBRANCHFLOWDIRECTED_INTEGER.fx(currTP,br,i_flowDirection)$(UseBranchFlowMIP(currTP) and (not branch(currTP,br))) = 0 ;
 * Apply an upper bound on the integer weighting parameter based on its definition
@@ -2017,10 +2017,10 @@ for(iterationCount = 1 to numTradePeriods,
           UseBranchFlowMIP(currTP) = 0 ;
 
 * Check if there are circulating branch flows on loss AC branches and HVDC links
-          circularBranchFlowExist(ACbranch)$(LossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
+          circularBranchFlowExist(ACbranch)$(lossBranch(ACbranch) and (abs(sum(i_flowDirection, ACBRANCHFLOWDIRECTED.l(ACbranch,i_flowDirection)) - abs(ACBRANCHFLOW.l(ACbranch))) > circularBranchFlowTolerance)) = 1 ;
           NorthHVDC(currTP) = sum((ild,b,br)$((ord(ild) = 2) and i_tradePeriodBusIsland(currTP,b,ild) and HVDClinkSendingBus(currTP,br,b) and HVDCpoles(currTP,br)), HVDClINKFLOW.l(currTP,br)) ;
           SouthHVDC(currTP) = sum((ild,b,br)$((ord(ild) = 1) and i_tradePeriodBusIsland(currTP,b,ild) and HVDClinkSendingBus(currTP,br,b) and HVDCpoles(currTP,br)), HVDClINKFLOW.l(currTP,br)) ;
-          circularBranchFlowExist(currTP,br)$(HVDCpoles(currTP,br) and LossBranch(currTP,br) and (min(NorthHVDC(currTP), SouthHVDC(currTP)) > circularBranchFlowTolerance)) = 1 ;
+          circularBranchFlowExist(currTP,br)$(HVDCpoles(currTP,br) and lossBranch(currTP,br) and (min(NorthHVDC(currTP), SouthHVDC(currTP)) > circularBranchFlowTolerance)) = 1 ;
 
 * RDN - Determine the circular branch flow flag on each HVDC pole
           TotalHVDCpoleFlow(currTP,pole) =
@@ -2033,19 +2033,19 @@ for(iterationCount = 1 to numTradePeriods,
 
 
 * Check if there are non-physical losses on loss AC branches and HVDC links
-          ManualBranchSegmentMWFlow(ValidLossSegment(ACbranch,los))$LossBranch(ACbranch) = min(max((abs(ACBRANCHFLOW.l(ACbranch))-(LossSegmentMW(ACbranch,los-1))$(ord(los) > 1)),0),ACbranchLossMW(ACbranch,los)) ;
-          ManualBranchSegmentMWFlow(ValidLossSegment(HVDClink,los))$(LossBranch(HVDClink) and (ord(los) <= HVDClinkLossBlocks(HVDClink))) = min(max((abs(HVDClINKFLOW.l(HVDClink))-(LossSegmentMW(HVDClink,los-1))$(ord(los) > 1)),0),(LossSegmentMW(HVDClink,los) - (LossSegmentMW(HVDClink,los-1))$(ord(los) > 1))) ;
-          ManualLossCalculation(branch)$LossBranch(branch) = sum(los, LossSegmentFactor(branch,los) * ManualBranchSegmentMWFlow(branch,los)) ;
-          NonPhysicalLossExist(ACbranch)$(LossBranch(ACbranch) and (abs(ManualLossCalculation(ACbranch) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(ACbranch,i_flowDirection))) > NonPhysicalLossTolerance)) = 1 ;
-          NonPhysicalLossExist(HVDClink)$(LossBranch(HVDClink) and (abs(ManualLossCalculation(HVDClink) - HVDClINKLOSSES.l(HVDClink)) > NonPhysicalLossTolerance)) = 1 ;
+          ManualBranchSegmentMWFlow(ValidLossSegment(ACbranch,los))$lossBranch(ACbranch) = min(max((abs(ACBRANCHFLOW.l(ACbranch))-(lossSegmentMW(ACbranch,los-1))$(ord(los) > 1)),0),ACbranchLossMW(ACbranch,los)) ;
+          ManualBranchSegmentMWFlow(ValidLossSegment(HVDClink,los))$(lossBranch(HVDClink) and (ord(los) <= HVDClinkLossBlocks(HVDClink))) = min(max((abs(HVDClINKFLOW.l(HVDClink))-(lossSegmentMW(HVDClink,los-1))$(ord(los) > 1)),0),(lossSegmentMW(HVDClink,los) - (lossSegmentMW(HVDClink,los-1))$(ord(los) > 1))) ;
+          ManualLossCalculation(branch)$lossBranch(branch) = sum(los, lossSegmentFactor(branch,los) * ManualBranchSegmentMWFlow(branch,los)) ;
+          NonPhysicalLossExist(ACbranch)$(lossBranch(ACbranch) and (abs(ManualLossCalculation(ACbranch) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(ACbranch,i_flowDirection))) > NonPhysicalLossTolerance)) = 1 ;
+          NonPhysicalLossExist(HVDClink)$(lossBranch(HVDClink) and (abs(ManualLossCalculation(HVDClink) - HVDClINKLOSSES.l(HVDClink)) > NonPhysicalLossTolerance)) = 1 ;
 
 * Invoke the UseBranchFlowMIP flag if the number of circular branch flow and non-physical loss branches exceeds the specified tolerance
 * RDN - Test - update logic to include roundpower logic
-*          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and LossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
-*            sum(br$(LossBranch(currTP,br) and HVDClink(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br)))
+*          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and lossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
+*            sum(br$(lossBranch(currTP,br) and HVDClink(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br)))
 *            > UseBranchFlowMIPTolerance) = 1 ;
-          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and LossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
-            sum(br$(LossBranch(currTP,br) and HVDClink(currTP,br)), (1-AllowHVDCroundpower(currTP))*i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br))) +
+          UseBranchFlowMIP(currTP)$((sum(br$(ACbranch(currTP,br) and lossBranch(currTP,br)), i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveACNonPhysicalLosses*NonPhysicalLossExist(currTP,br)) +
+            sum(br$(lossBranch(currTP,br) and HVDClink(currTP,br)), (1-AllowHVDCroundpower(currTP))*i_resolveCircularBranchFlows*circularBranchFlowExist(currTP,br) + i_resolveHVDCNonPhysicalLosses*NonPhysicalLossExist(currTP,br))) +
             sum(pole, i_resolveCircularBranchFlows*poleCircularBranchFlowExist(currTP,pole))
             > UseBranchFlowMIPTolerance) = 1 ;
 
@@ -2302,8 +2302,8 @@ $OFFTEXT
       o_nonPhysicalLoss(dt,br)$ACbranch(currTP,br) = abs(ManualLossCalculation(currTP,br) - sum(i_flowDirection, ACBRANCHLOSSESDIRECTED.l(currTP,br,i_flowDirection))) ;
       o_nonPhysicalLoss(dt,br)$HVDClink(currTP,br) = abs(ManualLossCalculation(currTP,br) - HVDClINKLOSSES.l(currTP,br)) ;
 
-      o_lossSegmentBreakPoint(dt,br,los)$ValidLossSegment(currTP,br,los) = LossSegmentMW(currTP,br,los) ;
-      o_lossSegmentFactor(dt,br,los)$ValidLossSegment(currTP,br,los) = LossSegmentFactor(currTP,br,los) ;
+      o_lossSegmentBreakPoint(dt,br,los)$ValidLossSegment(currTP,br,los) = lossSegmentMW(currTP,br,los) ;
+      o_lossSegmentFactor(dt,br,los)$ValidLossSegment(currTP,br,los) = lossSegmentFactor(currTP,br,los) ;
 
       o_busIsland_TP(dt,b,ild)$busIsland(currTP,b,ild) = yes ;
 

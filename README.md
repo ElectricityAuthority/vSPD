@@ -1,13 +1,14 @@
 vSPD
 ====
 
-vectorised Scheduling, Pricing and Dispatch - an audited, mathematical replica of SPD.
+vectorised Scheduling, Pricing and Dispatch - an audited, mathematical replica of SPD, the
+pricing and dispatch engine used in the New Zealand electricity market.
 
 Input GDX files are available daily from ..\Datasets\Wholesale\Final_pricing\GDX\ at
-ftp://ftp.emi.ea.govt.nz
+ftp://ftp.emi.ea.govt.nz.
 
-The Electricity Authority wrote vSPD using the GAMS software in 2008. Dr Ramu Naidoo
-was the original author and custodian of vSPD until Nov 2013. Dr Phil Bishop and Tuong
+The Electricity Authority created vSPD using the GAMS software in 2008. Dr Ramu Naidoo was
+the original author and, until November 2013, the custodian of vSPD. Dr Phil Bishop and Tuong
 Nguyen now take care of vSPD. Others at the Electricity Authority also contribute.
 
 Several frequently-used basic sets are aliased as follows:
@@ -28,5 +29,6 @@ Contact: emi@ea.govt.nz
 TODO:
 - Aliases yet to be considered
   i_bid(*)         as bid ???,
-- The ability to add new set elements through the override facility has been implemented - with just offers for now. To reduce the code required, consider
-  putting new offer, node, branch and constraint elements into the same symbol in the override GDX file.
+- The ability to add new set elements through the override facility has been implemented - with
+  just offers for now. To reduce the code required, consider putting new offer, node, branch and
+  constraint elements into the same symbol in the override GDX file.

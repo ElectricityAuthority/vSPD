@@ -1,12 +1,12 @@
 *=====================================================================================
-* Name:                 vSPDsolveOverrides.gms
+* Name:                 vSPDoverrides.gms
 * Function:             Code to be included in vSPDsolve to take care of input data
 *                       overrides.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     22 November 2013
+* Last modified on:     26 November 2013
 *=====================================================================================
 
 $ontext
@@ -408,18 +408,23 @@ newOfferDay(new_offer,fromTo)   = sum((day,mth,yr)$new_offerDate(new_offer,fromT
 newOfferMonth(new_offer,fromTo) = sum((day,mth,yr)$new_offerDate(new_offer,fromTo,day,mth,yr), ord(mth) ) ;
 newOfferYear(new_offer,fromTo)  = sum((day,mth,yr)$new_offerDate(new_offer,fromTo,day,mth,yr), ord(yr) + startYear ) ;
 
-newOfferGDate(new_offer,fromTo)$sum((day,mth,yr)$new_offerDate(new_offer,fromTo,day,mth,yr), 1 ) = jdate( newOfferYear(new_offer,fromTo), newOfferMonth(new_offer,fromTo), newOfferDay(new_offer,fromTo) ) ;
+newOfferGDate(new_offer,fromTo)$sum((day,mth,yr)$new_offerDate(new_offer,fromTo,day,mth,yr), 1 ) =
+  jdate( newOfferYear(new_offer,fromTo), newOfferMonth(new_offer,fromTo), newOfferDay(new_offer,fromTo) ) ;
 
 * If new offer is not mapped to a node then it is an invalid offer and excluded from the solve
 i_tradePeriodOfferNode(tp,new_offerNode(new_offer,n))${ ( inputGDXgdate >= newOfferGDate(new_offer,'frm') ) and
                                                         ( inputGDXgdate <= newOfferGDate(new_offer,'to') )
                                                       } = yes ;
 
+* If new offer is not mapped to a trader then it is an invalid offer and excluded from the solve
 i_tradePeriodOfferTrader(tp,new_offerTrader(new_offer,trdr))${ ( inputGDXgdate >= newOfferGDate(new_offer,'frm') ) and
                                                                ( inputGDXgdate <= newOfferGDate(new_offer,'to') )
                                                              } = yes ;
 
-* Initialise the data for new set elements based on inherited values
+* Initialise the set of risk setters if the new offer is a risk setter
+i_tradePeriodRiskGenerator(tp,new_offerRiskSetter(new_offer)) = yes ;
+
+* Initialise the data for new parameters based on inherited values
 i_tradePeriodOfferParameter(tp,new_offer,i_OfferParam)                    = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodOfferParameter(tp,o1,i_OfferParam)) ;
 i_tradePeriodEnergyOffer(tp,new_offer,trdBlk,i_EnergyOfferComponent)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodEnergyOffer(tp,o1,trdBlk,i_EnergyOfferComponent)) ;
 i_tradePeriodSustainedPLSROffer(tp,new_offer,trdBlk,i_PLSROfferComponent) = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedPLSROffer(tp,o1,trdBlk,i_PLSROfferComponent)) ;
@@ -428,6 +433,20 @@ i_tradePeriodSustainedTWDROffer(tp,new_offer,trdBlk,i_TWDROfferComponent) = sum(
 i_tradePeriodFastTWDROffer(tp,new_offer,trdBlk,i_TWDROfferComponent)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastTWDROffer(tp,o1,trdBlk,i_TWDROfferComponent)) ;
 i_tradePeriodSustainedILROffer(tp,new_offer,trdBlk,i_ILROfferComponent)   = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedILROffer(tp,o1,trdBlk,i_ILROfferComponent)) ;
 i_tradePeriodFastILROffer(tp,new_offer,trdBlk,i_ILROfferComponent)        = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastILROffer(tp,o1,trdBlk,i_ILROfferComponent)) ;
+
+$ontext
+Symbols defined on i_offer/o that are not intialised for new offer elements - check with Ramu that this is as he intended...
+Sets
+  i_tradePeriodPrimarySecondaryOffer(tp,o1,o)
+Parameters
+  i_tradePeriodMNodeEnergyOfferConstraintFactors(tp,i_MNodeConstraint,o)
+  i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o)
+  i_tradePeriodGenericEnergyOfferConstraintFactors(tp,i_genericConstraint,o)
+  i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)
+  i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType)
+  i_tradePeriodMNodeReserveOfferConstraintFactors(tp,i_MNodeConstraint,o,i_reserveClass,i_reserveType)
+  i_tradePeriodGenericReserveOfferConstraintFactors(tp,i_genericConstraint,o,i_reserveClass,i_reserveType)
+$offtext
 
 
 
@@ -461,7 +480,7 @@ loop((ovrd,tp,o,i_offerParam)$(   i_studyTradePeriod(tp) and
 * Apply the offer parameter override values to the base case input data value. Clear the offer parameter override values when done.
 i_tradePeriodOfferParameter(tp,o,i_offerParam)$( ovrdOfferParamTP(tp,o,i_offerParam) > 0 )   = ovrdOfferParamTP(tp,o,i_offerParam) ;
 i_tradePeriodOfferParameter(tp,o,i_offerParam)$(   ovrdOfferParamTP(tp,o,i_offerParam) and
-                                                   ( ovrdOfferParamTP(tp,o,i_offerParam) = eps ) ) = 0 ;
+                                                 ( ovrdOfferParamTP(tp,o,i_offerParam) = eps ) ) = 0 ;
 option clear = ovrdOfferParamTP ;
 
 
