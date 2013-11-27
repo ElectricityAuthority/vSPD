@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     26 November 2013
+* Last modified on:     27 November 2013
 *=====================================================================================
 
 $ontext
@@ -42,12 +42,12 @@ Sets
   i_tradeBlock(*)                          'Trade block definitions (or tranches) - used for the offer and bids'
   i_CVP(*)                                 'Constraint violation penalties used in the model'
   i_offerType(*)                           'Type of energy and reserve offers from market participants'
-  i_offerParam(*)                          'Different parameters specified for each offer'
-  i_energyOfferComponent(*)                'Components of the energy offer comprising of block MW capacity and price'
-  i_PLSRofferComponent(*)                  'Components of the PLSR offer comprising of MW proportion, block MW and price'
-  i_TWDRofferComponent(*)                  'Components of the TWDR offer comprising of block MW and price'
-  i_ILRofferComponent(*)                   'Components of the ILR offer comprising of block MW and price'
-  i_energyBidComponent(*)                  'Components of the energy bid comprising of the block MW capacity and the price'
+  i_offerParam(*)                          'The various parameters required for each offer'
+  i_energyOfferComponent(*)                'Components of the energy offer - comprised of MW capacity and price by tradeBlock'
+  i_PLSRofferComponent(*)                  'Components of the PLSR offer - comprised of MW proportion and price by tradeBlock'
+  i_TWDRofferComponent(*)                  'Components of the TWDR offer - comprised of MW capacity and price by tradeBlock'
+  i_ILRofferComponent(*)                   'Components of the ILR offer - comprised of MW capacity and price by tradeBlock' 
+  i_energyBidComponent(*)                  'Components of the energy bid - comprised of MW capacity and price by tradeBlock'
   i_ILRbidComponent(*)                     'Components of the ILR provided by bids'
   i_riskClass(*)                           'Different risks that could set the reserve requirements'
   i_reserveType(*)                         'Definition of the different reserve types (PLSR, TWDR, ILR)'
@@ -57,64 +57,64 @@ Sets
   i_lossSegment(*)                         'Loss segments available for loss modelling'
   i_lossParameter(*)                       'Components of the piecewise loss function'
   i_constraintRHS(*)                       'Constraint RHS definition'
-  i_flowDirection(*)                       'Directional flow definition used in the formulation'
+  i_flowDirection(*)                       'Directional flow definition used in the SPD formulation'
   i_type1MixedConstraintRHS(*)             'Type 1 mixed constraint RHS definitions'
 * 14 fundamental sets - membership is populated via loading from GDX file in vSPDsolve.gms
   i_dateTime(*)                            'Date and time for the trade periods'
   i_tradePeriod(*)                         'Trade periods for which input data is defined'
-  i_node(*)                                'Node definitions for all the trading periods'
+  i_node(*)                                'Node definitions for all trading periods'
   i_offer(*)                               'Offers for all trading periods'
-  i_trader(*)                              'Traders defined for all the trading periods'
-  i_bid(*)                                 'Bids for all the trading periods'
-  i_bus(*)                                 'Bus definitions for all the trading periods'
-  i_branch(*)                              'Branch definition for all the trading periods'
-  i_branchConstraint(*)                    'Branch constraint definitions for all the trading periods'
-  i_ACnodeConstraint(*)                    'AC node constraint definitions for all the trading periods'
-  i_MnodeConstraint(*)                     'Market node constraint definitions for all the trading periods'
-  i_type1MixedConstraint(*)                'Type 1 mixed constraint definitions for all the tradeing periods'
-  i_type2MixedConstraint(*)                'Type 2 mixed constraint definitions for all the trading periods'
-  i_genericConstraint(*)                   'Generic constraint names for all the trading periods'
+  i_trader(*)                              'Traders defined for all trading periods'
+  i_bid(*)                                 'Bids for all trading periods'
+  i_bus(*)                                 'Bus definitions for all trading periods'
+  i_branch(*)                              'Branch definition for all trading periods'
+  i_branchConstraint(*)                    'Branch constraint definitions for all trading periods'
+  i_ACnodeConstraint(*)                    'AC node constraint definitions for all trading periods'
+  i_MnodeConstraint(*)                     'Market node constraint definitions for all trading periods'
+  i_type1MixedConstraint(*)                'Type 1 mixed constraint definitions for all trading periods'
+  i_type2MixedConstraint(*)                'Type 2 mixed constraint definitions for all trading periods'
+  i_genericConstraint(*)                   'Generic constraint names for all trading periods'
   ;
 
 * Aliases
-Alias (i_island,ild,ild1), (i_dateTime,dt), (i_tradePeriod,tp), (i_node,n), (i_offer,o,o1), (i_trader,trdr), (i_tradeBlock,trdBlk), (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1) ;
+Alias (i_island,ild,ild1), (i_dateTime,dt), (i_tradePeriod,tp), (i_node,n), (i_offer,o,o1), (i_trader,trdr), (i_tradeBlock,trdBlk) ;
+Alias (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  i_dateTimeTradePeriodMap(dt,tp)                               'Mapping of date time set to the trade period set'
-  i_tradePeriodOfferTrader(tp,o,trdr)                           'Offers and the corresponding trader for the different trading periods'
-  i_tradePeriodOfferNode(tp,o,n)                                'Offers and the corresponding offer node for the different trading periods'
-  i_tradePeriodBidTrader(tp,i_bid,trdr)                         'Bids and the corresponding trader for the different trading periods'
-  i_tradePeriodBidNode(tp,i_bid,n)                              'Bids and the corresponding node for the different trading periods'
-  i_tradePeriodNode(tp,n)                                       'Node definition for the different trading periods'
-  i_tradePeriodBusIsland(tp,b,ild)                              'Bus island mapping for the different trade periods'
-  i_tradePeriodBus(tp,b)                                        'Bus definition for the different trading periods'
-  i_tradePeriodNodeBus(tp,n,b)                                  'Node bus mapping for the different trading periods'
-  i_tradePeriodBranchDefn(tp,br,frB,toB)                        'Branch definition for the different trading periods'
-  i_tradePeriodRiskGenerator(tp,o)                              'Set of generators (offers) that can set the risk in the different trading periods'
+  i_dateTimeTradePeriodMap(dt,tp)                                   'Mapping of dateTime set to the tradePeriod set'
+  i_tradePeriodNode(tp,n)                                           'Node definition for the different trading periods'
+  i_tradePeriodOfferNode(tp,o,n)                                    'Offers and the corresponding offer node for the different trading periods'
+  i_tradePeriodOfferTrader(tp,o,trdr)                               'Offers and the corresponding trader for the different trading periods'
+  i_tradePeriodBidNode(tp,i_bid,n)                                  'Bids and the corresponding node for the different trading periods'
+  i_tradePeriodBidTrader(tp,i_bid,trdr)                             'Bids and the corresponding trader for the different trading periods'
+  i_tradePeriodBus(tp,b)                                            'Bus definition for the different trading periods'
+  i_tradePeriodNodeBus(tp,n,b)                                      'Node bus mapping for the different trading periods'
+  i_tradePeriodBusIsland(tp,b,ild)                                  'Bus island mapping for the different trade periods'
+  i_tradePeriodBranchDefn(tp,br,frB,toB)                            'Branch definition for the different trading periods'
+  i_tradePeriodRiskGenerator(tp,o)                                  'Set of generators (offers) that can set the risk in the different trading periods'
+  i_tradePeriodType1MixedConstraint(tp,i_type1MixedConstraint)      'Set of mixed constraints defined for the different trading periods'
+  i_tradePeriodType2MixedConstraint(tp,i_type2MixedConstraint)      'Set of mixed constraints defined for the different trading periods'
   i_type1MixedConstraintReserveMap(i_type1MixedConstraint,ild,i_reserveClass,i_riskClass) 'Mapping of mixed constraint variables to reserve-related data'
-  i_tradePeriodType1MixedConstraint(tp,i_type1MixedConstraint)  'Set of mixed constraints defined for the different trading periods'
-  i_tradePeriodType2MixedConstraint(tp,i_type2MixedConstraint)  'Set of mixed constraints defined for the different trading periods'
-  i_type1MixedConstraintBranchCondition(i_type1MixedConstraint,br) 'Set of mixed constraints that have limits conditional on branch flows'
-  i_tradePeriodGenericConstraint(tp,i_genericConstraint)        'Generic constraints defined for the different trading periods'
+  i_type1MixedConstraintBranchCondition(i_type1MixedConstraint,br)  'Set of mixed constraints that have limits conditional on branch flows'
+  i_tradePeriodGenericConstraint(tp,i_genericConstraint)            'Generic constraints defined for the different trading periods'
 * 1 set loaded from GDX with conditional load statement in vSPDsolve.gms at execution time
-  i_tradePeriodPrimarySecondaryOffer(tp,o,o1)                   'Primary-secondary offer mapping for the different trading periods'
+  i_tradePeriodPrimarySecondaryOffer(tp,o,o1)                       'Primary-secondary offer mapping for the different trading periods'
   ;
 
 Parameters
 * 6 scalars - values are loaded from GDX file in vSPDsolve.gms
-  i_day                                   'Day number (1..31)'
-  i_month                                 'Month number (1..12)'
-  i_year                                  'Year number (1900..2200)'
-  i_tradingPeriodLength                   'Length of the trading period in minutes (e.g. 30)'
-  i_AClineUnit                            '0 = Actual values, 1 = per unit values on a 100MVA base'
-  i_branchReceivingEndLossProportion      'Proportion of losses to be allocated to the receiving end of a branch'
-
+  i_day                                                             'Day number (1..31)'
+  i_month                                                           'Month number (1..12)'
+  i_year                                                            'Year number (1900..2200)'
+  i_tradingPeriodLength                                             'Length of the trading period in minutes (e.g. 30)'
+  i_AClineUnit                                                      '0 = Actual values, 1 = per unit values on a 100MVA base'
+  i_branchReceivingEndLossProportion                                'Proportion of losses to be allocated to the receiving end of a branch'
 * 49 parameters - values are loaded from GDX file in vSPDsolve.gms
-  i_StudyTradePeriod(tp)                  'Trade periods that are to be studied'
-  i_CVPvalues(i_CVP)                      'Values for the constraint violation penalties'
+  i_StudyTradePeriod(tp)                                            'Trade periods that are to be studied'
+  i_CVPvalues(i_CVP)                                                'Values for the constraint violation penalties'
 * Offer data
-  i_tradePeriodOfferParameter(tp,o,i_offerParam)                    'InitialMW for each offer for the different trading periods'
+  i_tradePeriodOfferParameter(tp,o,i_offerParam)                    'Initial MW for each offer for the different trading periods'
   i_tradePeriodEnergyOffer(tp,o,trdBlk,i_energyOfferComponent)      'Energy offers for the different trading periods'
   i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent) 'Sustained (60s) PLSR offers for the different trading periods'
   i_tradePeriodFastPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)      'Fast (6s) PLSR offers for the different trading periods'
@@ -170,19 +170,18 @@ Parameters
   i_tradePeriodGenericILReserveBidConstraintFactors(tp,i_genericConstraint,i_bid,i_reserveClass)          'Generic constraint IL reserve bid constraint factors for the different trading periods'
   i_tradePeriodGenericBranchConstraintFactors(tp,i_genericConstraint,br)                                  'Generic constraint energy offer constraint factors for the different trading periods'
   i_tradePeriodGenericConstraintRHS(tp,i_genericConstraint,i_constraintRHS)                               'Generic constraint sense and limit for the different trading periods'
-
 * 11 parameters loaded from GDX with conditional load statement at execution time
-  i_tradePeriodAllowHVDCRoundpower(tp)                                     'Flag to allow roundpower on the HVDC (1 = Yes)'
-  i_tradePeriodManualRisk_ECE(tp,ild,i_reserveClass)                       'Manual ECE risk set for the different trading periods'
-  i_tradePeriodHVDCSecRiskEnabled(tp,ild,i_riskClass)                      'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
-  i_tradePeriodHVDCSecRiskSubtractor(tp,ild)                               'Ramp up capability on the HVDC pole that is not the secondary risk'
-  i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,br)            'Type 1 mixed constraint AC branch flow weights'
-  i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,br)        'Type 1 mixed constraint AC branch loss weights'
-  i_type1MixedConstraintAClineFixedLossWeight(i_type1MixedConstraint,br)   'Type 1 mixed constraint AC branch fixed losses weight'
-  i_type1MixedConstraintHVDClineLossWeight(i_type1MixedConstraint,br)      'Type 1 mixed constraint HVDC branch loss weights'
-  i_type1MixedConstraintHVDClineFixedLossWeight(i_type1MixedConstraint,br) 'Type 1 mixed constraint HVDC branch fixed losses weight'
-  i_type1MixedConstraintPurWeight(i_type1MixedConstraint,i_bid)            'Type 1 mixed constraint demand bid weights'
-  i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)          'MW used to determine factor to adjust maximum reserve of a reserve class'
+  i_tradePeriodAllowHVDCRoundpower(tp)                                          'Flag to allow roundpower on the HVDC (1 = Yes)'
+  i_tradePeriodManualRisk_ECE(tp,ild,i_reserveClass)                            'Manual ECE risk set for the different trading periods'
+  i_tradePeriodHVDCSecRiskEnabled(tp,ild,i_riskClass)                           'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
+  i_tradePeriodHVDCSecRiskSubtractor(tp,ild)                                    'Ramp up capability on the HVDC pole that is not the secondary risk'
+  i_type1MixedConstraintAClineWeight(i_type1MixedConstraint,br)                 'Type 1 mixed constraint AC branch flow weights'
+  i_type1MixedConstraintAClineLossWeight(i_type1MixedConstraint,br)             'Type 1 mixed constraint AC branch loss weights'
+  i_type1MixedConstraintAClineFixedLossWeight(i_type1MixedConstraint,br)        'Type 1 mixed constraint AC branch fixed losses weight'
+  i_type1MixedConstraintHVDClineLossWeight(i_type1MixedConstraint,br)           'Type 1 mixed constraint HVDC branch loss weights'
+  i_type1MixedConstraintHVDClineFixedLossWeight(i_type1MixedConstraint,br)      'Type 1 mixed constraint HVDC branch fixed losses weight'
+  i_type1MixedConstraintPurWeight(i_type1MixedConstraint,i_bid)                 'Type 1 mixed constraint demand bid weights'
+  i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)               'MW used to determine factor to adjust maximum reserve of a reserve class'
   ;
 
 * End of GDX declarations
