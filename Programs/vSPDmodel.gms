@@ -5,13 +5,13 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     27 November 2013
+* Last modified on:     28 November 2013
 *=====================================================================================
 
 $ontext
 Code sections:
   1. Declare sets and parameters for all symbols to be loaded from daily GDX files
-  2. Additional declarations of sets and parameters used throughout the model
+  2. Declare additional sets and parameters used throughout the model
   3. Declare model variables and constraints, and initialise constraints
 
 Aliases to be aware of:
@@ -59,7 +59,7 @@ Sets
   i_constraintRHS(*)                       'Constraint RHS definition'
   i_flowDirection(*)                       'Directional flow definition used in the SPD formulation'
   i_type1MixedConstraintRHS(*)             'Type 1 mixed constraint RHS definitions'
-* 14 fundamental sets - membership is populated via loading from GDX file in vSPDsolve.gms
+* 14 fundamental sets - membership is assigned when symbols are loaded from the GDX file in vSPDsolve.gms
   i_dateTime(*)                            'Date and time for the trade periods'
   i_tradePeriod(*)                         'Trade periods for which input data is defined'
   i_node(*)                                'Node definitions for all trading periods'
@@ -77,8 +77,8 @@ Sets
   ;
 
 * Aliases
-Alias (i_island,ild,ild1), (i_dateTime,dt), (i_tradePeriod,tp), (i_node,n), (i_offer,o,o1), (i_trader,trdr), (i_tradeBlock,trdBlk) ;
-Alias (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1) ;
+Alias (i_island,ild,ild1), (i_dateTime,dt), (i_tradePeriod,tp), (i_node,n), (i_offer,o,o1), (i_trader,trdr), (i_tradeBlock,trdBlk),
+      (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
@@ -189,31 +189,31 @@ Parameters
 
 
 *===================================================================================
-* 2. Additional declarations of sets and parameters used throughout the model
+* 2. Declare additional sets and parameters used throughout the model
 *===================================================================================
 
 Scalars
-  i_sequentialSolve
-  i_useACLossModel
-  i_useHVDCLossModel
-  i_useACBranchLimits                      'Use the AC branch limits (1 = Yes)'
-  i_useHVDCBranchLimits                    'Use the HVDC branch limits (1 = Yes)'
-  i_resolveCircularBranchFlows             'Resolve circular branch flows (1 = Yes)'
-  i_resolveHVDCNonPhysicalLosses           'Resolve nonphysical losses on HVDC branches (1 = Yes)'
-  i_resolveACNonPhysicalLosses             'Resolve nonphysical losses on AC branches (1 = Yes)'
+  sequentialSolve
+  useAClossModel
+  useHVDClossModel
+  useACbranchLimits                        'Use the AC branch limits (1 = Yes)'
+  useHVDCbranchLimits                      'Use the HVDC branch limits (1 = Yes)'
+  resolveCircularBranchFlows               'Resolve circular branch flows (1 = Yes)'
+  resolveHVDCnonPhysicalLosses             'Resolve nonphysical losses on HVDC branches (1 = Yes)'
+  resolveACnonPhysicalLosses               'Resolve nonphysical losses on AC branches (1 = Yes)'
   circularBranchFlowTolerance
   nonPhysicalLossTolerance
-  useBranchFlowMIPTolerance
-  i_useReserveModel                        'Use the reserve model (1 = Yes)'
-  i_useMixedConstraint                     'Use the mixed constraint formulation (1 = Yes)'
+  useBranchFlowMIPtolerance
+  useReserveModel                          'Use the reserve model (1 = Yes)'
+  suppressMixedConstraint                  'Suppress use of the mixed constraint formulation (1 = suppress)'
   mixedMIPtolerance
   LPtimeLimit                              'CPU seconds allowed for LP solves'
   LPiterationLimit                         'Iteration limit allowed for LP solves'
   MIPtimeLimit                             'CPU seconds allowed for MIP solves'
   MIPiterationLimit                        'Iteration limit allowed for MIP solves'
   MIPoptimality
-  i_disconnectedNodePriceCorrection
-  i_useExternalLossModel
+  disconnectedNodePriceCorrection
+  useExternalLossModel
   lossCoeff_A
   lossCoeff_C
   lossCoeff_D
@@ -586,11 +586,9 @@ Equations
 * RDN - Risk calculation for generators with more than one offer - Primary and secondary offers
   GenIslandRiskCalculation_NonPS(tp,ild,o,i_reserveClass,i_riskClass)             'Calculation of the island risk for risk setting generators with only one offer (3.4.1.6)'
   GenIslandRiskCalculation_PS(tp,ild,o,i_reserveClass,i_riskClass)                'Calculation of the island risk for risk setting generators with more than one offer (3.4.1.6)'
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* RiskOffSetCalculationApproximation(tp,ild,i_reserveClass,i_riskClass)           'Approximate calculation of the risk offset variable.  This will be used when the i_useMixedConstraint flag is false'
-  RiskOffsetCalculation_DCCE(tp,ild,i_reserveClass,i_riskClass)                   'Calculation of the risk offset variable for the DCCE risk class.  This will be used when the i_useMixedConstraint flag is false (3.4.1.2)'
-  RiskOffsetCalculation_DCECE(tp,ild,i_reserveClass,i_riskClass)                  'Calculation of the risk offset variable for the DCECE risk class.  This will be used when the i_useMixedConstraint flag is false (3.4.1.4)'
-  RiskOffsetCalculation(tp,i_type1MixedConstraint,ild,i_reserveClass,i_riskClass) 'Risk offset definition. This will be used when the i_useMixedConstraint flag is true (3.4.1.5 - v4.4)'
+  RiskOffsetCalculation_DCCE(tp,ild,i_reserveClass,i_riskClass)                   'Calculation of the risk offset variable for the DCCE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.2)'
+  RiskOffsetCalculation_DCECE(tp,ild,i_reserveClass,i_riskClass)                  'Calculation of the risk offset variable for the DCECE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.4)'
+  RiskOffsetCalculation(tp,i_type1MixedConstraint,ild,i_reserveClass,i_riskClass) 'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
 * RDN - Need to seperate the maximum island risk definition constraint to support the different CVPs defined for CE and ECE
   MaximumIslandRiskDefinition_CE(tp,ild,i_reserveClass,i_riskClass)               'Definition of the maximum CE risk in each island (3.4.3.1a)'
   MaximumIslandRiskDefinition_ECE(tp,ild,i_reserveClass,i_riskClass)              'Definition of the maximum ECE risk in each island (3.4.3.1b)'
@@ -682,7 +680,7 @@ sum(validPurchaseBidBlock(Bid,trdBlk), PURCHASEBLOCK(Bid,trdBlk))
   ;
 
 * Maximum flow on each HVDC link (3.2.1.1)
-HVDClinkMaximumFlow(HVDClink) $ (HVDClinkClosedStatus(HVDClink) and i_useHVDCBranchLimits)..
+HVDClinkMaximumFlow(HVDClink) $ (HVDClinkClosedStatus(HVDClink) and useHVDCbranchLimits)..
 HVDClinkFLOW(HVDClink) =l=
 HVDClinkCapacity(HVDClink)
   ;
@@ -701,28 +699,28 @@ sum(validLossSegment(HVDClink,los), HVDCBreakPointMWFlow(HVDClink,los)*LAMBDA(HV
 
 * Definition of the integer HVDC link flow variable (3.8.2a)
 * RDN - Update constraint to exlcude if roundpower is allowed
-* HVDClinkFlowIntegerDefinition1(currTP) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows)..
-HVDClinkFlowIntegerDefinition1(currTP) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows and (1-AllowHVDCRoundpower(currTP)))..
+* HVDClinkFlowIntegerDefinition1(currTP) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
+HVDClinkFlowIntegerDefinition1(currTP) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows and (1-AllowHVDCRoundpower(currTP)))..
 sum(i_flowDirection, HVDClinkFLOWDIRECTION_INTEGER(currTP,i_flowDirection)) =e=
 sum(HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDClinkFLOW(HVDClink))
   ;
 
 * Definition of the integer HVDC link flow variable (3.8.2b)
 * RDN - Update constraint to exlcude if roundpower is allowed
-* HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows)..
-HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows and (1-AllowHVDCRoundpower(currTP)))..
+* HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
+HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows and (1-AllowHVDCRoundpower(currTP)))..
 HVDClinkFLOWDIRECTION_INTEGER(currTP,i_flowDirection) =e=
 sum(HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDClinkFLOW(HVDClink))
   ;
 
 * RDN - Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2c)
-HVDClinkFlowIntegerDefinition3(currTP,pole) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows)..
+HVDClinkFlowIntegerDefinition3(currTP,pole) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
 sum(br${ HVDCpoles(currTP,br) and HVDCpoleBranchMap(pole,br) }, HVDClinkFLOW(currTP,br)) =e=
 sum(i_flowDirection, HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection))
   ;
 
 * RDN - Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2d)
-HVDClinkFlowIntegerDefinition4(currTP,pole,i_flowDirection) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows)..
+HVDClinkFlowIntegerDefinition4(currTP,pole,i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
 sum(HVDCpoleDirection(HVDCpoles(currTP,br),i_flowDirection) $ HVDCpoleBranchMap(pole,br), HVDClinkFLOW(HVDCpoles)) =e=
 HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection)
   ;
@@ -733,12 +731,12 @@ sum(validLossSegment(HVDClink,los), LAMBDA(HVDClink,los)) =e=
 1  ;
 
 * Definition of weighting factor when branch integer constraints are needed (3.8.3a)
-LambdaIntegerDefinition1(HVDClink(currTP,br)) $ (UseBranchFlowMIP(currTP) and i_resolveHVDCNonPhysicalLosses)..
+LambdaIntegerDefinition1(HVDClink(currTP,br)) $ (UseBranchFlowMIP(currTP) and resolveHVDCnonPhysicalLosses)..
 sum(validLossSegment(HVDClink,los), LAMBDAINTEGER(HVDClink,los)) =e=
 1  ;
 
 * Definition of weighting factor when branch integer constraints are needed (3.8.3b)
-LambdaIntegerDefinition2(validLossSegment(HVDClink(currTP,br),los)) $ (UseBranchFlowMIP(currTP) and i_resolveHVDCNonPhysicalLosses)..
+LambdaIntegerDefinition2(validLossSegment(HVDClink(currTP,br),los)) $ (UseBranchFlowMIP(currTP) and resolveHVDCnonPhysicalLosses)..
 LAMBDAINTEGER(HVDClink,los) =e=
 LAMBDA(HVDClink,los)
   ;
@@ -775,7 +773,7 @@ ACnodeNETINJECTION(currTP,b) =e=
   ;
 
 * Maximum flow on the AC branch (3.3.1.3)
-ACBranchMaximumFlow(ClosedBranch(ACBranch),i_flowDirection) $ i_useACBranchLimits..
+ACBranchMaximumFlow(ClosedBranch(ACbranch),i_flowDirection) $ useACbranchLimits..
 ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) =l=
 ACBranchCapacity(ACBranch)
 + SURPLUSBRANCHFLOW(ACBranch)
@@ -819,13 +817,13 @@ sum(validLossSegment(ACBranch,los), ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_f
   ;
 
 * Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)
-ACDirectedBranchFlowIntegerDefinition1(ClosedBranch(ACBranch(lossBranch(currTP,br)))) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows)..
+ACDirectedBranchFlowIntegerDefinition1(ClosedBranch(ACBranch(lossBranch(currTP,br)))) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
 sum(i_flowDirection, ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection)) =e=
 sum(i_flowDirection, ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection))
   ;
 
 * Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)
-ACDirectedBranchFlowIntegerDefinition2(ClosedBranch(ACBranch(lossBranch(currTP,br))),i_flowDirection) $ (UseBranchFlowMIP(currTP) and i_resolveCircularBranchFlows)..
+ACDirectedBranchFlowIntegerDefinition2(ClosedBranch(ACBranch(lossBranch(currTP,br))),i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
 ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection) =e=
 ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
   ;
@@ -869,16 +867,8 @@ GenerationEndDown(currTP,o)
   ;
 
 * RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* Approximation of the risk offset variable.  This approximation will be used if the i_useMixedConstraint flag is set to false
-* RiskOffSetCalculationApproximation(currTP,ild,i_reserveClass,i_riskClass) $ (not i_useMixedConstraint)..
-* RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
-* FreeReserve(currTP,ild,i_reserveClass,i_riskClass) + HVDCpoleRampUp(currTP,ild,i_reserveClass,i_riskClass)
-* ;
-
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
 * Calculation of the risk offset variable for the DCCE risk class.  This will be used when the useMixedConstraintRiskOffset flag is false (3.4.1.2)
-* RDN - Disable this constraint only when the original mixed constraint formulation specifit to the risk offset calculation is not used
-* RiskOffsetCalculation_DCCE(currTP,ild,i_reserveClass,i_riskClass) $ ((not i_useMixedConstraint) and HVDCrisk(i_riskClass) and ContingentEvents(i_riskClass))..
+* RDN - Disable this constraint only when the original mixed constraint formulation specific to the risk offset calculation is not used
 RiskOffsetCalculation_DCCE(currTP,ild,i_reserveClass,i_riskClass) $ ((not useMixedConstraintRiskOffset) and HVDCrisk(i_riskClass) and ContingentEvents(i_riskClass))..
 RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
 FreeReserve(currTP,ild,i_reserveClass,i_riskClass) + HVDCPoleRampUp(currTP,ild,i_reserveClass,i_riskClass)
@@ -887,7 +877,6 @@ FreeReserve(currTP,ild,i_reserveClass,i_riskClass) + HVDCPoleRampUp(currTP,ild,i
 * RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
 * Calculation of the risk offset variable for the DCECE risk class.  This will be used when the useMixedConstraintRiskOffset flag is false (3.4.1.4)
 * RDN - Disable this constraint only when the original mixed constraint formulation specifit to the risk offset calculation is not used
-* RiskOffsetCalculation_DCECE(currTP,ild,i_reserveClass,i_riskClass) $ ((not i_useMixedConstraint) and HVDCrisk(i_riskClass) and ExtendedContingentEvent(i_riskClass))..
 RiskOffsetCalculation_DCECE(currTP,ild,i_reserveClass,i_riskClass) $ ((not useMixedConstraintRiskOffset) and HVDCrisk(i_riskClass) and ExtendedContingentEvent(i_riskClass))..
 RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
 FreeReserve(currTP,ild,i_reserveClass,i_riskClass)
@@ -895,7 +884,6 @@ FreeReserve(currTP,ild,i_reserveClass,i_riskClass)
 
 * Risk offset definition (3.4.1.5) in old formulation (v4.4). use this when the useMixedConstraintRiskOffset flag is set.
 * RDN - Enable this constraint only when the original mixed constraint formulation specifit to the risk offset calculation is used
-* RiskOffsetCalculation(currTP,i_type1MixedConstraintReserveMap(i_type1MixedConstraint,ild,i_reserveClass,i_riskClass)) $ i_useMixedConstraint..
 RiskOffsetCalculation(currTP,i_type1MixedConstraintReserveMap(i_type1MixedConstraint,ild,i_reserveClass,i_riskClass)) $ useMixedConstraintRiskOffset..
 RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
 MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
@@ -1045,7 +1033,7 @@ MAXISLANDRISK(currTP,ild,i_reserveClass) + DEFICITRESERVE_ECE(currTP,ild,i_reser
   ;
 
 * Matching of reserve supply and demand (3.4.3.2)
-SupplyDemandReserveRequirement(currTP,ild,i_reserveClass) $ i_useReserveModel..
+SupplyDemandReserveRequirement(currTP,ild,i_reserveClass) $ useReserveModel..
 MAXISLANDRISK(currTP,ild,i_reserveClass) - (DEFICITRESERVE(currTP,ild,i_reserveClass) $ (not DiffCeECeCVP)) =l=
   sum((o,i_reserveType) $ (Offer(currTP,o) and IslandOffer(currTP,ild,o)), RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(i_bid $ (Bid(currTP,i_bid) and IslandBid(currTP,ild,i_bid)), PURCHASEILR(currTP,i_bid,i_reserveClass))
@@ -1144,12 +1132,8 @@ MNodeConstraintLimit(currTP,i_MNodeConstraint)
   ;
 
 * Type 1 mixed constraint definition with LE sense (3.6.1.1a)
-* Type1MixedConstraintLE(currTP,i_type1MixedConstraint) $ (i_useMixedConstraint and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = -1) and (not useMixedConstraintMIP(currTP)))..
 Type1MixedConstraintLE(currTP,i_type1MixedConstraint) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = -1) and (not useMixedConstraintMIP(currTP)))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
-* RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* + sum(o, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
-* + sum((o,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,br) * HVDClinkFLOW(currTP,br))
@@ -1165,12 +1149,8 @@ Type1MixedConstraintLimit1(currTP,i_type1MixedConstraint)
 
 
 * Type 1 mixed constraint definition with GE sense (3.6.1.1b)
-* Type1MixedConstraintGE(currTP,i_type1MixedConstraint) $ (i_useMixedConstraint and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 1) and (not useMixedConstraintMIP(currTP)))..
 Type1MixedConstraintGE(currTP,i_type1MixedConstraint) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 1) and (not useMixedConstraintMIP(currTP)))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
-* RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* + sum(o, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
-* + sum((o,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,br) * HVDClinkFLOW(currTP,br))
@@ -1185,12 +1165,8 @@ Type1MixedConstraintLimit1(currTP,i_type1MixedConstraint)
   ;
 
 * Type 1 mixed constraint definition with EQ sense (3.6.1.1c)
-* Type1MixedConstraintEQ(currTP,i_type1MixedConstraint) $ (i_useMixedConstraint and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 0) and (not useMixedConstraintMIP(currTP)))..
 Type1MixedConstraintEQ(currTP,i_type1MixedConstraint) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 0) and (not useMixedConstraintMIP(currTP)))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
-* RDN - 20130226 - Only valid energy offers and bids are included in the constraint
-* + sum(o, i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
-* + sum((o,i_reserveClass,i_reserveType), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,br) * HVDClinkFLOW(currTP,br))
@@ -1205,7 +1181,6 @@ Type1MixedConstraintLimit1(currTP,i_type1MixedConstraint)
   ;
 
 * Type 2 mixed constraint definition with LE sense (3.6.1.2a)
-* Type2MixedConstraintLE(currTP,i_type2MixedConstraint) $ (i_useMixedConstraint and (Type2MixedConstraintSense(currTP,i_type2MixedConstraint) = -1))..
 Type2MixedConstraintLE(currTP,i_type2MixedConstraint) $ (UseMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,i_type2MixedConstraint) = -1))..
 sum(i_type1MixedConstraint, i_type2MixedConstraintLHSParameters(i_type2MixedConstraint,i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint))
 =l=
@@ -1213,7 +1188,6 @@ Type2MixedConstraintLimit(currTP,i_type2MixedConstraint)
   ;
 
 * Type 2 mixed constraint definition with GE sense (3.6.1.2b)
-* Type2MixedConstraintGE(currTP,i_type2MixedConstraint) $ (i_useMixedConstraint and (Type2MixedConstraintSense(currTP,i_type2MixedConstraint) = 1))..
 Type2MixedConstraintGE(currTP,i_type2MixedConstraint) $ (UseMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,i_type2MixedConstraint) = 1))..
 sum(i_type1MixedConstraint, i_type2MixedConstraintLHSParameters(i_type2MixedConstraint,i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint))
 =g=
@@ -1221,7 +1195,6 @@ Type2MixedConstraintLimit(currTP,i_type2MixedConstraint)
   ;
 
 * Type 2 mixed constraint definition with EQ sense (3.6.1.2c)
-* Type2MixedConstraintEQ(currTP,i_type2MixedConstraint) $ (i_useMixedConstraint and (Type2MixedConstraintSense(currTP,i_type2MixedConstraint) = 0))..
 Type2MixedConstraintEQ(currTP,i_type2MixedConstraint) $ (UseMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,i_type2MixedConstraint) = 0))..
 sum(i_type1MixedConstraint, i_type2MixedConstraintLHSParameters(i_type2MixedConstraint,i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint))
 =e=
@@ -1229,19 +1202,14 @@ Type2MixedConstraintLimit(currTP,i_type2MixedConstraint)
   ;
 
 * Type 1 mixed constraint definition of alternate limit selection (integer)
-* RDN - Enable this constraint only when the original mixed constraint formulation is used. This logic is specific to the HVDC pole 1 south flow condition.
-* Type1MixedConstraintMIP(currTP,i_type1MixedConstraintBranchCondition(i_type1MixedConstraint,br)) $ (i_useMixedConstraint and HVDCHalfPoles(currTP,br) and useMixedConstraintMIP(currTP))..
 Type1MixedConstraintMIP(currTP,i_type1MixedConstraintBranchCondition(i_type1MixedConstraint,br)) $ (useMixedConstraintRiskOffset and HVDCHalfPoles(currTP,br) and useMixedConstraintMIP(currTP))..
 HVDClinkFLOW(currTP,br) =l=
 MIXEDCONSTRAINTLIMIT2SELECT(currTP,i_type1MixedConstraint) * MixedConstraintBigNumber
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with LE sense (3.6.1.1a_MIP)
-* Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,i_type1MixedConstraint)) $ (i_useMixedConstraint and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = -1) and useMixedConstraintMIP(currTP))..
 Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,i_type1MixedConstraint)) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = -1) and useMixedConstraintMIP(currTP))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
-* RDN - 20130226 - Only positive energy offers are included in the constraint
-* + sum(o $ offer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,br) * HVDClinkFLOW(currTP,br))
@@ -1257,11 +1225,8 @@ Type1MixedConstraintLimit1(currTP,i_type1MixedConstraint) * (1 - MIXEDCONSTRAINT
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with GE sense (3.6.1.1b_MIP)
-* Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,i_type1MixedConstraint)) $ (i_useMixedConstraint and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 1) and useMixedConstraintMIP(currTP))..
 Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,i_type1MixedConstraint)) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 1) and useMixedConstraintMIP(currTP))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
-* RDN - 20130226 - Only positive energy offers are included in the constraint
-* + sum(o $ offer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,br) * HVDClinkFLOW(currTP,br))
@@ -1277,11 +1242,8 @@ Type1MixedConstraintLimit1(currTP,i_type1MixedConstraint) * (1 - MIXEDCONSTRAINT
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with EQ sense (3.6.1.1b_MIP)
-* Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,i_type1MixedConstraint)) $ (i_useMixedConstraint and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 0) and useMixedConstraintMIP(currTP))..
 Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,i_type1MixedConstraint)) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,i_type1MixedConstraint) = 0) and useMixedConstraintMIP(currTP))..
 i_type1MixedConstraintVarWeight(i_type1MixedConstraint) * MIXEDCONSTRAINTVARIABLE(currTP,i_type1MixedConstraint)
-* RDN - 20130226 - Only positive energy offers are included in the constraint
-* + sum(o $ offer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(i_type1MixedConstraint,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(i_type1MixedConstraint,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
 + sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(i_type1MixedConstraint,br) * HVDClinkFLOW(currTP,br))
