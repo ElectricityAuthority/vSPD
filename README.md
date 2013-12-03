@@ -22,6 +22,13 @@ Several frequently-used basic sets are aliased as follows:
 - i_bus = b, b1, frB, toB
 - i_branch = br, br1
 - i_lossSegment = los, los1
+- i_energyOfferComponent = NRGofrCmpnt
+- i_PLSRofferComponent = PLSofrCmpnt
+- i_TWDRofferComponent = TWDofrCmpnt
+- i_ILRofferComponent = ILofrCmpnt
+- i_energyBidComponent = NRGbidCmpnt
+- i_ILRbidComponent = ILbidCmpnt
+
 
 Contact: emi@ea.govt.nz
 

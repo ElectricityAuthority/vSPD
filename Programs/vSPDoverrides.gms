@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     26 November 2013
+* Last modified on:     3 December 2013
 *=====================================================================================
 
 $ontext
@@ -23,17 +23,23 @@ $ontext
   any means the user prefers - GDX file, $include file, hard-coding, etc. But it probably makes sense to mimic
   the GDX file as used by EMI.
 
-  Aliases to be aware of:
-    i_island = ild, ild1
-    i_dateTime = dt
-    i_tradePeriod = tp
-    i_node = n
-    i_offer = o, o1
-    i_trader = trdr
-    i_tradeBlock = trdBlk
-    i_bus = b, b1, frB, toB
-    i_branch = br, br1
-    i_lossSegment = los, los1
+Aliases to be aware of:
+  i_island = ild, ild1
+  i_dateTime = dt
+  i_tradePeriod = tp
+  i_node = n
+  i_offer = o, o1
+  i_trader = trdr
+  i_tradeBlock = trdBlk
+  i_bus = b, b1, frB, toB
+  i_branch = br, br1
+  i_lossSegment = los, los1
+  i_energyOfferComponent = NRGofrCmpnt
+  i_PLSRofferComponent = PLSofrCmpnt
+  i_TWDRofferComponent = TWDofrCmpnt
+  i_ILRofferComponent = ILofrCmpnt
+  i_energyBidComponent = NRGbidCmpnt
+  i_ILRbidComponent = ILbidCmpnt
 $offtext
 
 * 1. Install new set elements from newSetElements.inc, if any exist
@@ -56,7 +62,7 @@ $offtext
 $if not %interfaceMode%==1 $goto skipOverridesWithExcel
 $ontext
 Parameters
-  i_energyOfferOvrd(tp,i_offer,trdBlk,i_energyOfferComponent)  'Override for energy offers for specified trade period'
+  i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt)  'Override for energy offers for specified trade period'
   i_offerParamOvrd(tp,i_offer,i_offerParam)  'Override for energy offer parameters for specified trade period'
   i_nodeDemandOvrd(tp,n)                'Override MW nodal demand for specified trade period'
   i_islandDemandOvrd(tp,ild)            'Scaling factor for island demand for specified trade period'
@@ -96,9 +102,9 @@ i_tradePeriodNodeDemand(tp,n)$i_nodeDemandOvrd(tp,n) = i_nodeDemandOvrd(tp,n) ;
 i_tradePeriodNodeDemand(tp,n)$( i_nodeDemandOvrd(tp,n) * ( i_nodeDemandOvrd(tp,n) = eps ) ) = 0 ;
 
 * Energy offer overrides
-i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,i_energyOfferComponent)$( i_energyOfferOvrd(tp,i_offer,trdBlk,i_energyOfferComponent) > 0 )
-  = i_energyOfferOvrd(tp,i_offer,trdBlk,i_energyOfferComponent) ;
-i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,i_energyOfferComponent)$( i_energyOfferOvrd(tp,i_offer,trdBlk,i_energyOfferComponent) * ( i_energyOfferOvrd(tp,i_offer,trdBlk,i_energyOfferComponent) = eps ) )
+i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) > 0 )
+  = i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) ;
+i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) * ( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) = eps ) )
   = 0 ;
 
 * Offer parameter overrides
@@ -127,29 +133,29 @@ $if exist newSetElements.inc $include newSetElements.inc
 
 * a) Offers - incl. energy, PLSR, TWDR, and ILR
 Sets
-  new_offer(o)                                                            'New offer elements'
-  new_offerNode(o,n)                                                      'Mapping of new offers to nodes'
-  new_offerTrader(o,trdr)                                                 'Mapping of new offers to traders'
-  new_offerRiskSetter(o)                                                  'Flag to indicate if new offers are the risk setter'
-  new_offerInherit(o,o1)                                                  'New offer to inherit data from existing offer'
-  new_offerDate(o,fromTo,day,mth,yr)                                      'Applicable dates for the new offer'
-  ovrd_offerParamDate(ovrd,o,fromTo,day,mth,yr)                           'Offer parameter override dates'
-  ovrd_offerParamTP(ovrd,o,tp)                                            'Offer parameter override trade periods'
-  ovrd_energyOfferDate(ovrd,o,fromTo,day,mth,yr)                          'Energy offer override dates'
-  ovrd_energyOfferTP(ovrd,o,tp)                                           'Energy offer override trade periods'
-  ovrd_PLSRofferDate(ovrd,o,fromTo,day,mth,yr)                            'PLSR offer override dates'
-  ovrd_PLSRofferTP(ovrd,o,tp)                                             'PLSR offer override trade periods'
-  ovrd_TWDRofferDate(ovrd,o,fromTo,day,mth,yr)                            'TWDR offer override dates'
-  ovrd_TWDRofferTP(ovrd,o,tp)                                             'TWDR offer override trade periods'
-  ovrd_ILRofferDate(ovrd,o,fromTo,day,mth,yr)                             'ILR offer override dates'
-  ovrd_ILRofferTP(ovrd,o,tp)                                              'ILR offer override trade periods'
+  new_offer(o)                                                   'New offer elements'
+  new_offerNode(o,n)                                             'Mapping of new offers to nodes'
+  new_offerTrader(o,trdr)                                        'Mapping of new offers to traders'
+  new_offerRiskSetter(o)                                         'Flag to indicate if new offers are the risk setter'
+  new_offerInherit(o,o1)                                         'New offer to inherit data from existing offer'
+  new_offerDate(o,fromTo,day,mth,yr)                             'Applicable dates for the new offer'
+  ovrd_offerParamDate(ovrd,o,fromTo,day,mth,yr)                  'Offer parameter override dates'
+  ovrd_offerParamTP(ovrd,o,tp)                                   'Offer parameter override trade periods'
+  ovrd_energyOfferDate(ovrd,o,fromTo,day,mth,yr)                 'Energy offer override dates'
+  ovrd_energyOfferTP(ovrd,o,tp)                                  'Energy offer override trade periods'
+  ovrd_PLSRofferDate(ovrd,o,fromTo,day,mth,yr)                   'PLSR offer override dates'
+  ovrd_PLSRofferTP(ovrd,o,tp)                                    'PLSR offer override trade periods'
+  ovrd_TWDRofferDate(ovrd,o,fromTo,day,mth,yr)                   'TWDR offer override dates'
+  ovrd_TWDRofferTP(ovrd,o,tp)                                    'TWDR offer override trade periods'
+  ovrd_ILRofferDate(ovrd,o,fromTo,day,mth,yr)                    'ILR offer override dates'
+  ovrd_ILRofferTP(ovrd,o,tp)                                     'ILR offer override trade periods'
 
 Parameters
-  ovrd_offerParam(ovrd,o,i_offerParam)                                    'Offer parameter override values'
-  ovrd_energyOffer(ovrd,o,trdBlk,i_energyOfferComponent)                  'Energy offer override values'
-  ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,i_PLSRofferComponent)       'PLSR offer override values'
-  ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,i_TWDRofferComponent)       'TWDR offer override values'
-  ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,i_ILRofferComponent)         'ILR offer override values'
+  ovrd_offerParam(ovrd,o,i_offerParam)                           'Offer parameter override values'
+  ovrd_energyOffer(ovrd,o,trdBlk,NRGofrCmpnt)                    'Energy offer override values'
+  ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,PLSofrCmpnt)       'PLSR offer override values'
+  ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,TWDofrCmpnt)       'TWDR offer override values'
+  ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,ILofrCmpnt)         'ILR offer override values'
   ;
 
 *new_offer('offer_x') = yes ;
@@ -171,20 +177,20 @@ Parameters
 *=====================================================================================
 
 Parameters
-  newOfferDay(new_offer,fromTo)                                           'New offer override from/to day'
-  newOfferMonth(new_offer,fromTo)                                         'New offer override from/to month'
-  newOfferYear(new_offer,fromTo)                                          'New offer override from/to year'
-  newOfferGDate(new_offer,fromTo)                                         'New offer override from/to Gregorian date'
+  newOfferDay(new_offer,fromTo)                                  'New offer override from/to day'
+  newOfferMonth(new_offer,fromTo)                                'New offer override from/to month'
+  newOfferYear(new_offer,fromTo)                                 'New offer override from/to year'
+  newOfferGDate(new_offer,fromTo)                                'New offer override from/to Gregorian date'
 
-  ovrdOfferDay(ovrd,o,fromTo)                                             'Offer override from/to day'
-  ovrdOfferMonth(ovrd,o,fromTo)                                           'Offer override from/to month'
-  ovrdOfferYear(ovrd,o,fromTo)                                            'Offer override from/to year'
-  ovrdOfferGDate(ovrd,o,fromTo)                                           'Offer override from/to Gregorian date'
-  ovrdOfferParamTP(tp,o,i_offerParam)                                     'Offer parameter override values by applicable trade periods'
-  ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent)                   'Energy offer override values by applicable trade periods'
-  ovrdPLSRofferTP(tp,i_reserveClass,o,trdBlk,i_PLSRofferComponent)        'PLSR offer override values by applicable trade periods'
-  ovrdTWDRofferTP(tp,i_reserveClass,o,trdBlk,i_TWDRofferComponent)        'TWDR offer override values by applicable trade periods'
-  ovrdILRofferTP(tp,i_reserveClass,o,trdBlk,i_ILRofferComponent)          'ILR offer override values by applicable trade periods'
+  ovrdOfferDay(ovrd,o,fromTo)                                    'Offer override from/to day'
+  ovrdOfferMonth(ovrd,o,fromTo)                                  'Offer override from/to month'
+  ovrdOfferYear(ovrd,o,fromTo)                                   'Offer override from/to year'
+  ovrdOfferGDate(ovrd,o,fromTo)                                  'Offer override from/to Gregorian date'
+  ovrdOfferParamTP(tp,o,i_offerParam)                            'Offer parameter override values by applicable trade periods'
+  ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt)                     'Energy offer override values by applicable trade periods'
+  ovrdPLSRofferTP(tp,i_reserveClass,o,trdBlk,PLSofrCmpnt)        'PLSR offer override values by applicable trade periods'
+  ovrdTWDRofferTP(tp,i_reserveClass,o,trdBlk,TWDofrCmpnt)        'TWDR offer override values by applicable trade periods'
+  ovrdILRofferTP(tp,i_reserveClass,o,trdBlk,ILofrCmpnt)          'ILR offer override values by applicable trade periods'
   ;
 
 
@@ -425,14 +431,14 @@ i_tradePeriodOfferTrader(tp,new_offerTrader(new_offer,trdr))${ ( inputGDXgdate >
 i_tradePeriodRiskGenerator(tp,new_offerRiskSetter(new_offer)) = yes ;
 
 * Initialise the data for new parameters based on inherited values
-i_tradePeriodOfferParameter(tp,new_offer,i_OfferParam)                    = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodOfferParameter(tp,o1,i_OfferParam)) ;
-i_tradePeriodEnergyOffer(tp,new_offer,trdBlk,i_EnergyOfferComponent)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodEnergyOffer(tp,o1,trdBlk,i_EnergyOfferComponent)) ;
-i_tradePeriodSustainedPLSROffer(tp,new_offer,trdBlk,i_PLSROfferComponent) = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedPLSROffer(tp,o1,trdBlk,i_PLSROfferComponent)) ;
-i_tradePeriodFastPLSROffer(tp,new_offer,trdBlk,i_PLSROfferComponent)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastPLSROffer(tp,o1,trdBlk,i_PLSROfferComponent)) ;
-i_tradePeriodSustainedTWDROffer(tp,new_offer,trdBlk,i_TWDROfferComponent) = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedTWDROffer(tp,o1,trdBlk,i_TWDROfferComponent)) ;
-i_tradePeriodFastTWDROffer(tp,new_offer,trdBlk,i_TWDROfferComponent)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastTWDROffer(tp,o1,trdBlk,i_TWDROfferComponent)) ;
-i_tradePeriodSustainedILROffer(tp,new_offer,trdBlk,i_ILROfferComponent)   = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedILROffer(tp,o1,trdBlk,i_ILROfferComponent)) ;
-i_tradePeriodFastILROffer(tp,new_offer,trdBlk,i_ILROfferComponent)        = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastILROffer(tp,o1,trdBlk,i_ILROfferComponent)) ;
+i_tradePeriodOfferParameter(tp,new_offer,i_OfferParam)           = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodOfferParameter(tp,o1,i_OfferParam)) ;
+i_tradePeriodEnergyOffer(tp,new_offer,trdBlk,NRGofrCmpnt)        = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodEnergyOffer(tp,o1,trdBlk,NRGofrCmpnt)) ;
+i_tradePeriodSustainedPLSROffer(tp,new_offer,trdBlk,PLSofrCmpnt) = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedPLSROffer(tp,o1,trdBlk,PLSofrCmpnt)) ;
+i_tradePeriodFastPLSROffer(tp,new_offer,trdBlk,PLSofrCmpnt)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastPLSROffer(tp,o1,trdBlk,PLSofrCmpnt)) ;
+i_tradePeriodSustainedTWDROffer(tp,new_offer,trdBlk,TWDofrCmpnt) = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedTWDROffer(tp,o1,trdBlk,TWDofrCmpnt)) ;
+i_tradePeriodFastTWDROffer(tp,new_offer,trdBlk,TWDofrCmpnt)      = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastTWDROffer(tp,o1,trdBlk,TWDofrCmpnt)) ;
+i_tradePeriodSustainedILROffer(tp,new_offer,trdBlk,ILofrCmpnt)   = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodSustainedILROffer(tp,o1,trdBlk,ILofrCmpnt)) ;
+i_tradePeriodFastILROffer(tp,new_offer,trdBlk,ILofrCmpnt)        = sum(o1$new_offerInherit(new_offer,o1), i_tradePeriodFastILROffer(tp,o1,trdBlk,ILofrCmpnt)) ;
 
 $ontext
 Symbols defined on i_offer/o that are not intialised for new offer elements - check with Ramu that this is as he intended...
@@ -467,20 +473,20 @@ ovrdOfferGDate(ovrd,o,fromTo)$sum((day,mth,yr)$ovrd_offerParamDate(ovrd,o,fromTo
   jdate( ovrdOfferYear(ovrd,o,fromTo), ovrdOfferMonth(ovrd,o,fromTo), ovrdOfferDay(ovrd,o,fromTo) ) ;
 
 * Determine if all the conditions for applying the offer parameter overrides are satisfied
-loop((ovrd,tp,o,i_offerParam)$(   i_studyTradePeriod(tp) and
+loop((ovrd,tp,o,i_offerParam)${   i_studyTradePeriod(tp) and
                                 ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
                                 ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
                                   ovrd_offerParamTP(ovrd,o,tp) and
                                   ovrd_offerParam(ovrd,o,i_offerParam)
-                              ),
+                              },
   if( (ovrd_offerParam(ovrd,o,i_offerParam) > 0 ),   ovrdOfferParamTP(tp,o,i_offerParam) = ovrd_offerParam(ovrd,o,i_offerParam) ) ;
   if( (ovrd_offerParam(ovrd,o,i_offerParam) = eps ), ovrdOfferParamTP(tp,o,i_offerParam) = eps ) ;
 ) ;
 
 * Apply the offer parameter override values to the base case input data value. Clear the offer parameter override values when done.
-i_tradePeriodOfferParameter(tp,o,i_offerParam)$( ovrdOfferParamTP(tp,o,i_offerParam) > 0 )   = ovrdOfferParamTP(tp,o,i_offerParam) ;
-i_tradePeriodOfferParameter(tp,o,i_offerParam)$(   ovrdOfferParamTP(tp,o,i_offerParam) and
-                                                 ( ovrdOfferParamTP(tp,o,i_offerParam) = eps ) ) = 0 ;
+i_tradePeriodOfferParameter(tp,o,i_offerParam)${ ovrdOfferParamTP(tp,o,i_offerParam) > 0 } = ovrdOfferParamTP(tp,o,i_offerParam) ;
+i_tradePeriodOfferParameter(tp,o,i_offerParam)${   ovrdOfferParamTP(tp,o,i_offerParam) and
+                                                 ( ovrdOfferParamTP(tp,o,i_offerParam) = eps ) } = 0 ;
 option clear = ovrdOfferParamTP ;
 
 
@@ -497,25 +503,25 @@ ovrdOfferGDate(ovrd,o,fromTo)$sum((day,mth,yr)$ovrd_energyOfferDate(ovrd,o,fromT
   jdate( ovrdOfferYear(ovrd,o,fromTo), ovrdOfferMonth(ovrd,o,fromTo), ovrdOfferDay(ovrd,o,fromTo) ) ;
 
 * Determine if all the conditions for applying the energy offer overrides are satisfied
-loop((ovrd,tp,o,trdBlk,i_energyOfferComponent)$(   i_studyTradePeriod(tp) and
-                                                 ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
-                                                 ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
-                                                   ovrd_energyOfferTP(ovrd,o,tp) and
-                                                   ovrd_energyOffer(ovrd,o,trdBlk,i_energyOfferComponent)
-                                                 ),
-  if(ovrd_energyOffer(ovrd,o,trdBlk,i_energyOfferComponent) > 0,
-    ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent) = ovrd_energyOffer(ovrd,o,trdBlk,i_energyOfferComponent) ;
+loop((ovrd,tp,o,trdBlk,NRGofrCmpnt)${   i_studyTradePeriod(tp) and
+                                      ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
+                                      ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
+                                        ovrd_energyOfferTP(ovrd,o,tp) and
+                                        ovrd_energyOffer(ovrd,o,trdBlk,NRGofrCmpnt)
+                                    },
+  if(ovrd_energyOffer(ovrd,o,trdBlk,NRGofrCmpnt) > 0,
+    ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt) = ovrd_energyOffer(ovrd,o,trdBlk,NRGofrCmpnt) ;
   ) ;
-  if(ovrd_energyOffer(ovrd,o,trdBlk,i_energyOfferComponent) = eps,
-    ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent) = eps ;
+  if(ovrd_energyOffer(ovrd,o,trdBlk,NRGofrCmpnt) = eps,
+    ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt) = eps ;
   ) ;
 ) ;
 
 * Apply the energy offer override values to the base case input data values. Clear the energy offer override values when done.
-i_tradePeriodEnergyOffer(tp,o,trdBlk,i_energyOfferComponent)$( ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent) > 0 ) =
-  ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent) ;
-i_tradePeriodEnergyOffer(tp,o,trdBlk,i_energyOfferComponent)$(   ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent) and
-                                                               ( ovrdEnergyOfferTP(tp,o,trdBlk,i_energyOfferComponent) = eps ) ) = 0 ;
+i_tradePeriodEnergyOffer(tp,o,trdBlk,NRGofrCmpnt)$( ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt) > 0 ) =
+  ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt) ;
+i_tradePeriodEnergyOffer(tp,o,trdBlk,NRGofrCmpnt)$(   ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt) and
+                                                    ( ovrdEnergyOfferTP(tp,o,trdBlk,NRGofrCmpnt) = eps ) ) = 0 ;
 option clear = ovrdEnergyOfferTP ;
 
 
@@ -532,29 +538,29 @@ ovrdOfferGDate(ovrd,o,fromTo)$sum((day,mth,yr)$ovrd_PLSRofferDate(ovrd,o,fromTo,
   jdate( ovrdOfferYear(ovrd,o,fromTo), ovrdOfferMonth(ovrd,o,fromTo), ovrdOfferDay(ovrd,o,fromTo) ) ;
 
 * Determine if all the conditions for applying the PLSR offer overrides are satisfied
-loop((ovrd,tp,o,i_reserveClass,trdBlk,i_PLSRofferComponent)$(   i_studyTradePeriod(tp) and
-                                                              ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
-                                                              ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
-                                                                ovrd_PLSRofferTP(ovrd,o,tp) and
-                                                                ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,i_PLSRofferComponent)
-                                                              ),
-  if(ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,i_PLSRofferComponent) > 0,
-    ovrdPLSRofferTP(tp,i_reserveClass,o,trdBlk,i_PLSRofferComponent) = ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,i_PLSRofferComponent) ;
+loop((ovrd,tp,o,i_reserveClass,trdBlk,PLSofrCmpnt)$(   i_studyTradePeriod(tp) and
+                                                     ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
+                                                     ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
+                                                       ovrd_PLSRofferTP(ovrd,o,tp) and
+                                                       ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,PLSofrCmpnt)
+                                                   ),
+  if(ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,PLSofrCmpnt) > 0,
+    ovrdPLSRofferTP(tp,i_reserveClass,o,trdBlk,PLSofrCmpnt) = ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,PLSofrCmpnt) ;
   ) ;
-  if(ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,i_PLSRofferComponent) = eps,
-    ovrdPLSRofferTP(tp,i_reserveClass,o,trdBlk,i_PLSRofferComponent) = eps ;
+  if(ovrd_PLSRoffer(ovrd,i_reserveClass,o,trdBlk,PLSofrCmpnt) = eps,
+    ovrdPLSRofferTP(tp,i_reserveClass,o,trdBlk,PLSofrCmpnt) = eps ;
   ) ;
 ) ;
 
 * Apply the PLSR offer override values to the base case input data values. Clear the PLSR offer override values when done.
-i_tradePeriodFastPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)$( ovrdPLSRofferTP(tp,'fir',o,trdBlk,i_PLSRofferComponent) > 0 ) =
-  ovrdPLSRofferTP(tp,'fir',o,trdBlk,i_PLSRofferComponent) ;
-i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)$( ovrdPLSRofferTP(tp,'sir',o,trdBlk,i_PLSRofferComponent) > 0 ) =
-  ovrdPLSRofferTP(tp,'sir',o,trdBlk,i_PLSRofferComponent) ;
-i_tradePeriodFastPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)$(   ovrdPLSRofferTP(tp,'fir',o,trdBlk,i_PLSRofferComponent) and
-                                                               ( ovrdPLSRofferTP(tp,'fir',o,trdBlk,i_PLSRofferComponent) = eps ) ) = 0 ;
-i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)$(   ovrdPLSRofferTP(tp,'sir',o,trdBlk,i_PLSRofferComponent) and
-                                                                    ( ovrdPLSRofferTP(tp,'sir',o,trdBlk,i_PLSRofferComponent) = eps ) ) = 0 ;
+i_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)$( ovrdPLSRofferTP(tp,'fir',o,trdBlk,PLSofrCmpnt) > 0 ) =
+  ovrdPLSRofferTP(tp,'fir',o,trdBlk,PLSofrCmpnt) ;
+i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)$( ovrdPLSRofferTP(tp,'sir',o,trdBlk,PLSofrCmpnt) > 0 ) =
+  ovrdPLSRofferTP(tp,'sir',o,trdBlk,PLSofrCmpnt) ;
+i_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)$(   ovrdPLSRofferTP(tp,'fir',o,trdBlk,PLSofrCmpnt) and
+                                                      ( ovrdPLSRofferTP(tp,'fir',o,trdBlk,PLSofrCmpnt) = eps ) ) = 0 ;
+i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)$(   ovrdPLSRofferTP(tp,'sir',o,trdBlk,PLSofrCmpnt) and
+                                                           ( ovrdPLSRofferTP(tp,'sir',o,trdBlk,PLSofrCmpnt) = eps ) ) = 0 ;
 option clear = ovrdPLSRofferTP ;
 
 
@@ -571,29 +577,29 @@ ovrdOfferGDate(ovrd,o,fromTo)$sum((day,mth,yr)$ovrd_TWDRofferDate(ovrd,o,fromTo,
   jdate( ovrdOfferYear(ovrd,o,fromTo), ovrdOfferMonth(ovrd,o,fromTo), ovrdOfferDay(ovrd,o,fromTo) ) ;
 
 * Determine if all the conditions for applying the TWDR offer overrides are satisfied
-loop((ovrd,tp,o,i_reserveClass,trdBlk,i_TWDRofferComponent)$(   i_studyTradePeriod(tp) and
-                                                              ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
-                                                              ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
-                                                                ovrd_TWDRofferTP(ovrd,o,tp) and
-                                                                ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,i_TWDRofferComponent)
-                                                            ),
-  if(ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,i_TWDRofferComponent) > 0,
-    ovrdTWDRofferTP(tp,i_reserveClass,o,trdBlk,i_TWDRofferComponent) = ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,i_TWDRofferComponent) ;
+loop((ovrd,tp,o,i_reserveClass,trdBlk,TWDofrCmpnt)$(   i_studyTradePeriod(tp) and
+                                                     ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
+                                                     ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
+                                                       ovrd_TWDRofferTP(ovrd,o,tp) and
+                                                       ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,TWDofrCmpnt)
+                                                   ),
+  if(ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,TWDofrCmpnt) > 0,
+    ovrdTWDRofferTP(tp,i_reserveClass,o,trdBlk,TWDofrCmpnt) = ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,TWDofrCmpnt) ;
   ) ;
-  if(ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,i_TWDRofferComponent) = eps,
-    ovrdTWDRofferTP(tp,i_reserveClass,o,trdBlk,i_TWDRofferComponent) = eps ;
+  if(ovrd_TWDRoffer(ovrd,i_reserveClass,o,trdBlk,TWDofrCmpnt) = eps,
+    ovrdTWDRofferTP(tp,i_reserveClass,o,trdBlk,TWDofrCmpnt) = eps ;
   ) ;
 ) ;
 
 * Apply the TWDR offer override values to the base case input data values. Clear the TWDR offer override values when done.
-i_tradePeriodFastTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent)$( ovrdTWDRofferTP(tp,'fir',o,trdBlk,i_TWDRofferComponent) > 0 ) =
-  ovrdTWDRofferTP(tp,'fir',o,trdBlk,i_TWDRofferComponent) ;
-i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent)$( ovrdTWDRofferTP(tp,'sir',o,trdBlk,i_TWDRofferComponent) > 0 ) =
-  ovrdTWDRofferTP(tp,'sir',o,trdBlk,i_TWDRofferComponent) ;
-i_tradePeriodFastTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent)$(   ovrdTWDRofferTP(tp,'fir',o,trdBlk,i_TWDRofferComponent) and
-                                                               ( ovrdTWDRofferTP(tp,'fir',o,trdBlk,i_TWDRofferComponent) = eps ) ) = 0 ;
-i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent)$(   ovrdTWDRofferTP(tp,'sir',o,trdBlk,i_TWDRofferComponent) and
-                                                                    ( ovrdTWDRofferTP(tp,'sir',o,trdBlk,i_TWDRofferComponent) = eps ) ) = 0 ;
+i_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)$( ovrdTWDRofferTP(tp,'fir',o,trdBlk,TWDofrCmpnt) > 0 ) =
+  ovrdTWDRofferTP(tp,'fir',o,trdBlk,TWDofrCmpnt) ;
+i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)$( ovrdTWDRofferTP(tp,'sir',o,trdBlk,TWDofrCmpnt) > 0 ) =
+  ovrdTWDRofferTP(tp,'sir',o,trdBlk,TWDofrCmpnt) ;
+i_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)$(   ovrdTWDRofferTP(tp,'fir',o,trdBlk,TWDofrCmpnt) and
+                                                      ( ovrdTWDRofferTP(tp,'fir',o,trdBlk,TWDofrCmpnt) = eps ) ) = 0 ;
+i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)$(   ovrdTWDRofferTP(tp,'sir',o,trdBlk,TWDofrCmpnt) and
+                                                           ( ovrdTWDRofferTP(tp,'sir',o,trdBlk,TWDofrCmpnt) = eps ) ) = 0 ;
 option clear = ovrdTWDRofferTP ;
 
 
@@ -610,29 +616,29 @@ ovrdOfferGDate(ovrd,o,fromTo)$sum((day,mth,yr)$ovrd_ILRofferDate(ovrd,o,fromTo,d
   jdate( ovrdOfferYear(ovrd,o,fromTo), ovrdOfferMonth(ovrd,o,fromTo), ovrdOfferDay(ovrd,o,fromTo) ) ;
 
 * Determine if all the conditions for applying the ILR offer overrides are satisfied
-loop((ovrd,tp,o,i_reserveClass,trdBlk,i_ILRofferComponent)$(   i_studyTradePeriod(tp) and
-                                                             ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
-                                                             ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
-                                                               ovrd_ILRofferTP(ovrd,o,tp) and
-                                                               ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,i_ILRofferComponent)
-                                                           ),
-  if(ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,i_ILRofferComponent) > 0,
-    ovrdILRofferTP(tp,i_reserveClass,o,trdBlk,i_ILRofferComponent) = ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,i_ILRofferComponent) ;
+loop((ovrd,tp,o,i_reserveClass,trdBlk,ILofrCmpnt)$(   i_studyTradePeriod(tp) and
+                                                    ( ovrdOfferGDate(ovrd,o,'frm') <= inputGDXgdate ) and
+                                                    ( ovrdOfferGDate(ovrd,o,'to')  >= inputGDXgdate ) and
+                                                      ovrd_ILRofferTP(ovrd,o,tp) and
+                                                      ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,ILofrCmpnt)
+                                                  ),
+  if(ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,ILofrCmpnt) > 0,
+    ovrdILRofferTP(tp,i_reserveClass,o,trdBlk,ILofrCmpnt) = ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,ILofrCmpnt) ;
   ) ;
-  if(ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,i_ILRofferComponent) = eps,
-    ovrdILRofferTP(tp,i_reserveClass,o,trdBlk,i_ILRofferComponent) = eps ;
+  if(ovrd_ILRoffer(ovrd,i_reserveClass,o,trdBlk,ILofrCmpnt) = eps,
+    ovrdILRofferTP(tp,i_reserveClass,o,trdBlk,ILofrCmpnt) = eps ;
   ) ;
 ) ;
 
 * Apply the ILR offer override values to the base case input data values. Clear the ILR offer override values when done.
-i_tradePeriodFastILRoffer(tp,o,trdBlk,i_ILRofferComponent)$( ovrdILRofferTP(tp,'fir',o,trdBlk,i_ILRofferComponent) > 0 ) =
-  ovrdILRofferTP(tp,'fir',o,trdBlk,i_ILRofferComponent) ;
-i_tradePeriodSustainedILRoffer(tp,o,trdBlk,i_ILRofferComponent)$( ovrdILRofferTP(tp,'sir',o,trdBlk,i_ILRofferComponent) > 0 ) =
-  ovrdILRofferTP(tp,'sir',o,trdBlk,i_ILRofferComponent) ;
-i_tradePeriodFastILRoffer(tp,o,trdBlk,i_ILRofferComponent)$(   ovrdILRofferTP(tp,'fir',o,trdBlk,i_ILRofferComponent) and
-                                                             ( ovrdILRofferTP(tp,'fir',o,trdBlk,i_ILRofferComponent) = eps ) ) = 0 ;
-i_tradePeriodSustainedILRoffer(tp,o,trdBlk,i_ILRofferComponent)$(   ovrdILRofferTP(tp,'sir',o,trdBlk,i_ILRofferComponent) and
-                                                                  ( ovrdILRofferTP(tp,'sir',o,trdBlk,i_ILRofferComponent) = eps ) ) = 0 ;
+i_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)$( ovrdILRofferTP(tp,'fir',o,trdBlk,ILofrCmpnt) > 0 ) =
+  ovrdILRofferTP(tp,'fir',o,trdBlk,ILofrCmpnt) ;
+i_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)$( ovrdILRofferTP(tp,'sir',o,trdBlk,ILofrCmpnt) > 0 ) =
+  ovrdILRofferTP(tp,'sir',o,trdBlk,ILofrCmpnt) ;
+i_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)$(   ovrdILRofferTP(tp,'fir',o,trdBlk,ILofrCmpnt) and
+                                                    ( ovrdILRofferTP(tp,'fir',o,trdBlk,ILofrCmpnt) = eps ) ) = 0 ;
+i_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)$(   ovrdILRofferTP(tp,'sir',o,trdBlk,ILofrCmpnt) and
+                                                         ( ovrdILRofferTP(tp,'sir',o,trdBlk,ILofrCmpnt) = eps ) ) = 0 ;
 option clear = ovrdILRofferTP ;
 
 * f) Demand overrides

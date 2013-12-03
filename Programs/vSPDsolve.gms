@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     28 November 2013
+* Last modified on:     3 December 2013
 *=====================================================================================
 
 $ontext
@@ -40,6 +40,12 @@ Aliases to be aware of:
   i_bus = b, b1, frB, toB
   i_branch = br, br1
   i_lossSegment = los, los1
+  i_energyOfferComponent = NRGofrCmpnt
+  i_PLSRofferComponent = PLSofrCmpnt
+  i_TWDRofferComponent = TWDofrCmpnt
+  i_ILRofferComponent = ILofrCmpnt
+  i_energyBidComponent = NRGbidCmpnt
+  i_ILRbidComponent = ILbidCmpnt
 $offtext
 
 
@@ -140,21 +146,21 @@ Scalar startYear 'Start year - used in computing Gregorian date for override yea
 
 Sets
 * Dispatch results reporting
-  o_fromDateTime(dt)                                                       'Start period for summary reports'
-  o_dateTime(dt)                                                           'Date and time for reporting'
-  o_bus(dt,b)                                                          'Set of buses for output report'
-  o_offer(dt,o)                                                      'Set of offers for output report'
-  o_island(dt,ild)                                                    'Island definition for trade period reserve output report'
-  o_offerTrader(o,trdr)                                                  'Mapping of offers to traders for offer summary reports'
-  o_trader(trdr)                                                               'Set of traders for trader summary output report'
-  o_node(dt,n)                                                        'Set of nodes for output report'
-  o_branch(dt,br)                                                    'Set of branches for output report'
-  o_branchFromBus_TP(dt,br,frB)                                'From bus for set of branches for output report'
-  o_branchToBus_TP(dt,br,toB)                                    'To bus for set of branches for output report'
-  o_brConstraint_TP(dt,i_branchConstraint)                                 'Set of branch constraints for output report'
-  o_MnodeConstraint_TP(dt,i_MnodeConstraint)                               'Set of Mnode constraints for output report'
+  o_fromDateTime(dt)                                            'Start period for summary reports'
+  o_dateTime(dt)                                                'Date and time for reporting'
+  o_bus(dt,b)                                                   'Set of buses for output report'
+  o_offer(dt,o)                                                 'Set of offers for output report'
+  o_island(dt,ild)                                              'Island definition for trade period reserve output report'
+  o_offerTrader(o,trdr)                                         'Mapping of offers to traders for offer summary reports'
+  o_trader(trdr)                                                'Set of traders for trader summary output report'
+  o_node(dt,n)                                                  'Set of nodes for output report'
+  o_branch(dt,br)                                               'Set of branches for output report'
+  o_branchFromBus_TP(dt,br,frB)                                 'From bus for set of branches for output report'
+  o_branchToBus_TP(dt,br,toB)                                   'To bus for set of branches for output report'
+  o_brConstraint_TP(dt,i_branchConstraint)                      'Set of branch constraints for output report'
+  o_MnodeConstraint_TP(dt,i_MnodeConstraint)                    'Set of Mnode constraints for output report'
 * TN - Audit report
-  o_busIsland_TP(dt,b,ild)                                        'Bus Island Mapping for audit report'
+  o_busIsland_TP(dt,b,ild)                                      'Bus Island Mapping for audit report'
   o_marketNodeIsland_TP(dt,o,ild)                               'Generation offer Island Mapping for audit reporting'
 * TN - Audit report - End
 * RDN - Additional output for audit report - Start------------------------------
@@ -164,181 +170,181 @@ Sets
 
 Parameters
 * Main iteration counter
-  iterationCount                                                                   'Iteration counter for the solve'
+  iterationCount                                                'Iteration counter for the solve'
 * MIP logic
-  branchFlowMIPInvoked(tp)                                              'Flag to detect if branch flow MIP is needed'
-  circularBranchFlowExist(tp,br)                                  'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
+  branchFlowMIPInvoked(tp)                                      'Flag to detect if branch flow MIP is needed'
+  circularBranchFlowExist(tp,br)                                'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
 * RDN - Introduce flag to detect circular branch flows on each HVDC pole
-  poleCircularBranchFlowExist(tp,pole)                                'Flag to indicate if circulating branch flows exist on each an HVDC pole: 1 = Yes'
+  poleCircularBranchFlowExist(tp,pole)                          'Flag to indicate if circulating branch flows exist on each an HVDC pole: 1 = Yes'
 
-  northHVDC(tp)                                                         'HVDC MW sent from from SI to NI'
-  southHVDC(tp)                                                         'HVDC MW sent from from NI to SI'
-  nonPhysicalLossExist(tp,br)                                     'Flag to indicate if non-physical losses exist on branch: 1 = Yes'
-  manualBranchSegmentMWFlow(tp,br,los)                  'Manual calculation of the branch loss segment MW flow'
-  manualLossCalculation(tp,br)                                    'MW losses calculated manually from the solution for each loss branch'
-  HVDChalfPoleSouthFlow(tp)                                             'Flag to indicate if south flow on HVDC halfpoles'
-  type1MixedConstraintLimit2Violation(tp, i_type1MixedConstraint)       'Type 1 mixed constraint MW violaton of the alternate limit value'
+  northHVDC(tp)                                                 'HVDC MW sent from from SI to NI'
+  southHVDC(tp)                                                 'HVDC MW sent from from NI to SI'
+  nonPhysicalLossExist(tp,br)                                   'Flag to indicate if non-physical losses exist on branch: 1 = Yes'
+  manualBranchSegmentMWFlow(tp,br,los)                          'Manual calculation of the branch loss segment MW flow'
+  manualLossCalculation(tp,br)                                  'MW losses calculated manually from the solution for each loss branch'
+  HVDChalfPoleSouthFlow(tp)                                     'Flag to indicate if south flow on HVDC halfpoles'
+  type1MixedConstraintLimit2Violation(tp, i_type1MixedConstraint) 'Type 1 mixed constraint MW violaton of the alternate limit value'
 
 * RDN - Parameters to calculate circular branch flow on each HVDC pole
-  TotalHVDCpoleFlow(tp,pole)                                          'Total flow on an HVDC pole'
-  MaxHVDCpoleFlow(tp,pole)                                            'Maximum flow on an HVDC pole'
+  TotalHVDCpoleFlow(tp,pole)                                    'Total flow on an HVDC pole'
+  MaxHVDCpoleFlow(tp,pole)                                      'Maximum flow on an HVDC pole'
 
 * Disconnected bus post-processing
-  busGeneration(tp,b)                                               'MW generation at each bus for the study trade periods'
-  busLoad(tp,b)                                                     'MW load at each bus for the study trade periods'
-  busPrice(tp,b)                                                    '$/MW price at each bus for the study trade periods'
-  busDisconnected(tp,b)                                             'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
+  busGeneration(tp,b)                                           'MW generation at each bus for the study trade periods'
+  busLoad(tp,b)                                                 'MW load at each bus for the study trade periods'
+  busPrice(tp,b)                                                '$/MW price at each bus for the study trade periods'
+  busDisconnected(tp,b)                                         'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
 * Dispatch Results Outputs for reporting
 * Trade period level
-  o_islandGen_TP(dt,ild)                                              'Island MW generation for the different time periods'
-  o_islandLoad_TP(dt,ild)                                             'Island MW load for the different time periods'
-  o_systemViolation_TP(dt,ild)                                        'Island MW violation for the different time periods'
-  o_islandEnergyRevenue_TP(dt,ild)                                    'Island energy revenue ($) for the different time periods'
-  o_islandReserveRevenue_TP(dt,ild)                                   'Island reserve revenue ($) for the different time periods'
-  o_islandLoadCost_TP(dt,ild)                                         'Island load cost ($) for the different time periods'
-  o_islandLoadRevenue_TP(dt,ild)                                      'Island load revenue ($) for the different time periods'
-  o_islandBranchLoss_TP(dt,ild)                                       'Intra-island branch losses for the different time periods (MW)'
-  o_islandRefPrice_TP(dt,ild)                                         'Reference prices in each island ($/MWh)'
-  o_HVDCflow_TP(dt,ild)                                               'HVDC flow from each island (MW)'
-  o_HVDCloss_TP(dt,ild)                                               'HVDC losses (MW)'
-  o_HVDChalfPoleLoss_TP(dt,ild)                                       'Losses on HVDC half poles (MW)'
-  o_HVDCpoleFixedLoss_TP(dt,ild)                                      'Fixed loss on inter-island HVDC (MW)'
-  o_busGeneration_TP(dt,b)                                             'Output MW generation at each bus for the different time periods'
-  o_busLoad_TP(dt,b)                                                   'Output MW load at each bus for the different time periods'
-  o_busPrice_TP(dt,b)                                                  'Output $/MW price at each bus for the different time periods'
-  o_busDisconnected_TP(dt,b)                                           'Output disconnected bus flag (1 = Yes) for the different time periods'
-  o_busRevenue_TP(dt,b)                                                'Generation revenue ($) at each bus for the different time periods'
-  o_busCost_TP(dt,b)                                                   'Load cost ($) at each bus for the different time periods'
-  o_busDeficit_TP(dt,b)                                                'Bus deficit violation for each trade period'
-  o_busSurplus_TP(dt,b)                                                'Bus surplus violation for each trade period'
-  o_branchFromBusPrice_TP(dt,br)                                     'Output from bus price ($/MW) for branch reporting'
-  o_branchToBusPrice_TP(dt,br)                                       'Output to bus price ($/MW) for branch reporting'
-  o_branchMarginalPrice_TP(dt,br)                                    'Output marginal branch constraint price ($/MW) for branch reporting'
-  o_branchFlow_TP(dt,br)                                             'Output MW flow on each branch for the different time periods'
-  o_branchDynamicLoss_TP(dt,br)                                      'Output MW dynamic loss on each branch for the different time periods'
-  o_branchTotalLoss_TP(dt,br)                                        'Output MW total loss on each branch for the different time periods'
-  o_branchFixedLoss_TP(dt,br)                                        'Output MW fixed loss on each branch for the different time periods'
-  o_branchDynamicRentals_TP(dt,br)                                   'Output $ rentals on transmission branches using dynamic losses for the different time periods'
-  o_branchTotalRentals_TP(dt,br)                                     'Output $ rentals on transmission branches using total (dynamic + fixed) for the different time periods'
-  o_branchCapacity_TP(dt,br)                                         'Output MW branch capacity for branch reporting'
-  o_offerEnergy_TP(dt,o)                                             'Output MW cleared for each energy offer for each trade period'
-  o_offerFIR_TP(dt,o)                                                'Output MW cleared for FIR for each trade period'
-  o_offerSIR_TP(dt,o)                                                'Output MW cleared for SIR for each trade period'
-  o_bidEnergy_TP(dt,i_bid)                                                 'Output MW cleared for each energy bid for each trade period'
-  o_bidReserve_TP(dt,i_bid,i_reserveClass)                                 'Output MW cleared for each reserve bid for each trade period'
-  o_FIRreqd_TP(dt,ild)                                                'Output MW required FIR for each trade period'
-  o_SIRreqd_TP(dt,ild)                                                'Output MW required SIR for each trade period'
-  o_FIRprice_TP(dt,ild)                                               'Output $/MW price for FIR reserve classes for each trade period'
-  o_SIRprice_TP(dt,ild)                                               'Output $/MW price for SIR reserve classes for each trade period'
-  o_FIRviolation_TP(dt,ild)                                           'Violtaiton MW for FIR reserve classes for each trade period'
-  o_SIRviolation_TP(dt,ild)                                           'Violtaiton MW for SIR reserve classes for each trade period'
-  o_nodeGeneration_TP(dt,n)                                           'Ouput MW generation at each node for the different time periods'
-  o_nodeLoad_TP(dt,n)                                                 'Ouput MW load at each node for the different time periods'
-  o_nodePrice_TP(dt,n)                                                'Output $/MW price at each node for the different time periods'
-  o_nodeRevenue_TP(dt,n)                                              'Output $ revenue at each node for the different time periods'
-  o_nodeCost_TP(dt,n)                                                 'Output $ cost at each node for the different time periods'
-  o_nodeDeficit_TP(dt,n)                                              'Output node deficit violation for each trade period'
-  o_nodeSurplus_TP(dt,n)                                              'Output node surplus violation for each trade period'
+  o_islandGen_TP(dt,ild)                                        'Island MW generation for the different time periods'
+  o_islandLoad_TP(dt,ild)                                       'Island MW load for the different time periods'
+  o_systemViolation_TP(dt,ild)                                  'Island MW violation for the different time periods'
+  o_islandEnergyRevenue_TP(dt,ild)                              'Island energy revenue ($) for the different time periods'
+  o_islandReserveRevenue_TP(dt,ild)                             'Island reserve revenue ($) for the different time periods'
+  o_islandLoadCost_TP(dt,ild)                                   'Island load cost ($) for the different time periods'
+  o_islandLoadRevenue_TP(dt,ild)                                'Island load revenue ($) for the different time periods'
+  o_islandBranchLoss_TP(dt,ild)                                 'Intra-island branch losses for the different time periods (MW)'
+  o_islandRefPrice_TP(dt,ild)                                   'Reference prices in each island ($/MWh)'
+  o_HVDCflow_TP(dt,ild)                                         'HVDC flow from each island (MW)'
+  o_HVDCloss_TP(dt,ild)                                         'HVDC losses (MW)'
+  o_HVDChalfPoleLoss_TP(dt,ild)                                 'Losses on HVDC half poles (MW)'
+  o_HVDCpoleFixedLoss_TP(dt,ild)                                'Fixed loss on inter-island HVDC (MW)'
+  o_busGeneration_TP(dt,b)                                      'Output MW generation at each bus for the different time periods'
+  o_busLoad_TP(dt,b)                                            'Output MW load at each bus for the different time periods'
+  o_busPrice_TP(dt,b)                                           'Output $/MW price at each bus for the different time periods'
+  o_busDisconnected_TP(dt,b)                                    'Output disconnected bus flag (1 = Yes) for the different time periods'
+  o_busRevenue_TP(dt,b)                                         'Generation revenue ($) at each bus for the different time periods'
+  o_busCost_TP(dt,b)                                            'Load cost ($) at each bus for the different time periods'
+  o_busDeficit_TP(dt,b)                                         'Bus deficit violation for each trade period'
+  o_busSurplus_TP(dt,b)                                         'Bus surplus violation for each trade period'
+  o_branchFromBusPrice_TP(dt,br)                                'Output from bus price ($/MW) for branch reporting'
+  o_branchToBusPrice_TP(dt,br)                                  'Output to bus price ($/MW) for branch reporting'
+  o_branchMarginalPrice_TP(dt,br)                               'Output marginal branch constraint price ($/MW) for branch reporting'
+  o_branchFlow_TP(dt,br)                                        'Output MW flow on each branch for the different time periods'
+  o_branchDynamicLoss_TP(dt,br)                                 'Output MW dynamic loss on each branch for the different time periods'
+  o_branchTotalLoss_TP(dt,br)                                   'Output MW total loss on each branch for the different time periods'
+  o_branchFixedLoss_TP(dt,br)                                   'Output MW fixed loss on each branch for the different time periods'
+  o_branchDynamicRentals_TP(dt,br)                              'Output $ rentals on transmission branches using dynamic losses for the different time periods'
+  o_branchTotalRentals_TP(dt,br)                                'Output $ rentals on transmission branches using total (dynamic + fixed) for the different time periods'
+  o_branchCapacity_TP(dt,br)                                    'Output MW branch capacity for branch reporting'
+  o_offerEnergy_TP(dt,o)                                        'Output MW cleared for each energy offer for each trade period'
+  o_offerFIR_TP(dt,o)                                           'Output MW cleared for FIR for each trade period'
+  o_offerSIR_TP(dt,o)                                           'Output MW cleared for SIR for each trade period'
+  o_bidEnergy_TP(dt,i_bid)                                      'Output MW cleared for each energy bid for each trade period'
+  o_bidReserve_TP(dt,i_bid,i_reserveClass)                      'Output MW cleared for each reserve bid for each trade period'
+  o_FIRreqd_TP(dt,ild)                                          'Output MW required FIR for each trade period'
+  o_SIRreqd_TP(dt,ild)                                          'Output MW required SIR for each trade period'
+  o_FIRprice_TP(dt,ild)                                         'Output $/MW price for FIR reserve classes for each trade period'
+  o_SIRprice_TP(dt,ild)                                         'Output $/MW price for SIR reserve classes for each trade period'
+  o_FIRviolation_TP(dt,ild)                                     'Violtaiton MW for FIR reserve classes for each trade period'
+  o_SIRviolation_TP(dt,ild)                                     'Violtaiton MW for SIR reserve classes for each trade period'
+  o_nodeGeneration_TP(dt,n)                                     'Ouput MW generation at each node for the different time periods'
+  o_nodeLoad_TP(dt,n)                                           'Ouput MW load at each node for the different time periods'
+  o_nodePrice_TP(dt,n)                                          'Output $/MW price at each node for the different time periods'
+  o_nodeRevenue_TP(dt,n)                                        'Output $ revenue at each node for the different time periods'
+  o_nodeCost_TP(dt,n)                                           'Output $ cost at each node for the different time periods'
+  o_nodeDeficit_TP(dt,n)                                        'Output node deficit violation for each trade period'
+  o_nodeSurplus_TP(dt,n)                                        'Output node surplus violation for each trade period'
 * Security constraint data
-  o_brConstraintSense_TP(dt,i_branchConstraint)                            'Branch constraint sense for each output report'
-  o_brConstraintLHS_TP(dt,i_branchConstraint)                              'Branch constraint LHS for each output report'
-  o_brConstraintRHS_TP(dt,i_branchConstraint)                              'Branch constraint RHS for each output report'
-  o_brConstraintPrice_TP(dt,i_branchConstraint)                            'Branch constraint price for each output report'
+  o_brConstraintSense_TP(dt,i_branchConstraint)                 'Branch constraint sense for each output report'
+  o_brConstraintLHS_TP(dt,i_branchConstraint)                   'Branch constraint LHS for each output report'
+  o_brConstraintRHS_TP(dt,i_branchConstraint)                   'Branch constraint RHS for each output report'
+  o_brConstraintPrice_TP(dt,i_branchConstraint)                 'Branch constraint price for each output report'
 * Mnode constraint data
-  o_MnodeConstraintSense_TP(dt,i_MnodeConstraint)                          'Market node constraint sense for each output report'
-  o_MnodeConstraintLHS_TP(dt,i_MnodeConstraint)                            'Market node constraint LHS for each output report'
-  o_MnodeConstraintRHS_TP(dt,i_MnodeConstraint)                            'Market node constraint RHS for each output report'
-  o_MnodeConstraintPrice_TP(dt,i_MnodeConstraint)                          'Market node constraint price for each output report'
+  o_MnodeConstraintSense_TP(dt,i_MnodeConstraint)               'Market node constraint sense for each output report'
+  o_MnodeConstraintLHS_TP(dt,i_MnodeConstraint)                 'Market node constraint LHS for each output report'
+  o_MnodeConstraintRHS_TP(dt,i_MnodeConstraint)                 'Market node constraint RHS for each output report'
+  o_MnodeConstraintPrice_TP(dt,i_MnodeConstraint)               'Market node constraint price for each output report'
 * TradePeriod summary report
-  o_solveOK_TP(dt)                                                         'Solve status for summary report (1=OK)'
-  o_systemCost_TP(dt)                                                      'System cost for summary report'
+  o_solveOK_TP(dt)                                              'Solve status for summary report (1=OK)'
+  o_systemCost_TP(dt)                                           'System cost for summary report'
 *RDN - 20130730 - Additional reporting on system objective function and penalty cost
-  o_ofv_TP(dt)                                                             'Objective function value for summary report'
-  o_penaltyCost_TP(dt)                                                     'Penalty cost for summary report'
+  o_ofv_TP(dt)                                                  'Objective function value for summary report'
+  o_penaltyCost_TP(dt)                                          'Penalty cost for summary report'
 *RDN - 20130730 - Additional reporting on system objective function and penalty cost
-  o_defGenViolation_TP(dt)                                                 'Deficit generation violation for summary report'
-  o_surpGenViolation_TP(dt)                                                'Surplus generaiton violation for summary report'
-  o_surpBranchFlow_TP(dt)                                                  'Surplus branch flow violation for summary report'
-  o_defRampRate_TP(dt)                                                     'Deficit ramp rate violation for summary report'
-  o_surpRampRate_TP(dt)                                                    'Surplus ramp rate violation for summary report'
-  o_surpBranchGroupConst_TP(dt)                                            'Surplus branch group constraint violation for summary report'
-  o_defBranchGroupConst_TP(dt)                                             'Deficit branch group constraint violation for summary report'
-  o_defMnodeConst_TP(dt)                                                   'Deficit market node constraint violation for summary report'
-  o_surpMnodeConst_TP(dt)                                                  'Surplus market node constraint violation for summary report'
-  o_defACnodeConst_TP(dt)                                                  'Deficit AC node constraint violation for summary report'
-  o_surpACnodeConst_TP(dt)                                                 'Surplus AC node constraint violation for summary report'
-  o_defT1MixedConst_TP(dt)                                                 'Deficit Type1 mixed constraint violation for sumamry report'
-  o_surpT1MixedConst_TP(dt)                                                'Surplus Type1 mixed constraint violation for summary report'
-  o_defGenericConst_TP(dt)                                                 'Deficit generic constraint violation for summary report'
-  o_surpGenericConst_TP(dt)                                                'Surplus generic constraint violation for summary report'
-  o_defResv_TP(dt)                                                         'Deficit reserve violation for summary report'
-  o_totalViolation_TP(dt)                                                  'Total violation for datawarehouse summary report'
+  o_defGenViolation_TP(dt)                                      'Deficit generation violation for summary report'
+  o_surpGenViolation_TP(dt)                                     'Surplus generaiton violation for summary report'
+  o_surpBranchFlow_TP(dt)                                       'Surplus branch flow violation for summary report'
+  o_defRampRate_TP(dt)                                          'Deficit ramp rate violation for summary report'
+  o_surpRampRate_TP(dt)                                         'Surplus ramp rate violation for summary report'
+  o_surpBranchGroupConst_TP(dt)                                 'Surplus branch group constraint violation for summary report'
+  o_defBranchGroupConst_TP(dt)                                  'Deficit branch group constraint violation for summary report'
+  o_defMnodeConst_TP(dt)                                        'Deficit market node constraint violation for summary report'
+  o_surpMnodeConst_TP(dt)                                       'Surplus market node constraint violation for summary report'
+  o_defACnodeConst_TP(dt)                                       'Deficit AC node constraint violation for summary report'
+  o_surpACnodeConst_TP(dt)                                      'Surplus AC node constraint violation for summary report'
+  o_defT1MixedConst_TP(dt)                                      'Deficit Type1 mixed constraint violation for sumamry report'
+  o_surpT1MixedConst_TP(dt)                                     'Surplus Type1 mixed constraint violation for summary report'
+  o_defGenericConst_TP(dt)                                      'Deficit generic constraint violation for summary report'
+  o_surpGenericConst_TP(dt)                                     'Surplus generic constraint violation for summary report'
+  o_defResv_TP(dt)                                              'Deficit reserve violation for summary report'
+  o_totalViolation_TP(dt)                                       'Total violation for datawarehouse summary report'
 * System level
-  o_numTradePeriods                                                                'Output number of trade periods in summary'
-  o_systemOFV                                                                      'System objective function value'
-  o_systemGen                                                                      'Output system MWh generation'
-  o_systemLoad                                                                     'Output system MWh load'
-  o_systemLoss                                                                     'Output system MWh loss'
-  o_systemViolation                                                                'Output system MWh violation'
-  o_systemFIR                                                                      'Output system FIR MWh reserve'
-  o_systemSIR                                                                      'Output system SIR MWh reserve'
-  o_systemEnergyRevenue                                                            'Output offer energy revenue $'
-  o_systemReserveRevenue                                                           'Output reserve revenue $'
-  o_systemLoadCost                                                                 'Output system load cost $'
-  o_systemLoadRevenue                                                              'Output system load revenue $'
-  o_systemSurplus                                                                  'Output system surplus $'
-  o_systemACrentals                                                                'Output system AC rentals $'
-  o_systemDCrentals                                                                'Output system DC rentals $'
+  o_numTradePeriods                                             'Output number of trade periods in summary'
+  o_systemOFV                                                   'System objective function value'
+  o_systemGen                                                   'Output system MWh generation'
+  o_systemLoad                                                  'Output system MWh load'
+  o_systemLoss                                                  'Output system MWh loss'
+  o_systemViolation                                             'Output system MWh violation'
+  o_systemFIR                                                   'Output system FIR MWh reserve'
+  o_systemSIR                                                   'Output system SIR MWh reserve'
+  o_systemEnergyRevenue                                         'Output offer energy revenue $'
+  o_systemReserveRevenue                                        'Output reserve revenue $'
+  o_systemLoadCost                                              'Output system load cost $'
+  o_systemLoadRevenue                                           'Output system load revenue $'
+  o_systemSurplus                                               'Output system surplus $'
+  o_systemACrentals                                             'Output system AC rentals $'
+  o_systemDCrentals                                             'Output system DC rentals $'
 * Offer level
-  o_offerGen(o)                                                              'Output offer generation (MWh)'
-  o_offerFIR(o)                                                              'Output offer FIR (MWh)'
-  o_offerSIR(o)                                                              'Output offer SIR (MWh)'
-  o_offerGenRevenue(o)                                                       'Output offer energy revenue ($)'
-  o_offerFIRrevenue(o)                                                       'Output offer FIR revenue ($)'
-  o_offerSIRrevenue(o)                                                       'Output offer SIR revenue ($)'
+  o_offerGen(o)                                                 'Output offer generation (MWh)'
+  o_offerFIR(o)                                                 'Output offer FIR (MWh)'
+  o_offerSIR(o)                                                 'Output offer SIR (MWh)'
+  o_offerGenRevenue(o)                                          'Output offer energy revenue ($)'
+  o_offerFIRrevenue(o)                                          'Output offer FIR revenue ($)'
+  o_offerSIRrevenue(o)                                          'Output offer SIR revenue ($)'
 * Trader level
-  o_traderGen(trdr)                                                            'Output trader generation (MWh)'
-  o_traderFIR(trdr)                                                            'Output trader FIR (MWh)'
-  o_traderSIR(trdr)                                                            'Output trader SIR (MWh)'
-  o_traderGenRevenue(trdr)                                                     'Output trader energy revenue ($)'
-  o_traderFIRrevenue(trdr)                                                     'Output trader FIR revenue ($)'
-  o_traderSIRrevenue(trdr)                                                     'Output trader SIR revenue ($)'
+  o_traderGen(trdr)                                             'Output trader generation (MWh)'
+  o_traderFIR(trdr)                                             'Output trader FIR (MWh)'
+  o_traderSIR(trdr)                                             'Output trader SIR (MWh)'
+  o_traderGenRevenue(trdr)                                      'Output trader energy revenue ($)'
+  o_traderFIRrevenue(trdr)                                      'Output trader FIR revenue ($)'
+  o_traderSIRrevenue(trdr)                                      'Output trader SIR revenue ($)'
 * TN - Additional output for audit reporting
-  o_lossSegmentBreakPoint(dt,br,los)                       'MW capacity of each loss segment for audit'
-  o_lossSegmentFactor(dt,br,los)                           'Loss factor of each loss segment for audit'
-  o_ACbusAngle(dt,b)                                                   'Bus voltage angle for audit reporting'
-  o_nonPhysicalLoss(dt,br)                                           'MW losses calculated manually from the solution for each loss branch'
-  o_branchConstrained_TP(dt,br)                                      'Output flag if branch constrained'
-  o_ILRO_FIR_TP(dt,o)                                                'Output IL offer FIR (MWh)'
-  o_ILRO_SIR_TP(dt,o)                                                'Output IL offer SIR (MWh)'
-  o_ILbus_FIR_TP(dt,b)                                                 'Output IL offer at bus FIR (MWh)'
-  o_ILbus_SIR_TP(dt,b)                                                 'Output IL offer at bus SIR (MWh)'
-  o_PLRO_FIR_TP(dt,o)                                                'Output PLSR offer FIR (MWh)'
-  o_PLRO_SIR_TP(dt,o)                                                'Output PLSR SIR (MWh)'
-  o_TWRO_FIR_TP(dt,o)                                                'Output TWR FIR (MWh)'
-  o_TWRO_SIR_TP(dt,o)                                                'Output TWR SIR (MWh)'
+  o_lossSegmentBreakPoint(dt,br,los)                            'MW capacity of each loss segment for audit'
+  o_lossSegmentFactor(dt,br,los)                                'Loss factor of each loss segment for audit'
+  o_ACbusAngle(dt,b)                                            'Bus voltage angle for audit reporting'
+  o_nonPhysicalLoss(dt,br)                                      'MW losses calculated manually from the solution for each loss branch'
+  o_branchConstrained_TP(dt,br)                                 'Output flag if branch constrained'
+  o_ILRO_FIR_TP(dt,o)                                           'Output IL offer FIR (MWh)'
+  o_ILRO_SIR_TP(dt,o)                                           'Output IL offer SIR (MWh)'
+  o_ILbus_FIR_TP(dt,b)                                          'Output IL offer at bus FIR (MWh)'
+  o_ILbus_SIR_TP(dt,b)                                          'Output IL offer at bus SIR (MWh)'
+  o_PLRO_FIR_TP(dt,o)                                           'Output PLSR offer FIR (MWh)'
+  o_PLRO_SIR_TP(dt,o)                                           'Output PLSR SIR (MWh)'
+  o_TWRO_FIR_TP(dt,o)                                           'Output TWR FIR (MWh)'
+  o_TWRO_SIR_TP(dt,o)                                           'Output TWR SIR (MWh)'
   o_generationRiskSetter(dt,ild,o,i_reserveClass,i_riskClass)   'For Audit'
   o_generationRiskSetterMax(dt,ild,o,i_reserveClass)            'For Audit'
   o_genHVDCriskSetter(dt,ild,o,i_reserveClass,i_riskClass)      'For Audit'
-  o_HVDCriskSetter(dt,ild,i_reserveClass,i_riskClass)                 'For Audit'
-  o_manuRiskSetter(dt,ild,i_reserveClass,i_riskClass)                 'For Audit'
-  o_manuHVDCriskSetter(dt,ild,i_reserveClass,i_riskClass)             'For Audit'
+  o_HVDCriskSetter(dt,ild,i_reserveClass,i_riskClass)           'For Audit'
+  o_manuRiskSetter(dt,ild,i_reserveClass,i_riskClass)           'For Audit'
+  o_manuHVDCriskSetter(dt,ild,i_reserveClass,i_riskClass)       'For Audit'
 * TN - Additional output for audit reporting - End
 * RDN - Additional output for Audit risk report - Start--------------------------
-  o_HVDCriskSetterMax(dt,ild,i_reserveClass)                          'For Audit'
+  o_HVDCriskSetterMax(dt,ild,i_reserveClass)                    'For Audit'
   o_genHVDCriskSetterMax(dt,ild,o,i_reserveClass)               'For Audit'
-  o_manuHVDCriskSetterMax(dt,ild,i_reserveClass)                      'For Audit'
-  o_manuRiskSetterMax(dt,ild,i_reserveClass)                          'For Audit'
-  o_FIRcleared_TP(dt,ild)                                             'For Audit'
-  o_SIRcleared_TP(dt,ild)                                             'For Audit'
+  o_manuHVDCriskSetterMax(dt,ild,i_reserveClass)                'For Audit'
+  o_manuRiskSetterMax(dt,ild,i_reserveClass)                    'For Audit'
+  o_FIRcleared_TP(dt,ild)                                       'For Audit'
+  o_SIRcleared_TP(dt,ild)                                       'For Audit'
 * RDN - Update the deficit and surplus reporting at the nodal level - Start------
-  totalBusAllocation(dt,b)                                             'Total allocation of nodes to bus'
-  busNodeAllocationFactor(dt,b,n)                                 'Bus to node allocation factor'
+  totalBusAllocation(dt,b)                                      'Total allocation of nodes to bus'
+  busNodeAllocationFactor(dt,b,n)                               'Bus to node allocation factor'
 * RDN - Update the deficit and surplus reporting at the nodal level - End--------
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - Start-----------
 * Introduce i_useBusNetworkModel to account for MSP change-over date when for half of the day the old
 * market node model and the other half the bus network model was used.
-  i_useBusNetworkModel(tp)                                              'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
+  i_useBusNetworkModel(tp)                                      'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End-----------
   ;
 
@@ -1011,8 +1017,8 @@ for(iterationCount = 1 to numTradePeriods,
 *   RDN - Set the primary-secondary offer combinations
     primarySecondaryOffer(currTP,o,o1) = i_tradePeriodPrimarySecondaryOffer(currTP,o,o1) ;
 
-    generationOfferMW(offer,trdBlk)    = sum(i_energyOfferComponent$( ord(i_energyOfferComponent) = 1 ), i_tradePeriodEnergyOffer(offer,trdBlk,i_energyOfferComponent) ) ;
-    generationOfferPrice(offer,trdBlk) = sum(i_energyOfferComponent$( ord(i_energyOfferComponent) = 2 ), i_tradePeriodEnergyOffer(offer,trdBlk,i_energyOfferComponent) ) ;
+    generationOfferMW(offer,trdBlk)    = sum(NRGofrCmpnt$( ord(NRGofrCmpnt) = 1 ), i_tradePeriodEnergyOffer(offer,trdBlk,NRGofrCmpnt) ) ;
+    generationOfferPrice(offer,trdBlk) = sum(NRGofrCmpnt$( ord(NRGofrCmpnt) = 2 ), i_tradePeriodEnergyOffer(offer,trdBlk,NRGofrCmpnt) ) ;
 
 *   Valid generation offer blocks are defined as those with a non-zero block capacity or a non-zero price
 *   Re-define valid generation offer block to be a block with a positive block limit
@@ -1023,39 +1029,39 @@ for(iterationCount = 1 to numTradePeriods,
     positiveEnergyOffer(offer)$( sum(trdBlk$validGenerationOfferBlock(offer,trdBlk), 1 ) ) = yes ;
 
     reserveOfferProportion(offer,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 1 )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 1 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,i_PLSRofferComponent) / 100 ) ;
+      = sum(PLSofrCmpnt$( ord(PLSofrCmpnt) = 1 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,PLSofrCmpnt) / 100 ) ;
     reserveOfferProportion(offer,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 2 )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 1 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,i_PLSRofferComponent) / 100 ) ;
+      = sum(PLSofrCmpnt$( ord(PLSofrCmpnt) = 1 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,PLSofrCmpnt) / 100 ) ;
 
     reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 1 ) )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 2 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
+      = sum(PLSofrCmpnt$( ord(PLSofrCmpnt) = 2 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,PLSofrCmpnt)) ;
     reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2) and (ord(i_reserveType) = 1))
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 2 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
+      = sum(PLSofrCmpnt$( ord(PLSofrCmpnt) = 2 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,PLSofrCmpnt)) ;
 
     reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 1 ), i_tradePeriodFastTWDRoffer(offer,trdBlk,i_TWDRofferComponent) ) ;
+      = sum(TWDofrCmpnt$( ord(TWDofrCmpnt) = 1 ), i_tradePeriodFastTWDRoffer(offer,trdBlk,TWDofrCmpnt) ) ;
     reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 1 ), i_tradePeriodSustainedTWDRoffer(offer,trdBlk,i_TWDRofferComponent)) ;
+      = sum(TWDofrCmpnt$( ord(TWDofrCmpnt) = 1 ), i_tradePeriodSustainedTWDRoffer(offer,trdBlk,TWDofrCmpnt)) ;
 
     reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 1 ), i_tradePeriodFastILRoffer(offer,trdBlk,i_ILRofferComponent) ) ;
+      = sum(ILofrCmpnt$( ord(ILofrCmpnt) = 1 ), i_tradePeriodFastILRoffer(offer,trdBlk,ILofrCmpnt) ) ;
     reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 1 ), i_tradePeriodSustainedILRoffer(offer,trdBlk,i_ILRofferComponent)) ;
+      = sum(ILofrCmpnt$( ord(ILofrCmpnt) = 1 ), i_tradePeriodSustainedILRoffer(offer,trdBlk,ILofrCmpnt)) ;
 
     reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 1 ) )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 3 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
+      = sum(PLSofrCmpnt$( ord(PLSofrCmpnt) = 3 ), i_tradePeriodFastPLSRoffer(offer,trdBlk,PLSofrCmpnt)) ;
     reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 1 ) )
-      = sum(i_PLSRofferComponent$( ord(i_PLSRofferComponent) = 3 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,i_PLSRofferComponent)) ;
+      = sum(PLSofrCmpnt$( ord(PLSofrCmpnt) = 3 ), i_tradePeriodSustainedPLSRoffer(offer,trdBlk,PLSofrCmpnt)) ;
 
     reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 2 ), i_tradePeriodFastTWDRoffer(offer,trdBlk,i_TWDRofferComponent)) ;
+      = sum(TWDofrCmpnt$( ord(TWDofrCmpnt) = 2 ), i_tradePeriodFastTWDRoffer(offer,trdBlk,TWDofrCmpnt)) ;
     reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 2 ) )
-      = sum(i_TWDRofferComponent$( ord(i_TWDRofferComponent) = 2 ), i_tradePeriodSustainedTWDRoffer(offer,trdBlk,i_TWDRofferComponent)) ;
+      = sum(TWDofrCmpnt$( ord(TWDofrCmpnt) = 2 ), i_tradePeriodSustainedTWDRoffer(offer,trdBlk,TWDofrCmpnt)) ;
 
     reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 1 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 2 ), i_tradePeriodFastILRoffer(offer,trdBlk,i_ILRofferComponent)) ;
+      = sum(ILofrCmpnt$( ord(ILofrCmpnt) = 2 ), i_tradePeriodFastILRoffer(offer,trdBlk,ILofrCmpnt)) ;
     reserveOfferPrice(offer,trdBlk,i_reserveClass,i_reserveType)$(( ord(i_reserveClass) = 2 ) and ( ord(i_reserveType) = 3 ) )
-      = sum(i_ILRofferComponent$( ord(i_ILRofferComponent) = 2 ), i_tradePeriodSustainedILRoffer(offer,trdBlk,i_ILRofferComponent)) ;
+      = sum(ILofrCmpnt$( ord(ILofrCmpnt) = 2 ), i_tradePeriodSustainedILRoffer(offer,trdBlk,ILofrCmpnt)) ;
 
 *   Valid reserve offer block for each reserve class and reserve type are defined as those with a non-zero block capacity OR a non-zero block price
 *   Re-define valid reserve offer block to be a block with a positive block limit
@@ -1084,9 +1090,9 @@ for(iterationCount = 1 to numTradePeriods,
     bidNode(bid,n)$i_tradePeriodBidNode(bid,n) = yes ;
 
     purchaseBidMW(bid,trdBlk)
-      = sum(i_energyBidComponent$( ord(i_energyBidComponent) = 1 ), i_tradePeriodEnergyBid(bid,trdBlk,i_energyBidComponent)) ;
+      = sum(NRGbidCmpnt$( ord(NRGbidCmpnt) = 1 ), i_tradePeriodEnergyBid(bid,trdBlk,NRGbidCmpnt)) ;
     purchaseBidPrice(bid,trdBlk)
-      = sum(i_energyBidComponent$( ord(i_energyBidComponent) = 2 ), i_tradePeriodEnergyBid(bid,trdBlk,i_energyBidComponent)) ;
+      = sum(NRGbidCmpnt$( ord(NRGbidCmpnt) = 2 ), i_tradePeriodEnergyBid(bid,trdBlk,NRGbidCmpnt)) ;
 
 *   RDN - Change to demand bid
 *   Valid purchaser bid blocks are defined as those with a non-zero block capacity OR a non-zero block price
@@ -1100,14 +1106,14 @@ for(iterationCount = 1 to numTradePeriods,
 
 *   RDN - Change to demand bid - End
     purchaseBidILRMW(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 1 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent ) = 1), i_tradePeriodFastILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
+      = sum(ILbidCmpnt$( ord(ILbidCmpnt ) = 1), i_tradePeriodFastILRbid(bid,trdBlk,ILbidCmpnt) ) ;
     purchaseBidILRPrice(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 1 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 2 ), i_tradePeriodFastILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
+      = sum(ILbidCmpnt$( ord(ILbidCmpnt) = 2 ), i_tradePeriodFastILRbid(bid,trdBlk,ILbidCmpnt) ) ;
 
     purchaseBidILRMW(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 2 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 1 ), i_tradePeriodSustainedILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
+      = sum(ILbidCmpnt$( ord(ILbidCmpnt) = 1 ), i_tradePeriodSustainedILRbid(bid,trdBlk,ILbidCmpnt) ) ;
     purchaseBidILRPrice(bid,trdBlk,i_reserveClass)$( ord(i_reserveClass) = 2 )
-      = sum(i_ILRbidComponent$( ord(i_ILRbidComponent) = 2 ), i_tradePeriodSustainedILRbid(bid,trdBlk,i_ILRbidComponent) ) ;
+      = sum(ILbidCmpnt$( ord(ILbidCmpnt) = 2 ), i_tradePeriodSustainedILRbid(bid,trdBlk,ILbidCmpnt) ) ;
 *   Valid purchaser ILR blocks are defined as those with a non-zero block capacity OR a non-zero block price
 *   Re-define valid purchase ILR offer block to be a block with a positive block limit
     validPurchaseBidILRBlock(bid,trdBlk,i_reserveClass)$( purchaseBidILRMW(bid,trdBlk,i_reserveClass) > 0 ) = yes ;

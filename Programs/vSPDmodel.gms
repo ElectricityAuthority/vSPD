@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     28 November 2013
+* Last modified on:     3 December 2013
 *=====================================================================================
 
 $ontext
@@ -25,6 +25,12 @@ Aliases to be aware of:
   i_bus = b, b1, frB, toB
   i_branch = br, br1
   i_lossSegment = los, los1
+  i_energyOfferComponent = NRGofrCmpnt
+  i_PLSRofferComponent = PLSofrCmpnt
+  i_TWDRofferComponent = TWDofrCmpnt
+  i_ILRofferComponent = ILofrCmpnt
+  i_energyBidComponent = NRGbidCmpnt
+  i_ILRbidComponent = ILbidCmpnt
 $offtext
 
 
@@ -78,7 +84,10 @@ Sets
 
 * Aliases
 Alias (i_island,ild,ild1), (i_dateTime,dt), (i_tradePeriod,tp), (i_node,n), (i_offer,o,o1), (i_trader,trdr), (i_tradeBlock,trdBlk),
-      (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1) ;
+      (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1)
+      (i_energyOfferComponent,NRGofrCmpnt), (i_PLSRofferComponent,PLSofrCmpnt), (i_TWDRofferComponent,TWDofrCmpnt)
+      (i_ILRofferComponent,ILofrCmpnt),     (i_energyBidComponent,NRGbidCmpnt), (i_ILRbidComponent,ILbidCmpnt) ;
+
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
@@ -115,19 +124,19 @@ Parameters
   i_CVPvalues(i_CVP)                                                'Values for the constraint violation penalties'
 * Offer data
   i_tradePeriodOfferParameter(tp,o,i_offerParam)                    'Initial MW for each offer for the different trading periods'
-  i_tradePeriodEnergyOffer(tp,o,trdBlk,i_energyOfferComponent)      'Energy offers for the different trading periods'
-  i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent) 'Sustained (60s) PLSR offers for the different trading periods'
-  i_tradePeriodFastPLSRoffer(tp,o,trdBlk,i_PLSRofferComponent)      'Fast (6s) PLSR offers for the different trading periods'
-  i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent) 'Sustained (60s) TWDR offers for the different trading periods'
-  i_tradePeriodFastTWDRoffer(tp,o,trdBlk,i_TWDRofferComponent)      'Fast (6s) TWDR offers for the different trading periods'
-  i_tradePeriodSustainedILRoffer(tp,o,trdBlk,i_ILRofferComponent)   'Sustained (60s) ILR offers for the different trading periods'
-  i_tradePeriodFastILRoffer(tp,o,trdBlk,i_ILRofferComponent)        'Fast (6s) ILR offers for the different trading periods'
+  i_tradePeriodEnergyOffer(tp,o,trdBlk,NRGofrCmpnt)                 'Energy offers for the different trading periods'
+  i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)          'Sustained (60s) PLSR offers for the different trading periods'
+  i_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)               'Fast (6s) PLSR offers for the different trading periods'
+  i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)          'Sustained (60s) TWDR offers for the different trading periods'
+  i_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)               'Fast (6s) TWDR offers for the different trading periods'
+  i_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)            'Sustained (60s) ILR offers for the different trading periods'
+  i_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)                 'Fast (6s) ILR offers for the different trading periods'
 * Demand data
   i_tradePeriodNodeDemand(tp,n)                                     'MW demand at each node for all trading periods'
 * Bid data
-  i_tradePeriodEnergyBid(tp,i_bid,trdBlk,i_energyBidComponent)      'Energy bids for the different trading periods'
-  i_tradePeriodSustainedILRbid(tp,i_bid,trdBlk,i_ILRbidComponent)   'Sustained ILR bids for the different trading periods'
-  i_tradePeriodFastILRbid(tp,i_bid,trdBlk,i_ILRbidComponent)        'Fast ILR bids for the different trading periods'
+  i_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)               'Energy bids for the different trading periods'
+  i_tradePeriodSustainedILRbid(tp,i_bid,trdBlk,ILbidCmpnt)          'Sustained ILR bids for the different trading periods'
+  i_tradePeriodFastILRbid(tp,i_bid,trdBlk,ILbidCmpnt)               'Fast ILR bids for the different trading periods'
 * Network data
   i_tradePeriodHVDCNode(tp,n)                                       'HVDC node for the different trading periods'
   i_tradePeriodReferenceNode(tp,n)                                  'Reference nodes for the different trading periods'
