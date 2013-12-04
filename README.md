@@ -22,19 +22,19 @@ Several frequently-used basic sets are aliased as follows:
 - i_bus = b, b1, frB, toB
 - i_branch = br, br1
 - i_lossSegment = los, los1
-- i_branchConstraint = brCnstrnt
-- i_ACnodeConstraint = ACnodeCnstrnt
-- i_MnodeConstraint = MnodeCnstrnt
+- i_branchConstraint = brCstr
+- i_ACnodeConstraint = ACnodeCstr
+- i_MnodeConstraint = MnodeCstr
 - i_energyOfferComponent = NRGofrCmpnt
 - i_PLSRofferComponent = PLSofrCmpnt
 - i_TWDRofferComponent = TWDofrCmpnt
 - i_ILRofferComponent = ILofrCmpnt
 - i_energyBidComponent = NRGbidCmpnt
 - i_ILRbidComponent = ILbidCmpnt
-- i_type1MixedConstraint = t1MixCnstrnt
-- i_type2MixedConstraint = t2MixCnstrnt
-- i_type1MixedConstraintRHS = t1MixCnstrntRHS
-- i_genericConstraint = gnrcCnstrnt
+- i_type1MixedConstraint = t1MixCstr
+- i_type2MixedConstraint = t2MixCstr
+- i_type1MixedConstraintRHS = t1MixCstrRHS
+- i_genericConstraint = gnrcCstr
 
 
 Contact: emi@ea.govt.nz

@@ -30,18 +30,18 @@ Directory of code sections in vSPDsolve.gms:
   8. Write results to GDX files
 
 Aliases to be aware of:
-  i_island = ild, ild1                         i_dateTime = dt
-  i_tradePeriod = tp                           i_node = n
-  i_offer = o, o1                              i_trader = trdr
-  i_tradeBlock = trdBlk                        i_bus = b, b1, frB, toB
-  i_branch = br, br1                           i_lossSegment = los, los1
-  i_branchConstraint = brCnstrnt               i_ACnodeConstraint = ACnodeCnstrnt
-  i_MnodeConstraint = MnodeCnstrnt             i_energyOfferComponent = NRGofrCmpnt
-  i_PLSRofferComponent = PLSofrCmpnt           i_TWDRofferComponent = TWDofrCmpnt
-  i_ILRofferComponent = ILofrCmpnt             i_energyBidComponent = NRGbidCmpnt
-  i_ILRbidComponent = ILbidCmpnt               i_type1MixedConstraint = t1MixCnstrnt
-  i_type2MixedConstraint = t2MixCnstrnt        i_type1MixedConstraintRHS = t1MixCnstrntRHS
-  i_genericConstraint = gnrcCnstrnt
+  i_island = ild, ild1                      i_dateTime = dt
+  i_tradePeriod = tp                        i_node = n
+  i_offer = o, o1                           i_trader = trdr
+  i_tradeBlock = trdBlk                     i_bus = b, b1, frB, toB
+  i_branch = br, br1                        i_lossSegment = los, los1
+  i_branchConstraint = brCstr               i_ACnodeConstraint = ACnodeCstr
+  i_MnodeConstraint = MnodeCstr             i_energyOfferComponent = NRGofrCmpnt
+  i_PLSRofferComponent = PLSofrCmpnt        i_TWDRofferComponent = TWDofrCmpnt
+  i_ILRofferComponent = ILofrCmpnt          i_energyBidComponent = NRGbidCmpnt
+  i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
+  i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
+  i_genericConstraint = gnrcCstr
 $offtext
 
 
@@ -154,8 +154,8 @@ Sets
   o_branch(dt,br)                                               'Set of branches for output report'
   o_branchFromBus_TP(dt,br,frB)                                 'From bus for set of branches for output report'
   o_branchToBus_TP(dt,br,toB)                                   'To bus for set of branches for output report'
-  o_brConstraint_TP(dt,brCnstrnt)                               'Set of branch constraints for output report'
-  o_MnodeConstraint_TP(dt,MnodeCnstrnt)                         'Set of Mnode constraints for output report'
+  o_brConstraint_TP(dt,brCstr)                                  'Set of branch constraints for output report'
+  o_MnodeConstraint_TP(dt,MnodeCstr)                            'Set of Mnode constraints for output report'
 * TN - Audit report
   o_busIsland_TP(dt,b,ild)                                      'Bus Island Mapping for audit report'
   o_marketNodeIsland_TP(dt,o,ild)                               'Generation offer Island Mapping for audit reporting'
@@ -180,7 +180,7 @@ Parameters
   manualBranchSegmentMWFlow(tp,br,los)                          'Manual calculation of the branch loss segment MW flow'
   manualLossCalculation(tp,br)                                  'MW losses calculated manually from the solution for each loss branch'
   HVDChalfPoleSouthFlow(tp)                                     'Flag to indicate if south flow on HVDC halfpoles'
-  type1MixedConstraintLimit2Violation(tp, t1MixCnstrnt)         'Type 1 mixed constraint MW violaton of the alternate limit value'
+  type1MixedConstraintLimit2Violation(tp, t1MixCstr)            'Type 1 mixed constraint MW violaton of the alternate limit value'
 
 * RDN - Parameters to calculate circular branch flow on each HVDC pole
   TotalHVDCpoleFlow(tp,pole)                                    'Total flow on an HVDC pole'
@@ -243,15 +243,15 @@ Parameters
   o_nodeDeficit_TP(dt,n)                                        'Output node deficit violation for each trade period'
   o_nodeSurplus_TP(dt,n)                                        'Output node surplus violation for each trade period'
 * Security constraint data
-  o_brConstraintSense_TP(dt,brCnstrnt)                          'Branch constraint sense for each output report'
-  o_brConstraintLHS_TP(dt,brCnstrnt)                            'Branch constraint LHS for each output report'
-  o_brConstraintRHS_TP(dt,brCnstrnt)                            'Branch constraint RHS for each output report'
-  o_brConstraintPrice_TP(dt,brCnstrnt)                          'Branch constraint price for each output report'
+  o_brConstraintSense_TP(dt,brCstr)                             'Branch constraint sense for each output report'
+  o_brConstraintLHS_TP(dt,brCstr)                               'Branch constraint LHS for each output report'
+  o_brConstraintRHS_TP(dt,brCstr)                               'Branch constraint RHS for each output report'
+  o_brConstraintPrice_TP(dt,brCstr)                             'Branch constraint price for each output report'
 * Mnode constraint data
-  o_MnodeConstraintSense_TP(dt,MnodeCnstrnt)                    'Market node constraint sense for each output report'
-  o_MnodeConstraintLHS_TP(dt,MnodeCnstrnt)                      'Market node constraint LHS for each output report'
-  o_MnodeConstraintRHS_TP(dt,MnodeCnstrnt)                      'Market node constraint RHS for each output report'
-  o_MnodeConstraintPrice_TP(dt,MnodeCnstrnt)                    'Market node constraint price for each output report'
+  o_MnodeConstraintSense_TP(dt,MnodeCstr)                       'Market node constraint sense for each output report'
+  o_MnodeConstraintLHS_TP(dt,MnodeCstr)                         'Market node constraint LHS for each output report'
+  o_MnodeConstraintRHS_TP(dt,MnodeCstr)                         'Market node constraint RHS for each output report'
+  o_MnodeConstraintPrice_TP(dt,MnodeCstr)                       'Market node constraint price for each output report'
 * TradePeriod summary report
   o_solveOK_TP(dt)                                              'Solve status for summary report (1=OK)'
   o_systemCost_TP(dt)                                           'System cost for summary report'
@@ -467,12 +467,12 @@ if(inputGDXGDate >= addnMixedConstraintVarGDXGDate,
   execute_load i_type1MixedConstraintAClineWeight, i_type1MixedConstraintAClineLossWeight, i_type1MixedConstraintAClineFixedLossWeight
                i_type1MixedConstraintHVDClineLossWeight, i_type1MixedConstraintHVDClineFixedLossWeight, i_type1MixedConstraintPurWeight ;
 else
-  i_type1MixedConstraintAClineWeight(t1MixCnstrnt,br) = 0 ;
-  i_type1MixedConstraintAClineLossWeight(t1MixCnstrnt,br) = 0 ;
-  i_type1MixedConstraintAClineFixedLossWeight(t1MixCnstrnt,br) = 0 ;
-  i_type1MixedConstraintHVDClineLossWeight(t1MixCnstrnt,br) = 0 ;
-  i_type1MixedConstraintHVDClineFixedLossWeight(t1MixCnstrnt,br) = 0 ;
-  i_type1MixedConstraintPurWeight(t1MixCnstrnt,i_bid) = 0 ;
+  i_type1MixedConstraintAClineWeight(t1MixCstr,br) = 0 ;
+  i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) = 0 ;
+  i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) = 0 ;
+  i_type1MixedConstraintHVDClineLossWeight(t1MixCstr,br) = 0 ;
+  i_type1MixedConstraintHVDClineFixedLossWeight(t1MixCstr,br) = 0 ;
+  i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) = 0 ;
 ) ;
 
 * Conditional load of reserve class generation parameter
@@ -486,7 +486,7 @@ else
 useMixedConstraintRiskOffset = 1$(inputGDXGDate < mixedConstraintRiskOffsetGDXGDate) ;
 
 * RDN - Switch off mixed constraint formulation if no data coming through or it's explicitly suppressed by the user
-useMixedConstraint(tp)$sum(t1MixCnstrnt$i_tradePeriodType1MixedConstraint(tp,t1MixCnstrnt), 1) = 1 ;
+useMixedConstraint(tp)$sum(t1MixCstr$i_tradePeriodType1MixedConstraint(tp,t1MixCstr), 1) = 1 ;
 useMixedConstraint(tp)$suppressMixedConstraint = 0 ;
 
 * RDN - Do not use the extended risk class if no data coming through
@@ -1388,22 +1388,22 @@ for(iterationCount = 1 to numTradePeriods,
     ReserveMaximumFactor(offer,i_reserveClass)$(ReserveClassGenerationMaximum(offer,i_reserveClass)>0) = (ReserveGenerationMaximum(offer) / reserveClassGenerationMaximum(offer,i_reserveClass)) ;
 
 * Initialise branch constraint data for the current trading period
-    branchConstraint(currTP,brCnstrnt)$(sum(br$(branch(currTP,br) and i_tradePeriodBranchConstraintFactors(currTP,brCnstrnt,br)),1))
+    branchConstraint(currTP,brCstr)$(sum(br$(branch(currTP,br) and i_tradePeriodBranchConstraintFactors(currTP,brCstr,br)),1))
        = yes ;
     branchConstraintFactors(branchConstraint,br) = i_tradePeriodBranchConstraintFactors(branchConstraint,br) ;
     branchConstraintSense(branchConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 1), i_tradePeriodBranchConstraintRHS(branchConstraint,i_ConstraintRHS)) ;
     branchConstraintLimit(branchConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodBranchConstraintRHS(branchConstraint,i_ConstraintRHS)) ;
 
 * Initialise AC node constraint data for the current trading period
-    ACnodeConstraint(currTP,ACnodeCnstrnt)$(sum(n$(ACnode(currTP,n) and i_tradePeriodACnodeConstraintFactors(currTP,ACnodeCnstrnt,n)),1))
+    ACnodeConstraint(currTP,ACnodeCstr)$(sum(n$(ACnode(currTP,n) and i_tradePeriodACnodeConstraintFactors(currTP,ACnodeCstr,n)),1))
        = yes ;
     ACnodeConstraintFactors(ACnodeConstraint,n) = i_tradePeriodACnodeConstraintFactors(ACnodeConstraint,n) ;
     ACnodeConstraintSense(ACnodeConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 1), i_tradePeriodACnodeConstraintRHS(ACnodeConstraint,i_ConstraintRHS)) ;
     ACnodeConstraintLimit(ACnodeConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodACnodeConstraintRHS(ACnodeConstraint,i_ConstraintRHS)) ;
 
 * Initialise market node constraint data for the current trading period
-    MnodeConstraint(currTP,MnodeCnstrnt)$( (sum((o,i_reserveType,i_reserveClass)$(offer(currTP,o) and (i_tradePeriodMnodeEnergyOfferConstraintFactors(currTP,MnodeCnstrnt,o) or i_tradePeriodMnodeReserveOfferConstraintFactors(currTP,MnodeCnstrnt,o,i_reserveClass,i_reserveType))),1))
-         or (sum((i_bid,i_reserveClass)$(bid(currTP,i_bid) and (i_tradePeriodMnodeEnergyBidConstraintFactors(currTP,MnodeCnstrnt,i_bid) or i_tradePeriodMnodeILReserveBidConstraintFactors(currTP,MnodeCnstrnt,i_bid,i_reserveClass))),1)) ) = yes ;
+    MnodeConstraint(currTP,MnodeCstr)$( (sum((o,i_reserveType,i_reserveClass)$(offer(currTP,o) and (i_tradePeriodMnodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o) or i_tradePeriodMnodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType))),1))
+         or (sum((i_bid,i_reserveClass)$(bid(currTP,i_bid) and (i_tradePeriodMnodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid) or i_tradePeriodMnodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass))),1)) ) = yes ;
     MnodeEnergyOfferConstraintFactors(MnodeConstraint,o) = i_tradePeriodMnodeEnergyOfferConstraintFactors(MnodeConstraint,o) ;
     MnodeReserveOfferConstraintFactors(MnodeConstraint,o,i_reserveClass,i_reserveType) = i_tradePeriodMnodeReserveOfferConstraintFactors(MnodeConstraint,o,i_reserveClass,i_reserveType) ;
     MnodeEnergyBidConstraintFactors(MnodeConstraint,i_bid) = i_tradePeriodMnodeEnergyBidConstraintFactors(MnodeConstraint,i_bid) ;
@@ -1412,17 +1412,17 @@ for(iterationCount = 1 to numTradePeriods,
     MnodeConstraintLimit(MnodeConstraint) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodMnodeConstraintRHS(MnodeConstraint,i_ConstraintRHS)) ;
 
 * Initialise mixed constraint data for the current trading period
-    Type1MixedConstraint(currTP,t1MixCnstrnt) = i_tradePeriodType1MixedConstraint(currTP,t1MixCnstrnt) ;
-    Type2MixedConstraint(currTP,t2MixCnstrnt) = i_tradePeriodType2MixedConstraint(currTP,t2MixCnstrnt) ;
-    Type1MixedConstraintSense(currTP,t1MixCnstrnt) = sum(t1MixCnstrntRHS$(ord(t1MixCnstrntRHS) = 1), i_tradePeriodType1MixedConstraintRHSParameters(currTP,t1MixCnstrnt,t1MixCnstrntRHS)) ;
-    Type1MixedConstraintLimit1(currTP,t1MixCnstrnt) = sum(t1MixCnstrntRHS$(ord(t1MixCnstrntRHS) = 2), i_tradePeriodType1MixedConstraintRHSParameters(currTP,t1MixCnstrnt,t1MixCnstrntRHS)) ;
-    Type1MixedConstraintLimit2(currTP,t1MixCnstrnt) = sum(t1MixCnstrntRHS$(ord(t1MixCnstrntRHS) = 3), i_tradePeriodType1MixedConstraintRHSParameters(currTP,t1MixCnstrnt,t1MixCnstrntRHS)) ;
-    Type2MixedConstraintSense(currTP,t2MixCnstrnt) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 1), i_tradePeriodType2MixedConstraintRHSParameters(currTP,t2MixCnstrnt,i_ConstraintRHS)) ;
-    Type2MixedConstraintLimit(currTP,t2MixCnstrnt) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodType2MixedConstraintRHSParameters(currTP,t2MixCnstrnt,i_ConstraintRHS)) ;
-    Type1MixedConstraintCondition(currTP,t1MixCnstrnt)$(sum(br$(HVDChalfPoles(currTP,br) and i_type1MixedConstraintBranchCondition(t1MixCnstrnt,br)),1)) = yes ;
+    Type1MixedConstraint(currTP,t1MixCstr) = i_tradePeriodType1MixedConstraint(currTP,t1MixCstr) ;
+    Type2MixedConstraint(currTP,t2MixCstr) = i_tradePeriodType2MixedConstraint(currTP,t2MixCstr) ;
+    Type1MixedConstraintSense(currTP,t1MixCstr) = sum(t1MixCstrRHS$(ord(t1MixCstrRHS) = 1), i_tradePeriodType1MixedConstraintRHSParameters(currTP,t1MixCstr,t1MixCstrRHS)) ;
+    Type1MixedConstraintLimit1(currTP,t1MixCstr) = sum(t1MixCstrRHS$(ord(t1MixCstrRHS) = 2), i_tradePeriodType1MixedConstraintRHSParameters(currTP,t1MixCstr,t1MixCstrRHS)) ;
+    Type1MixedConstraintLimit2(currTP,t1MixCstr) = sum(t1MixCstrRHS$(ord(t1MixCstrRHS) = 3), i_tradePeriodType1MixedConstraintRHSParameters(currTP,t1MixCstr,t1MixCstrRHS)) ;
+    Type2MixedConstraintSense(currTP,t2MixCstr) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 1), i_tradePeriodType2MixedConstraintRHSParameters(currTP,t2MixCstr,i_ConstraintRHS)) ;
+    Type2MixedConstraintLimit(currTP,t2MixCstr) = sum(i_ConstraintRHS$(ord(i_ConstraintRHS) = 2), i_tradePeriodType2MixedConstraintRHSParameters(currTP,t2MixCstr,i_ConstraintRHS)) ;
+    Type1MixedConstraintCondition(currTP,t1MixCstr)$(sum(br$(HVDChalfPoles(currTP,br) and i_type1MixedConstraintBranchCondition(t1MixCstr,br)),1)) = yes ;
 
 * Initialise generic constraint data for the current trading period
-    GenericConstraint(currTP,gnrcCnstrnt) = i_tradePeriodGenericConstraint(currTP,gnrcCnstrnt) ;
+    GenericConstraint(currTP,gnrcCstr) = i_tradePeriodGenericConstraint(currTP,gnrcCstr) ;
     GenericEnergyOfferConstraintFactors(GenericConstraint,o) = i_tradePeriodGenericEnergyOfferConstraintFactors(GenericConstraint,o) ;
     GenericReserveOfferConstraintFactors(GenericConstraint,o,i_reserveClass,i_reserveType) = i_tradePeriodGenericReserveOfferConstraintFactors(GenericConstraint,o,i_reserveClass,i_reserveType) ;
     GenericEnergyBidConstraintFactors(GenericConstraint,i_bid) = i_tradePeriodGenericEnergyBidConstraintFactors(GenericConstraint,i_bid) ;
@@ -1593,7 +1593,7 @@ for(iterationCount = 1 to numTradePeriods,
     PURCHASEILR.fx(currTP,i_bid,i_reserveClass)$(not (sum(trdBlk$validPurchaseBidILRBlock(currTP,i_bid,trdBlk,i_reserveClass),1))) = 0 ;
 
 * Risk offset fixed to zero for those not mapped to corresponding mixed constraint variable
-    RISKOFFSET.fx(currTP,ild,i_reserveClass,i_riskClass)$(useMixedConstraintRiskOffset and UseMixedConstraint(currTP) and (not sum(t1MixCnstrnt$i_type1MixedConstraintReserveMap(t1MixCnstrnt,ild,i_reserveClass,i_riskClass),1))) = 0 ;
+    RISKOFFSET.fx(currTP,ild,i_reserveClass,i_riskClass)$(useMixedConstraintRiskOffset and UseMixedConstraint(currTP) and (not sum(t1MixCstr$i_type1MixedConstraintReserveMap(t1MixCstr,ild,i_reserveClass,i_riskClass),1))) = 0 ;
 
 * RDN - Fix the appropriate deficit variable to zero depending on whether the different CE and ECE CVP flag is set
     DEFICITRESERVE.fx(currTP,ild,i_reserveClass)$diffCeECeCVP = 0 ;
@@ -1601,7 +1601,7 @@ for(iterationCount = 1 to numTradePeriods,
     DEFICITRESERVE_ECE.fx(currTP,ild,i_reserveClass)$(not diffCeECeCVP) = 0 ;
 
 * Mixed constraint
-    MIXEDCONSTRAINTVARIABLE.fx(currTP,t1MixCnstrnt)$(not (i_type1MixedConstraintVarWeight(t1MixCnstrnt))) = 0 ;
+    MIXEDCONSTRAINTVARIABLE.fx(currTP,t1MixCstr)$(not (i_type1MixedConstraintVarWeight(t1MixCstr))) = 0 ;
 
 
 *=====================================================================================
@@ -1684,7 +1684,7 @@ for(iterationCount = 1 to numTradePeriods,
 * Check branch flows for relevant mixed constraint to check if integer variables are needed
 * RDN - Updated the condition to useMixedConstraintRiskOffset which is specific to the original mixed constraint application
        if(useMixedConstraintRiskOffset,
-          HVDChalfPoleSouthFlow(currTP)$(sum(i_type1MixedConstraintBranchCondition(t1MixCnstrnt,br)$HVDChalfPoles(currTP,br), HVDClINKFLOW.l(currTP,br)) > MixedMIPTolerance) = 1 ;
+          HVDChalfPoleSouthFlow(currTP)$(sum(i_type1MixedConstraintBranchCondition(t1MixCstr,br)$HVDChalfPoles(currTP,br), HVDClINKFLOW.l(currTP,br)) > MixedMIPTolerance) = 1 ;
 * RDN - Change definition to only calculate violation if the constraint limit is non-zero
 *          Type1MixedConstraintLimit2Violation(Type1MixedConstraintCondition)
           Type1MixedConstraintLimit2Violation(Type1MixedConstraintCondition)$(Type1MixedConstraintLimit2(Type1MixedConstraintCondition) > 0)
@@ -1692,7 +1692,7 @@ for(iterationCount = 1 to numTradePeriods,
               + (Type1MixedConstraintLimit2(Type1MixedConstraintCondition) - Type1MixedConstraintGE.l(Type1MixedConstraintCondition))$(Type1MixedConstraintSense(Type1MixedConstraintCondition) = 1)
               + abs(Type1MixedConstraintEQ.l(Type1MixedConstraintCondition) - Type1MixedConstraintLimit2(Type1MixedConstraintCondition))$(Type1MixedConstraintSense(Type1MixedConstraintCondition) = 0) ;
 * Integer constraints are needed if southward flow on half-poles AND constraint level exceeds the mixed constraint limit2 value
-          UseMixedConstraintMIP(currTP)$(HVDChalfPoleSouthFlow(currTP) and sum(t1MixCnstrnt$(Type1MixedConstraintLimit2Violation(currTP,t1MixCnstrnt) > MixedMIPTolerance),1)) = 1 ;
+          UseMixedConstraintMIP(currTP)$(HVDChalfPoleSouthFlow(currTP) and sum(t1MixCstr$(Type1MixedConstraintLimit2Violation(currTP,t1MixCstr) > MixedMIPTolerance),1)) = 1 ;
        ) ;
 
 * Skip the resolve logic if the simultaneous mode requires integer variables since the problem becomes large MILP
@@ -1719,7 +1719,7 @@ for(iterationCount = 1 to numTradePeriods,
 
          if((sum(currTP, UseBranchFlowMIP(currTP)) * sum(currTP,UseMixedConstraintMIP(currTP))) >= 1,
 * Don't use integer variables for periods that do not need them
-          MIXEDCONSTRAINTLIMIT2SELECT.fx(currTP,t1MixCnstrnt)$(not UseMixedConstraintMIP(currTP)) = 0 ;
+          MIXEDCONSTRAINTLIMIT2SELECT.fx(currTP,t1MixCstr)$(not UseMixedConstraintMIP(currTP)) = 0 ;
           ACBRANCHFLOWDIRECTED_INTEGER.fx(currTP,br,i_flowDirection)$(not UseBranchFlowMIP(currTP)) = 0 ;
           HVDClINKFLOWDIRECTION_INTEGER.fx(currTP,i_flowDirection)$(not UseBranchFlowMIP(currTP)) = 0 ;
 * RDN - Don't use the integer variables if not needed
@@ -1739,7 +1739,7 @@ for(iterationCount = 1 to numTradePeriods,
           LAMBDAINTEGER.fx(currTP,br,los)$(UseBranchFlowMIP(currTP) and (not branch(currTP,br))) = 0 ;
 
 * Fix the value of some binary variables used in the mixed constraints that have no alternate limit
-          MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCnstrnt))$(UseMixedConstraintMIP(currTP) and (not Type1MixedConstraintCondition(Type1MixedConstraint))) = 0 ;
+          MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCstr))$(UseMixedConstraintMIP(currTP) and (not Type1MixedConstraintCondition(Type1MixedConstraint))) = 0 ;
 * Use the advanced basis here
           option bratio = 0.25 ;
 * Set the optimality criteria for the MIP
@@ -1809,9 +1809,9 @@ for(iterationCount = 1 to numTradePeriods,
 
           elseif(sum(currTP, UseMixedConstraintMIP(currTP)) >= 1),
 * Don't use integer variables for periods that do not need them
-             MIXEDCONSTRAINTLIMIT2SELECT.fx(currTP,t1MixCnstrnt)$(not UseMixedConstraintMIP(currTP)) = 0 ;
+             MIXEDCONSTRAINTLIMIT2SELECT.fx(currTP,t1MixCstr)$(not UseMixedConstraintMIP(currTP)) = 0 ;
 * Fix the value of some binary variables used in the mixed constraints that have no alternate limit
-             MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCnstrnt))$(UseMixedConstraintMIP(currTP) and (not Type1MixedConstraintCondition(Type1MixedConstraint))) = 0 ;
+             MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCstr))$(UseMixedConstraintMIP(currTP) and (not Type1MixedConstraintCondition(Type1MixedConstraint))) = 0 ;
 * Use the advanced basis here
              option bratio = 0.25 ;
 * Set the optimality criteria for the MIP
@@ -1899,7 +1899,7 @@ for(iterationCount = 1 to numTradePeriods,
              UseMixedConstraintMIP(currTP) = 0 ;
 
 * Check branch flows for relevant mixed constraint to check if integer variables are needed
-             HVDChalfPoleSouthFlow(currTP)$(sum(i_type1MixedConstraintBranchCondition(t1MixCnstrnt,br)$HVDChalfPoles(currTP,br), HVDClINKFLOW.l(currTP,br)) > MixedMIPTolerance) = 1 ;
+             HVDChalfPoleSouthFlow(currTP)$(sum(i_type1MixedConstraintBranchCondition(t1MixCstr,br)$HVDChalfPoles(currTP,br), HVDClINKFLOW.l(currTP,br)) > MixedMIPTolerance) = 1 ;
 * RDN - Change definition to only calculate violation if the constraint limit is non-zero
 *          Type1MixedConstraintLimit2Violation(Type1MixedConstraintCondition)
              Type1MixedConstraintLimit2Violation(Type1MixedConstraintCondition)$(Type1MixedConstraintLimit2(Type1MixedConstraintCondition) > 0)
@@ -1907,14 +1907,14 @@ for(iterationCount = 1 to numTradePeriods,
                     + (Type1MixedConstraintLimit2(Type1MixedConstraintCondition) - Type1MixedConstraintGE.l(Type1MixedConstraintCondition))$(Type1MixedConstraintSense(Type1MixedConstraintCondition) = 1)
                     + abs(Type1MixedConstraintEQ.l(Type1MixedConstraintCondition) - Type1MixedConstraintLimit2(Type1MixedConstraintCondition))$(Type1MixedConstraintSense(Type1MixedConstraintCondition) = 0) ;
 * Integer constraints are needed if southward flow on half-poles AND constraint level exceeds the mixed constraint limit2 value
-             UseMixedConstraintMIP(currTP)$(HVDChalfPoleSouthFlow(currTP) and sum(t1MixCnstrnt$(Type1MixedConstraintLimit2Violation(currTP,t1MixCnstrnt) > MixedMIPTolerance),1)) = 1 ;
+             UseMixedConstraintMIP(currTP)$(HVDChalfPoleSouthFlow(currTP) and sum(t1MixCstr$(Type1MixedConstraintLimit2Violation(currTP,t1MixCstr) > MixedMIPTolerance),1)) = 1 ;
           ) ;
 
 * If either circular branch flows or non-physical losses or discontinuous mixed constraint limits then
           if((sum(currTP, UseBranchFlowMIP(currTP) + UseMixedConstraintMIP(currTP)) >= 1),
 
 * Reset some bounds
-             MIXEDCONSTRAINTLIMIT2SELECT.up(currTP,t1MixCnstrnt) = 1 ;
+             MIXEDCONSTRAINTLIMIT2SELECT.up(currTP,t1MixCstr) = 1 ;
              ACBRANCHFLOWDIRECTED_INTEGER.up(currTP,br,i_flowDirection) = +inf ;
              HVDClINKFLOWDIRECTION_INTEGER.up(currTP,i_flowDirection) = +inf ;
 * RDN - Reset the bound of the integer variable
@@ -1923,7 +1923,7 @@ for(iterationCount = 1 to numTradePeriods,
              LAMBDAINTEGER.up(currTP,br,los) = +inf ;
 
 * Don't use integer variables for periods that do not need them
-             MIXEDCONSTRAINTLIMIT2SELECT.fx(currTP,t1MixCnstrnt)$(not UseMixedConstraintMIP(currTP)) = 0 ;
+             MIXEDCONSTRAINTLIMIT2SELECT.fx(currTP,t1MixCstr)$(not UseMixedConstraintMIP(currTP)) = 0 ;
              ACBRANCHFLOWDIRECTED_INTEGER.fx(currTP,br,i_flowDirection)$(not UseBranchFlowMIP(currTP)) = 0 ;
              HVDClINKFLOWDIRECTION_INTEGER.fx(currTP,i_flowDirection)$(not UseBranchFlowMIP(currTP)) = 0 ;
 * RDN - Don't use the integer variable if not needed
@@ -1941,7 +1941,7 @@ for(iterationCount = 1 to numTradePeriods,
 * RDN - 20130227 - Fix the lambda integer variable to zero for invalid branches
              LAMBDAINTEGER.fx(currTP,br,los)$(UseBranchFlowMIP(currTP) and (not branch(currTP,br))) = 0 ;
 * Fix the value of some binary variables used in the mixed constraints that have no alternate limit
-             MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCnstrnt))$(UseMixedConstraintMIP(currTP) and (not Type1MixedConstraintCondition(Type1MixedConstraint))) = 0 ;
+             MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCstr))$(UseMixedConstraintMIP(currTP) and (not Type1MixedConstraintCondition(Type1MixedConstraint))) = 0 ;
 
 * Use the advanced basis here
              option bratio = 1 ;
@@ -2058,7 +2058,7 @@ for(iterationCount = 1 to numTradePeriods,
              UseMixedConstraintMIP(currTP) = 0 ;
 
 * Check branch flows for relevant mixed constraint to check if integer variables are needed
-             HVDChalfPoleSouthFlow(currTP)$(sum(i_type1MixedConstraintBranchCondition(t1MixCnstrnt,br)$HVDChalfPoles(currTP,br), HVDClINKFLOW.l(currTP,br)) > MixedMIPTolerance) = 1 ;
+             HVDChalfPoleSouthFlow(currTP)$(sum(i_type1MixedConstraintBranchCondition(t1MixCstr,br)$HVDChalfPoles(currTP,br), HVDClINKFLOW.l(currTP,br)) > MixedMIPTolerance) = 1 ;
 * RDN - Change definition to only calculate violation if the constraint limit is non-zero
 *             Type1MixedConstraintLimit2Violation(Type1MixedConstraintCondition)
              Type1MixedConstraintLimit2Violation(Type1MixedConstraintCondition)$(Type1MixedConstraintLimit2(Type1MixedConstraintCondition) > 0)
@@ -2066,7 +2066,7 @@ for(iterationCount = 1 to numTradePeriods,
                  + (Type1MixedConstraintLimit2(Type1MixedConstraintCondition) - Type1MixedConstraintGE.l(Type1MixedConstraintCondition))$(Type1MixedConstraintSense(Type1MixedConstraintCondition) = 1)
                  + abs(Type1MixedConstraintEQ.l(Type1MixedConstraintCondition) - Type1MixedConstraintLimit2(Type1MixedConstraintCondition))$(Type1MixedConstraintSense(Type1MixedConstraintCondition) = 0) ;
 * Integer constraints are needed if southward flow on half-poles AND constraint level exceeds the mixed constraint limit2 value
-             UseMixedConstraintMIP(currTP)$(HVDChalfPoleSouthFlow(currTP) and sum(t1MixCnstrnt$(Type1MixedConstraintLimit2Violation(currTP,t1MixCnstrnt) > MixedMIPTolerance),1)) = 1 ;
+             UseMixedConstraintMIP(currTP)$(HVDChalfPoleSouthFlow(currTP) and sum(t1MixCstr$(Type1MixedConstraintLimit2Violation(currTP,t1MixCstr) > MixedMIPTolerance),1)) = 1 ;
           ) ;
 
 * End of if-statement when the MIP is invalid and the LP is resolved
@@ -2258,25 +2258,25 @@ $OFFTEXT
        o_SIRviolation_TP(dt,ild)$(diffCeECeCVP) = sum(i_reserveClass$(ord(i_reserveClass) = 2), DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass) + DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass)) ;
 
 * Security constraint data
-       o_brConstraint_TP(dt,brCnstrnt)$branchConstraint(currTP,brCnstrnt) = yes ;
-       o_brConstraintSense_TP(dt,brCnstrnt)$branchConstraint(currTP,brCnstrnt) = branchConstraintSense(currTP,brCnstrnt) ;
-       o_brConstraintLHS_TP(dt,brCnstrnt)$branchConstraint(currTP,brCnstrnt) = branchSecurityConstraintLE.l(currTP,brCnstrnt)$(branchConstraintSense(currTP,brCnstrnt) = -1)
-                                                                                                                          + branchSecurityConstraintGE.l(currTP,brCnstrnt)$(branchConstraintSense(currTP,brCnstrnt) = 1)
-                                                                                                                          + branchSecurityConstraintEQ.l(currTP,brCnstrnt)$(branchConstraintSense(currTP,brCnstrnt) = 0) ;
-       o_brConstraintRHS_TP(dt,brCnstrnt)$branchConstraint(currTP,brCnstrnt) = branchConstraintLimit(currTP,brCnstrnt) ;
-       o_brConstraintPrice_TP(dt,brCnstrnt)$branchConstraint(currTP,brCnstrnt) = branchSecurityConstraintLE.m(currTP,brCnstrnt)$(branchConstraintSense(currTP,brCnstrnt) = -1)
-                                                                                                                          + branchSecurityConstraintGE.m(currTP,brCnstrnt)$(branchConstraintSense(currTP,brCnstrnt) = 1)
-                                                                                                                          + branchSecurityConstraintEQ.m(currTP,brCnstrnt)$(branchConstraintSense(currTP,brCnstrnt) = 0) ;
+       o_brConstraint_TP(dt,brCstr)$branchConstraint(currTP,brCstr) = yes ;
+       o_brConstraintSense_TP(dt,brCstr)$branchConstraint(currTP,brCstr) = branchConstraintSense(currTP,brCstr) ;
+       o_brConstraintLHS_TP(dt,brCstr)$branchConstraint(currTP,brCstr) = branchSecurityConstraintLE.l(currTP,brCstr)$(branchConstraintSense(currTP,brCstr) = -1)
+                                                                                                                          + branchSecurityConstraintGE.l(currTP,brCstr)$(branchConstraintSense(currTP,brCstr) = 1)
+                                                                                                                          + branchSecurityConstraintEQ.l(currTP,brCstr)$(branchConstraintSense(currTP,brCstr) = 0) ;
+       o_brConstraintRHS_TP(dt,brCstr)$branchConstraint(currTP,brCstr) = branchConstraintLimit(currTP,brCstr) ;
+       o_brConstraintPrice_TP(dt,brCstr)$branchConstraint(currTP,brCstr) = branchSecurityConstraintLE.m(currTP,brCstr)$(branchConstraintSense(currTP,brCstr) = -1)
+                                                                                                                          + branchSecurityConstraintGE.m(currTP,brCstr)$(branchConstraintSense(currTP,brCstr) = 1)
+                                                                                                                          + branchSecurityConstraintEQ.m(currTP,brCstr)$(branchConstraintSense(currTP,brCstr) = 0) ;
 * Mnode constraint data
-       o_MnodeConstraint_TP(dt,MnodeCnstrnt)$MnodeConstraint(currTP,MnodeCnstrnt) = yes ;
-       o_MnodeConstraintSense_TP(dt,MnodeCnstrnt)$MnodeConstraint(currTP,MnodeCnstrnt) = MnodeConstraintSense(currTP,MnodeCnstrnt) ;
-       o_MnodeConstraintLHS_TP(dt,MnodeCnstrnt)$MnodeConstraint(currTP,MnodeCnstrnt) = MnodeSecurityConstraintLE.l(currTP,MnodeCnstrnt)$(MnodeConstraintSense(currTP,MnodeCnstrnt) = -1)
-                                                                                                                          + MnodeSecurityConstraintGE.l(currTP,MnodeCnstrnt)$(MnodeConstraintSense(currTP,MnodeCnstrnt) = 1)
-                                                                                                                          + MnodeSecurityConstraintEQ.l(currTP,MnodeCnstrnt)$(MnodeConstraintSense(currTP,MnodeCnstrnt) = 0) ;
-       o_MnodeConstraintRHS_TP(dt,MnodeCnstrnt)$MnodeConstraint(currTP,MnodeCnstrnt) = MnodeConstraintLimit(currTP,MnodeCnstrnt) ;
-       o_MnodeConstraintPrice_TP(dt,MnodeCnstrnt)$MnodeConstraint(currTP,MnodeCnstrnt) = MnodeSecurityConstraintLE.m(currTP,MnodeCnstrnt)$(MnodeConstraintSense(currTP,MnodeCnstrnt) = -1)
-                                                                                                                          + MnodeSecurityConstraintGE.m(currTP,MnodeCnstrnt)$(MnodeConstraintSense(currTP,MnodeCnstrnt) = 1)
-                                                                                                                          + MnodeSecurityConstraintEQ.m(currTP,MnodeCnstrnt)$(MnodeConstraintSense(currTP,MnodeCnstrnt) = 0) ;
+       o_MnodeConstraint_TP(dt,MnodeCstr)$MnodeConstraint(currTP,MnodeCstr) = yes ;
+       o_MnodeConstraintSense_TP(dt,MnodeCstr)$MnodeConstraint(currTP,MnodeCstr) = MnodeConstraintSense(currTP,MnodeCstr) ;
+       o_MnodeConstraintLHS_TP(dt,MnodeCstr)$MnodeConstraint(currTP,MnodeCstr) = MnodeSecurityConstraintLE.l(currTP,MnodeCstr)$(MnodeConstraintSense(currTP,MnodeCstr) = -1)
+                                                                                                                          + MnodeSecurityConstraintGE.l(currTP,MnodeCstr)$(MnodeConstraintSense(currTP,MnodeCstr) = 1)
+                                                                                                                          + MnodeSecurityConstraintEQ.l(currTP,MnodeCstr)$(MnodeConstraintSense(currTP,MnodeCstr) = 0) ;
+       o_MnodeConstraintRHS_TP(dt,MnodeCstr)$MnodeConstraint(currTP,MnodeCstr) = MnodeConstraintLimit(currTP,MnodeCstr) ;
+       o_MnodeConstraintPrice_TP(dt,MnodeCstr)$MnodeConstraint(currTP,MnodeCstr) = MnodeSecurityConstraintLE.m(currTP,MnodeCstr)$(MnodeConstraintSense(currTP,MnodeCstr) = -1)
+                                                                                                                          + MnodeSecurityConstraintGE.m(currTP,MnodeCstr)$(MnodeConstraintSense(currTP,MnodeCstr) = 1)
+                                                                                                                          + MnodeSecurityConstraintEQ.m(currTP,MnodeCstr)$(MnodeConstraintSense(currTP,MnodeCstr) = 0) ;
 
 * Island results at a trade period level
       o_islandGen_TP(dt,ild) = sum(b$busIsland(currTP,b,ild), busGeneration(currTP,b)) ;
@@ -2467,16 +2467,16 @@ $ONTEXT
                                   + sum(b$bus(currTP,b), SurplusBusGenerationPenalty * SURPLUSBUSGENERATION.l(currTP,b))
                                   + sum(br$branch(currTP,br), SurplusBranchFlowPenalty * SURPLUSBRANCHFLOW.l(currTP,br))
                                   + sum(o$offer(currTP,o), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(currTP,o)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(currTP,o)))
-                                  + sum(ACnodeCnstrnt$ACnodeConstraint(currTP,ACnodeCnstrnt), DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCnstrnt))
-                                  + sum(ACnodeCnstrnt$ACnodeConstraint(currTP,ACnodeCnstrnt), SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCnstrnt))
-                                  + sum(brCnstrnt$branchConstraint(currTP,brCnstrnt), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCnstrnt))
-                                  + sum(brCnstrnt$branchConstraint(currTP,brCnstrnt), DeficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCnstrnt))
-                                  + sum(MnodeCnstrnt$MnodeConstraint(currTP,MnodeCnstrnt), DeficitMnodeConstraintPenalty * DEFICITMnodeCONSTRAINT.l(currTP,MnodeCnstrnt))
-                                  + sum(MnodeCnstrnt$MnodeConstraint(currTP,MnodeCnstrnt), SurplusMnodeConstraintPenalty * SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCnstrnt))
-                                  + sum(t1MixCnstrnt$Type1MixedConstraint(currTP,t1MixCnstrnt), Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt))
-                                  + sum(t1MixCnstrnt$Type1MixedConstraint(currTP,t1MixCnstrnt), Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt))
-                                  + sum(gnrcCnstrnt$GenericConstraint(currTP,gnrcCnstrnt), DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT.l(currTP,gnrcCnstrnt))
-                                  + sum(gnrcCnstrnt$GenericConstraint(currTP,gnrcCnstrnt), SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCnstrnt))
+                                  + sum(ACnodeCstr$ACnodeConstraint(currTP,ACnodeCstr), DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCstr))
+                                  + sum(ACnodeCstr$ACnodeConstraint(currTP,ACnodeCstr), SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCstr))
+                                  + sum(brCstr$branchConstraint(currTP,brCstr), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCstr))
+                                  + sum(brCstr$branchConstraint(currTP,brCstr), DeficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCstr))
+                                  + sum(MnodeCstr$MnodeConstraint(currTP,MnodeCstr), DeficitMnodeConstraintPenalty * DEFICITMnodeCONSTRAINT.l(currTP,MnodeCstr))
+                                  + sum(MnodeCstr$MnodeConstraint(currTP,MnodeCstr), SurplusMnodeConstraintPenalty * SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCstr))
+                                  + sum(t1MixCstr$Type1MixedConstraint(currTP,t1MixCstr), Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr))
+                                  + sum(t1MixCstr$Type1MixedConstraint(currTP,t1MixCstr), Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr))
+                                  + sum(gnrcCstr$GenericConstraint(currTP,gnrcCstr), DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT.l(currTP,gnrcCstr))
+                                  + sum(gnrcCstr$GenericConstraint(currTP,gnrcCstr), SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCstr))
                                   + sum((ild,i_reserveClass)$(not diffCeECeCVP), DeficitReservePenalty(i_reserveClass) * DEFICITRESERVE.l(currTP,ild,i_reserveClass))
                                   + sum((ild,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_CE(i_reserveClass) * DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass))
                                   + sum((ild,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass))
@@ -2486,16 +2486,16 @@ $OFFTEXT
                                    + sum(b$bus(currTP,b), SurplusBusGenerationPenalty * SURPLUSBUSGENERATION.l(currTP,b))
                                    + sum(br$branch(currTP,br), SurplusBranchFlowPenalty * SURPLUSBRANCHFLOW.l(currTP,br))
                                    + sum(o$offer(currTP,o), (DeficitRampRatePenalty * DEFICITRAMPRATE.l(currTP,o)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE.l(currTP,o)))
-                                   + sum(ACnodeCnstrnt$ACnodeConstraint(currTP,ACnodeCnstrnt), DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCnstrnt))
-                                   + sum(ACnodeCnstrnt$ACnodeConstraint(currTP,ACnodeCnstrnt), SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCnstrnt))
-                                   + sum(brCnstrnt$branchConstraint(currTP,brCnstrnt), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCnstrnt))
-                                   + sum(brCnstrnt$branchConstraint(currTP,brCnstrnt), DeficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCnstrnt))
-                                   + sum(MnodeCnstrnt$MnodeConstraint(currTP,MnodeCnstrnt), DeficitMnodeConstraintPenalty * DEFICITMnodeCONSTRAINT.l(currTP,MnodeCnstrnt))
-                                   + sum(MnodeCnstrnt$MnodeConstraint(currTP,MnodeCnstrnt), SurplusMnodeConstraintPenalty * SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCnstrnt))
-                                   + sum(t1MixCnstrnt$Type1MixedConstraint(currTP,t1MixCnstrnt), Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt))
-                                   + sum(t1MixCnstrnt$Type1MixedConstraint(currTP,t1MixCnstrnt), Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt))
-                                   + sum(gnrcCnstrnt$GenericConstraint(currTP,gnrcCnstrnt), DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT.l(currTP,gnrcCnstrnt))
-                                   + sum(gnrcCnstrnt$GenericConstraint(currTP,gnrcCnstrnt), SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCnstrnt))
+                                   + sum(ACnodeCstr$ACnodeConstraint(currTP,ACnodeCstr), DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCstr))
+                                   + sum(ACnodeCstr$ACnodeConstraint(currTP,ACnodeCstr), SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCstr))
+                                   + sum(brCstr$branchConstraint(currTP,brCstr), SurplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCstr))
+                                   + sum(brCstr$branchConstraint(currTP,brCstr), DeficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCstr))
+                                   + sum(MnodeCstr$MnodeConstraint(currTP,MnodeCstr), DeficitMnodeConstraintPenalty * DEFICITMnodeCONSTRAINT.l(currTP,MnodeCstr))
+                                   + sum(MnodeCstr$MnodeConstraint(currTP,MnodeCstr), SurplusMnodeConstraintPenalty * SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCstr))
+                                   + sum(t1MixCstr$Type1MixedConstraint(currTP,t1MixCstr), Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr))
+                                   + sum(t1MixCstr$Type1MixedConstraint(currTP,t1MixCstr), Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr))
+                                   + sum(gnrcCstr$GenericConstraint(currTP,gnrcCstr), DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT.l(currTP,gnrcCstr))
+                                   + sum(gnrcCstr$GenericConstraint(currTP,gnrcCstr), SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCstr))
                                    + sum((ild,i_reserveClass)$(not diffCeECeCVP), DeficitReservePenalty(i_reserveClass) * DEFICITRESERVE.l(currTP,ild,i_reserveClass))
                                    + sum((ild,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_CE(i_reserveClass) * DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass))
                                    + sum((ild,i_reserveClass)$diffCeECeCVP, DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass))
@@ -2510,18 +2510,18 @@ $OFFTEXT
       o_surpBranchFlow_TP(dt) = sum(br$branch(currTP,br), SURPLUSBRANCHFLOW.l(currTP,br)) ;
       o_defRampRate_TP(dt) = sum(o$offer(currTP,o), DEFICITRAMPRATE.l(currTP,o)) ;
       o_surpRampRate_TP(dt) = sum(o$offer(currTP,o), SURPLUSRAMPRATE.l(currTP,o)) ;
-      o_surpBranchGroupConst_TP(dt) = sum(brCnstrnt$branchConstraint(currTP,brCnstrnt), SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCnstrnt)) ;
-      o_defBranchGroupConst_TP(dt) = sum(brCnstrnt$branchConstraint(currTP,brCnstrnt), DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCnstrnt)) ;
-      o_defMnodeConst_TP(dt) = sum(MnodeCnstrnt$MnodeConstraint(currTP,MnodeCnstrnt), DEFICITMnodeCONSTRAINT.l(currTP,MnodeCnstrnt)) ;
-      o_surpMnodeConst_TP(dt) = sum(MnodeCnstrnt$MnodeConstraint(currTP,MnodeCnstrnt), SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCnstrnt)) ;
-      o_defACnodeConst_TP(dt) = sum(ACnodeCnstrnt$ACnodeConstraint(currTP,ACnodeCnstrnt), DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCnstrnt)) ;
-      o_surpACnodeConst_TP(dt) = sum(ACnodeCnstrnt$ACnodeConstraint(currTP,ACnodeCnstrnt), SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCnstrnt)) ;
+      o_surpBranchGroupConst_TP(dt) = sum(brCstr$branchConstraint(currTP,brCstr), SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCstr)) ;
+      o_defBranchGroupConst_TP(dt) = sum(brCstr$branchConstraint(currTP,brCstr), DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCstr)) ;
+      o_defMnodeConst_TP(dt) = sum(MnodeCstr$MnodeConstraint(currTP,MnodeCstr), DEFICITMnodeCONSTRAINT.l(currTP,MnodeCstr)) ;
+      o_surpMnodeConst_TP(dt) = sum(MnodeCstr$MnodeConstraint(currTP,MnodeCstr), SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCstr)) ;
+      o_defACnodeConst_TP(dt) = sum(ACnodeCstr$ACnodeConstraint(currTP,ACnodeCstr), DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCstr)) ;
+      o_surpACnodeConst_TP(dt) = sum(ACnodeCstr$ACnodeConstraint(currTP,ACnodeCstr), SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCstr)) ;
 
-      o_defT1MixedConst_TP(dt) = sum(t1MixCnstrnt$Type1MixedConstraint(currTP,t1MixCnstrnt), DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt)) ;
-      o_surpT1MixedConst_TP(dt) = sum(t1MixCnstrnt$Type1MixedConstraint(currTP,t1MixCnstrnt), SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt)) ;
+      o_defT1MixedConst_TP(dt) = sum(t1MixCstr$Type1MixedConstraint(currTP,t1MixCstr), DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)) ;
+      o_surpT1MixedConst_TP(dt) = sum(t1MixCstr$Type1MixedConstraint(currTP,t1MixCstr), SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)) ;
 
-      o_defGenericConst_TP(dt) = sum(gnrcCnstrnt$GenericConstraint(currTP,gnrcCnstrnt), DEFICITGENERICCONSTRAINT.l(currTP,gnrcCnstrnt)) ;
-      o_surpGenericConst_TP(dt) =  sum(gnrcCnstrnt$GenericConstraint(currTP,gnrcCnstrnt), SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCnstrnt)) ;
+      o_defGenericConst_TP(dt) = sum(gnrcCstr$GenericConstraint(currTP,gnrcCstr), DEFICITGENERICCONSTRAINT.l(currTP,gnrcCstr)) ;
+      o_surpGenericConst_TP(dt) =  sum(gnrcCstr$GenericConstraint(currTP,gnrcCstr), SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCstr)) ;
       o_defResv_TP(dt) =  sum((ild,i_reserveClass)$(not diffCeECeCVP), DEFICITRESERVE.l(currTP,ild,i_reserveClass))
                           + sum((ild,i_reserveClass)$diffCeECeCVP, DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass) + DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass)) ;
 
@@ -2550,7 +2550,7 @@ $OFFTEXT
                           sum(ACnodeConstraint, DEFICITACnodeCONSTRAINT.l(ACnodeConstraint) + SURPLUSACnodeCONSTRAINT.l(ACnodeConstraint)) +
                           sum(branch, DEFICITBRANCHFLOW.l(branch) + SURPLUSBRANCHFLOW.l(branch)) +
                           sum(MnodeConstraint, DEFICITMnodeCONSTRAINT.l(MnodeConstraint) + SURPLUSMnodeCONSTRAINT.l(MnodeConstraint)) +
-                          sum((currTP,t1MixCnstrnt), DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt) + SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCnstrnt)) +
+                          sum((currTP,t1MixCstr), DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr) + SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)) +
                           sum(GenericConstraint, SURPLUSGENERICCONSTRAINT.l(GenericConstraint) + DEFICITGENERICCONSTRAINT.l(GenericConstraint)) ;
       o_systemFIR = o_systemFIR + sum((offer,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 1), RESERVE.l(offer,i_reserveClass,i_reserveType)) + sum((bid,i_reserveClass)$(ord(i_reserveClass) = 1), PURCHASEILR.l(bid,i_reserveClass)) ;
       o_systemSIR = o_systemSIR + sum((offer,i_reserveClass,i_reserveType)$(ord(i_reserveClass) = 2), RESERVE.l(offer,i_reserveClass,i_reserveType)) + sum((bid,i_reserveClass)$(ord(i_reserveClass) = 2), PURCHASEILR.l(bid,i_reserveClass)) ;

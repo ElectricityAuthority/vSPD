@@ -40,18 +40,18 @@ Directory of code sections in vSPDoverrides.gms:
      f) Demand overrides
 
 Aliases to be aware of:
-  i_island = ild, ild1                         i_dateTime = dt
-  i_tradePeriod = tp                           i_node = n
-  i_offer = o, o1                              i_trader = trdr
-  i_tradeBlock = trdBlk                        i_bus = b, b1, frB, toB
-  i_branch = br, br1                           i_lossSegment = los, los1
-  i_branchConstraint = brCnstrnt               i_ACnodeConstraint = ACnodeCnstrnt
-  i_MnodeConstraint = MnodeCnstrnt             i_energyOfferComponent = NRGofrCmpnt
-  i_PLSRofferComponent = PLSofrCmpnt           i_TWDRofferComponent = TWDofrCmpnt
-  i_ILRofferComponent = ILofrCmpnt             i_energyBidComponent = NRGbidCmpnt
-  i_ILRbidComponent = ILbidCmpnt               i_type1MixedConstraint = t1MixCnstrnt
-  i_type2MixedConstraint = t2MixCnstrnt        i_type1MixedConstraintRHS = t1MixCnstrntRHS
-  i_genericConstraint = gnrcCnstrnt
+  i_island = ild, ild1                      i_dateTime = dt
+  i_tradePeriod = tp                        i_node = n
+  i_offer = o, o1                           i_trader = trdr
+  i_tradeBlock = trdBlk                     i_bus = b, b1, frB, toB
+  i_branch = br, br1                        i_lossSegment = los, los1
+  i_branchConstraint = brCstr               i_ACnodeConstraint = ACnodeCstr
+  i_MnodeConstraint = MnodeCstr             i_energyOfferComponent = NRGofrCmpnt
+  i_PLSRofferComponent = PLSofrCmpnt        i_TWDRofferComponent = TWDofrCmpnt
+  i_ILRofferComponent = ILofrCmpnt          i_energyBidComponent = NRGbidCmpnt
+  i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
+  i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
+  i_genericConstraint = gnrcCstr
 $offtext
 
 
@@ -207,17 +207,17 @@ Sets
   i_branchOpenStatusOvrdDate(ovrd,br,fromTo,day,mth,yr)                 'Branch open status override date'
   i_branchOpenStatusOvrdTP(ovrd,br,tp)                             'Branch open status override trade period'
 * Branch security constraint overrides
-  i_branchConstraintFactorOvrdDate(ovrd,brCnstrnt,br,fromTo,day,mth,yr)    'Branch constraint factor override date'
-  i_branchConstraintFactorOvrdTP(ovrd,brCnstrnt,br,tp)                'Branch constraint factor override trade period'
-  i_branchConstraintRHSOvrdDate(ovrd,brCnstrnt,fromTo,day,mth,yr)                'Branch constraint RHS override date'
-  i_branchConstraintRHSOvrdTP(ovrd,brCnstrnt,tp)                            'Branch constraint RHS override trade period'
+  i_branchConstraintFactorOvrdDate(ovrd,brCstr,br,fromTo,day,mth,yr)    'Branch constraint factor override date'
+  i_branchConstraintFactorOvrdTP(ovrd,brCstr,br,tp)                'Branch constraint factor override trade period'
+  i_branchConstraintRHSOvrdDate(ovrd,brCstr,fromTo,day,mth,yr)                'Branch constraint RHS override date'
+  i_branchConstraintRHSOvrdTP(ovrd,brCstr,tp)                            'Branch constraint RHS override trade period'
 * Market node constraint overrides
-  i_MnodeEnergyConstraintFactorOvrdDate(ovrd,MnodeCnstrnt,o,fromTo,day,mth,yr) 'Market node energy constraint factor override date'
-  i_MnodeEnergyConstraintFactorOvrdTP(ovrd,MnodeCnstrnt,o,tp)             'Market node energy constraint factor override trade period'
-  i_MnodeReserveConstraintFactorOvrdDate(ovrd,MnodeCnstrnt,o,i_reserveClass,fromTo,day,mth,yr) 'Market node reserve constraint factor override date'
-  i_MnodeReserveConstraintFactorOvrdTP(ovrd,MnodeCnstrnt,o,i_reserveClass,tp)             'Market node reserve constraint factor override trade period'
-  i_MnodeConstraintRHSOvrdDate(ovrd,MnodeCnstrnt,fromTo,day,mth,yr)                                  'Market node constraint RHS override date'
-  i_MnodeConstraintRHSOvrdTP(ovrd,MnodeCnstrnt,tp)                                              'Market node constraint RHS override trade period'
+  i_MnodeEnergyConstraintFactorOvrdDate(ovrd,MnodeCstr,o,fromTo,day,mth,yr) 'Market node energy constraint factor override date'
+  i_MnodeEnergyConstraintFactorOvrdTP(ovrd,MnodeCstr,o,tp)             'Market node energy constraint factor override trade period'
+  i_MnodeReserveConstraintFactorOvrdDate(ovrd,MnodeCstr,o,i_reserveClass,fromTo,day,mth,yr) 'Market node reserve constraint factor override date'
+  i_MnodeReserveConstraintFactorOvrdTP(ovrd,MnodeCstr,o,i_reserveClass,tp)             'Market node reserve constraint factor override trade period'
+  i_MnodeConstraintRHSOvrdDate(ovrd,MnodeCstr,fromTo,day,mth,yr)                                  'Market node constraint RHS override date'
+  i_MnodeConstraintRHSOvrdTP(ovrd,MnodeCstr,tp)                                              'Market node constraint RHS override trade period'
 * Risk/Reserves
   i_contingentEventRAFOvrdDate(ovrd,ild,i_reserveClass,fromTo,day,mth,yr)                            'Contingency event RAF override date'
   i_contingentEventRAFOvrdTP(ovrd,ild,i_reserveClass,tp)                                        'Contingency event RAF override trade period'
@@ -244,12 +244,12 @@ Parameters
   i_branchCapacityOvrd(ovrd,br)                                               'Branch capacity override values'
   i_branchOpenStatusOvrd(ovrd,br)                                             'Branch open status override values'
 * Branch constraint factor overrides - factor and RHS
-  i_branchConstraintFactorOvrd(ovrd,brCnstrnt,br)                    'Branch constraint factor override values'
-  i_branchConstraintRHSOvrd(ovrd,brCnstrnt,i_constraintRHS)                'Branch constraint RHS override values'
+  i_branchConstraintFactorOvrd(ovrd,brCstr,br)                    'Branch constraint factor override values'
+  i_branchConstraintRHSOvrd(ovrd,brCstr,i_constraintRHS)                'Branch constraint RHS override values'
 * Market node constraint overrides - factor and RHS
-  i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCnstrnt,o)                 'Market node energy constraint factor override values'
-  i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCnstrnt,o,i_reserveClass) 'Market node reserve constraint factor override values'
-  i_MnodeConstraintRHSOvrd(ovrd,MnodeCnstrnt,i_constraintRHS)                  'Market node constraint RHS override values'
+  i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCstr,o)                 'Market node energy constraint factor override values'
+  i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCstr,o,i_reserveClass) 'Market node reserve constraint factor override values'
+  i_MnodeConstraintRHSOvrd(ovrd,MnodeCstr,i_constraintRHS)                  'Market node constraint RHS override values'
 * Risk/Reserve overrides
   i_contingentEventRAFOvrd(ovrd,ild,i_reserveClass)                            'Contingency event RAF override'
   i_extendedContingentEventRAFOvrd(ovrd,ild,i_reserveClass)                    'Extended contingency event RAF override'
@@ -291,55 +291,55 @@ Parameters
   tradePeriodBranchCapacityOvrd(tp,br)                             'Branch capacity override for applicable trade periods'
   tradePeriodBranchOpenStatusOvrd(tp,br)                           'Branch status override for applicable trade periods'
 * More branch security constraint overrides - factor
-  branchConstraintFactorOvrdFromDay(ovrd,brCnstrnt,br)               'Branch constraint factor override from day'
-  branchConstraintFactorOvrdFromMonth(ovrd,brCnstrnt,br)             'Branch constraint factor override from month'
-  branchConstraintFactorOvrdFromYear(ovrd,brCnstrnt,br)              'Branch constraint factor override from year'
-  branchConstraintFactorOvrdToDay(ovrd,brCnstrnt,br)                 'Branch constraint factor override to day'
-  branchConstraintFactorOvrdToMonth(ovrd,brCnstrnt,br)               'Branch constraint factor override to month'
-  branchConstraintFactorOvrdToYear(ovrd,brCnstrnt,br)                'Branch constraint factor override to year'
-  branchConstraintFactorOvrdFromGDate(ovrd,brCnstrnt,br)             'Branch constraint factor override date - Gregorian'
-  branchConstraintFactorOvrdToGDate(ovrd,brCnstrnt,br)               'Branch constraint factor override to date - Gregorian'
-  tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br)  'Branch constraint factor override for applicable trade periods'
+  branchConstraintFactorOvrdFromDay(ovrd,brCstr,br)               'Branch constraint factor override from day'
+  branchConstraintFactorOvrdFromMonth(ovrd,brCstr,br)             'Branch constraint factor override from month'
+  branchConstraintFactorOvrdFromYear(ovrd,brCstr,br)              'Branch constraint factor override from year'
+  branchConstraintFactorOvrdToDay(ovrd,brCstr,br)                 'Branch constraint factor override to day'
+  branchConstraintFactorOvrdToMonth(ovrd,brCstr,br)               'Branch constraint factor override to month'
+  branchConstraintFactorOvrdToYear(ovrd,brCstr,br)                'Branch constraint factor override to year'
+  branchConstraintFactorOvrdFromGDate(ovrd,brCstr,br)             'Branch constraint factor override date - Gregorian'
+  branchConstraintFactorOvrdToGDate(ovrd,brCstr,br)               'Branch constraint factor override to date - Gregorian'
+  tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br)  'Branch constraint factor override for applicable trade periods'
 * More branch security constraint overrides - RHS
-  branchConstraintRHSOvrdFromDay(ovrd,brCnstrnt)                           'Branch constraint RHS override from day'
-  branchConstraintRHSOvrdFromMonth(ovrd,brCnstrnt)                         'Branch constraint RHS override from month'
-  branchConstraintRHSOvrdFromYear(ovrd,brCnstrnt)                          'Branch constraint RHS override from year'
-  branchConstraintRHSOvrdToDay(ovrd,brCnstrnt)                             'Branch constraint RHS override to day'
-  branchConstraintRHSOvrdToMonth(ovrd,brCnstrnt)                           'Branch constraint RHS override to month'
-  branchConstraintRHSOvrdToYear(ovrd,brCnstrnt)                            'Branch constraint RHS override to year'
-  branchConstraintRHSOvrdFromGDate(ovrd,brCnstrnt)                         'Branch constraint RHS override date - Gregorian'
-  branchConstraintRHSOvrdToGDate(ovrd,brCnstrnt)                           'Branch constraint RHS override to date - Gregorian'
-  tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS)'Branch constraint RHS override for applicable trade periods'
+  branchConstraintRHSOvrdFromDay(ovrd,brCstr)                           'Branch constraint RHS override from day'
+  branchConstraintRHSOvrdFromMonth(ovrd,brCstr)                         'Branch constraint RHS override from month'
+  branchConstraintRHSOvrdFromYear(ovrd,brCstr)                          'Branch constraint RHS override from year'
+  branchConstraintRHSOvrdToDay(ovrd,brCstr)                             'Branch constraint RHS override to day'
+  branchConstraintRHSOvrdToMonth(ovrd,brCstr)                           'Branch constraint RHS override to month'
+  branchConstraintRHSOvrdToYear(ovrd,brCstr)                            'Branch constraint RHS override to year'
+  branchConstraintRHSOvrdFromGDate(ovrd,brCstr)                         'Branch constraint RHS override date - Gregorian'
+  branchConstraintRHSOvrdToGDate(ovrd,brCstr)                           'Branch constraint RHS override to date - Gregorian'
+  tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS)'Branch constraint RHS override for applicable trade periods'
 * More market node constraint overrides - energy factor
-  MnodeEnergyConstraintFactorOvrdFromDay(ovrd,MnodeCnstrnt,o)            'Market node energy constraint factor override from day'
-  MnodeEnergyConstraintFactorOvrdFromMonth(ovrd,MnodeCnstrnt,o)          'Market node energy constraint factor override from month'
-  MnodeEnergyConstraintFactorOvrdFromYear(ovrd,MnodeCnstrnt,o)           'Market node energy constraint factor override from year'
-  MnodeEnergyConstraintFactorOvrdToDay(ovrd,MnodeCnstrnt,o)              'Market node energy constraint factor override to day'
-  MnodeEnergyConstraintFactorOvrdToMonth(ovrd,MnodeCnstrnt,o)            'Market node energy constraint factor override to month'
-  MnodeEnergyConstraintFactorOvrdToYear(ovrd,MnodeCnstrnt,o)             'Market node energy constraint factor override to year'
-  MnodeEnergyConstraintFactorOvrdFromGDate(ovrd,MnodeCnstrnt,o)          'Market node energy constraint factor override date - Gregorian'
-  MnodeEnergyConstraintFactorOvrdToGDate(ovrd,MnodeCnstrnt,o)            'Market node energy constraint factor override to date - Gregorian'
-  tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) 'Market node energy constraint factor override for applicable trade periods'
+  MnodeEnergyConstraintFactorOvrdFromDay(ovrd,MnodeCstr,o)            'Market node energy constraint factor override from day'
+  MnodeEnergyConstraintFactorOvrdFromMonth(ovrd,MnodeCstr,o)          'Market node energy constraint factor override from month'
+  MnodeEnergyConstraintFactorOvrdFromYear(ovrd,MnodeCstr,o)           'Market node energy constraint factor override from year'
+  MnodeEnergyConstraintFactorOvrdToDay(ovrd,MnodeCstr,o)              'Market node energy constraint factor override to day'
+  MnodeEnergyConstraintFactorOvrdToMonth(ovrd,MnodeCstr,o)            'Market node energy constraint factor override to month'
+  MnodeEnergyConstraintFactorOvrdToYear(ovrd,MnodeCstr,o)             'Market node energy constraint factor override to year'
+  MnodeEnergyConstraintFactorOvrdFromGDate(ovrd,MnodeCstr,o)          'Market node energy constraint factor override date - Gregorian'
+  MnodeEnergyConstraintFactorOvrdToGDate(ovrd,MnodeCstr,o)            'Market node energy constraint factor override to date - Gregorian'
+  tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) 'Market node energy constraint factor override for applicable trade periods'
 * More market node constraint overrides - reserve factor
-  MnodeReserveConstraintFactorOvrdFromDay(ovrd,MnodeCnstrnt,o,i_reserveClass)            'Market node reserve constraint factor override from day'
-  MnodeReserveConstraintFactorOvrdFromMonth(ovrd,MnodeCnstrnt,o,i_reserveClass)          'Market node reserve constraint factor override from month'
-  MnodeReserveConstraintFactorOvrdFromYear(ovrd,MnodeCnstrnt,o,i_reserveClass)           'Market node reserve constraint factor override from year'
-  MnodeReserveConstraintFactorOvrdToDay(ovrd,MnodeCnstrnt,o,i_reserveClass)              'Market node reserve constraint factor override to day'
-  MnodeReserveConstraintFactorOvrdToMonth(ovrd,MnodeCnstrnt,o,i_reserveClass)            'Market node reserve constraint factor override to month'
-  MnodeReserveConstraintFactorOvrdToYear(ovrd,MnodeCnstrnt,o,i_reserveClass)             'Market node reserve constraint factor override to year'
-  MnodeReserveConstraintFactorOvrdFromGDate(ovrd,MnodeCnstrnt,o,i_reserveClass)          'Market node reserve constraint factor override date - Gregorian'
-  MnodeReserveConstraintFactorOvrdToGDate(ovrd,MnodeCnstrnt,o,i_reserveClass)            'Market node reserve constraint factor override to date - Gregorian'
-  tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) 'Market node reserve constraint factor override for applicable trade periods'
+  MnodeReserveConstraintFactorOvrdFromDay(ovrd,MnodeCstr,o,i_reserveClass)            'Market node reserve constraint factor override from day'
+  MnodeReserveConstraintFactorOvrdFromMonth(ovrd,MnodeCstr,o,i_reserveClass)          'Market node reserve constraint factor override from month'
+  MnodeReserveConstraintFactorOvrdFromYear(ovrd,MnodeCstr,o,i_reserveClass)           'Market node reserve constraint factor override from year'
+  MnodeReserveConstraintFactorOvrdToDay(ovrd,MnodeCstr,o,i_reserveClass)              'Market node reserve constraint factor override to day'
+  MnodeReserveConstraintFactorOvrdToMonth(ovrd,MnodeCstr,o,i_reserveClass)            'Market node reserve constraint factor override to month'
+  MnodeReserveConstraintFactorOvrdToYear(ovrd,MnodeCstr,o,i_reserveClass)             'Market node reserve constraint factor override to year'
+  MnodeReserveConstraintFactorOvrdFromGDate(ovrd,MnodeCstr,o,i_reserveClass)          'Market node reserve constraint factor override date - Gregorian'
+  MnodeReserveConstraintFactorOvrdToGDate(ovrd,MnodeCstr,o,i_reserveClass)            'Market node reserve constraint factor override to date - Gregorian'
+  tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) 'Market node reserve constraint factor override for applicable trade periods'
 * More market node constraint overrides - RHS
-  MnodeConstraintRHSOvrdFromDay(ovrd,MnodeCnstrnt)                             'Market node constraint RHS override from day'
-  MnodeConstraintRHSOvrdFromMonth(ovrd,MnodeCnstrnt)                           'Market node constraint RHS override from month'
-  MnodeConstraintRHSOvrdFromYear(ovrd,MnodeCnstrnt)                            'Market node constraint RHS override from year'
-  MnodeConstraintRHSOvrdToDay(ovrd,MnodeCnstrnt)                               'Market node constraint RHS override to day'
-  MnodeConstraintRHSOvrdToMonth(ovrd,MnodeCnstrnt)                             'Market node constraint RHS override to month'
-  MnodeConstraintRHSOvrdToYear(ovrd,MnodeCnstrnt)                              'Market node constraint RHS override to year'
-  MnodeConstraintRHSOvrdFromGDate(ovrd,MnodeCnstrnt)                           'Market node constraint RHS override date - Gregorian'
-  MnodeConstraintRHSOvrdToGDate(ovrd,MnodeCnstrnt)                             'Market node constraint RHS override to date - Gregorian'
-  tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS)'Market node constraint RHS override for applicable trade periods'
+  MnodeConstraintRHSOvrdFromDay(ovrd,MnodeCstr)                             'Market node constraint RHS override from day'
+  MnodeConstraintRHSOvrdFromMonth(ovrd,MnodeCstr)                           'Market node constraint RHS override from month'
+  MnodeConstraintRHSOvrdFromYear(ovrd,MnodeCstr)                            'Market node constraint RHS override from year'
+  MnodeConstraintRHSOvrdToDay(ovrd,MnodeCstr)                               'Market node constraint RHS override to day'
+  MnodeConstraintRHSOvrdToMonth(ovrd,MnodeCstr)                             'Market node constraint RHS override to month'
+  MnodeConstraintRHSOvrdToYear(ovrd,MnodeCstr)                              'Market node constraint RHS override to year'
+  MnodeConstraintRHSOvrdFromGDate(ovrd,MnodeCstr)                           'Market node constraint RHS override date - Gregorian'
+  MnodeConstraintRHSOvrdToGDate(ovrd,MnodeCstr)                             'Market node constraint RHS override to date - Gregorian'
+  tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS)'Market node constraint RHS override for applicable trade periods'
 * More risk/reserve overrides
   RAFovrdDay(ovrd,ild,i_reserveClass)                                          'RAF override from day'
   RAFovrdMonth(ovrd,ild,i_reserveClass)                                        'RAF override from month'
@@ -442,13 +442,13 @@ Symbols defined on i_offer/o that are not intialised for new offer elements - ch
 Sets
   i_tradePeriodPrimarySecondaryOffer(tp,o1,o)
 Parameters
-  i_tradePeriodMNodeEnergyOfferConstraintFactors(tp,MnodeCnstrnt,o)
-  i_type1MixedConstraintGenWeight(t1MixCnstrnt,o)
-  i_tradePeriodGenericEnergyOfferConstraintFactors(tp,gnrcCnstrnt,o)
+  i_tradePeriodMNodeEnergyOfferConstraintFactors(tp,MnodeCstr,o)
+  i_type1MixedConstraintGenWeight(t1MixCstr,o)
+  i_tradePeriodGenericEnergyOfferConstraintFactors(tp,gnrcCstr,o)
   i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)
-  i_type1MixedConstraintResWeight(t1MixCnstrnt,o,i_reserveClass,i_reserveType)
-  i_tradePeriodMNodeReserveOfferConstraintFactors(tp,MnodeCnstrnt,o,i_reserveClass,i_reserveType)
-  i_tradePeriodGenericReserveOfferConstraintFactors(tp,gnrcCnstrnt,o,i_reserveClass,i_reserveType)
+  i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+  i_tradePeriodMNodeReserveOfferConstraintFactors(tp,MnodeCstr,o,i_reserveClass,i_reserveType)
+  i_tradePeriodGenericReserveOfferConstraintFactors(tp,gnrcCstr,o,i_reserveClass,i_reserveType)
 $offtext
 
 
@@ -898,23 +898,23 @@ i_tradePeriodBranchOpenStatus(tp,br)$(tradePeriodBranchOpenStatusOvrd(tp,br) and
   option clear = BranchConstraintFactorOvrdFromGDate ;      option clear = BranchConstraintFactorOvrdToGDate ;
 
 * Calculate the from and to date for the branch constraint factor override
-BranchConstraintFactorOvrdFromDay(ovrd,brCnstrnt,br) = sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCnstrnt,br,day,mth,yr), ord(day)) ;
-BranchConstraintFactorOvrdFromMonth(ovrd,brCnstrnt,br) = sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCnstrnt,br,day,mth,yr), ord(mth)) ;
-BranchConstraintFactorOvrdFromYear(ovrd,brCnstrnt,br) = sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCnstrnt,br,day,mth,yr), ord(yr) + startYear) ;
+BranchConstraintFactorOvrdFromDay(ovrd,brCstr,br) = sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCstr,br,day,mth,yr), ord(day)) ;
+BranchConstraintFactorOvrdFromMonth(ovrd,brCstr,br) = sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCstr,br,day,mth,yr), ord(mth)) ;
+BranchConstraintFactorOvrdFromYear(ovrd,brCstr,br) = sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCstr,br,day,mth,yr), ord(yr) + startYear) ;
 
-BranchConstraintFactorOvrdToDay(ovrd,brCnstrnt,br) = sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCnstrnt,br,toDay,toMth,toYr), ord(toDay)) ;
-BranchConstraintFactorOvrdToMonth(ovrd,brCnstrnt,br) = sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCnstrnt,br,toDay,toMth,toYr), ord(toMth)) ;
-BranchConstraintFactorOvrdToYear(ovrd,brCnstrnt,br) = sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCnstrnt,br,toDay,toMth,toYr), ord(toYr) + startYear) ;
+BranchConstraintFactorOvrdToDay(ovrd,brCstr,br) = sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCstr,br,toDay,toMth,toYr), ord(toDay)) ;
+BranchConstraintFactorOvrdToMonth(ovrd,brCstr,br) = sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCstr,br,toDay,toMth,toYr), ord(toMth)) ;
+BranchConstraintFactorOvrdToYear(ovrd,brCstr,br) = sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCstr,br,toDay,toMth,toYr), ord(toYr) + startYear) ;
 
-BranchConstraintFactorOvrdFromGDate(ovrd,brCnstrnt,br)$sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCnstrnt,br,day,mth,yr), 1) = jdate(BranchConstraintFactorOvrdFromYear(ovrd,brCnstrnt,br), BranchConstraintFactorOvrdFromMonth(ovrd,brCnstrnt,br), BranchConstraintFactorOvrdFromDay(ovrd,brCnstrnt,br)) ;
-BranchConstraintFactorOvrdToGDate(ovrd,brCnstrnt,br)$sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCnstrnt,br,toDay,toMth,toYr), 1) = jdate(BranchConstraintFactorOvrdToYear(ovrd,brCnstrnt,br), BranchConstraintFactorOvrdToMonth(ovrd,brCnstrnt,br), BranchConstraintFactorOvrdToDay(ovrd,brCnstrnt,br)) ;
+BranchConstraintFactorOvrdFromGDate(ovrd,brCstr,br)$sum((day,mth,yr)$i_BranchConstraintFactorOvrdFromDate(ovrd,brCstr,br,day,mth,yr), 1) = jdate(BranchConstraintFactorOvrdFromYear(ovrd,brCstr,br), BranchConstraintFactorOvrdFromMonth(ovrd,brCstr,br), BranchConstraintFactorOvrdFromDay(ovrd,brCstr,br)) ;
+BranchConstraintFactorOvrdToGDate(ovrd,brCstr,br)$sum((toDay,toMth,toYr)$i_BranchConstraintFactorOvrdToDate(ovrd,brCstr,br,toDay,toMth,toYr), 1) = jdate(BranchConstraintFactorOvrdToYear(ovrd,brCstr,br), BranchConstraintFactorOvrdToMonth(ovrd,brCstr,br), BranchConstraintFactorOvrdToDay(ovrd,brCstr,br)) ;
 
 * Determine if all the conditions for the branch constraint factor are satisfied
-loop((ovrd,tp,brCnstrnt,br)$(i_studyTradePeriod(tp) and (BranchConstraintFactorOvrdFromGDate(ovrd,brCnstrnt,br) <= inputGDXgdate) and (BranchConstraintFactorOvrdToGDate(ovrd,brCnstrnt,br) >= inputGDXgdate) and i_BranchConstraintFactorOvrdTP(ovrd,brCnstrnt,br,tp) and brCnstrntFactorOvrd(ovrd,brCnstrnt,br)),
-    if ((i_BranchConstraintFactorOvrd(ovrd,brCnstrnt,br) <> 0),
-      tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br) = i_BranchConstraintFactorOvrd(ovrd,brCnstrnt,br) ;
-    elseif (i_BranchConstraintFactorOvrd(ovrd,brCnstrnt,br) = eps),
-      tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br) = eps ;
+loop((ovrd,tp,brCstr,br)$(i_studyTradePeriod(tp) and (BranchConstraintFactorOvrdFromGDate(ovrd,brCstr,br) <= inputGDXgdate) and (BranchConstraintFactorOvrdToGDate(ovrd,brCstr,br) >= inputGDXgdate) and i_BranchConstraintFactorOvrdTP(ovrd,brCstr,br,tp) and brCstrFactorOvrd(ovrd,brCstr,br)),
+    if ((i_BranchConstraintFactorOvrd(ovrd,brCstr,br) <> 0),
+      tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br) = i_BranchConstraintFactorOvrd(ovrd,brCstr,br) ;
+    elseif (i_BranchConstraintFactorOvrd(ovrd,brCstr,br) = eps),
+      tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br) = eps ;
     ) ;
 ) ;
 
@@ -924,8 +924,8 @@ loop((ovrd,tp,brCnstrnt,br)$(i_studyTradePeriod(tp) and (BranchConstraintFactorO
   option clear = BranchConstraintFactorOvrdFromGDate ;      option clear = BranchConstraintFactorOvrdToGDate ;
 
 * Apply the branch constraint factor override
-i_tradePeriodBranchConstraintFactors(tp,brCnstrnt,br)$(tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br) <> 0) = tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br) ;
-i_tradePeriodBranchConstraintFactors(tp,brCnstrnt,br)$(tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br) and (tradePeriodBranchConstraintFactorOvrd(tp,brCnstrnt,br) = eps)) = 0 ;
+i_tradePeriodBranchConstraintFactors(tp,brCstr,br)$(tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br) <> 0) = tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br) ;
+i_tradePeriodBranchConstraintFactors(tp,brCstr,br)$(tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br) and (tradePeriodBranchConstraintFactorOvrd(tp,brCstr,br) = eps)) = 0 ;
   option clear = tradePeriodBranchConstraintFactorOvrd ;
 
 * Reset the branch constraint RHS override parameters
@@ -934,23 +934,23 @@ i_tradePeriodBranchConstraintFactors(tp,brCnstrnt,br)$(tradePeriodBranchConstrai
   option clear = BranchConstraintRHSOvrdFromGDate ;         option clear = BranchConstraintRHSOvrdToGDate ;
 
 * Calculate the from and to date for the branch constraint RHS override
-BranchConstraintRHSOvrdFromDay(ovrd,brCnstrnt) = sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCnstrnt,day,mth,yr), ord(day)) ;
-BranchConstraintRHSOvrdFromMonth(ovrd,brCnstrnt) = sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCnstrnt,day,mth,yr), ord(mth)) ;
-BranchConstraintRHSOvrdFromYear(ovrd,brCnstrnt) = sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCnstrnt,day,mth,yr), ord(yr) + startYear) ;
+BranchConstraintRHSOvrdFromDay(ovrd,brCstr) = sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCstr,day,mth,yr), ord(day)) ;
+BranchConstraintRHSOvrdFromMonth(ovrd,brCstr) = sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCstr,day,mth,yr), ord(mth)) ;
+BranchConstraintRHSOvrdFromYear(ovrd,brCstr) = sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCstr,day,mth,yr), ord(yr) + startYear) ;
 
-BranchConstraintRHSOvrdToDay(ovrd,brCnstrnt) = sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCnstrnt,toDay,toMth,toYr), ord(toDay)) ;
-BranchConstraintRHSOvrdToMonth(ovrd,brCnstrnt) = sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCnstrnt,toDay,toMth,toYr), ord(toMth)) ;
-BranchConstraintRHSOvrdToYear(ovrd,brCnstrnt) = sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCnstrnt,toDay,toMth,toYr), ord(toYr) + startYear) ;
+BranchConstraintRHSOvrdToDay(ovrd,brCstr) = sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCstr,toDay,toMth,toYr), ord(toDay)) ;
+BranchConstraintRHSOvrdToMonth(ovrd,brCstr) = sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCstr,toDay,toMth,toYr), ord(toMth)) ;
+BranchConstraintRHSOvrdToYear(ovrd,brCstr) = sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCstr,toDay,toMth,toYr), ord(toYr) + startYear) ;
 
-BranchConstraintRHSOvrdFromGDate(ovrd,brCnstrnt)$sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCnstrnt,day,mth,yr), 1) = jdate(BranchConstraintRHSOvrdFromYear(ovrd,brCnstrnt), BranchConstraintRHSOvrdFromMonth(ovrd,brCnstrnt), BranchConstraintRHSOvrdFromDay(ovrd,brCnstrnt)) ;
-BranchConstraintRHSOvrdToGDate(ovrd,brCnstrnt)$sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCnstrnt,toDay,toMth,toYr), 1) = jdate(BranchConstraintRHSOvrdToYear(ovrd,brCnstrnt), BranchConstraintRHSOvrdToMonth(ovrd,brCnstrnt), BranchConstraintRHSOvrdToDay(ovrd,brCnstrnt)) ;
+BranchConstraintRHSOvrdFromGDate(ovrd,brCstr)$sum((day,mth,yr)$i_BranchConstraintRHSOvrdFromDate(ovrd,brCstr,day,mth,yr), 1) = jdate(BranchConstraintRHSOvrdFromYear(ovrd,brCstr), BranchConstraintRHSOvrdFromMonth(ovrd,brCstr), BranchConstraintRHSOvrdFromDay(ovrd,brCstr)) ;
+BranchConstraintRHSOvrdToGDate(ovrd,brCstr)$sum((toDay,toMth,toYr)$i_BranchConstraintRHSOvrdToDate(ovrd,brCstr,toDay,toMth,toYr), 1) = jdate(BranchConstraintRHSOvrdToYear(ovrd,brCstr), BranchConstraintRHSOvrdToMonth(ovrd,brCstr), BranchConstraintRHSOvrdToDay(ovrd,brCstr)) ;
 
 * Determine if all the conditions for the branch constraint RHS are satisfied
-loop((ovrd,tp,brCnstrnt,i_constraintRHS)$(i_studyTradePeriod(tp) and (BranchConstraintRHSOvrdFromGDate(ovrd,brCnstrnt) <= inputGDXgdate) and (BranchConstraintRHSOvrdToGDate(ovrd,brCnstrnt) >= inputGDXgdate) and i_BranchConstraintRHSOvrdTP(ovrd,brCnstrnt,tp) and i_BranchConstraintRHSOvrd(ovrd,brCnstrnt,i_constraintRHS)),
-    if ((i_BranchConstraintRHSOvrd(ovrd,brCnstrnt,i_constraintRHS) <> 0),
-      tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS) = i_BranchConstraintRHSOvrd(ovrd,brCnstrnt,i_constraintRHS) ;
-    elseif (i_BranchConstraintRHSOvrd(ovrd,brCnstrnt,i_constraintRHS) = eps),
-      tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS) = eps ;
+loop((ovrd,tp,brCstr,i_constraintRHS)$(i_studyTradePeriod(tp) and (BranchConstraintRHSOvrdFromGDate(ovrd,brCstr) <= inputGDXgdate) and (BranchConstraintRHSOvrdToGDate(ovrd,brCstr) >= inputGDXgdate) and i_BranchConstraintRHSOvrdTP(ovrd,brCstr,tp) and i_BranchConstraintRHSOvrd(ovrd,brCstr,i_constraintRHS)),
+    if ((i_BranchConstraintRHSOvrd(ovrd,brCstr,i_constraintRHS) <> 0),
+      tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS) = i_BranchConstraintRHSOvrd(ovrd,brCstr,i_constraintRHS) ;
+    elseif (i_BranchConstraintRHSOvrd(ovrd,brCstr,i_constraintRHS) = eps),
+      tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS) = eps ;
     ) ;
 ) ;
 
@@ -960,8 +960,8 @@ loop((ovrd,tp,brCnstrnt,i_constraintRHS)$(i_studyTradePeriod(tp) and (BranchCons
   option clear = BranchConstraintRHSOvrdFromGDate ;         option clear = BranchConstraintRHSOvrdToGDate ;
 
 * Apply the branch constraint RHS override
-i_tradePeriodBranchConstraintRHS(tp,brCnstrnt,i_constraintRHS)$(tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS) <> 0) = tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS) ;
-i_tradePeriodBranchConstraintRHS(tp,brCnstrnt,i_constraintRHS)$(tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS) and (tradePeriodBranchConstraintRHSOvrd(tp,brCnstrnt,i_constraintRHS) = eps)) = 0 ;
+i_tradePeriodBranchConstraintRHS(tp,brCstr,i_constraintRHS)$(tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS) <> 0) = tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS) ;
+i_tradePeriodBranchConstraintRHS(tp,brCstr,i_constraintRHS)$(tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS) and (tradePeriodBranchConstraintRHSOvrd(tp,brCstr,i_constraintRHS) = eps)) = 0 ;
   option clear = tradePeriodBranchConstraintRHSOvrd ;
 
 *+++ End branch constraint override +++
@@ -974,23 +974,23 @@ i_tradePeriodBranchConstraintRHS(tp,brCnstrnt,i_constraintRHS)$(tradePeriodBranc
   option clear = MnodeEnergyConstraintFactorOvrdFromGDate ; option clear = MnodeEnergyConstraintFactorOvrdToGDate ;
 
 * Calculate the from and to date for the market node energy constraint factor override
-MnodeEnergyConstraintFactorOvrdFromDay(ovrd,MnodeCnstrnt,o) = sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,day,mth,yr), ord(day)) ;
-MnodeEnergyConstraintFactorOvrdFromMonth(ovrd,MnodeCnstrnt,o) = sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,day,mth,yr), ord(mth)) ;
-MnodeEnergyConstraintFactorOvrdFromYear(ovrd,MnodeCnstrnt,o) = sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,day,mth,yr), ord(yr) + startYear) ;
+MnodeEnergyConstraintFactorOvrdFromDay(ovrd,MnodeCstr,o) = sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,day,mth,yr), ord(day)) ;
+MnodeEnergyConstraintFactorOvrdFromMonth(ovrd,MnodeCstr,o) = sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,day,mth,yr), ord(mth)) ;
+MnodeEnergyConstraintFactorOvrdFromYear(ovrd,MnodeCstr,o) = sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,day,mth,yr), ord(yr) + startYear) ;
 
-MnodeEnergyConstraintFactorOvrdToDay(ovrd,MnodeCnstrnt,o) = sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,toDay,toMth,toYr), ord(toDay)) ;
-MnodeEnergyConstraintFactorOvrdToMonth(ovrd,MnodeCnstrnt,o) = sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,toDay,toMth,toYr), ord(toMth)) ;
-MnodeEnergyConstraintFactorOvrdToYear(ovrd,MnodeCnstrnt,o) = sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,toDay,toMth,toYr), ord(toYr) + startYear) ;
+MnodeEnergyConstraintFactorOvrdToDay(ovrd,MnodeCstr,o) = sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,toDay,toMth,toYr), ord(toDay)) ;
+MnodeEnergyConstraintFactorOvrdToMonth(ovrd,MnodeCstr,o) = sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,toDay,toMth,toYr), ord(toMth)) ;
+MnodeEnergyConstraintFactorOvrdToYear(ovrd,MnodeCstr,o) = sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,toDay,toMth,toYr), ord(toYr) + startYear) ;
 
-MnodeEnergyConstraintFactorOvrdFromGDate(ovrd,MnodeCnstrnt,o)$sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,day,mth,yr), 1) = jdate(MnodeEnergyConstraintFactorOvrdFromYear(ovrd,MnodeCnstrnt,o), MnodeEnergyConstraintFactorOvrdFromMonth(ovrd,MnodeCnstrnt,o), MnodeEnergyConstraintFactorOvrdFromDay(ovrd,MnodeCnstrnt,o)) ;
-MnodeEnergyConstraintFactorOvrdToGDate(ovrd,MnodeCnstrnt,o)$sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,toDay,toMth,toYr), 1) = jdate(MnodeEnergyConstraintFactorOvrdToYear(ovrd,MnodeCnstrnt,o), MnodeEnergyConstraintFactorOvrdToMonth(ovrd,MnodeCnstrnt,o), MnodeEnergyConstraintFactorOvrdToDay(ovrd,MnodeCnstrnt,o)) ;
+MnodeEnergyConstraintFactorOvrdFromGDate(ovrd,MnodeCstr,o)$sum((day,mth,yr)$i_MnodeEnergyConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,day,mth,yr), 1) = jdate(MnodeEnergyConstraintFactorOvrdFromYear(ovrd,MnodeCstr,o), MnodeEnergyConstraintFactorOvrdFromMonth(ovrd,MnodeCstr,o), MnodeEnergyConstraintFactorOvrdFromDay(ovrd,MnodeCstr,o)) ;
+MnodeEnergyConstraintFactorOvrdToGDate(ovrd,MnodeCstr,o)$sum((toDay,toMth,toYr)$i_MnodeEnergyConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,toDay,toMth,toYr), 1) = jdate(MnodeEnergyConstraintFactorOvrdToYear(ovrd,MnodeCstr,o), MnodeEnergyConstraintFactorOvrdToMonth(ovrd,MnodeCstr,o), MnodeEnergyConstraintFactorOvrdToDay(ovrd,MnodeCstr,o)) ;
 
 * Determine if all the conditions for the market node energy constraint factor are satisfied
-loop((ovrd,tp,MnodeCnstrnt,o)$(i_studyTradePeriod(tp) and (MnodeEnergyConstraintFactorOvrdFromGDate(ovrd,MnodeCnstrnt,o) <= inputGDXgdate) and (MnodeEnergyConstraintFactorOvrdToGDate(ovrd,MnodeCnstrnt,o) >= inputGDXgdate) and i_MnodeEnergyConstraintFactorOvrdTP(ovrd,MnodeCnstrnt,o,tp) and i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCnstrnt,o)),
-    if ((i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCnstrnt,o) <> 0),
-      tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) = i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCnstrnt,o) ;
-    elseif (i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCnstrnt,o) = eps),
-      tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) = eps ;
+loop((ovrd,tp,MnodeCstr,o)$(i_studyTradePeriod(tp) and (MnodeEnergyConstraintFactorOvrdFromGDate(ovrd,MnodeCstr,o) <= inputGDXgdate) and (MnodeEnergyConstraintFactorOvrdToGDate(ovrd,MnodeCstr,o) >= inputGDXgdate) and i_MnodeEnergyConstraintFactorOvrdTP(ovrd,MnodeCstr,o,tp) and i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCstr,o)),
+    if ((i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCstr,o) <> 0),
+      tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) = i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCstr,o) ;
+    elseif (i_MnodeEnergyConstraintFactorOvrd(ovrd,MnodeCstr,o) = eps),
+      tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) = eps ;
     ) ;
 ) ;
 
@@ -1000,8 +1000,8 @@ loop((ovrd,tp,MnodeCnstrnt,o)$(i_studyTradePeriod(tp) and (MnodeEnergyConstraint
   option clear = MnodeEnergyConstraintFactorOvrdFromGDate ; option clear = MnodeEnergyConstraintFactorOvrdToGDate ;
 
 * Apply the market node energy constraint factor override
-i_tradePeriodMnodeEnergyOfferConstraintFactors(tp,MnodeCnstrnt,o)$(tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) <> 0) = tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) ;
-i_tradePeriodMnodeEnergyOfferConstraintFactors(tp,MnodeCnstrnt,o)$(tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) and (tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCnstrnt,o) = eps)) = 0 ;
+i_tradePeriodMnodeEnergyOfferConstraintFactors(tp,MnodeCstr,o)$(tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) <> 0) = tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) ;
+i_tradePeriodMnodeEnergyOfferConstraintFactors(tp,MnodeCstr,o)$(tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) and (tradePeriodMnodeEnergyConstraintFactorOvrd(tp,MnodeCstr,o) = eps)) = 0 ;
   option clear = tradePeriodMnodeEnergyConstraintFactorOvrd ;
 
 * Reset the market node reserve constraint factor override parameters
@@ -1010,23 +1010,23 @@ i_tradePeriodMnodeEnergyOfferConstraintFactors(tp,MnodeCnstrnt,o)$(tradePeriodMn
   option clear = MnodeReserveConstraintFactorOvrdFromGDate ;        option clear = MnodeReserveConstraintFactorOvrdToGDate ;
 
 * Calculate the from and to date for the market node reserve constraint factor override
-MnodeReserveConstraintFactorOvrdFromDay(ovrd,MnodeCnstrnt,o,i_reserveClass) = sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,i_reserveClass,day,mth,yr), ord(day)) ;
-MnodeReserveConstraintFactorOvrdFromMonth(ovrd,MnodeCnstrnt,o,i_reserveClass) = sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,i_reserveClass,day,mth,yr), ord(mth)) ;
-MnodeReserveConstraintFactorOvrdFromYear(ovrd,MnodeCnstrnt,o,i_reserveClass) = sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,i_reserveClass,day,mth,yr), ord(yr) + startYear) ;
+MnodeReserveConstraintFactorOvrdFromDay(ovrd,MnodeCstr,o,i_reserveClass) = sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,i_reserveClass,day,mth,yr), ord(day)) ;
+MnodeReserveConstraintFactorOvrdFromMonth(ovrd,MnodeCstr,o,i_reserveClass) = sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,i_reserveClass,day,mth,yr), ord(mth)) ;
+MnodeReserveConstraintFactorOvrdFromYear(ovrd,MnodeCstr,o,i_reserveClass) = sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,i_reserveClass,day,mth,yr), ord(yr) + startYear) ;
 
-MnodeReserveConstraintFactorOvrdToDay(ovrd,MnodeCnstrnt,o,i_reserveClass) = sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,i_reserveClass,toDay,toMth,toYr), ord(toDay)) ;
-MnodeReserveConstraintFactorOvrdToMonth(ovrd,MnodeCnstrnt,o,i_reserveClass) = sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,i_reserveClass,toDay,toMth,toYr), ord(toMth)) ;
-MnodeReserveConstraintFactorOvrdToYear(ovrd,MnodeCnstrnt,o,i_reserveClass) = sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,i_reserveClass,toDay,toMth,toYr), ord(toYr) + startYear) ;
+MnodeReserveConstraintFactorOvrdToDay(ovrd,MnodeCstr,o,i_reserveClass) = sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,i_reserveClass,toDay,toMth,toYr), ord(toDay)) ;
+MnodeReserveConstraintFactorOvrdToMonth(ovrd,MnodeCstr,o,i_reserveClass) = sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,i_reserveClass,toDay,toMth,toYr), ord(toMth)) ;
+MnodeReserveConstraintFactorOvrdToYear(ovrd,MnodeCstr,o,i_reserveClass) = sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,i_reserveClass,toDay,toMth,toYr), ord(toYr) + startYear) ;
 
-MnodeReserveConstraintFactorOvrdFromGDate(ovrd,MnodeCnstrnt,o,i_reserveClass)$sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCnstrnt,o,i_reserveClass,day,mth,yr), 1) = jdate(MnodeReserveConstraintFactorOvrdFromYear(ovrd,MnodeCnstrnt,o,i_reserveClass), MnodeReserveConstraintFactorOvrdFromMonth(ovrd,MnodeCnstrnt,o,i_reserveClass), MnodeReserveConstraintFactorOvrdFromDay(ovrd,MnodeCnstrnt,o,i_reserveClass)) ;
-MnodeReserveConstraintFactorOvrdToGDate(ovrd,MnodeCnstrnt,o,i_reserveClass)$sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCnstrnt,o,i_reserveClass,toDay,toMth,toYr), 1) = jdate(MnodeReserveConstraintFactorOvrdToYear(ovrd,MnodeCnstrnt,o,i_reserveClass), MnodeReserveConstraintFactorOvrdToMonth(ovrd,MnodeCnstrnt,o,i_reserveClass), MnodeReserveConstraintFactorOvrdToDay(ovrd,MnodeCnstrnt,o,i_reserveClass)) ;
+MnodeReserveConstraintFactorOvrdFromGDate(ovrd,MnodeCstr,o,i_reserveClass)$sum((day,mth,yr)$i_MnodeReserveConstraintFactorOvrdFromDate(ovrd,MnodeCstr,o,i_reserveClass,day,mth,yr), 1) = jdate(MnodeReserveConstraintFactorOvrdFromYear(ovrd,MnodeCstr,o,i_reserveClass), MnodeReserveConstraintFactorOvrdFromMonth(ovrd,MnodeCstr,o,i_reserveClass), MnodeReserveConstraintFactorOvrdFromDay(ovrd,MnodeCstr,o,i_reserveClass)) ;
+MnodeReserveConstraintFactorOvrdToGDate(ovrd,MnodeCstr,o,i_reserveClass)$sum((toDay,toMth,toYr)$i_MnodeReserveConstraintFactorOvrdToDate(ovrd,MnodeCstr,o,i_reserveClass,toDay,toMth,toYr), 1) = jdate(MnodeReserveConstraintFactorOvrdToYear(ovrd,MnodeCstr,o,i_reserveClass), MnodeReserveConstraintFactorOvrdToMonth(ovrd,MnodeCstr,o,i_reserveClass), MnodeReserveConstraintFactorOvrdToDay(ovrd,MnodeCstr,o,i_reserveClass)) ;
 
 * Determine if all the conditions for the market node reserve constraint factor are satisfied
-loop((ovrd,tp,MnodeCnstrnt,o,i_reserveClass)$(i_studyTradePeriod(tp) and (MnodeReserveConstraintFactorOvrdFromGDate(ovrd,MnodeCnstrnt,o,i_reserveClass) <= inputGDXgdate) and (MnodeReserveConstraintFactorOvrdToGDate(ovrd,MnodeCnstrnt,o,i_reserveClass) >= inputGDXgdate) and i_MnodeReserveConstraintFactorOvrdTP(ovrd,MnodeCnstrnt,o,i_reserveClass,tp) and i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCnstrnt,o,i_reserveClass)),
-    if ((i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCnstrnt,o,i_reserveClass) <> 0),
-      tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) = i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCnstrnt,o,i_reserveClass) ;
-    elseif (i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCnstrnt,o,i_reserveClass) = eps),
-      tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) = eps ;
+loop((ovrd,tp,MnodeCstr,o,i_reserveClass)$(i_studyTradePeriod(tp) and (MnodeReserveConstraintFactorOvrdFromGDate(ovrd,MnodeCstr,o,i_reserveClass) <= inputGDXgdate) and (MnodeReserveConstraintFactorOvrdToGDate(ovrd,MnodeCstr,o,i_reserveClass) >= inputGDXgdate) and i_MnodeReserveConstraintFactorOvrdTP(ovrd,MnodeCstr,o,i_reserveClass,tp) and i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCstr,o,i_reserveClass)),
+    if ((i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCstr,o,i_reserveClass) <> 0),
+      tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) = i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCstr,o,i_reserveClass) ;
+    elseif (i_MnodeReserveConstraintFactorOvrd(ovrd,MnodeCstr,o,i_reserveClass) = eps),
+      tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) = eps ;
     ) ;
 ) ;
 
@@ -1036,8 +1036,8 @@ loop((ovrd,tp,MnodeCnstrnt,o,i_reserveClass)$(i_studyTradePeriod(tp) and (MnodeR
   option clear = MnodeReserveConstraintFactorOvrdFromGDate ;        option clear = MnodeReserveConstraintFactorOvrdToGDate ;
 
 * Apply the market node reserve constraint factor override
-i_tradePeriodMnodeReserveOfferConstraintFactors(tp,MnodeCnstrnt,o,i_reserveClass,i_reserveType)$(tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) <> 0) = tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) ;
-i_tradePeriodMnodeReserveOfferConstraintFactors(tp,MnodeCnstrnt,o,i_reserveClass,i_reserveType)$(tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) and (tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCnstrnt,o,i_reserveClass) = eps)) = 0 ;
+i_tradePeriodMnodeReserveOfferConstraintFactors(tp,MnodeCstr,o,i_reserveClass,i_reserveType)$(tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) <> 0) = tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) ;
+i_tradePeriodMnodeReserveOfferConstraintFactors(tp,MnodeCstr,o,i_reserveClass,i_reserveType)$(tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) and (tradePeriodMnodeReserveConstraintFactorOvrd(tp,MnodeCstr,o,i_reserveClass) = eps)) = 0 ;
   option clear = tradePeriodMnodeReserveConstraintFactorOvrd ;
 
 * Reset the market node reserve constraint RHS override parameters
@@ -1046,23 +1046,23 @@ i_tradePeriodMnodeReserveOfferConstraintFactors(tp,MnodeCnstrnt,o,i_reserveClass
   option clear = MnodeConstraintRHSOvrdFromGDate ;          option clear = MnodeConstraintRHSOvrdToGDate ;
 
 * Calculate the from and to date for the market node RHS override
-MnodeConstraintRHSOvrdFromDay(ovrd,MnodeCnstrnt) = sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCnstrnt,day,mth,yr), ord(day)) ;
-MnodeConstraintRHSOvrdFromMonth(ovrd,MnodeCnstrnt) = sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCnstrnt,day,mth,yr), ord(mth)) ;
-MnodeConstraintRHSOvrdFromYear(ovrd,MnodeCnstrnt) = sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCnstrnt,day,mth,yr), ord(yr) + startYear) ;
+MnodeConstraintRHSOvrdFromDay(ovrd,MnodeCstr) = sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCstr,day,mth,yr), ord(day)) ;
+MnodeConstraintRHSOvrdFromMonth(ovrd,MnodeCstr) = sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCstr,day,mth,yr), ord(mth)) ;
+MnodeConstraintRHSOvrdFromYear(ovrd,MnodeCstr) = sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCstr,day,mth,yr), ord(yr) + startYear) ;
 
-MnodeConstraintRHSOvrdToDay(ovrd,MnodeCnstrnt) = sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCnstrnt,toDay,toMth,toYr), ord(toDay)) ;
-MnodeConstraintRHSOvrdToMonth(ovrd,MnodeCnstrnt) = sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCnstrnt,toDay,toMth,toYr), ord(toMth)) ;
-MnodeConstraintRHSOvrdToYear(ovrd,MnodeCnstrnt) = sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCnstrnt,toDay,toMth,toYr), ord(toYr) + startYear) ;
+MnodeConstraintRHSOvrdToDay(ovrd,MnodeCstr) = sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCstr,toDay,toMth,toYr), ord(toDay)) ;
+MnodeConstraintRHSOvrdToMonth(ovrd,MnodeCstr) = sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCstr,toDay,toMth,toYr), ord(toMth)) ;
+MnodeConstraintRHSOvrdToYear(ovrd,MnodeCstr) = sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCstr,toDay,toMth,toYr), ord(toYr) + startYear) ;
 
-MnodeConstraintRHSOvrdFromGDate(ovrd,MnodeCnstrnt)$sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCnstrnt,day,mth,yr), 1) = jdate(MnodeConstraintRHSOvrdFromYear(ovrd,MnodeCnstrnt), MnodeConstraintRHSOvrdFromMonth(ovrd,MnodeCnstrnt), MnodeConstraintRHSOvrdFromDay(ovrd,MnodeCnstrnt)) ;
-MnodeConstraintRHSOvrdToGDate(ovrd,MnodeCnstrnt)$sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCnstrnt,toDay,toMth,toYr), 1) = jdate(MnodeConstraintRHSOvrdToYear(ovrd,MnodeCnstrnt), MnodeConstraintRHSOvrdToMonth(ovrd,MnodeCnstrnt), MnodeConstraintRHSOvrdToDay(ovrd,MnodeCnstrnt)) ;
+MnodeConstraintRHSOvrdFromGDate(ovrd,MnodeCstr)$sum((day,mth,yr)$i_MnodeConstraintRHSOvrdFromDate(ovrd,MnodeCstr,day,mth,yr), 1) = jdate(MnodeConstraintRHSOvrdFromYear(ovrd,MnodeCstr), MnodeConstraintRHSOvrdFromMonth(ovrd,MnodeCstr), MnodeConstraintRHSOvrdFromDay(ovrd,MnodeCstr)) ;
+MnodeConstraintRHSOvrdToGDate(ovrd,MnodeCstr)$sum((toDay,toMth,toYr)$i_MnodeConstraintRHSOvrdToDate(ovrd,MnodeCstr,toDay,toMth,toYr), 1) = jdate(MnodeConstraintRHSOvrdToYear(ovrd,MnodeCstr), MnodeConstraintRHSOvrdToMonth(ovrd,MnodeCstr), MnodeConstraintRHSOvrdToDay(ovrd,MnodeCstr)) ;
 
 * Determine if all the conditions for the market node constraint RHS are satisfied
-loop((ovrd,tp,MnodeCnstrnt,i_constraintRHS)$(i_studyTradePeriod(tp) and (MnodeConstraintRHSOvrdFromGDate(ovrd,MnodeCnstrnt) <= inputGDXgdate) and (MnodeConstraintRHSOvrdToGDate(ovrd,MnodeCnstrnt) >= inputGDXgdate) and i_MnodeConstraintRHSOvrdTP(ovrd,MnodeCnstrnt,tp) and i_MnodeConstraintRHSOvrd(ovrd,MnodeCnstrnt,i_constraintRHS)),
-    if ((i_MnodeConstraintRHSOvrd(ovrd,MnodeCnstrnt,i_constraintRHS) <> 0),
-      tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS) = i_MnodeConstraintRHSOvrd(ovrd,MnodeCnstrnt,i_constraintRHS) ;
-    elseif (i_MnodeConstraintRHSOvrd(ovrd,MnodeCnstrnt,i_constraintRHS) = eps),
-      tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS) = eps ;
+loop((ovrd,tp,MnodeCstr,i_constraintRHS)$(i_studyTradePeriod(tp) and (MnodeConstraintRHSOvrdFromGDate(ovrd,MnodeCstr) <= inputGDXgdate) and (MnodeConstraintRHSOvrdToGDate(ovrd,MnodeCstr) >= inputGDXgdate) and i_MnodeConstraintRHSOvrdTP(ovrd,MnodeCstr,tp) and i_MnodeConstraintRHSOvrd(ovrd,MnodeCstr,i_constraintRHS)),
+    if ((i_MnodeConstraintRHSOvrd(ovrd,MnodeCstr,i_constraintRHS) <> 0),
+      tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS) = i_MnodeConstraintRHSOvrd(ovrd,MnodeCstr,i_constraintRHS) ;
+    elseif (i_MnodeConstraintRHSOvrd(ovrd,MnodeCstr,i_constraintRHS) = eps),
+      tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS) = eps ;
     ) ;
 ) ;
 
@@ -1072,8 +1072,8 @@ loop((ovrd,tp,MnodeCnstrnt,i_constraintRHS)$(i_studyTradePeriod(tp) and (MnodeCo
   option clear = MnodeConstraintRHSOvrdFromGDate ;  option clear = MnodeConstraintRHSOvrdToGDate ;
 
 * Market node constraint RHS override
-i_tradePeriodMnodeConstraintRHS(tp,MnodeCnstrnt,i_constraintRHS)$(tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS) <> 0) = tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS) ;
-i_tradePeriodMnodeConstraintRHS(tp,MnodeCnstrnt,i_constraintRHS)$(tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS) and (tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCnstrnt,i_constraintRHS) = eps)) = 0 ;
+i_tradePeriodMnodeConstraintRHS(tp,MnodeCstr,i_constraintRHS)$(tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS) <> 0) = tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS) ;
+i_tradePeriodMnodeConstraintRHS(tp,MnodeCstr,i_constraintRHS)$(tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS) and (tradePeriodMnodeConstraintRHSOvrd(tp,MnodeCstr,i_constraintRHS) = eps)) = 0 ;
   option clear = tradePeriodMnodeConstraintRHSOvrd ;
 
 *+++ End market node constraint override +++
