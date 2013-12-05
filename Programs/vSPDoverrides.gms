@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     4 December 2013
+* Last modified on:     5 December 2013
 *=====================================================================================
 
 $ontext
@@ -24,11 +24,14 @@ any means the user prefers - GDX file, $include file, hard-coding, etc. But it p
 the GDX file as used by EMI.
 
 Directory of code sections in vSPDoverrides.gms:
-  1. Install new set elements from newSetElements.inc, if any exist
-  2. Declare override symbols to be loaded from override GDX
-     a) Offers - incl. energy, PLSR, TWDR, and ILR
-     b) Demand
-  3. Declare more override symbols - to be initialised within this program
+  1. Excel interface - declare and initialise overrides
+  2. EMI tools and Standalone interface - declare override symbols
+     a) Install new set elements from vSPDnewElements.inc, if any exist
+     b) Declare override symbols to be loaded from override GDX
+        i)  Offers - incl. energy, PLSR, TWDR, and ILR
+        ii) Demand
+     c) Declare more override symbols - to be initialised within this program
+
 
   x. Initialise new data instances based on new set elements in override file
   x. Initialise override symbols
@@ -55,44 +58,61 @@ Aliases to be aware of:
 $offtext
 
 
-* Excel interface - declare and initialise overrides
-$if not %interfaceMode%==1 $goto skipOverridesWithExcel
-$ontext
+*=========================================================================================================================
+* 1. Excel interface - declare and initialise overrides
+*=========================================================================================================================
+
+$if not %interfaceMode%==1 $goto endOverridesWithExcel
+
 Parameters
   i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt)  'Override for energy offers for specified trade period'
-  i_offerParamOvrd(tp,i_offer,i_offerParam)  'Override for energy offer parameters for specified trade period'
-  i_nodeDemandOvrd(tp,n)                'Override MW nodal demand for specified trade period'
-  i_islandDemandOvrd(tp,ild)            'Scaling factor for island demand for specified trade period'
-  tradePeriodNodeDemandTemp(tp,n)       'Temporary trade period node demand for use in override calculations using i_islandDemandOvrd' ;
-$onecho > OverridesFromExcel.ins
-  par = i_energyOfferOvrd         rng = i_energyOfferOvrd         rdim = 4
-  par = i_offerParamOvrd          rng = i_offerParamOvrd          rdim = 3
-  par = i_nodeDemandOvrd          rng = i_nodeDemandOvrd          rdim = 2
-  par = i_islandDemandOvrd        rng = i_islandDemandOvrd        rdim = 2
+  i_offerParamOvrd(tp,i_offer,i_offerParam)         'Override for energy offer parameters for specified trade period'
+  i_nodeDemandOvrd(tp,n)                            'Override MW nodal demand for specified trade period'
+  i_islandDemandOvrd(tp,ild)                        'Scaling factor for island demand for specified trade period'
+  tradePeriodNodeDemandTemp(tp,n)                   'Temporary trade period node demand for use in override calculations using i_islandDemandOvrd'
+  ;
+$onecho > overridesFromExcel.ins
+  par = i_energyOfferOvrd       rng = i_energyOfferOvrd       rdim = 4
+  par = i_offerParamOvrd        rng = i_offerParamOvrd        rdim = 3
+  par = i_nodeDemandOvrd        rng = i_nodeDemandOvrd        rdim = 2
+  par = i_islandDemandOvrd      rng = i_islandDemandOvrd      rdim = 2
 $offecho
-*RDN - Update the override path and file name for the xls overrides
-*$call 'gdxxrw "%ovrdPath%\%vSPDinputOvrdData%.xls" o=overridesFromExcel.gdx "@OverridesFromExcel.ins"'
-*$gdxin "%ovrdPath%\overridesFromExcel"
-$call 'gdxxrw "%programPath%\%vSPDinputFileName%.xls" o=overridesFromExcel.gdx "@OverridesFromExcel.ins"'
-$gdxin "%programPath%\overridesFromExcel"
+
+* Update the override path and file name for the xls overrides
+$call 'gdxxrw "%programPath%\%vSPDinputFileName%.xls" o=overridesFromExcel.gdx "@overridesFromExcel.ins"'
+$gdxin "%ovrdPath%\overridesFromExcel"
 $load i_energyOfferOvrd i_offerParamOvrd i_nodeDemandOvrd i_islandDemandOvrd
 $gdxin
 
 * Island demand overrides
 tradePeriodNodeDemandTemp(tp,n) = 0 ;
 tradePeriodNodeDemandTemp(tp,n) = i_tradePeriodNodeDemand(tp,n) ;
+
 * Apply island scaling factor to a node if scaling factor > 0 and the node demand > 0
-  i_tradePeriodNodeDemand(tp,n)$(
-                         ( tradePeriodNodeDemandTemp(tp,n) > 0 ) *
-                         ( sum((b,ild)$( i_tradePeriodNodeBus(tp,n,b) * i_tradePeriodBusIsland(tp,b,ild) ), i_islandDemandOvrd(tp,ild) ) > 0 )  )
-    = sum((b,ild)$( i_tradePeriodNodeBus(tp,n,b) * i_tradePeriodBusIsland(tp,b,ild) ), i_tradePeriodNodeBusAllocationFactor(tp,n,b) * i_islandDemandOvrd(tp,ild) )
-        * tradePeriodNodeDemandTemp(tp,n) ;
+i_tradePeriodNodeDemand(tp,n) $ { ( tradePeriodNodeDemandTemp(tp,n) > 0 ) and
+                                  ( sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
+                                                     i_tradePeriodBusIsland(tp,b,ild)
+                                                   }, i_islandDemandOvrd(tp,ild)
+                                       ] > 0
+                                   )
+                                }
+    = sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
+                       i_tradePeriodBusIsland(tp,b,ild)
+                     }, i_tradePeriodNodeBusAllocationFactor(tp,n,b)
+                      * i_islandDemandOvrd(tp,ild)
+                      * tradePeriodNodeDemandTemp(tp,n)
+         ] ;
+
 * Apply island scaling factor to a node if scaling factor = eps (0) and the node demand > 0
-  i_tradePeriodNodeDemand(tp,n)$(
-                         ( tradePeriodNodeDemandTemp(tp,n) > 0 ) *
-                         ( sum((b,ild)$( i_tradePeriodNodeBus(tp,n,b) * i_tradePeriodBusIsland(tp,b,ild) * i_islandDemandOvrd(tp,ild) * ( i_islandDemandOvrd(tp,ild) = eps ) ), 1 ) > 0 )  )
-    = sum((b,ild)$( i_tradePeriodNodeBus(tp,n,b) * i_tradePeriodBusIsland(tp,b,ild) ), i_tradePeriodNodeBusAllocationFactor(tp,n,b) * 0 )
-        * tradePeriodNodeDemandTemp(tp,n) ;
+i_tradePeriodNodeDemand(tp,n) $ { ( tradePeriodNodeDemandTemp(tp,n) > 0 ) and
+                                    ( sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
+                                                       i_tradePeriodBusIsland(tp,b,ild) and
+                                                       i_islandDemandOvrd(tp,ild) and
+                                                       ( i_islandDemandOvrd(tp,ild) = eps )
+                                                     }, 1
+                                         ] > 0 )
+                                }
+    = 0 ;
 
 * Node demand overrides
 i_tradePeriodNodeDemand(tp,n)$i_nodeDemandOvrd(tp,n) = i_nodeDemandOvrd(tp,n) ;
@@ -101,34 +121,35 @@ i_tradePeriodNodeDemand(tp,n)$( i_nodeDemandOvrd(tp,n) * ( i_nodeDemandOvrd(tp,n
 * Energy offer overrides
 i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) > 0 )
   = i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) ;
-i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) * ( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) = eps ) )
-  = 0 ;
+i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$
+  ( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) * ( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) = eps ) )
+   = 0 ;
 
 * Offer parameter overrides
 i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)$( i_offerParamOvrd(tp,i_offer,i_offerParam) > 0 ) = i_offerParamOvrd(tp,i_offer,i_offerParam) ;
-i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)$( i_offerParamOvrd(tp,i_offer,i_offerParam) * ( i_offerParamOvrd(tp,i_offer,i_offerParam) = eps ) ) = 0 ;
-$offtext
-$label skipOverridesWithExcel
+i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)${ i_offerParamOvrd(tp,i_offer,i_offerParam) and
+                                                       ( i_offerParamOvrd(tp,i_offer,i_offerParam) = eps ) } = 0 ;
 
-* EMI tools and Standalone interface - declare override symbols
-$if %interfaceMode%==1 $goto skipEMIandStandaloneOverrides
+$goto theEnd
+$label endOverridesWithExcel
+
+
+
+*=========================================================================================================================
+* 2. EMI tools and Standalone interface - declare override symbols
+*=========================================================================================================================
+$if %interfaceMode%==1 $goto endEMIandStandaloneOverrides
 * Declare override symbols to be used for both EMI tools and standalone interface types
 * NB: The following declarations are not skipped if in Excel interface mode - no harm is done by declaring symbols and then never using them.
 
 
-
-*=====================================================================================
-* 1. Install new set elements from newSetElements.inc, if any exist
-*=====================================================================================
-$if exist newSetElements.inc $include newSetElements.inc
+* a) Install new set elements from vSPDnewElements.inc, if any exist
+$if exist vSPDnewElements.inc $include vSPDnewElements.inc
 
 
+* b) Declare override symbols to be loaded from override GDX
 
-*=====================================================================================
-* 2. Declare override symbols to be loaded from override GDX
-*=====================================================================================
-
-* a) Offers - incl. energy, PLSR, TWDR, and ILR
+* i) Offers - incl. energy, PLSR, TWDR, and ILR
 Sets
   new_offer(o)                                                   'New offer elements'
   new_offerNode(o,n)                                             'Mapping of new offers to nodes'
@@ -166,13 +187,10 @@ Parameters
 
 
 
-* b) Demand
+* ii) Demand
 
 
-*=====================================================================================
-* 3. Declare more override symbols - to be initialised within this program
-*=====================================================================================
-
+* c) Declare more override symbols - to be initialised within this program
 Parameters
   newOfferDay(new_offer,fromTo)                                  'New offer override from/to day'
   newOfferMonth(new_offer,fromTo)                                'New offer override from/to month'
@@ -1233,4 +1251,7 @@ $offtext
 
 
 * End EMI and Standalone interface override assignments
-$label skipEMIandStandaloneOverrides
+$label endEMIandStandaloneOverrides
+
+
+$label theEnd

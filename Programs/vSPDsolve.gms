@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     4 December 2013
+* Last modified on:     5 December 2013
 *=====================================================================================
 
 $ontext
@@ -509,6 +509,7 @@ i_useBusNetworkModel(tp) = 1$( ( inputGDXGDate >= MSPchangeOverGDXGDate ) and su
 * RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - End----------
 
 
+
 *=====================================================================================
 * 4. Establish which trading periods are to be solved
 *=====================================================================================
@@ -521,45 +522,15 @@ $ontext
   values imply standalone interface mode (although ideally users should set it equal to 2 for standalone).
 $offtext
 
-Parameter i_tradePeriodSolve(tp) 'Trading periods to be solved' ;
+Sets
+  tempPeriod  'Temporary list of user-specified trading periods to be solved'
+$ include vSPDtpsToSolve.inc
+  ;
 
-* EMI interface
-$if not %interfaceMode%==0 $goto skipEMIReadTPsToSolve
-$gdxin "%programPath%\TPsToSolve.gdx"
-$load i_tradePeriodSolve
-$gdxin
-$label skipEMIReadTPsToSolve
-
-* Excel interface
-$if not %interfaceMode%==1 $goto skipExcelReadTPsToSolve
-$onecho > TPsToSolve.ins
-  par = i_tradePeriodSolve  rng = i_tradePeriodSolve  rdim = 1
-$offecho
-*RDN - Update the file name and path for the TPsTpSolve when in Excel mode
-*$call 'gdxxrw "%ovrdPath%\%vSPDinputOvrdData%.xls" o=TPsToSolve.gdx "@TPsToSolve.ins"'
-*$gdxin "%ovrdPath%\TPsToSolve.gdx"
-$call 'gdxxrw "%programPath%\%vSPDinputFileName%.xls" o=TPsToSolve.gdx "@TPsToSolve.ins"'
-$gdxin "%programPath%\TPsToSolve.gdx"
-$load i_tradePeriodSolve
-$gdxin
-$label skipExcelReadTPsToSolve
-
-* Standalone interface
-$if %interfaceMode%==0 $goto skipStandaloneReadTPsToSolve
-$if %interfaceMode%==1 $goto skipStandaloneReadTPsToSolve
-* Users need to edit the next few lines to suit their own purposes. The default is to solve for all trading periods
-  i_tradePeriodSolve(tp) = 1 ;
-* i_tradePeriodSolve(tp)$[(ord(tp) > 28) or (ord(tp) < 41)] = 1 ;
-* $include tradePeriodsToSolve.inc
-*$gdxin "%programPath%\TPsToSolve.gdx"
-*$load i_tradePeriodSolve
-*$gdxin
-$label skipStandaloneReadTPsToSolve
-
-* Regardless of interface type, now use i_tradePeriodSolve to change the values of i_studyTradePeriod
 i_studyTradePeriod(tp) = 0 ;
-i_studyTradePeriod(tp)$i_tradePeriodSolve(tp) = 1 ;
-*Display i_tradePeriodSolve ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tp,tempPeriod)] = 1 ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'All')] = 1 ;
+
 
 
 *=====================================================================================
