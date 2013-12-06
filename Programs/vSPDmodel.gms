@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     4 December 2013
+* Last modified on:     6 December 2013
 *=====================================================================================
 
 $ontext
@@ -681,7 +681,7 @@ sum(validPurchaseBidBlock(Bid,trdBlk), PURCHASEBLOCK(Bid,trdBlk))
   ;
 
 * Maximum flow on each HVDC link (3.2.1.1)
-HVDClinkMaximumFlow(HVDClink) $ (ClosedBranch(HVDClink) and i_useHVDCbranchLimits)..
+HVDClinkMaximumFlow(HVDClink) $ (ClosedBranch(HVDClink) and useHVDCbranchLimits)..
 HVDCLINKFLOW(HVDClink) =l=
 HVDClinkCapacity(HVDClink)
   ;
@@ -1090,7 +1090,7 @@ MNodeConstraintLimit(currTP,MnodeCstr)
   ;
 
 * Type 1 mixed constraint definition with LE sense (3.6.1.1a)
-Type1MixedConstraintLE(currTP,t1MixCstr) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and (not useMixedConstraintMIP(currTP)))..
+Type1MixedConstraintLE(currTP,t1MixCstr) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and (not useMixedConstraintMIP(currTP)))..
 i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
@@ -1107,7 +1107,7 @@ Type1MixedConstraintLimit1(currTP,t1MixCstr)
 
 
 * Type 1 mixed constraint definition with GE sense (3.6.1.1b)
-Type1MixedConstraintGE(currTP,t1MixCstr) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and (not useMixedConstraintMIP(currTP)))..
+Type1MixedConstraintGE(currTP,t1MixCstr) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and (not useMixedConstraintMIP(currTP)))..
 i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
@@ -1123,7 +1123,7 @@ Type1MixedConstraintLimit1(currTP,t1MixCstr)
   ;
 
 * Type 1 mixed constraint definition with EQ sense (3.6.1.1c)
-Type1MixedConstraintEQ(currTP,t1MixCstr) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and (not useMixedConstraintMIP(currTP)))..
+Type1MixedConstraintEQ(currTP,t1MixCstr) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and (not useMixedConstraintMIP(currTP)))..
 i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
@@ -1139,21 +1139,21 @@ Type1MixedConstraintLimit1(currTP,t1MixCstr)
   ;
 
 * Type 2 mixed constraint definition with LE sense (3.6.1.2a)
-Type2MixedConstraintLE(currTP,t2MixCstr) $ (UseMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = -1))..
+Type2MixedConstraintLE(currTP,t2MixCstr) $ (useMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = -1))..
 sum(t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr))
 =l=
 Type2MixedConstraintLimit(currTP,t2MixCstr)
   ;
 
 * Type 2 mixed constraint definition with GE sense (3.6.1.2b)
-Type2MixedConstraintGE(currTP,t2MixCstr) $ (UseMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = 1))..
+Type2MixedConstraintGE(currTP,t2MixCstr) $ (useMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = 1))..
 sum(t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr))
 =g=
 Type2MixedConstraintLimit(currTP,t2MixCstr)
   ;
 
 * Type 2 mixed constraint definition with EQ sense (3.6.1.2c)
-Type2MixedConstraintEQ(currTP,t2MixCstr) $ (UseMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = 0))..
+Type2MixedConstraintEQ(currTP,t2MixCstr) $ (useMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = 0))..
 sum(t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr))
 =e=
 Type2MixedConstraintLimit(currTP,t2MixCstr)
@@ -1166,7 +1166,7 @@ MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr) * MixedConstraintBigNumber
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with LE sense (3.6.1.1a_MIP)
-Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and useMixedConstraintMIP(currTP))..
+Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and useMixedConstraintMIP(currTP))..
 i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
@@ -1183,7 +1183,7 @@ Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with GE sense (3.6.1.1b_MIP)
-Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and useMixedConstraintMIP(currTP))..
+Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and useMixedConstraintMIP(currTP))..
 i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
@@ -1200,7 +1200,7 @@ Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with EQ sense (3.6.1.1b_MIP)
-Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (UseMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and useMixedConstraintMIP(currTP))..
+Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and useMixedConstraintMIP(currTP))..
 i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
 + sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
 + sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
