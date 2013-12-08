@@ -47,7 +47,7 @@ Sets
   i_energyOfferComponent(*)                'Components of the energy offer - comprised of MW capacity and price by tradeBlock'
   i_PLSRofferComponent(*)                  'Components of the PLSR offer - comprised of MW proportion and price by tradeBlock'
   i_TWDRofferComponent(*)                  'Components of the TWDR offer - comprised of MW capacity and price by tradeBlock'
-  i_ILRofferComponent(*)                   'Components of the ILR offer - comprised of MW capacity and price by tradeBlock' 
+  i_ILRofferComponent(*)                   'Components of the ILR offer - comprised of MW capacity and price by tradeBlock'
   i_energyBidComponent(*)                  'Components of the energy bid - comprised of MW capacity and price by tradeBlock'
   i_ILRbidComponent(*)                     'Components of the ILR provided by bids'
   i_riskClass(*)                           'Different risks that could set the reserve requirements'
@@ -78,13 +78,14 @@ Sets
   ;
 
 * Aliases
-Alias (i_island,ild,ild1), (i_dateTime,dt),  (i_tradePeriod,tp), (i_node,n), (i_offer,o,o1), (i_trader,trdr), (i_tradeBlock,trdBlk),
-      (i_bus,b,b1,toB,frB), (i_branch,br,br1), (i_lossSegment,los,los1)
+Alias (i_dateTime,dt),                      (i_tradePeriod,tp),                 (i_island,ild,ild1)
+      (i_bus,b,b1,toB,frB),                 (i_node,n),                         (i_offer,o,o1)
+      (i_trader,trdr),                      (i_tradeBlock,trdBlk),              (i_branch,br,br1)
       (i_branchConstraint,brCstr),          (i_ACnodeConstraint,ACnodeCstr),    (i_MnodeConstraint,MnodeCstr)
       (i_energyOfferComponent,NRGofrCmpnt), (i_PLSRofferComponent,PLSofrCmpnt), (i_TWDRofferComponent,TWDofrCmpnt)
       (i_ILRofferComponent,ILofrCmpnt),     (i_energyBidComponent,NRGbidCmpnt), (i_ILRbidComponent,ILbidCmpnt)
       (i_type1MixedConstraint,t1MixCstr),   (i_type2MixedConstraint,t2MixCstr), (i_type1MixedConstraintRHS,t1MixCstrRHS),
-      (i_genericConstraint,gnrcCstr) ;
+      (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
@@ -241,7 +242,7 @@ Sets
   validReserveOfferBlock(tp,o,trdBlk,i_reserveClass,i_reserveType)  'Valid trade blocks for the respective reserve offers by class and type'
   PreviousMW(o)                                                     'MW output of offer to be used as initial MW of the next trading period if necessary'
   PositiveEnergyOffer(tp,o)                                         'Postive energy offers defined for the current trading period'
-* RDN - Additional set for primary secondary offers
+* Set for primary secondary offers
   PrimarySecondaryOffer(tp,o,o1)                                    'Primary-secondary offer mapping for the current trading period'
 * Bid
   Bid(tp,i_bid)                                                     'Bids defined for the current trading period'
@@ -276,7 +277,7 @@ Sets
   OpenBranch(tp,br)                                                 'Set of branches that are open'
   validLossSegment(tp,br,los)                                       'Valid loss segments for a branch'
   lossBranch(tp,br)                                                 'Subset of branches that have non-zero loss factors'
-* RDN - Mapping set of branches to HVDC pole
+* Mapping set of branches to HVDC pole
   HVDCpoleBranchMap(pole,br)                                        'Mapping of HVDC  branch to pole number'
 * Risk/Reserve
   RiskGenerator(tp,o)                                               'Set of generators that can set the risk in the current trading period'
@@ -284,14 +285,14 @@ Sets
   HVDCrisk(i_riskClass)                                             'Subset containing DCCE and DCECE risks'
   GenRisk(i_riskClass)                                              'Subset containing generator risks'
   ManualRisk(i_riskClass)                                           'Subset containting manual risks'
-* RDN - Allow for the HVDC secondary risks
+* Allow for the HVDC secondary risks
   HVDCSecRisk(i_riskClass)                                          'Subset containing secondary risk of the HVDC for CE and ECE events'
   PLSRReserveType(i_reserveType)                                    'PLSR reserve type'
   TWDRReserveType(i_reserveType)                                    'TWDR reserve type'
   ILReserveType(i_reserveType)                                      'IL reserve type'
   IslandOffer(tp,ild,o)                                             'Mapping of reserve offer to island for the current trading period'
   IslandBid(tp,ild,i_bid)                                           'Mapping of purchase bid ILR to island for the current trading period'
-* RDN - Definition of CE and ECE events to support different CE and ECE CVPs
+* Definition of CE and ECE events to support different CE and ECE CVPs
   ContingentEvents(i_riskClass)                                     'Subset of Risk Classes containing contigent event risks'
   ExtendedContingentEvent(i_riskClass)                              'Subset of Risk Classes containing extended contigent event risk'
 * Branch constraint
@@ -315,10 +316,10 @@ Parameters
   GenerationStart(tp,o)                                             'The MW generation level associated with the offer at the start of a trading period'
   ReserveGenerationMaximum(tp,o)                                    'Maximum generation and reserve capability for the current trading period (MW)'
   WindOffer(tp,o)                                                   'Flag to indicate if offer is from wind generator (1 = Yes)'
-* RDN - Primary-secondary offer parameters
+* Primary-secondary offer parameters
   HasSecondaryOffer(tp,o)                                           'Flag to indicate if offer has a secondary offer (1 = Yes)'
   HasPrimaryOffer(tp,o)                                             'Flag to indicate if offer has a primary offer (1 = Yes)'
-* RDN - Frequency keeper band MW
+* Frequency keeper band MW
   FKBand(tp,o)                                                      'Frequency keeper band MW which is set when the risk setter is selected as the frequency keeper'
   GenerationMaximum(tp,o)                                           'Maximum generation level associated with the generation offer (MW)'
   GenerationMinimum(tp,o)                                           'Minimum generation level associated with the generation offer (MW)'
@@ -361,7 +362,7 @@ Parameters
 
   NodeBusAllocationFactor(tp,n,b)                                   'Allocation factor of market node to bus for the current trade period'
   BusElectricalIsland(tp,b)                                         'Bus electrical island status for the current trade period (0 = Dead)'
-* RDN - Flag to allow roundpower on the HVDC link
+* Flag to allow roundpower on the HVDC link
   AllowHVDCRoundpower(tp)                                           'Flag to allow roundpower on the HVDC (1 = Yes)'
 * Risk/Reserve
   ReserveClassGenerationMaximum(tp,o,i_reserveClass)                'MW used to determine factor to adjust maximum reserve of a reserve class'
@@ -406,7 +407,7 @@ Parameters
   GenericConstraintLimit(tp,gnrcCstr)                                             'Generic constraint limit for the current trading period'
 * Violation penalties
   DeficitReservePenalty(i_reserveClass)            '6s and 60s reserve deficit violation penalty'
-* RDN - Different CVPs defined for CE and ECE
+* Different CVPs defined for CE and ECE
   DeficitReservePenalty_CE(i_reserveClass)         '6s and 60s CE reserve deficit violation penalty'
   DeficitReservePenalty_ECE(i_reserveClass)        '6s and 60s ECE reserve deficit violation penalty'
 * Post-processing
@@ -437,7 +438,7 @@ Scalars
 * Mixed constraint
   MixedConstraintBigNumber                         'Big number used in the definition of the integer variables for mixed constraints'   /1000 /
   useMixedConstraintRiskOffset                     'Use the risk offset calculation based on mixed constraint formulation (1= Yes)'
-* RDN - Separate flag for the CE and ECE CVP
+* Separate flag for the CE and ECE CVP
   DiffCeECeCVP                                     'Flag to indicate if the separate CE and ECE CVP is applied'
   usePrimSecGenRiskModel                           'Flag to use the revised generator risk model for generators with primary and secondary offers'
   useDSBFDemandBidModel                            'Flag to use the demand model defined under demand-side bidding and forecasting (DSBF)'
@@ -460,30 +461,27 @@ Variables
   HVDCREC(tp,ild)                                  'Total net pre-contingent HVDC MW flow received at each island'
   RISKOFFSET(tp,ild,i_reserveClass,i_riskClass)    'MW offset applied to the raw risk to account for HVDC pole rampup, AUFLS, free reserve and non-compliant generation'
 * Network
-  ACnodeNETINJECTION(tp,b)                         'MW injection at buses corresponding to AC nodes'
+  ACNODENETINJECTION(tp,b)                         'MW injection at buses corresponding to AC nodes'
   ACBRANCHFLOW(tp,br)                              'MW flow on undirected AC branch'
-  ACnodeANGLE(tp,b)                                'Bus voltage angle'
+  ACNODEANGLE(tp,b)                                'Bus voltage angle'
 * Mixed constraint variables
   MIXEDCONSTRAINTVARIABLE(tp,t1MixCstr)            'Mixed constraint variable'
-* RDN - Change to demand bids
-* Demand bids were only positive but can be both positive and negative from v6.0 of SPD formulation (with DSBF)
-* This change will be managed with the update of the lower bound of the free variable in vSPDSolve.gms to allow
-* backward compatibility
+
+* Demand bids can be either positive or negative from v6.0 of SPD formulation (with DSBF)
+* The lower bound of the free variable is updated in vSPDSolve.gms to allow backward compatibility
 * Note the formulation now refers to this as Demand. So Demand (in SPD formulation) = Purchase (in vSPD code)
   PURCHASE(tp,i_bid)                               'Total MW purchase scheduled'
   PURCHASEBLOCK(tp,i_bid,trdBlk)                   'MW purchase scheduled from the individual trade blocks of a bid'
-* RDN - Change to demand bids - End
+
   ;
 
 Positive variables
 * Generation
-  GENERATION(tp,o)                                 'Total MW generation scheduled from an offer'
-  GENERATIONBLOCK(tp,o,trdBlk)                     'MW generation scheduled from the individual trade blocks of an offer'
+  GENERATION(tp,o)                                       'Total MW generation scheduled from an offer'
+  GENERATIONBLOCK(tp,o,trdBlk)                           'MW generation scheduled from the individual trade blocks of an offer'
 * Purchase
-* PURCHASE(tp,i_bid)                               'Total MW purchase scheduled'
-* PURCHASEBLOCK(tp,i_bid,trdBlk)                   'MW purchase scheduled from the individual trade blocks of a bid'
-  PURCHASEILR(tp,i_bid,i_reserveClass)             'Total MW ILR provided by purchase bid for the different reserve classes'
-  PURCHASEILRBLOCK(tp,i_bid,trdBlk,i_reserveClass) 'MW ILR provided by purchase bid for individual trade blocks for the different reserve classes'
+  PURCHASEILR(tp,i_bid,i_reserveClass)                   'Total MW ILR provided by purchase bid for the different reserve classes'
+  PURCHASEILRBLOCK(tp,i_bid,trdBlk,i_reserveClass)       'MW ILR provided by purchase bid for individual trade blocks for the different reserve classes'
 * Reserve
   RESERVE(tp,o,i_reserveClass,i_reserveType)             'MW Reserve scheduled from an offer'
   RESERVEBLOCK(tp,o,trdBlk,i_reserveClass,i_reserveType) 'MW Reserve scheduled from the individual trade blocks of an offer'
@@ -515,7 +513,7 @@ Positive variables
   SURPLUSTYPE1MIXEDCONSTRAINT(tp,t1MixCstr)        'Type 1 surplus mixed constraint in MW'
   SURPLUSGENERICCONSTRAINT(tp,gnrcCstr)            'Surplus generic constraint in MW'
   DEFICITGENERICCONSTRAINT(tp,gnrcCstr)            'Deficit generic constraint in MW'
-* RDN - Seperate CE and ECE violation variables to support different CVPs for CE and ECE
+* Seperate CE and ECE violation variables to support different CVPs for CE and ECE
   DEFICITRESERVE_CE(tp,ild,i_reserveClass)         'Deficit CE reserve generation in each island for each reserve class in MW'
   DEFICITRESERVE_ECE(tp,ild,i_reserveClass)        'Deficit ECE reserve generation in each island for each reserve class in MW'
   ;
@@ -526,8 +524,8 @@ Binary variables
 
 SOS1 Variables
   ACBRANCHFLOWDIRECTED_INTEGER(tp,br,i_flowDirection)'Integer variables used to select branch flow direction in the event of circular branch flows (3.8.1)'
-  HVDClinkFLOWDIRECTION_INTEGER(tp,i_flowDirection)'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
-* RDN - Integer varaible to prevent intra-pole circulating branch flows
+  HVDCLINKFLOWDIRECTION_INTEGER(tp,i_flowDirection)'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
+* Integer varaible to prevent intra-pole circulating branch flows
   HVDCPOLEFLOW_INTEGER(tp,pole,i_flowDirection)    'Integer variables used to select the HVDC pole flow direction on in the event of circulating branch flows within a pole'
   ;
 
@@ -541,18 +539,18 @@ Equations
   GenerationOfferDefintion(tp,o)                   'Definition of generation provided by an offer (3.1.1.2)'
   GenerationRampUp(tp,o)                           'Maximum movement of the generator upwards due to up ramp rate (3.7.1.1)'
   GenerationRampDown(tp,o)                         'Maximum movement of the generator downwards due to down ramp rate (3.7.1.2)'
-* RDN - Primary-secondary ramp constraints
+* Primary-secondary ramp constraints
   GenerationRampUp_PS(tp,o)                        'Maximum movement of the primary-secondary offers upwards due to up ramp rate (3.7.1.1)'
   GenerationRampDown_PS(tp,o)                      'Maximum movement of the primary-secondary offers downwards due to down ramp rate (3.7.1.2)'
   PurchaseBidDefintion(tp,i_bid)                   'Definition of purchase provided by a bid (3.1.1.5)'
-* RDN - Change to demand bids - End
+* Change to demand bids - End
 * Network
   HVDClinkMaximumFlow(tp,br)                       'Maximum flow on each HVDC link (3.2.1.1)'
   HVDClinkLossDefinition(tp,br)                    'Definition of losses on the HVDC link (3.2.1.2)'
   HVDClinkFlowDefinition(tp,br)                    'Definition of MW flow on the HVDC link (3.2.1.3)'
   HVDClinkFlowIntegerDefinition1(tp)               'Definition of the integer HVDC link flow variable (3.8.2a)'
   HVDClinkFlowIntegerDefinition2(tp,i_flowDirection)               'Definition of the integer HVDC link flow variable (3.8.2b)'
-* RDN - Additional constraints for the intra-pole circulating branch flows
+* Additional constraints for the intra-pole circulating branch flows
   HVDClinkFlowIntegerDefinition3(tp,pole)                          'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2c)'
   HVDClinkFlowIntegerDefinition4(tp,pole,i_flowDirection)          'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2d)'
 
@@ -584,19 +582,19 @@ Equations
   PurchaseBidReserveMaximum(tp,i_bid,i_reserveClass)               'Maximum ILR provided by purchase bids (3.4.2.5)'
   MaximumIslandRiskDefinition(tp,ild,i_reserveClass,i_riskClass)   'Definition of the maximum risk in each island (3.4.3.1)'
   SupplyDemandReserveRequirement(tp,ild,i_reserveClass)            'Matching of reserve supply and demand (3.4.3.2)'
-* RDN - Risk calculation for generators with more than one offer - Primary and secondary offers
+* Risk calculation for generators with more than one offer - Primary and secondary offers
   GenIslandRiskCalculation_NonPS(tp,ild,o,i_reserveClass,i_riskClass)    'Calculation of the island risk for risk setting generators with only one offer (3.4.1.6)'
   GenIslandRiskCalculation_PS(tp,ild,o,i_reserveClass,i_riskClass)       'Calculation of the island risk for risk setting generators with more than one offer (3.4.1.6)'
   RiskOffsetCalculation_DCCE(tp,ild,i_reserveClass,i_riskClass)          'Calculation of the risk offset variable for the DCCE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.2)'
   RiskOffsetCalculation_DCECE(tp,ild,i_reserveClass,i_riskClass)         'Calculation of the risk offset variable for the DCECE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.4)'
-  RiskOffsetCalculation(tp,t1MixCstr,ild,i_reserveClass,i_riskClass)  'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
-* RDN - Need to seperate the maximum island risk definition constraint to support the different CVPs defined for CE and ECE
+  RiskOffsetCalculation(tp,t1MixCstr,ild,i_reserveClass,i_riskClass)     'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
+* Need to seperate the maximum island risk definition constraint to support the different CVPs defined for CE and ECE
   MaximumIslandRiskDefinition_CE(tp,ild,i_reserveClass,i_riskClass)      'Definition of the maximum CE risk in each island (3.4.3.1a)'
   MaximumIslandRiskDefinition_ECE(tp,ild,i_reserveClass,i_riskClass)     'Definition of the maximum ECE risk in each island (3.4.3.1b)'
-* RDN - HVDC secondary risk calculation
+* HVDC secondary risk calculation
   HVDCIslandSecRiskCalculation_GEN(tp,ild,o,i_reserveClass,i_riskClass)  'Calculation of the island risk for an HVDC secondary risk to an AC risk (3.4.1.8)'
   HVDCIslandSecRiskCalculation_Manual(tp,ild,i_reserveClass,i_riskClass) 'Calculation of the island risk for an HVDC secondary risk to a manual risk (3.4.1.9)'
-* RDN - HVDC secondary risk calculation for generators with more than one offer - Primary and secondary offers
+* HVDC secondary risk calculation for generators with more than one offer - Primary and secondary offers
   HVDCIslandSecRiskCalculation_GEN_NonPS(tp,ild,o,i_reserveClass,i_riskClass)
   HVDCIslandSecRiskCalculation_GEN_PS(tp,ild,o,i_reserveClass,i_riskClass)
 * Branch security constraints
@@ -634,10 +632,10 @@ Equations
 * Objective function of the dispatch model (4.1.1.1)
 ObjectiveFunction..
 NETBENEFIT =e=
-  sum(validPurchaseBidBlock, PURCHASEBLOCK(validPurchaseBidBlock) * PurchaseBidPrice(validPurchaseBidBlock))
-- sum(validGenerationOfferBlock, GENERATIONBLOCK(validGenerationOfferBlock) * GenerationOfferPrice(validGenerationOfferBlock))
-- sum(validReserveOfferBlock, RESERVEBLOCK(validReserveOfferBlock) * ReserveOfferPrice(validReserveOfferBlock))
-- sum(validPurchaseBidILRBlock, PURCHASEILRBLOCK(validPurchaseBidILRBlock))
+  sum[ validPurchaseBidBlock,     PURCHASEBLOCK(validPurchaseBidBlock)       * PurchaseBidPrice(validPurchaseBidBlock) ]
+- sum[ validGenerationOfferBlock, GENERATIONBLOCK(validGenerationOfferBlock) * GenerationOfferPrice(validGenerationOfferBlock) ]
+- sum[ validReserveOfferBlock,    RESERVEBLOCK(validReserveOfferBlock)       * ReserveOfferPrice(validReserveOfferBlock) ]
+- sum[ validPurchaseBidILRBlock,  PURCHASEILRBLOCK(validPurchaseBidILRBlock) ]
 - TOTALPENALTYCOST
   ;
 
@@ -645,608 +643,1093 @@ NETBENEFIT =e=
 * RDN - Bug fix - used surplusBranchGroupConstraintPenalty rather than surplusBranchFlowPenalty
 TotalViolationCostDefinition..
 TOTALPENALTYCOST =e=
-  sum(Bus, deficitBusGenerationPenalty * DEFICITBUSGENERATION(Bus))
-+ sum(Bus, surplusBusGenerationPenalty * SURPLUSBUSGENERATION(Bus))
-+ sum(Branch, surplusBranchFlowPenalty * SURPLUSBRANCHFLOW(Branch))
-+ sum(Offer, (DeficitRampRatePenalty * DEFICITRAMPRATE(Offer)) + (SurplusRampRatePenalty * SURPLUSRAMPRATE(Offer)))
-+ sum(ACnodeConstraint, DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT(ACnodeConstraint))
-+ sum(ACnodeConstraint, SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT(ACnodeConstraint))
-+ sum(BranchConstraint, surplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT(BranchConstraint))
-+ sum(BranchConstraint, deficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT(BranchConstraint))
-+ sum(MNodeConstraint, DeficitMnodeConstraintPenalty * DEFICITMNODECONSTRAINT(MNodeConstraint))
-+ sum(MNodeConstraint, SurplusMnodeConstraintPenalty * SURPLUSMNODECONSTRAINT(MNodeConstraint))
-+ sum(Type1MixedConstraint, Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT(Type1MixedConstraint))
-+ sum(Type1MixedConstraint, Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT(Type1MixedConstraint))
-+ sum(GenericConstraint, DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT(GenericConstraint))
-+ sum(GenericConstraint, SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT(GenericConstraint))
-* RDN - Separate CE and ECE reserve deficity
-+ sum((currTP,ild,i_reserveClass) $ (not DiffCeECeCVP), DeficitReservePenalty(i_reserveClass) * DEFICITRESERVE(currTP,ild,i_reserveClass))
-+ sum((currTP,ild,i_reserveClass) $ DiffCeECeCVP, DeficitReservePenalty_CE(i_reserveClass) * DEFICITRESERVE_CE(currTP,ild,i_reserveClass))
-+ sum((currTP,ild,i_reserveClass) $ DiffCeECeCVP, DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE(currTP,ild,i_reserveClass))
+  sum[ Bus,    deficitBusGenerationPenalty * DEFICITBUSGENERATION(Bus) ]
++ sum[ Bus,    surplusBusGenerationPenalty * SURPLUSBUSGENERATION(Bus) ]
++ sum[ Branch, surplusBranchFlowPenalty    * SURPLUSBRANCHFLOW(Branch) ]
++ sum[ Offer,  deficitRampRatePenalty      * DEFICITRAMPRATE(Offer) ]
++ sum[ Offer,  surplusRampRatePenalty      * SURPLUSRAMPRATE(Offer) ]
++ sum[ ACnodeConstraint, DeficitACnodeConstraintPenalty * DEFICITACnodeCONSTRAINT(ACnodeConstraint) ]
++ sum[ ACnodeConstraint, SurplusACnodeConstraintPenalty * SURPLUSACnodeCONSTRAINT(ACnodeConstraint) ]
++ sum[ BranchConstraint, surplusBranchGroupConstraintPenalty * SURPLUSBRANCHSECURITYCONSTRAINT(BranchConstraint) ]
++ sum[ BranchConstraint, deficitBranchGroupConstraintPenalty * DEFICITBRANCHSECURITYCONSTRAINT(BranchConstraint) ]
++ sum[ MNodeConstraint, DeficitMnodeConstraintPenalty * DEFICITMNODECONSTRAINT(MNodeConstraint) ]
++ sum[ MNodeConstraint, SurplusMnodeConstraintPenalty * SURPLUSMNODECONSTRAINT(MNodeConstraint) ]
++ sum[ Type1MixedConstraint, Type1DeficitMixedConstraintPenalty * DEFICITTYPE1MIXEDCONSTRAINT(Type1MixedConstraint) ]
++ sum[ Type1MixedConstraint, Type1SurplusMixedConstraintPenalty * SURPLUSTYPE1MIXEDCONSTRAINT(Type1MixedConstraint) ]
++ sum[ GenericConstraint, DeficitGenericConstraintPenalty * DEFICITGENERICCONSTRAINT(GenericConstraint) ]
++ sum[ GenericConstraint, SurplusGenericConstraintPenalty * SURPLUSGENERICCONSTRAINT(GenericConstraint) ]
+* Separate CE and ECE reserve deficity
++ sum[ (currTP,ild,i_reserveClass)
+       , [DeficitReservePenalty(i_reserveClass)     * DEFICITRESERVE(currTP,ild,i_reserveClass)     $ (not DiffCeECeCVP)]
+       + [DeficitReservePenalty_CE(i_reserveClass)  * DEFICITRESERVE_CE(currTP,ild,i_reserveClass)  $ DiffCeECeCVP]
+       + [DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE(currTP,ild,i_reserveClass) $ DiffCeECeCVP]
+     ]
   ;
 
 * Definition of generation provided by an offer (3.1.1.2)
 GenerationOfferDefintion(Offer)..
-GENERATION(Offer) =e=
-sum(validGenerationOfferBlock(Offer,trdBlk), GENERATIONBLOCK(Offer,trdBlk))
+  GENERATION(Offer)
+=e=
+  sum[ validGenerationOfferBlock(Offer,trdBlk), GENERATIONBLOCK(Offer,trdBlk) ]
   ;
 
-* RDN - Change to demand bid
 * Change constraint numbering. 3.1.1.5 in the SPD formulation v6.0
 * Definition of purchase provided by a bid (3.1.1.5)
-* RDN - Change to demand bid - End
 PurchaseBidDefintion(Bid)..
-PURCHASE(Bid) =e=
-sum(validPurchaseBidBlock(Bid,trdBlk), PURCHASEBLOCK(Bid,trdBlk))
+  PURCHASE(Bid)
+=e=
+  sum[ validPurchaseBidBlock(Bid,trdBlk), PURCHASEBLOCK(Bid,trdBlk) ]
   ;
 
 * Maximum flow on each HVDC link (3.2.1.1)
-HVDClinkMaximumFlow(HVDClink) $ (ClosedBranch(HVDClink) and useHVDCbranchLimits)..
-HVDCLINKFLOW(HVDClink) =l=
-HVDClinkCapacity(HVDClink)
+HVDClinkMaximumFlow(HVDClink) $ { ClosedBranch(HVDClink) and useHVDCbranchLimits }..
+  HVDCLINKFLOW(HVDClink)
+=l=
+  HVDClinkCapacity(HVDClink)
   ;
 
 * Definition of losses on the HVDC link (3.2.1.2)
 HVDClinkLossDefinition(HVDClink)..
-HVDCLINKLOSSES(HVDClink) =e=
-sum(validLossSegment(HVDClink,los), HVDCBreakPointMWLoss(HVDClink,los)*LAMBDA(HVDClink,los))
+  HVDCLINKLOSSES(HVDClink)
+=e=
+  sum[ validLossSegment(HVDClink,los), HVDCBreakPointMWLoss(HVDClink,los) * LAMBDA(HVDClink,los) ]
   ;
 
 * Definition of MW flow on the HVDC link (3.2.1.3)
 HVDClinkFlowDefinition(HVDClink)..
-HVDCLINKFLOW(HVDClink) =e=
-sum(validLossSegment(HVDClink,los), HVDCBreakPointMWFlow(HVDClink,los)*LAMBDA(HVDClink,los))
+  HVDCLINKFLOW(HVDClink)
+=e=
+  sum[ validLossSegment(HVDClink,los), HVDCBreakPointMWFlow(HVDClink,los) * LAMBDA(HVDClink,los) ]
   ;
 
 * Definition of the integer HVDC link flow variable (3.8.2a)
-* RDN - Update constraint to exlcude if roundpower is allowed
-* HVDClinkFlowIntegerDefinition1(currTP) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
-HVDClinkFlowIntegerDefinition1(currTP) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows and (1-AllowHVDCRoundpower(currTP)))..
-sum(i_flowDirection, HVDClinkFLOWDIRECTION_INTEGER(currTP,i_flowDirection)) =e=
-sum(HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDCLINKFLOW(HVDClink))
+* Not used if roundpower is allowed
+HVDClinkFlowIntegerDefinition1(currTP) $ { UseBranchFlowMIP(currTP) and
+                                           resolveCircularBranchFlows and
+                                           (1-AllowHVDCRoundpower(currTP))
+                                         }..
+  sum[ i_flowDirection, HVDCLINKFLOWDIRECTION_INTEGER(currTP,i_flowDirection) ]
+=e=
+  sum[ HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDCLINKFLOW(HVDClink) ]
   ;
 
 * Definition of the integer HVDC link flow variable (3.8.2b)
-* RDN - Update constraint to exlcude if roundpower is allowed
-* HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
-HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows and (1-AllowHVDCRoundpower(currTP)))..
-HVDClinkFLOWDIRECTION_INTEGER(currTP,i_flowDirection) =e=
-sum(HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDCLINKFLOW(HVDClink))
+* Not used if roundpower is allowed
+HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ { UseBranchFlowMIP(currTP) and
+                                                           resolveCircularBranchFlows and
+                                                           (1-AllowHVDCRoundpower(currTP))
+                                                         }..
+  HVDCLINKFLOWDIRECTION_INTEGER(currTP,i_flowDirection)
+=e=
+  sum[ HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDCLINKFLOW(HVDClink) ]
   ;
 
-* RDN - Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2c)
-HVDClinkFlowIntegerDefinition3(currTP,pole) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
-sum(br${ HVDCpoles(currTP,br) and HVDCpoleBranchMap(pole,br) }, HVDCLINKFLOW(currTP,br)) =e=
-sum(i_flowDirection, HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection))
+* Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2c)
+HVDClinkFlowIntegerDefinition3(currTP,pole) $ { UseBranchFlowMIP(currTP) and
+                                                resolveCircularBranchFlows }..
+  sum[ br $ { HVDCpoles(currTP,br) and HVDCpoleBranchMap(pole,br) }, HVDCLINKFLOW(currTP,br) ]
+=e=
+  sum[ i_flowDirection, HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection) ]
   ;
 
-* RDN - Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2d)
-HVDClinkFlowIntegerDefinition4(currTP,pole,i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
-sum(HVDCpoleDirection(HVDCpoles(currTP,br),i_flowDirection) $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW(HVDCpoles)) =e=
-HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection)
+* Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2d)
+HVDClinkFlowIntegerDefinition4(currTP,pole,i_flowDirection) $ { UseBranchFlowMIP(currTP) and
+                                                                resolveCircularBranchFlows }..
+  sum[ HVDCpoleDirection(HVDCpoles(currTP,br),i_flowDirection) $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW(HVDCpoles) ]
+=e=
+  HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection)
   ;
 
 * Definition of weighting factor (3.2.1.4)
 LambdaDefinition(HVDClink)..
-sum(validLossSegment(HVDClink,los), LAMBDA(HVDClink,los)) =e=
-1  ;
+  sum(validLossSegment(HVDClink,los), LAMBDA(HVDClink,los))
+=e=
+  1
+  ;
 
 * Definition of weighting factor when branch integer constraints are needed (3.8.3a)
-LambdaIntegerDefinition1(HVDClink(currTP,br)) $ (UseBranchFlowMIP(currTP) and resolveHVDCnonPhysicalLosses)..
-sum(validLossSegment(HVDClink,los), LAMBDAINTEGER(HVDClink,los)) =e=
-1  ;
+LambdaIntegerDefinition1(HVDClink(currTP,br)) $ { UseBranchFlowMIP(currTP) and
+                                                  resolveHVDCnonPhysicalLosses }..
+  sum[ validLossSegment(HVDClink,los), LAMBDAINTEGER(HVDClink,los) ]
+=e=
+  1
+  ;
 
 * Definition of weighting factor when branch integer constraints are needed (3.8.3b)
-LambdaIntegerDefinition2(validLossSegment(HVDClink(currTP,br),los)) $ (UseBranchFlowMIP(currTP) and resolveHVDCnonPhysicalLosses)..
-LAMBDAINTEGER(HVDClink,los) =e=
-LAMBDA(HVDClink,los)
+LambdaIntegerDefinition2(validLossSegment(HVDClink(currTP,br),los)) $ { UseBranchFlowMIP(currTP) and
+                                                                        resolveHVDCnonPhysicalLosses }..
+  LAMBDAINTEGER(HVDClink,los)
+=e=
+  LAMBDA(HVDClink,los)
   ;
 
 * Definition of the net injection at the HVDC nodes (3.2.1.6)
 DCNodeNetInjection(DCBus(currTP,b))..
-0 =e=
-DEFICITBUSGENERATION(currTP,b) - SURPLUSBUSGENERATION(currTP,b)
-- sum(HVDClinkSendingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink))
-+ sum(HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink) - HVDCLINKLOSSES(HVDClink))
-- sum(HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * HVDClinkFixedLoss(HVDClink))
+  0
+=e=
+  DEFICITBUSGENERATION(currTP,b) - SURPLUSBUSGENERATION(currTP,b)
++ sum[ HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink)
+                                                                             - HVDCLINKLOSSES(HVDClink)
+     ]
+- sum[ HVDClinkSendingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink),   HVDCLINKFLOW(HVDClink) ]
+- sum[ HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * HVDClinkFixedLoss(HVDClink) ]
   ;
 
 * 1st definition of the net injection at buses corresponding to AC nodes (3.3.1.1)
 ACnodeNetInjectionDefinition1(ACBus(currTP,b))..
-ACnodeNETINJECTION(currTP,b) =e=
-  sum(ACBranchSendingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection))
-- sum(ACBranchReceivingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection))
+  ACNODENETINJECTION(currTP,b)
+=e=
+  sum[ ACBranchSendingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
+       , ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+     ]
+- sum[ ACBranchReceivingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
+       , ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+     ]
   ;
 
 * 2nd definition of the net injection at buses corresponding to AC nodes (3.3.1.2)
 ACnodeNetInjectionDefinition2(ACBus(currTP,b))..
-ACnodeNETINJECTION(currTP,b) =e=
-  sum(offerNode(currTP,o,n) $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b) * GENERATION(currTP,o))
-- sum(BidNode(currTP,i_bid,n) $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b) * PURCHASE(currTP,i_bid))
-- sum(NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b) * NodeDemand(currTP,n))
-+ DEFICITBUSGENERATION(currTP,b) - SURPLUSBUSGENERATION(currTP,b)
-- sum(HVDClinkSendingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink))
-+ sum(HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink) - HVDCLINKLOSSES(HVDClink))
-- sum(HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * HVDClinkFixedLoss(HVDClink))
-- sum(ACBranchReceivingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch), i_branchReceivingEndLossProportion * ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection))
-- sum(ACBranchSendingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch), (1 - i_branchReceivingEndLossProportion) * ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection))
-- sum(BranchBusConnect(ACBranch(currTP,br),b) $ ClosedBranch(ACBranch), 0.5 * ACBranchFixedLoss(ACBranch))
+  ACNODENETINJECTION(currTP,b)
+=e=
+  sum[ offerNode(currTP,o,n) $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b) * GENERATION(currTP,o) ]
+- sum[ BidNode(currTP,i_bid,n) $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b) * PURCHASE(currTP,i_bid) ]
+- sum[ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b) * NodeDemand(currTP,n) ]
++ sum[ HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink) ]
+- sum[ HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKLOSSES(HVDClink) ]
+- sum[ HVDClinkSendingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink) ]
+- sum[ HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * HVDClinkFixedLoss(HVDClink) ]
+- sum[ ACBranchReceivingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
+       , i_branchReceivingEndLossProportion * ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection) ]
+- sum[ ACBranchSendingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
+       , (1 - i_branchReceivingEndLossProportion) * ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection) ]
+- sum[ BranchBusConnect(ACBranch(currTP,br),b) $ ClosedBranch(ACBranch), 0.5 * ACBranchFixedLoss(ACBranch) ]
++ DEFICITBUSGENERATION(currTP,b)
+- SURPLUSBUSGENERATION(currTP,b)
   ;
 
 * Maximum flow on the AC branch (3.3.1.3)
 ACBranchMaximumFlow(ClosedBranch(ACbranch),i_flowDirection) $ useACbranchLimits..
-ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) =l=
-ACBranchCapacity(ACBranch)
+  ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+=l=
+  ACBranchCapacity(ACBranch)
 + SURPLUSBRANCHFLOW(ACBranch)
   ;
 
 * Relationship between directed and undirected branch flow variables (3.3.1.4)
 ACBranchFlowDefinition(ClosedBranch(ACBranch))..
-ACBRANCHFLOW(ACBranch) =e=
-  sum(i_flowDirection $ (ord(i_flowDirection) = 1), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection))
-- sum(i_flowDirection $ (ord(i_flowDirection) = 2), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection))
+  ACBRANCHFLOW(ACBranch)
+=e=
+  sum[ i_flowDirection $ (ord(i_flowDirection) = 1), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) ]
+- sum[ i_flowDirection $ (ord(i_flowDirection) = 2), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) ]
   ;
 
 * Equation that describes the linear load flow (3.3.1.5)
 LinearLoadFlow(ClosedBranch(ACBranch(currTP,br)))..
-ACBRANCHFLOW(ACBranch) =e=
-ACBranchSusceptance(ACBranch) * sum(BranchBusDefn(ACBranch,frB,toB), ACnodeANGLE(currTP,frB) - ACnodeANGLE(currTP,toB))
+  ACBRANCHFLOW(ACBranch)
+=e=
+  ACBranchSusceptance(ACBranch)
+  * sum[ BranchBusDefn(ACBranch,frB,toB), ACNODEANGLE(currTP,frB) - ACNODEANGLE(currTP,toB) ]
   ;
 
 * Limit on each AC branch flow block (3.3.1.6)
 ACBranchBlockLimit(validLossSegment(ClosedBranch(ACBranch),los),i_flowDirection)..
-ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection) =l=
-ACBranchLossMW(ACBranch,los)
+  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection)
+=l=
+  ACBranchLossMW(ACBranch,los)
   ;
 
 * Composition of the directed branch flow from the block branch flow (3.3.1.7)
 ACDirectedBranchFlowDefinition(ClosedBranch(ACBranch),i_flowDirection)..
-ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) =e=
-sum(validLossSegment(ACBranch,los), ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection))
+  ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+=e=
+  sum[ validLossSegment(ACBranch,los), ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection) ]
   ;
 
 * Calculation of the losses in each loss segment (3.3.1.8)
 ACBranchLossCalculation(validLossSegment(ClosedBranch(ACBranch),los),i_flowDirection)..
-ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_flowDirection) =e=
-ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection) * ACBranchLossFactor(ACBranch,los)
+  ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_flowDirection)
+=e=
+  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection) * ACBranchLossFactor(ACBranch,los)
   ;
 
 * Composition of the directed branch losses from the block branch losses (3.3.1.9)
 ACDirectedBranchLossDefinition(ClosedBranch(ACBranch),i_flowDirection)..
-ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection) =e=
-sum(validLossSegment(ACBranch,los), ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_flowDirection))
+  ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection)
+=e=
+  sum[ validLossSegment(ACBranch,los), ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_flowDirection) ]
   ;
 
 * Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)
-ACDirectedBranchFlowIntegerDefinition1(ClosedBranch(ACBranch(lossBranch(currTP,br)))) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
-sum(i_flowDirection, ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection)) =e=
-sum(i_flowDirection, ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection))
+ACDirectedBranchFlowIntegerDefinition1(ClosedBranch(ACBranch(lossBranch(currTP,br)))) $ { UseBranchFlowMIP(currTP) and
+                                                                                          resolveCircularBranchFlows }..
+  sum[ i_flowDirection, ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection) ]
+=e=
+  sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) ]
   ;
 
 * Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)
-ACDirectedBranchFlowIntegerDefinition2(ClosedBranch(ACBranch(lossBranch(currTP,br))),i_flowDirection) $ (UseBranchFlowMIP(currTP) and resolveCircularBranchFlows)..
-ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection) =e=
-ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+ACDirectedBranchFlowIntegerDefinition2(ClosedBranch(ACBranch(lossBranch(currTP,br))),i_flowDirection) $ { UseBranchFlowMIP(currTP) and
+                                                                                                          resolveCircularBranchFlows }..
+  ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection)
+=e=
+  ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
   ;
 
-GenerationRampUp(PositiveEnergyOffer) $ (not (HasSecondaryOffer(PositiveEnergyOffer) or HasPrimaryOffer(PositiveEnergyOffer)))..
-GENERATION(PositiveEnergyOffer) - DEFICITRAMPRATE(PositiveEnergyOffer) =l=
-GenerationEndUp(PositiveEnergyOffer)
+* Maximum movement of the generator downwards due to up ramp rate (3.7.1.1)
+GenerationRampUp(PositiveEnergyOffer) $ { not ( HasSecondaryOffer(PositiveEnergyOffer) or
+                                                HasPrimaryOffer(PositiveEnergyOffer)
+                                              ) }..
+  GENERATION(PositiveEnergyOffer) - DEFICITRAMPRATE(PositiveEnergyOffer)
+=l=
+  GenerationEndUp(PositiveEnergyOffer)
   ;
 
 * Maximum movement of the generator downwards due to down ramp rate (3.7.1.2)
-* Define this constraint over positive energy offers
-* RDN - The standard ramp rate constraint does not apply to primary-secondary offers. See GenerationRampDown_PS
-GenerationRampDown(PositiveEnergyOffer) $ (not (HasSecondaryOffer(PositiveEnergyOffer) or HasPrimaryOffer(PositiveEnergyOffer)))..
-GENERATION(PositiveEnergyOffer) + SURPLUSRAMPRATE(PositiveEnergyOffer) =g=
-GenerationEndDown(PositiveEnergyOffer)
+GenerationRampDown(PositiveEnergyOffer) $ { not ( HasSecondaryOffer(PositiveEnergyOffer) or
+                                                  HasPrimaryOffer(PositiveEnergyOffer)
+                                                ) }..
+  GENERATION(PositiveEnergyOffer) + SURPLUSRAMPRATE(PositiveEnergyOffer)
+=g=
+  GenerationEndDown(PositiveEnergyOffer)
   ;
 
-* RDN - Maximum movement of the primary offer that has a secondary offer upwards due to up ramp rate (3.7.1.1)
-* Define this constraint over positive energy offers
-GenerationRampUp_PS(currTP,o) $ (PositiveEnergyOffer(currTP,o) and HasSecondaryOffer(currTP,o))..
-GENERATION(currTP,o) + sum(o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1)) - DEFICITRAMPRATE(currTP,o) =l=
-GenerationEndUp(currTP,o)
+* Maximum movement of the primary offer that has a secondary offer upwards due to up ramp rate (3.7.1.1)
+GenerationRampUp_PS(currTP,o) $ { PositiveEnergyOffer(currTP,o) and HasSecondaryOffer(currTP,o) }..
+  GENERATION(currTP,o)
++ sum[ o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1) ]
+- DEFICITRAMPRATE(currTP,o)
+=l=
+  GenerationEndUp(currTP,o)
   ;
 
-* RDN - Maximum movement of the primary offer that has a secondary offer downwards due to down ramp rate (3.7.1.2)
-* Define this constraint over positive energy offers
-GenerationRampDown_PS(currTP,o) $ (PositiveEnergyOffer(currTP,o) and HasSecondaryOffer(currTP,o))..
-GENERATION(currTP,o) + sum(o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1)) + SURPLUSRAMPRATE(currTP,o) =g=
-GenerationEndDown(currTP,o)
+* Maximum movement of the primary offer that has a secondary offer downwards due to down ramp rate (3.7.1.2)
+GenerationRampDown_PS(currTP,o) $ { PositiveEnergyOffer(currTP,o) and HasSecondaryOffer(currTP,o) }..
+  GENERATION(currTP,o)
++ sum[ o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1) ]
++ SURPLUSRAMPRATE(currTP,o)
+=g=
+  GenerationEndDown(currTP,o)
   ;
 
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* Calculation of the risk offset variable for the DCCE risk class.  This will be used when the useMixedConstraintRiskOffset flag is false (3.4.1.2)
-* RDN - Disable this constraint only when the original mixed constraint formulation specific to the risk offset calculation is not used
-RiskOffsetCalculation_DCCE(currTP,ild,i_reserveClass,i_riskClass) $ ((not useMixedConstraintRiskOffset) and HVDCrisk(i_riskClass) and ContingentEvents(i_riskClass))..
-RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
-FreeReserve(currTP,ild,i_reserveClass,i_riskClass) + HVDCPoleRampUp(currTP,ild,i_reserveClass,i_riskClass)
+* Calculation of the risk offset variable for the DCCE risk class.
+* This will be used when the useMixedConstraintRiskOffset flag is false (3.4.1.2)
+RiskOffsetCalculation_DCCE(currTP,ild,i_reserveClass,i_riskClass) $ { (not useMixedConstraintRiskOffset) and
+                                                                      HVDCrisk(i_riskClass) and
+                                                                      ContingentEvents(i_riskClass)
+                                                                    }..
+  RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass)
+=e=
+  FreeReserve(currTP,ild,i_reserveClass,i_riskClass)
++ HVDCPoleRampUp(currTP,ild,i_reserveClass,i_riskClass)
   ;
 
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* Calculation of the risk offset variable for the DCECE risk class.  This will be used when the useMixedConstraintRiskOffset flag is false (3.4.1.4)
-* RDN - Disable this constraint only when the original mixed constraint formulation specifit to the risk offset calculation is not used
-RiskOffsetCalculation_DCECE(currTP,ild,i_reserveClass,i_riskClass) $ ((not useMixedConstraintRiskOffset) and HVDCrisk(i_riskClass) and ExtendedContingentEvent(i_riskClass))..
-RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
-FreeReserve(currTP,ild,i_reserveClass,i_riskClass)
+* Calculation of the risk offset variable for the DCECE risk class.
+* This will be used when the useMixedConstraintRiskOffset flag is false (3.4.1.4)
+RiskOffsetCalculation_DCECE(currTP,ild,i_reserveClass,i_riskClass) $ { (not useMixedConstraintRiskOffset) and
+                                                                       HVDCrisk(i_riskClass) and
+                                                                       ExtendedContingentEvent(i_riskClass)
+                                                                     }..
+  RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass)
+=e=
+  FreeReserve(currTP,ild,i_reserveClass,i_riskClass)
   ;
 
-* Risk offset definition (3.4.1.5) in old formulation (v4.4). use this when the useMixedConstraintRiskOffset flag is set.
-* RDN - Enable this constraint only when the original mixed constraint formulation specifit to the risk offset calculation is used
+* Risk offset definition (3.4.1.5) in old formulation (v4.4).
+* Use this when the useMixedConstraintRiskOffset flag is set.
 RiskOffsetCalculation(currTP,i_type1MixedConstraintReserveMap(t1MixCstr,ild,i_reserveClass,i_riskClass)) $ useMixedConstraintRiskOffset..
-RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass) =e=
-MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
+  RISKOFFSET(currTP,ild,i_reserveClass,i_riskClass)
+=e=
+  MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
   ;
 
 * Calculation of the island risk for a DCCE and DCECE (3.4.1.1)
 HVDCIslandRiskCalculation(currTP,ild,i_reserveClass,HVDCrisk)..
-ISLANDRISK(currTP,ild,i_reserveClass,HVDCrisk) =e=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCrisk) * (HVDCREC(currTP,ild) - RISKOFFSET(currTP,ild,i_reserveClass,HVDCrisk))
+  ISLANDRISK(currTP,ild,i_reserveClass,HVDCrisk)
+=e=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCrisk)
+  * [ HVDCREC(currTP,ild) - RISKOFFSET(currTP,ild,i_reserveClass,HVDCrisk) ]
   ;
 
-* Calculation of the net received HVDC MW flow into an island (3.4.1.2)
+* Calculation of the net received HVDC MW flow into an island (3.4.1.5)
 HVDCRecCalculation(currTP,ild)..
-HVDCREC(currTP,ild) =e=
-  sum((b,br) $ (BusIsland(currTP,b,ild) and ACBus(currTP,b) and HVDClink(currTP,br) and HVDClinkSendingBus(currTP,br,b) and HVDCPoles(currTP,br)), -HVDCLINKFLOW(currTP,br))
-+ sum((b,br) $ (BusIsland(currTP,b,ild) and ACBus(currTP,b) and HVDClink(currTP,br) and HVDClinkReceivingBus(currTP,br,b) and HVDClink(currTP,br)), HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br))
+  HVDCREC(currTP,ild)
+=e=
+  sum[ (b,br) $ { BusIsland(currTP,b,ild) and
+                  ACBus(currTP,b) and
+                  HVDClink(currTP,br) and
+                  HVDClinkSendingBus(currTP,br,b) and
+                  HVDCPoles(currTP,br)
+                }, -HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ (b,br) $ { BusIsland(currTP,b,ild) and
+                  ACBus(currTP,b) and
+                  HVDClink(currTP,br) and
+                  HVDClinkReceivingBus(currTP,br,b) and
+                  HVDCPoles(currTP,br)
+                }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
+     ]
   ;
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
-GenIslandRiskCalculation(currTP,ild,o,i_reserveClass,GenRisk) $ ((not (UsePrimSecGenRiskModel)) and IslandRiskGenerator(currTP,ild,o))..
-ISLANDRISK(currTP,ild,i_reserveClass,GenRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,GenRisk) * (GENERATION(currTP,o) - FreeReserve(currTP,ild,i_reserveClass,GenRisk) + FKBand(currTP,o) + sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType)) )
+GenIslandRiskCalculation(currTP,ild,o,i_reserveClass,GenRisk) $ { (not (UsePrimSecGenRiskModel)) and
+                                                                  IslandRiskGenerator(currTP,ild,o)
+                                                                }..
+  ISLANDRISK(currTP,ild,i_reserveClass,GenRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,GenRisk)
+  * [ GENERATION(currTP,o)
+    - FreeReserve(currTP,ild,i_reserveClass,GenRisk)
+    + FKBand(currTP,o)
+    + sum[ i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType) ]
+    ]
   ;
 
-*-----------------------------------------------
 * Calculation of the island risk for risk setting generators (3.4.1.6)
-* RDN - Generator island risk calculation with single offer
-GenIslandRiskCalculation_NonPS(currTP,ild,o,i_reserveClass,GenRisk) $ (UsePrimSecGenRiskModel and IslandRiskGenerator(currTP,ild,o) and (not (HasSecondaryOffer(currTP,o) or HasPrimaryOffer(currTP,o))))..
-ISLANDRISK(currTP,ild,i_reserveClass,GenRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,GenRisk) * (GENERATION(currTP,o) - FreeReserve(currTP,ild,i_reserveClass,GenRisk) + FKBand(currTP,o) + sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType)) )
+* Generator island risk calculation with single offer
+GenIslandRiskCalculation_NonPS(currTP,ild,o,i_reserveClass,GenRisk) $ { UsePrimSecGenRiskModel and
+                                                                        IslandRiskGenerator(currTP,ild,o) and
+                                                                        ( not ( HasSecondaryOffer(currTP,o) or
+                                                                                HasPrimaryOffer(currTP,o)
+                                                                              )
+                                                                        )
+                                                                      }..
+  ISLANDRISK(currTP,ild,i_reserveClass,GenRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,GenRisk)
+  * [ GENERATION(currTP,o)
+    - FreeReserve(currTP,ild,i_reserveClass,GenRisk)
+    + FKBand(currTP,o)
+    + sum[ i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType) ]
+    ]
   ;
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
-* RDN - Risk calculation for generators with more than one offer - Primary and secondary offers
-GenIslandRiskCalculation_PS(currTP,ild,o,i_reserveClass,GenRisk) $ (UsePrimSecGenRiskModel and IslandRiskGenerator(currTP,ild,o) and HasSecondaryOffer(currTP,o))..
-ISLANDRISK(currTP,ild,i_reserveClass,GenRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,GenRisk) * ((GENERATION(currTP,o) + sum(o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1))) - FreeReserve(currTP,ild,i_reserveClass,GenRisk) + FKBand(currTP,o)
-+ (sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType)) + sum((o1,i_reserveType) $ PrimarySecondaryOffer(currTP,o,o1), RESERVE(currTP,o1,i_reserveClass,i_reserveType))) )
+* Risk calculation for generators with more than one offer - Primary and secondary offers
+GenIslandRiskCalculation_PS(currTP,ild,o,i_reserveClass,GenRisk) $ { UsePrimSecGenRiskModel and
+                                                                     IslandRiskGenerator(currTP,ild,o) and
+                                                                     HasSecondaryOffer(currTP,o)
+                                                                   }..
+  ISLANDRISK(currTP,ild,i_reserveClass,GenRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,GenRisk)
+  * [ GENERATION(currTP,o)
+    - FreeReserve(currTP,ild,i_reserveClass,GenRisk)
+    + FKBand(currTP,o)
+    + sum[ i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType) ]
+    + sum[ o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1) ]
+    + sum[ (o1,i_reserveType) $ PrimarySecondaryOffer(currTP,o,o1), RESERVE(currTP,o1,i_reserveClass,i_reserveType) ]
+
+    ]
   ;
-*-----------------------------------------------
 
 * Calculation of the island risk based on manual specifications (3.4.1.7)
 ManualIslandRiskCalculation(currTP,ild,i_reserveClass,ManualRisk)..
-ISLANDRISK(currTP,ild,i_reserveClass,ManualRisk) =e=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,ManualRisk) * (IslandMinimumRisk(currTP,ild,i_reserveClass,ManualRisk) - FreeReserve(currTP,ild,i_reserveClass,ManualRisk))
+  ISLANDRISK(currTP,ild,i_reserveClass,ManualRisk)
+=e=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,ManualRisk)
+  * [ IslandMinimumRisk(currTP,ild,i_reserveClass,ManualRisk)
+    - FreeReserve(currTP,ild,i_reserveClass,ManualRisk)
+    ]
   ;
 
-* RDN - HVDC secondary risk calculation including the FKBand for generator primary risk
+* HVDC secondary risk calculation including the FKBand for generator primary risk
 * Calculation of the island risk for an HVDC secondary risk to a generator risk (3.4.1.8)
-HVDCIslandSecRiskCalculation_GEN(currTP,ild,o,i_reserveClass,HVDCSecRisk) $ ((not (UsePrimSecGenRiskModel)) and HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk) and IslandRiskGenerator(currTP,ild,o))..
-ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk) * (GENERATION(currTP,o) - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk) + HVDCREC(currTP,ild) - HVDCSecRiskSubtractor(currTP,ild) + FKBand(currTP,o) + sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType)))
+HVDCIslandSecRiskCalculation_GEN(currTP,ild,o,i_reserveClass,HVDCSecRisk) $ { (not (UsePrimSecGenRiskModel)) and
+                                                                              HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk) and
+                                                                              IslandRiskGenerator(currTP,ild,o)
+                                                                            }..
+  ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk)
+  * [ GENERATION(currTP,o)
+    - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk)
+    + HVDCREC(currTP,ild)
+    - HVDCSecRiskSubtractor(currTP,ild)
+    + FKBand(currTP,o)
+    + sum[ i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType) ]
+    ]
   ;
 
-*-----------------------------------------------
 * Calculation of the island risk for an HVDC secondary risk to a generator risk (3.4.1.8)
-HVDCIslandSecRiskCalculation_GEN_NonPS(currTP,ild,o,i_reserveClass,HVDCSecRisk) $ (UsePrimSecGenRiskModel and HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk) and IslandRiskGenerator(currTP,ild,o) and (not (HasSecondaryOffer(currTP,o) or HasPrimaryOffer(currTP,o))))..
-ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk) * (GENERATION(currTP,o) - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk) + HVDCREC(currTP,ild) - HVDCSecRiskSubtractor(currTP,ild) + FKBand(currTP,o) + sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType)))
+HVDCIslandSecRiskCalculation_GEN_NonPS(currTP,ild,o,i_reserveClass,HVDCSecRisk) $ { UsePrimSecGenRiskModel and
+                                                                                    HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk) and
+                                                                                    IslandRiskGenerator(currTP,ild,o) and
+                                                                                    ( not ( HasSecondaryOffer(currTP,o) or
+                                                                                            HasPrimaryOffer(currTP,o)
+                                                                                          )
+                                                                                    )
+                                                                                  }..
+  ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk)
+  * [ GENERATION(currTP,o)
+    - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk)
+    + HVDCREC(currTP,ild)
+    - HVDCSecRiskSubtractor(currTP,ild)
+    + FKBand(currTP,o)
+    + sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType))
+    ]
   ;
 
 * Calculation of the island risk for an HVDC secondary risk to a generator risk (3.4.1.8)
-HVDCIslandSecRiskCalculation_GEN_PS(currTP,ild,o,i_reserveClass,HVDCSecRisk) $ (UsePrimSecGenRiskModel and HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk) and IslandRiskGenerator(currTP,ild,o) and HasSecondaryOffer(currTP,o))..
-ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk) * ((GENERATION(currTP,o) + sum(o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1)))
-- FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk) + HVDCREC(currTP,ild) - HVDCSecRiskSubtractor(currTP,ild) + FKBand(currTP,o)
-+ (sum(i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType)) + sum((o1,i_reserveType) $ PrimarySecondaryOffer(currTP,o,o1), RESERVE(currTP,o1,i_reserveClass,i_reserveType))) )
+HVDCIslandSecRiskCalculation_GEN_PS(currTP,ild,o,i_reserveClass,HVDCSecRisk) $ { UsePrimSecGenRiskModel and
+                                                                                 HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk) and
+                                                                                 IslandRiskGenerator(currTP,ild,o) and
+                                                                                 HasSecondaryOffer(currTP,o)
+                                                                               }..
+  ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk)
+  * [ GENERATION(currTP,o)
+    - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk)
+    + HVDCREC(currTP,ild)
+    - HVDCSecRiskSubtractor(currTP,ild)
+    + FKBand(currTP,o)
+    + sum[ i_reserveType, RESERVE(currTP,o,i_reserveClass,i_reserveType) ]
+    + sum[ o1 $ PrimarySecondaryOffer(currTP,o,o1), GENERATION(currTP,o1) ]
+    + sum[ (o1,i_reserveType) $ PrimarySecondaryOffer(currTP,o,o1), RESERVE(currTP,o1,i_reserveClass,i_reserveType) ]
+    ]
   ;
-*-----------------------------------------------
 
-* RDN - HVDC secondary risk calculation for manual primary risk
+* HVDC secondary risk calculation for manual primary risk
 * Calculation of the island risk for an HVDC secondary risk to a manual risk (3.4.1.9)
 HVDCIslandSecRiskCalculation_Manual(currTP,ild,i_reserveClass,HVDCSecRisk) $ HVDCSecRiskEnabled(currTP,ild,HVDCSecRisk)..
-ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk) =g=
-IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk) * (HVDCSecIslandMinimumRisk(currTP,ild,i_reserveClass,HVDCSecRisk) - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk) + HVDCREC(currTP,ild) - HVDCSecRiskSubtractor(currTP,ild))
+  ISLANDRISK(currTP,ild,i_reserveClass,HVDCSecRisk)
+=g=
+  IslandRiskAdjustmentFactor(currTP,ild,i_reserveClass,HVDCSecRisk)
+  * [ HVDCSecIslandMinimumRisk(currTP,ild,i_reserveClass,HVDCSecRisk)
+    - FreeReserve(currTP,ild,i_reserveClass,HVDCSecRisk)
+    + HVDCREC(currTP,ild)
+    - HVDCSecRiskSubtractor(currTP,ild)
+    ]
   ;
 
 * Maximum PLSR as a proportion of the block MW (3.4.2.1)
 PLSRReserveProportionMaximum(validReserveOfferBlock(Offer,trdBlk,i_reserveClass,PLSRReserveType))..
-RESERVEBLOCK(Offer,trdBlk,i_reserveClass,PLSRReserveType) =l=
-ReserveOfferProportion(Offer,trdBlk,i_reserveClass) * GENERATION(Offer)
+  RESERVEBLOCK(Offer,trdBlk,i_reserveClass,PLSRReserveType)
+=l=
+  ReserveOfferProportion(Offer,trdBlk,i_reserveClass) * GENERATION(Offer)
   ;
 
 * Definition of the reserve offers of different classes and types (3.4.2.3a)
 ReserveOfferDefinition(Offer,i_reserveClass,i_reserveType)..
-RESERVE(Offer,i_reserveClass,i_reserveType) =e=
-sum(trdBlk, RESERVEBLOCK(Offer,trdBlk,i_reserveClass,i_reserveType))
+  RESERVE(Offer,i_reserveClass,i_reserveType)
+=e=
+  sum[ trdBlk, RESERVEBLOCK(Offer,trdBlk,i_reserveClass,i_reserveType) ]
   ;
 
 * Definition of the ILR reserve provided by purchase bids (3.4.2.3b)
 ReserveDefinitionPurchaseBid(Bid,i_reserveClass)..
-PURCHASEILR(Bid,i_reserveClass) =e=
-sum(trdBlk, PURCHASEILRBLOCK(Bid,trdBlk,i_reserveClass))
+  PURCHASEILR(Bid,i_reserveClass)
+=e=
+  sum(trdBlk, PURCHASEILRBLOCK(Bid,trdBlk,i_reserveClass))
   ;
 
 * Definition of maximum energy and reserves from each generator (3.4.2.4)
 EnergyAndReserveMaximum(Offer,i_reserveClass)..
-GENERATION(Offer) + ReserveMaximumFactor(Offer,i_reserveClass) * sum(i_reserveType $ (not ILReserveType(i_reserveType)), RESERVE(Offer,i_reserveClass,i_reserveType)) =l=
-ReserveGenerationMaximum(Offer)
+  GENERATION(Offer)
++ ReserveMaximumFactor(Offer,i_reserveClass)
+  * sum[ i_reserveType $ (not ILReserveType(i_reserveType)), RESERVE(Offer,i_reserveClass,i_reserveType) ]
+=l=
+  ReserveGenerationMaximum(Offer)
   ;
 
-* RDN - Change to demand bid
 * This constraint is no longer in the formulation from v6.0 (following changes with DSBF)
 * Maximum ILR provided by purchase bids (3.4.2.5)
 PurchaseBidReserveMaximum(Bid,i_reserveClass) $ (not (UseDSBFDemandBidModel))..
-PURCHASEILR(Bid,i_reserveClass) =l=
-PURCHASE(Bid)
+  PURCHASEILR(Bid,i_reserveClass)
+=l=
+  PURCHASE(Bid)
   ;
-* RDN - Change to demand bid - End
 
-* Definition of the maximum risk in each island (3.4.3.1)
-* RDN - Update maximum island risk definition to only apply when the CE and ECE CVPs are not separated
+* Definition of the maximum risk in each island
+* applied when the CE and ECE CVPs are not separated (3.4.3.1)
+
 MaximumIslandRiskDefinition(currTP,ild,i_reserveClass,i_riskClass) $ (not DiffCeECeCVP)..
-ISLANDRISK(currTP,ild,i_reserveClass,i_riskClass) =l=
-MAXISLANDRISK(currTP,ild,i_reserveClass)
+  ISLANDRISK(currTP,ild,i_reserveClass,i_riskClass)
+=l=
+  MAXISLANDRISK(currTP,ild,i_reserveClass)
   ;
 
-* RDN - Update maximum island risk definition with the CE and ECE deficit reserve
-* Definition of the maximum CE risk in each island (3.4.3.1a) - use this definition if flag for different CVPs for CE and ECE
+* Definition of the maximum CE risk in each island (3.4.3.1a)
+* applied when the CE and ECE CVPs are separated
 MaximumIslandRiskDefinition_CE(currTP,ild,i_reserveClass,ContingentEvents) $ (DiffCeECeCVP)..
-ISLANDRISK(currTP,ild,i_reserveClass,ContingentEvents) =l=
-MAXISLANDRISK(currTP,ild,i_reserveClass) + DEFICITRESERVE_CE(currTP,ild,i_reserveClass)
+  ISLANDRISK(currTP,ild,i_reserveClass,ContingentEvents)
+=l=
+  MAXISLANDRISK(currTP,ild,i_reserveClass)
+  + DEFICITRESERVE_CE(currTP,ild,i_reserveClass)
   ;
 
-* RDN - Update maximum island risk definition with the CE and ECE deficit reserve
-* Definition of the maximum ECE risk in each island (3.4.3.1b) - use this definition if flag for different CVPs for CE and ECE
+* Definition of the maximum CE risk in each island (3.4.3.1b)
+* applied when the CE and ECE CVPs are separated
 MaximumIslandRiskDefinition_ECE(currTP,ild,i_reserveClass,ExtendedContingentEvent) $ (DiffCeECeCVP)..
-ISLANDRISK(currTP,ild,i_reserveClass,ExtendedContingentEvent) =l=
-MAXISLANDRISK(currTP,ild,i_reserveClass) + DEFICITRESERVE_ECE(currTP,ild,i_reserveClass)
+  ISLANDRISK(currTP,ild,i_reserveClass,ExtendedContingentEvent)
+=l=
+  MAXISLANDRISK(currTP,ild,i_reserveClass)
+  + DEFICITRESERVE_ECE(currTP,ild,i_reserveClass)
   ;
 
 * Matching of reserve supply and demand (3.4.3.2)
 SupplyDemandReserveRequirement(currTP,ild,i_reserveClass) $ useReserveModel..
-MAXISLANDRISK(currTP,ild,i_reserveClass) - (DEFICITRESERVE(currTP,ild,i_reserveClass) $ (not DiffCeECeCVP)) =l=
-  sum((o,i_reserveType) $ (Offer(currTP,o) and IslandOffer(currTP,ild,o)), RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ (Bid(currTP,i_bid) and IslandBid(currTP,ild,i_bid)), PURCHASEILR(currTP,i_bid,i_reserveClass))
+  MAXISLANDRISK(currTP,ild,i_reserveClass)
+- [DEFICITRESERVE(currTP,ild,i_reserveClass) $ (not DiffCeECeCVP)]
+=l=
+  sum[ (o,i_reserveType) $ { Offer(currTP,o) and
+                             IslandOffer(currTP,ild,o)
+                           }, RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ { Bid(currTP,i_bid) and
+                 IslandBid(currTP,ild,i_bid)
+               }, PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
   ;
 
 * Branch security constraint with LE sense (3.5.1.5a)
 BranchSecurityConstraintLE(currTP,brCstr) $ (BranchConstraintSense(currTP,brCstr) = -1)..
-  sum(br$ACbranch(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * ACBRANCHFLOW(currTP,br))
-+ sum(br$HVDClink(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * HVDCLINKFLOW(currTP,br))
-- SURPLUSBRANCHSECURITYCONSTRAINT(currTP,brCstr) =l=
-BranchConstraintLimit(currTP,brCstr)
+  sum[ br $ ACbranch(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * ACBRANCHFLOW(currTP,br) ]
++ sum[ br $ HVDClink(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * HVDCLINKFLOW(currTP,br) ]
+- SURPLUSBRANCHSECURITYCONSTRAINT(currTP,brCstr)
+=l=
+  BranchConstraintLimit(currTP,brCstr)
   ;
 
 * Branch security constraint with GE sense (3.5.1.5b)
 BranchSecurityConstraintGE(currTP,brCstr) $ (BranchConstraintSense(currTP,brCstr) = 1)..
-  sum(br$ACbranch(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * ACBRANCHFLOW(currTP,br))
-+ sum(br$HVDClink(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * HVDCLINKFLOW(currTP,br))
-+ DEFICITBRANCHSECURITYCONSTRAINT(currTP,brCstr) =g=
-BranchConstraintLimit(currTP,brCstr)
+  sum[ br $ ACbranch(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * ACBRANCHFLOW(currTP,br) ]
++ sum[ br $ HVDClink(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * HVDCLINKFLOW(currTP,br) ]
++ DEFICITBRANCHSECURITYCONSTRAINT(currTP,brCstr)
+=g=
+  BranchConstraintLimit(currTP,brCstr)
   ;
 
 * Branch security constraint with EQ sense (3.5.1.5c)
 BranchSecurityConstraintEQ(currTP,brCstr) $ (BranchConstraintSense(currTP,brCstr) = 0)..
-  sum(br$ACbranch(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * ACBRANCHFLOW(currTP,br))
-+ sum(br$HVDClink(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * HVDCLINKFLOW(currTP,br))
-+ DEFICITBRANCHSECURITYCONSTRAINT(currTP,brCstr) - SURPLUSBRANCHSECURITYCONSTRAINT(currTP,brCstr) =e=
-BranchConstraintLimit(currTP,brCstr)
+  sum[ br $ ACbranch(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * ACBRANCHFLOW(currTP,br) ]
++ sum[ br $ HVDClink(currTP,br), BranchConstraintFactors(currTP,brCstr,br) * HVDCLINKFLOW(currTP,br) ]
++ DEFICITBRANCHSECURITYCONSTRAINT(currTP,brCstr)
+- SURPLUSBRANCHSECURITYCONSTRAINT(currTP,brCstr)
+=e=
+  BranchConstraintLimit(currTP,brCstr)
   ;
 
 * AC node security constraint with LE sense (3.5.1.6a)
 ACnodeSecurityConstraintLE(currTP,ACnodeCstr) $ (ACnodeConstraintSense(currTP,ACnodeCstr) = -1)..
-sum((n,b) $ (ACnode(currTP,n) and NodeBus(currTP,n,b)), ACnodeConstraintFactors(currTP,ACnodeCstr,n) * NodeBusAllocationFactor(currTP,n,b) * ACnodeNETINJECTION(currTP,b))
-- SURPLUSACnodeCONSTRAINT(currTP,ACnodeCstr) =l=
-ACnodeConstraintLimit(currTP,ACnodeCstr)
+  sum[ (n,b) $ { ACnode(currTP,n) and
+                 NodeBus(currTP,n,b)
+               }, ACnodeConstraintFactors(currTP,ACnodeCstr,n)
+                * NodeBusAllocationFactor(currTP,n,b)
+                * ACNODENETINJECTION(currTP,b)
+     ]
+- SURPLUSACnodeCONSTRAINT(currTP,ACnodeCstr)
+=l=
+  ACnodeConstraintLimit(currTP,ACnodeCstr)
   ;
 
 * AC node security constraint with GE sense (3.5.1.6b)
 ACnodeSecurityConstraintGE(currTP,ACnodeCstr) $ (ACnodeConstraintSense(currTP,ACnodeCstr) = 1)..
-sum((n,b) $ (ACnode(currTP,n) and NodeBus(currTP,n,b)), ACnodeConstraintFactors(currTP,ACnodeCstr,n) * NodeBusAllocationFactor(currTP,n,b) * ACnodeNETINJECTION(currTP,b))
-+ DEFICITACnodeCONSTRAINT(currTP,ACnodeCstr) =g=
-ACnodeConstraintLimit(currTP,ACnodeCstr)
+  sum[ (n,b) $ { ACnode(currTP,n) and
+                 NodeBus(currTP,n,b)
+               }, ACnodeConstraintFactors(currTP,ACnodeCstr,n)
+                * NodeBusAllocationFactor(currTP,n,b)
+                * ACNODENETINJECTION(currTP,b)
+     ]
++ DEFICITACnodeCONSTRAINT(currTP,ACnodeCstr)
+=g=
+  ACnodeConstraintLimit(currTP,ACnodeCstr)
   ;
 
 * AC node security constraint with EQ sense (3.5.1.6c)
 ACnodeSecurityConstraintEQ(currTP,ACnodeCstr) $ (ACnodeConstraintSense(currTP,ACnodeCstr) = 0)..
-sum((n,b) $ (ACnode(currTP,n) and NodeBus(currTP,n,b)), ACnodeConstraintFactors(currTP,ACnodeCstr,n) * NodeBusAllocationFactor(currTP,n,b) * ACnodeNETINJECTION(currTP,b))
-+ DEFICITACnodeCONSTRAINT(currTP,ACnodeCstr) - SURPLUSACnodeCONSTRAINT(currTP,ACnodeCstr) =e=
-ACnodeConstraintLimit(currTP,ACnodeCstr)
+  sum[ (n,b) $ { ACnode(currTP,n) and
+                 NodeBus(currTP,n,b)
+               }, ACnodeConstraintFactors(currTP,ACnodeCstr,n)
+                * NodeBusAllocationFactor(currTP,n,b)
+                * ACNODENETINJECTION(currTP,b)
+     ]
++ DEFICITACnodeCONSTRAINT(currTP,ACnodeCstr)
+- SURPLUSACnodeCONSTRAINT(currTP,ACnodeCstr)
+=e=
+  ACnodeConstraintLimit(currTP,ACnodeCstr)
   ;
 
 
 
 * Market node security constraint with LE sense (3.5.1.7a)
 MNodeSecurityConstraintLE(currTP,MnodeCstr) $ (MNodeConstraintSense(currTP,MnodeCstr) = -1)..
-  sum(o $ PositiveEnergyOffer(currTP,o), MNodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), MNodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ Bid(currTP,i_bid), MNodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ sum((i_bid,i_reserveClass) $ Bid(currTP,i_bid), MNodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass) * PURCHASEILR(currTP,i_bid,i_reserveClass))
-- SURPLUSMNODECONSTRAINT(currTP,MnodeCstr) =l=
-MNodeConstraintLimit(currTP,MnodeCstr)
+  sum[ o $ PositiveEnergyOffer(currTP,o)
+       , MNodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , MNodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , MNodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ sum[ (i_bid,i_reserveClass) $ Bid(currTP,i_bid)
+       , MNodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass)
+       * PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
+- SURPLUSMNODECONSTRAINT(currTP,MnodeCstr)
+=l=
+  MNodeConstraintLimit(currTP,MnodeCstr)
   ;
 
 * Market node security constraint with GE sense (3.5.1.7b)
 MNodeSecurityConstraintGE(currTP,MnodeCstr) $ (MNodeConstraintSense(currTP,MnodeCstr) = 1)..
-  sum(o $ PositiveEnergyOffer(currTP,o), MNodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), MNodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ Bid(currTP,i_bid), MNodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ sum((i_bid,i_reserveClass) $ Bid(currTP,i_bid), MNodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass) * PURCHASEILR(currTP,i_bid,i_reserveClass))
-+ DEFICITMNODECONSTRAINT(currTP,MnodeCstr) =g=
-MNodeConstraintLimit(currTP,MnodeCstr)
+  sum[ o $ PositiveEnergyOffer(currTP,o)
+       , MNodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , MNodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , MNodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ sum[ (i_bid,i_reserveClass) $ Bid(currTP,i_bid)
+       , MNodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass)
+       * PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
++ DEFICITMNODECONSTRAINT(currTP,MnodeCstr)
+=g=
+  MNodeConstraintLimit(currTP,MnodeCstr)
   ;
 
 * Market node security constraint with EQ sense (3.5.1.7c)
 MNodeSecurityConstraintEQ(currTP,MnodeCstr) $ (MNodeConstraintSense(currTP,MnodeCstr) = 0)..
-  sum(o $ PositiveEnergyOffer(currTP,o), MNodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), MNodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ Bid(currTP,i_bid), MNodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ sum((i_bid,i_reserveClass) $ Bid(currTP,i_bid), MNodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass) * PURCHASEILR(currTP,i_bid,i_reserveClass))
-+ DEFICITMNODECONSTRAINT(currTP,MnodeCstr) - SURPLUSMNODECONSTRAINT(currTP,MnodeCstr) =e=
-MNodeConstraintLimit(currTP,MnodeCstr)
+  sum[ o $ PositiveEnergyOffer(currTP,o)
+       , MNodeEnergyOfferConstraintFactors(currTP,MnodeCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , MNodeReserveOfferConstraintFactors(currTP,MnodeCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , MNodeEnergyBidConstraintFactors(currTP,MnodeCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ sum[ (i_bid,i_reserveClass) $ Bid(currTP,i_bid)
+       , MNodeILReserveBidConstraintFactors(currTP,MnodeCstr,i_bid,i_reserveClass)
+       * PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
++ DEFICITMNODECONSTRAINT(currTP,MnodeCstr)
+- SURPLUSMNODECONSTRAINT(currTP,MnodeCstr)
+=e=
+  MNodeConstraintLimit(currTP,MnodeCstr)
   ;
 
 * Type 1 mixed constraint definition with LE sense (3.6.1.1a)
-Type1MixedConstraintLE(currTP,t1MixCstr) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and (not useMixedConstraintMIP(currTP)))..
-i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
-+ sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br) * HVDCLINKFLOW(currTP,br))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$(ACBranch(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) * ACBranchFixedLoss(currTP,br))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br) * HVDCLINKLOSSES(currTP,br))
-+ sum(br$(HVDClink(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br) * HVDClinkFixedLoss(currTP,br))
-+ sum(i_bid $ Bid(currTP,i_bid), i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) * PURCHASE(currTP,i_bid))
-- SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) =l=
-Type1MixedConstraintLimit1(currTP,t1MixCstr)
+Type1MixedConstraintLE(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
+                                             (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and
+                                             (not useMixedConstraintMIP(currTP))
+                                           }..
+  i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
++ sum[ o $ PositiveEnergyOffer(currTP,o)
+       , i_type1MixedConstraintGenWeight(t1MixCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br)
+       * HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
+       * ACBranchFixedLoss(currTP,br)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
+       * HVDCLINKLOSSES(currTP,br)
+     ]
++ sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
+       * HVDClinkFixedLoss(currTP,br)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
+- SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+=l=
+  Type1MixedConstraintLimit1(currTP,t1MixCstr)
   ;
 
 
 * Type 1 mixed constraint definition with GE sense (3.6.1.1b)
-Type1MixedConstraintGE(currTP,t1MixCstr) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and (not useMixedConstraintMIP(currTP)))..
-i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
-+ sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br) * HVDCLINKFLOW(currTP,br))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$(ACBranch(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) * ACBranchFixedLoss(currTP,br))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br) * HVDCLINKLOSSES(currTP,br))
-+ sum(br$(HVDClink(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br) * HVDClinkFixedLoss(currTP,br))
-+ sum(i_bid $ Bid(currTP,i_bid), i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) =g=
-Type1MixedConstraintLimit1(currTP,t1MixCstr)
+Type1MixedConstraintGE(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
+                                             (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and
+                                             (not useMixedConstraintMIP(currTP))
+                                           }..
+  i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
++ sum[ o $ PositiveEnergyOffer(currTP,o)
+       , i_type1MixedConstraintGenWeight(t1MixCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br)
+       * HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
+       * ACBranchFixedLoss(currTP,br)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+     , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
+     * HVDCLINKLOSSES(currTP,br)
+     ]
++ sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
+       * HVDClinkFixedLoss(currTP,br)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+     , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
+     * PURCHASE(currTP,i_bid)
+     ]
++ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+=g=
+  Type1MixedConstraintLimit1(currTP,t1MixCstr)
   ;
 
 * Type 1 mixed constraint definition with EQ sense (3.6.1.1c)
-Type1MixedConstraintEQ(currTP,t1MixCstr) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and (not useMixedConstraintMIP(currTP)))..
-i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
-+ sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br) * HVDCLINKFLOW(currTP,br))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$(ACBranch(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) * ACBranchFixedLoss(currTP,br))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br) * HVDCLINKLOSSES(currTP,br))
-+ sum(br$(HVDClink(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br) * HVDClinkFixedLoss(currTP,br))
-+ sum(i_bid $ Bid(currTP,i_bid), i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) - SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) =e=
-Type1MixedConstraintLimit1(currTP,t1MixCstr)
+Type1MixedConstraintEQ(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
+                                             (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and
+                                             (not useMixedConstraintMIP(currTP))
+                                           }..
+  i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
++ sum[ o $ PositiveEnergyOffer(currTP,o)
+       , i_type1MixedConstraintGenWeight(t1MixCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br)
+       * HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
+       * ACBranchFixedLoss(currTP,br)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
+       * HVDCLINKLOSSES(currTP,br)
+     ]
++ sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
+       * HVDClinkFixedLoss(currTP,br)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+- SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+=e=
+  Type1MixedConstraintLimit1(currTP,t1MixCstr)
   ;
 
 * Type 2 mixed constraint definition with LE sense (3.6.1.2a)
-Type2MixedConstraintLE(currTP,t2MixCstr) $ (useMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = -1))..
-sum(t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr))
+Type2MixedConstraintLE(currTP,t2MixCstr) $ { useMixedConstraint(currTP) and
+                                             (Type2MixedConstraintSense(currTP,t2MixCstr) = -1)
+                                           }..
+  sum[ t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr)
+                * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr) ]
 =l=
-Type2MixedConstraintLimit(currTP,t2MixCstr)
+  Type2MixedConstraintLimit(currTP,t2MixCstr)
   ;
 
 * Type 2 mixed constraint definition with GE sense (3.6.1.2b)
-Type2MixedConstraintGE(currTP,t2MixCstr) $ (useMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = 1))..
-sum(t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr))
+Type2MixedConstraintGE(currTP,t2MixCstr) $ { useMixedConstraint(currTP) and
+                                             (Type2MixedConstraintSense(currTP,t2MixCstr) = 1)
+                                           }..
+  sum[ t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr)
+                * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr) ]
 =g=
-Type2MixedConstraintLimit(currTP,t2MixCstr)
+  Type2MixedConstraintLimit(currTP,t2MixCstr)
   ;
 
 * Type 2 mixed constraint definition with EQ sense (3.6.1.2c)
-Type2MixedConstraintEQ(currTP,t2MixCstr) $ (useMixedConstraint(currTP) and (Type2MixedConstraintSense(currTP,t2MixCstr) = 0))..
-sum(t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr))
+Type2MixedConstraintEQ(currTP,t2MixCstr) $ { useMixedConstraint(currTP) and
+                                             (Type2MixedConstraintSense(currTP,t2MixCstr) = 0)
+                                           }..
+  sum[ t1MixCstr, i_type2MixedConstraintLHSParameters(t2MixCstr,t1MixCstr)
+                * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr) ]
 =e=
-Type2MixedConstraintLimit(currTP,t2MixCstr)
+  Type2MixedConstraintLimit(currTP,t2MixCstr)
   ;
 
 * Type 1 mixed constraint definition of alternate limit selection (integer)
-Type1MixedConstraintMIP(currTP,i_type1MixedConstraintBranchCondition(t1MixCstr,br)) $ (useMixedConstraintRiskOffset and HVDCHalfPoles(currTP,br) and useMixedConstraintMIP(currTP))..
-HVDCLINKFLOW(currTP,br) =l=
-MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr) * MixedConstraintBigNumber
+Type1MixedConstraintMIP(currTP,i_type1MixedConstraintBranchCondition(t1MixCstr,br)) $ { useMixedConstraintRiskOffset and
+                                                                                        HVDCHalfPoles(currTP,br) and
+                                                                                        useMixedConstraintMIP(currTP)
+                                                                                      }..
+  HVDCLINKFLOW(currTP,br)
+=l=
+  MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr) * MixedConstraintBigNumber
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with LE sense (3.6.1.1a_MIP)
-Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and useMixedConstraintMIP(currTP))..
-i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
-+ sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br) * HVDCLINKFLOW(currTP,br))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$(ACBranch(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) * ACBranchFixedLoss(currTP,br))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br) * HVDCLINKLOSSES(currTP,br))
-+ sum(br$(HVDClink(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br) * HVDClinkFixedLoss(currTP,br))
-+ sum(i_bid $ Bid(currTP,i_bid), i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) * PURCHASE(currTP,i_bid))
-- SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) =l=
-Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr))
+Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedConstraint(currTP) and
+                                                                       (Type1MixedConstraintSense(currTP,t1MixCstr) = -1) and
+                                                                       useMixedConstraintMIP(currTP)
+                                                                     }..
+  i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
++ sum[ o $ PositiveEnergyOffer(currTP,o)
+       , i_type1MixedConstraintGenWeight(t1MixCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br)
+       * HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
+       * ACBranchFixedLoss(currTP,br)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
+       * HVDCLINKLOSSES(currTP,br)
+     ]
++ sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
+       * HVDClinkFixedLoss(currTP,br)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
+- SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+=l=
+  Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr))
 + Type1MixedConstraintLimit2(currTP,t1MixCstr) * MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr)
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with GE sense (3.6.1.1b_MIP)
-Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and useMixedConstraintMIP(currTP))..
-i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
-+ sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br) * HVDCLINKFLOW(currTP,br))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$(ACBranch(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) * ACBranchFixedLoss(currTP,br))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br) * HVDCLINKLOSSES(currTP,br))
-+ sum(br$(HVDClink(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br) * HVDClinkFixedLoss(currTP,br))
-+ sum(i_bid $ Bid(currTP,i_bid), i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) =g=
-Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr))
+Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedConstraint(currTP) and
+                                                                       (Type1MixedConstraintSense(currTP,t1MixCstr) = 1) and
+                                                                       useMixedConstraintMIP(currTP)
+                                                                     }..
+  i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
++ sum[ o $ PositiveEnergyOffer(currTP,o)
+       , i_type1MixedConstraintGenWeight(t1MixCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br)
+       * HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
+       * ACBranchFixedLoss(currTP,br)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
+       * HVDCLINKLOSSES(currTP,br)
+     ]
++ sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
+       * HVDClinkFixedLoss(currTP,br)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+=g=
+  Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr))
 + Type1MixedConstraintLimit2(currTP,t1MixCstr) * MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr)
   ;
 
 * Integer equivalent of Type 1 mixed constraint definition with EQ sense (3.6.1.1b_MIP)
-Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ (useMixedConstraint(currTP) and (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and useMixedConstraintMIP(currTP))..
-i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
-+ sum(o $ PositiveEnergyOffer(currTP,o), i_type1MixedConstraintGenWeight(t1MixCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br) * HVDCLINKFLOW(currTP,br))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$ACBranch(currTP,br), i_type1MixedConstraintAClineLossWeight(t1MixCstr,br) * sum(i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection)))
-+ sum(br$(ACBranch(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br) * ACBranchFixedLoss(currTP,br))
-+ sum(br$HVDClink(currTP,br), i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br) * HVDCLINKLOSSES(currTP,br))
-+ sum(br$(HVDClink(currTP,br) and ClosedBranch(currTP,br)), i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br) * HVDClinkFixedLoss(currTP,br))
-+ sum(i_bid $ Bid(currTP,i_bid), i_type1MixedConstraintPurWeight(t1MixCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) - SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr) =e=
-Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr))
+Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedConstraint(currTP) and
+                                                                       (Type1MixedConstraintSense(currTP,t1MixCstr) = 0) and
+                                                                       useMixedConstraintMIP(currTP)
+                                                                     }..
+  i_type1MixedConstraintVarWeight(t1MixCstr) * MIXEDCONSTRAINTVARIABLE(currTP,t1MixCstr)
++ sum[ o $ PositiveEnergyOffer(currTP,o)
+       , i_type1MixedConstraintGenWeight(t1MixCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , i_type1MixedConstraintResWeight(t1MixCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineWeight(t1MixCstr,br)
+       * HVDCLINKFLOW(currTP,br)
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ ACBranch(currTP,br)
+       , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
+       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+     ]
++ sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
+       * ACBranchFixedLoss(currTP,br)
+     ]
++ sum[ br $ HVDClink(currTP,br)
+       , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
+       * HVDCLINKLOSSES(currTP,br)
+     ]
++ sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
+       , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
+       * HVDClinkFixedLoss(currTP,br)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ DEFICITTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+- SURPLUSTYPE1MIXEDCONSTRAINT(currTP,t1MixCstr)
+=e=
+  Type1MixedConstraintLimit1(currTP,t1MixCstr) * (1 - MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr))
 + Type1MixedConstraintLimit2(currTP,t1MixCstr) * MIXEDCONSTRAINTLIMIT2SELECT(currTP,t1MixCstr)
   ;
 
 * Generic security constraint with LE sense
 GenericSecurityConstraintLE(currTP,gnrcCstr) $ (GenericConstraintSense(currTP,gnrcCstr) = -1)..
-  sum(o $ PositiveEnergyOffer(currTP,o), GenericEnergyOfferConstraintFactors(currTP,gnrcCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), GenericReserveOfferConstraintFactors(currTP,gnrcCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ Bid(currTP,i_bid), GenericEnergyBidConstraintFactors(currTP,gnrcCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ sum((i_bid,i_reserveClass) $ Bid(currTP,i_bid), GenericILReserveBidConstraintFactors(currTP,gnrcCstr,i_bid,i_reserveClass) * PURCHASEILR(currTP,i_bid,i_reserveClass))
-+ sum(br$((ACBranch(currTP,br) or HVDClink(currTP,br)) and ClosedBranch(currTP,br)), GenericBranchConstraintFactors(currTP,gnrcCstr,br) * (ACBRANCHFLOW(currTP,br) + HVDCLINKFLOW(currTP,br)))
-- SURPLUSGENERICCONSTRAINT(currTP,gnrcCstr) =l=
-GenericConstraintLimit(currTP,gnrcCstr)
+  sum[ o $ PositiveEnergyOffer(currTP,o)
+       , GenericEnergyOfferConstraintFactors(currTP,gnrcCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , GenericReserveOfferConstraintFactors(currTP,gnrcCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+     , GenericEnergyBidConstraintFactors(currTP,gnrcCstr,i_bid)
+     * PURCHASE(currTP,i_bid)
+     ]
++ sum[ (i_bid,i_reserveClass) $ Bid(currTP,i_bid)
+       , GenericILReserveBidConstraintFactors(currTP,gnrcCstr,i_bid,i_reserveClass)
+       * PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
++ sum[ br $ { [ACBranch(currTP,br) or HVDClink(currTP,br)] and ClosedBranch(currTP,br) }
+       , GenericBranchConstraintFactors(currTP,gnrcCstr,br)
+       * (ACBRANCHFLOW(currTP,br) + HVDCLINKFLOW(currTP,br))
+     ]
+- SURPLUSGENERICCONSTRAINT(currTP,gnrcCstr)
+=l=
+  GenericConstraintLimit(currTP,gnrcCstr)
   ;
 
 * Generic security constraint with GE sense
 GenericSecurityConstraintGE(currTP,gnrcCstr) $ (GenericConstraintSense(currTP,gnrcCstr) = 1)..
-  sum(o $ PositiveEnergyOffer(currTP,o), GenericEnergyOfferConstraintFactors(currTP,gnrcCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), GenericReserveOfferConstraintFactors(currTP,gnrcCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ Bid(currTP,i_bid), GenericEnergyBidConstraintFactors(currTP,gnrcCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ sum((i_bid,i_reserveClass) $ Bid(currTP,i_bid), GenericILReserveBidConstraintFactors(currTP,gnrcCstr,i_bid,i_reserveClass) * PURCHASEILR(currTP,i_bid,i_reserveClass))
-+ sum(br$((ACBranch(currTP,br) or HVDClink(currTP,br)) and ClosedBranch(currTP,br)), GenericBranchConstraintFactors(currTP,gnrcCstr,br) * (ACBRANCHFLOW(currTP,br) + HVDCLINKFLOW(currTP,br)))
-+ DEFICITGENERICCONSTRAINT(currTP,gnrcCstr) =g=
-GenericConstraintLimit(currTP,gnrcCstr)
+  sum[ o $ PositiveEnergyOffer(currTP,o)
+       , GenericEnergyOfferConstraintFactors(currTP,gnrcCstr,o)
+       * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , GenericReserveOfferConstraintFactors(currTP,gnrcCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , GenericEnergyBidConstraintFactors(currTP,gnrcCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ sum[ (i_bid,i_reserveClass) $ Bid(currTP,i_bid)
+       , GenericILReserveBidConstraintFactors(currTP,gnrcCstr,i_bid,i_reserveClass)
+       * PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
++ sum[ br $ { [ACBranch(currTP,br) or HVDClink(currTP,br)] and ClosedBranch(currTP,br) }
+       , GenericBranchConstraintFactors(currTP,gnrcCstr,br)
+       * (ACBRANCHFLOW(currTP,br) + HVDCLINKFLOW(currTP,br))
+     ]
++ DEFICITGENERICCONSTRAINT(currTP,gnrcCstr)
+=g=
+  GenericConstraintLimit(currTP,gnrcCstr)
   ;
 
 * Generic security constraint with EQ sense
 GenericSecurityConstraintEQ(currTP,gnrcCstr) $ (GenericConstraintSense(currTP,gnrcCstr) = 0)..
-  sum(o $ PositiveEnergyOffer(currTP,o), GenericEnergyOfferConstraintFactors(currTP,gnrcCstr,o) * GENERATION(currTP,o))
-+ sum((o,i_reserveClass,i_reserveType) $ offer(currTP,o), GenericReserveOfferConstraintFactors(currTP,gnrcCstr,o,i_reserveClass,i_reserveType) * RESERVE(currTP,o,i_reserveClass,i_reserveType))
-+ sum(i_bid $ Bid(currTP,i_bid), GenericEnergyBidConstraintFactors(currTP,gnrcCstr,i_bid) * PURCHASE(currTP,i_bid))
-+ sum((i_bid,i_reserveClass) $ Bid(currTP,i_bid), GenericILReserveBidConstraintFactors(currTP,gnrcCstr,i_bid,i_reserveClass) * PURCHASEILR(currTP,i_bid,i_reserveClass))
-+ sum(br$((ACBranch(currTP,br) or HVDClink(currTP,br)) and ClosedBranch(currTP,br)), GenericBranchConstraintFactors(currTP,gnrcCstr,br) * (ACBRANCHFLOW(currTP,br) + HVDCLINKFLOW(currTP,br)))
-+ DEFICITGENERICCONSTRAINT(currTP,gnrcCstr) - SURPLUSGENERICCONSTRAINT(currTP,gnrcCstr) =e=
-GenericConstraintLimit(currTP,gnrcCstr)
+  sum[ o $ PositiveEnergyOffer(currTP,o), GenericEnergyOfferConstraintFactors(currTP,gnrcCstr,o) * GENERATION(currTP,o)
+     ]
++ sum[ (o,i_reserveClass,i_reserveType) $ offer(currTP,o)
+       , GenericReserveOfferConstraintFactors(currTP,gnrcCstr,o,i_reserveClass,i_reserveType)
+       * RESERVE(currTP,o,i_reserveClass,i_reserveType)
+     ]
++ sum[ i_bid $ Bid(currTP,i_bid)
+       , GenericEnergyBidConstraintFactors(currTP,gnrcCstr,i_bid)
+       * PURCHASE(currTP,i_bid)
+     ]
++ sum[ (i_bid,i_reserveClass) $ Bid(currTP,i_bid)
+       , GenericILReserveBidConstraintFactors(currTP,gnrcCstr,i_bid,i_reserveClass)
+       * PURCHASEILR(currTP,i_bid,i_reserveClass)
+     ]
++ sum[ br $ { [ACBranch(currTP,br) or HVDClink(currTP,br)] and ClosedBranch(currTP,br) }
+       , GenericBranchConstraintFactors(currTP,gnrcCstr,br)
+      * (ACBRANCHFLOW(currTP,br) + HVDCLINKFLOW(currTP,br))
+     ]
++ DEFICITGENERICCONSTRAINT(currTP,gnrcCstr)
+- SURPLUSGENERICCONSTRAINT(currTP,gnrcCstr)
+=e=
+  GenericConstraintLimit(currTP,gnrcCstr)
   ;
 
 * Model declarations
@@ -1254,21 +1737,33 @@ Model vSPD /
 * Objective function
   ObjectiveFunction
 * Offer and purchase definitions
-  GenerationOfferDefintion, GenerationRampUp, GenerationRampDown, PurchaseBidDefintion
-* RDN - Primary-secondary ramping constraints
+  GenerationOfferDefintion, PurchaseBidDefintion
+  GenerationRampUp, GenerationRampDown
+* Primary-secondary ramping constraints
   GenerationRampUp_PS, GenerationRampDown_PS
 * Network
-  HVDClinkMaximumFlow, HVDClinkLossDefinition, HVDClinkFlowDefinition, LambdaDefinition, DCNodeNetInjection, ACnodeNetInjectionDefinition1, ACnodeNetInjectionDefinition2
-  ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow, ACBranchBlockLimit, ACDirectedBranchFlowDefinition, ACBranchLossCalculation, ACDirectedBranchLossDefinition
+  HVDClinkMaximumFlow, HVDClinkLossDefinition
+  HVDClinkFlowDefinition, LambdaDefinition
+  DCNodeNetInjection, ACnodeNetInjectionDefinition1
+  ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+  ACBranchFlowDefinition, LinearLoadFlow
+  ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+  ACBranchLossCalculation, ACDirectedBranchLossDefinition
 * Risk and Reserve
-  HVDCIslandRiskCalculation, HVDCRecCalculation, GenIslandRiskCalculation, ManualIslandRiskCalculation, PLSRReserveProportionMaximum, ReserveOfferDefinition
-  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum, PurchaseBidReserveMaximum, MaximumIslandRiskDefinition, SupplyDemandReserveRequirement, RiskOffsetCalculation
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* RiskOffSetCalculationApproximation
-  RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
-* RDN - Island risk definition for different CE and ECE CVPs
-  MaximumIslandRiskDefinition_CE, MaximumIslandRiskDefinition_ECE
-* RDN - Include HVDC secondary risk constraints
+  HVDCIslandRiskCalculation, HVDCRecCalculation
+  GenIslandRiskCalculation, ManualIslandRiskCalculation
+  PLSRReserveProportionMaximum, ReserveOfferDefinition
+  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum
+  PurchaseBidReserveMaximum, SupplyDemandReserveRequirement
+* Risk Offset calculation
+  RiskOffsetCalculation
+  RiskOffsetCalculation_DCCE
+  RiskOffsetCalculation_DCECE
+* Island risk definitions
+  MaximumIslandRiskDefinition
+  MaximumIslandRiskDefinition_CE
+  MaximumIslandRiskDefinition_ECE
+* Include HVDC secondary risk constraints
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_Manual
 * Branch security constraints
   BranchSecurityConstraintLE, BranchSecurityConstraintGE, BranchSecurityConstraintEQ
@@ -1277,36 +1772,50 @@ Model vSPD /
 * Market node security constraints
   MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
 * Mixed constraints
-  Type1MixedConstraintLE, Type1MixedConstraintGE, Type1MixedConstraintEQ, Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
+  Type1MixedConstraintLE, Type1MixedConstraintGE, Type1MixedConstraintEQ
+  Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
 * Generic constraints
   GenericSecurityConstraintLE, GenericSecurityConstraintGE, GenericSecurityConstraintEQ
 * ViolationCost
   TotalViolationCostDefinition
-* RDN - Generator island risk calculation considering more than one offer per generator
+* Generator island risk calculation considering more than one offer per generator
   GenIslandRiskCalculation_NonPS, GenIslandRiskCalculation_PS
-  HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS / ;
+  HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS
+  / ;
 
 Model vSPD_MIP /
 * Objective function
   ObjectiveFunction
 * Offer and purchase definitions
-  GenerationOfferDefintion, GenerationRampUp, GenerationRampDown, PurchaseBidDefintion
-* RDN - Primary-secondary ramping constraints
+  GenerationOfferDefintion, PurchaseBidDefintion
+  GenerationRampUp, GenerationRampDown
+* Primary-secondary ramping constraints
   GenerationRampUp_PS, GenerationRampDown_PS
 * Network
-  HVDClinkMaximumFlow, HVDClinkLossDefinition, HVDClinkFlowDefinition, LambdaDefinition, DCNodeNetInjection, ACnodeNetInjectionDefinition1, ACnodeNetInjectionDefinition2
-  ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow, ACBranchBlockLimit, ACDirectedBranchFlowDefinition, ACBranchLossCalculation, ACDirectedBranchLossDefinition
+  HVDClinkMaximumFlow, HVDClinkLossDefinition
+  HVDClinkFlowDefinition, LambdaDefinition
+  DCNodeNetInjection, ACnodeNetInjectionDefinition1
+  ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+  ACBranchFlowDefinition, LinearLoadFlow
+  ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+  ACBranchLossCalculation, ACDirectedBranchLossDefinition
   ACDirectedBranchFlowIntegerDefinition1, ACDirectedBranchFlowIntegerDefinition2
   LambdaIntegerDefinition1, LambdaIntegerDefinition2
 * Risk and Reserve
-  HVDCIslandRiskCalculation, HVDCRecCalculation, GenIslandRiskCalculation, ManualIslandRiskCalculation, PLSRReserveProportionMaximum, ReserveOfferDefinition
-  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum, PurchaseBidReserveMaximum, MaximumIslandRiskDefinition, SupplyDemandReserveRequirement, RiskOffsetCalculation
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* RiskOffSetCalculationApproximation
-  RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
-* RDN - Island risk definition for different CE and ECE CVPs
-  MaximumIslandRiskDefinition_CE, MaximumIslandRiskDefinition_ECE
-* RDN - Include HVDC secondary risk constraints
+  HVDCIslandRiskCalculation, HVDCRecCalculation
+  GenIslandRiskCalculation, ManualIslandRiskCalculation
+  PLSRReserveProportionMaximum, ReserveOfferDefinition
+  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum
+  PurchaseBidReserveMaximum, SupplyDemandReserveRequirement
+* Risk Offset calculation
+  RiskOffsetCalculation
+  RiskOffsetCalculation_DCCE
+  RiskOffsetCalculation_DCECE
+* Island risk definitions
+  MaximumIslandRiskDefinition
+  MaximumIslandRiskDefinition_CE
+  MaximumIslandRiskDefinition_ECE
+* Include HVDC secondary risk constraints
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_Manual
 * Branch security constraints
   BranchSecurityConstraintLE, BranchSecurityConstraintGE, BranchSecurityConstraintEQ
@@ -1315,39 +1824,53 @@ Model vSPD_MIP /
 * Market node security constraints
   MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
 * Mixed constraints
-  Type1MixedConstraintMIP, Type1MixedConstraintLE_MIP, Type1MixedConstraintGE_MIP, Type1MixedConstraintEQ_MIP, Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
+  Type1MixedConstraintMIP, Type1MixedConstraintLE_MIP, Type1MixedConstraintGE_MIP
+  Type1MixedConstraintEQ_MIP, Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
 * Generic constraints
   GenericSecurityConstraintLE, GenericSecurityConstraintGE, GenericSecurityConstraintEQ
 * ViolationCost
   TotalViolationCostDefinition
-* RDN - Updated set of integer constraints on the HVDC link to incorporate the allowance of HVDC roundpower
+* Set of integer constraints on the HVDC link to incorporate the allowance of HVDC roundpower
   HVDClinkFlowIntegerDefinition1, HVDClinkFlowIntegerDefinition2
   HVDClinkFlowIntegerDefinition3, HVDClinkFlowIntegerDefinition4
-* RDN - Generator island risk calculation considering more than one offer per generator
+* Generator island risk calculation considering more than one offer per generator
   GenIslandRiskCalculation_NonPS, GenIslandRiskCalculation_PS
-  HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS / ;
+  HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS
+  / ;
 
 Model vSPD_BranchFlowMIP /
 * Objective function
   ObjectiveFunction
 * Offer and purchase definitions
-  GenerationOfferDefintion, GenerationRampUp, GenerationRampDown, PurchaseBidDefintion
-* RDN - Primary-secondary ramping constraints
+  GenerationOfferDefintion, PurchaseBidDefintion
+  GenerationRampUp, GenerationRampDown
+* Primary-secondary ramping constraints
   GenerationRampUp_PS, GenerationRampDown_PS
 * Network
-  HVDClinkMaximumFlow, HVDClinkLossDefinition, HVDClinkFlowDefinition, LambdaDefinition, DCNodeNetInjection, ACnodeNetInjectionDefinition1, ACnodeNetInjectionDefinition2
-  ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow, ACBranchBlockLimit, ACDirectedBranchFlowDefinition, ACBranchLossCalculation, ACDirectedBranchLossDefinition
+  HVDClinkMaximumFlow, HVDClinkLossDefinition
+  HVDClinkFlowDefinition, LambdaDefinition
+  DCNodeNetInjection, ACnodeNetInjectionDefinition1
+  ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+  ACBranchFlowDefinition, LinearLoadFlow
+  ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+  ACBranchLossCalculation, ACDirectedBranchLossDefinition
   ACDirectedBranchFlowIntegerDefinition1, ACDirectedBranchFlowIntegerDefinition2
   LambdaIntegerDefinition1, LambdaIntegerDefinition2
 * Risk and Reserve
-  HVDCIslandRiskCalculation, HVDCRecCalculation, GenIslandRiskCalculation, ManualIslandRiskCalculation, PLSRReserveProportionMaximum, ReserveOfferDefinition
-  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum, PurchaseBidReserveMaximum, MaximumIslandRiskDefinition, SupplyDemandReserveRequirement, RiskOffsetCalculation
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* RiskOffSetCalculationApproximation
-  RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
-* RDN - Island risk definition for different CE and ECE CVPs
-  MaximumIslandRiskDefinition_CE, MaximumIslandRiskDefinition_ECE
-* RDN - Include HVDC secondary risk constraints
+  HVDCIslandRiskCalculation, HVDCRecCalculation
+  GenIslandRiskCalculation, ManualIslandRiskCalculation
+  PLSRReserveProportionMaximum, ReserveOfferDefinition
+  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum
+  PurchaseBidReserveMaximum, SupplyDemandReserveRequirement
+* Risk offset calculation
+  RiskOffsetCalculation
+  RiskOffsetCalculation_DCCE
+  RiskOffsetCalculation_DCECE
+* Island risk definitions
+  MaximumIslandRiskDefinition
+  MaximumIslandRiskDefinition_CE
+  MaximumIslandRiskDefinition_ECE
+* Include HVDC secondary risk constraints
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_Manual
 * Branch security constraints
   BranchSecurityConstraintLE, BranchSecurityConstraintGE, BranchSecurityConstraintEQ
@@ -1356,37 +1879,51 @@ Model vSPD_BranchFlowMIP /
 * Market node security constraints
   MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
 * Mixed constraints
-  Type1MixedConstraintLE, Type1MixedConstraintGE, Type1MixedConstraintEQ, Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
+  Type1MixedConstraintLE, Type1MixedConstraintGE, Type1MixedConstraintEQ
+  Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
 * Generic constraints
   GenericSecurityConstraintLE, GenericSecurityConstraintGE, GenericSecurityConstraintEQ
 * ViolationCost
   TotalViolationCostDefinition
-* RDN - Updated set of intrger constraints on the HVDC link to incorporate the allowance of HVDC roundpower
+* Set of intrger constraints on the HVDC link to incorporate the allowance of HVDC roundpower
   HVDClinkFlowIntegerDefinition1, HVDClinkFlowIntegerDefinition2
   HVDClinkFlowIntegerDefinition3, HVDClinkFlowIntegerDefinition4
-* RDN - Generator island risk calculation considering more than one offer per generator
+* Generator island risk calculation considering more than one offer per generator
   GenIslandRiskCalculation_NonPS, GenIslandRiskCalculation_PS
-  HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS / ;
+  HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS
+  / ;
 
 Model vSPD_MixedConstraintMIP /
 * Objective function
   ObjectiveFunction
 * Offer and purchase definitions
-  GenerationOfferDefintion, GenerationRampUp, GenerationRampDown, PurchaseBidDefintion
-* RDN - Primary-secondary ramping constraints
+  GenerationOfferDefintion, PurchaseBidDefintion
+  GenerationRampUp, GenerationRampDown
+* Primary-secondary ramping constraints
   GenerationRampUp_PS, GenerationRampDown_PS
 * Network
-  HVDClinkMaximumFlow, HVDClinkLossDefinition, HVDClinkFlowDefinition, LambdaDefinition, DCNodeNetInjection, ACnodeNetInjectionDefinition1, ACnodeNetInjectionDefinition2
-  ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow, ACBranchBlockLimit, ACDirectedBranchFlowDefinition, ACBranchLossCalculation, ACDirectedBranchLossDefinition
+  HVDClinkMaximumFlow, HVDClinkLossDefinition
+  HVDClinkFlowDefinition, LambdaDefinition
+  DCNodeNetInjection, ACnodeNetInjectionDefinition1
+  ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+  ACBranchFlowDefinition, LinearLoadFlow
+  ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+  ACBranchLossCalculation, ACDirectedBranchLossDefinition
 * Risk and Reserve
-  HVDCIslandRiskCalculation, HVDCRecCalculation, GenIslandRiskCalculation, ManualIslandRiskCalculation, PLSRReserveProportionMaximum, ReserveOfferDefinition
-  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum, PurchaseBidReserveMaximum, MaximumIslandRiskDefinition, SupplyDemandReserveRequirement, RiskOffsetCalculation
-* RDN - Replace the risk offset approximation by the several different constraints as in formulation - these are eqiuvalent
-* RiskOffSetCalculationApproximation
-  RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
-* RDN - Island risk definition for different CE and ECE CVPs
-  MaximumIslandRiskDefinition_CE, MaximumIslandRiskDefinition_ECE
-* RDN - Include HVDC secondary risk constraints
+  HVDCIslandRiskCalculation, HVDCRecCalculation
+  GenIslandRiskCalculation, ManualIslandRiskCalculation
+  PLSRReserveProportionMaximum, ReserveOfferDefinition
+  ReserveDefinitionPurchaseBid, EnergyAndReserveMaximum
+  PurchaseBidReserveMaximum, SupplyDemandReserveRequirement
+* Risk offset calculation
+  RiskOffsetCalculation
+  RiskOffsetCalculation_DCCE
+  RiskOffsetCalculation_DCECE
+* Island risk definition for different CE and ECE CVPs
+  MaximumIslandRiskDefinition
+  MaximumIslandRiskDefinition_CE
+  MaximumIslandRiskDefinition_ECE
+* Include HVDC secondary risk constraints
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_Manual
 * Branch security constraints
   BranchSecurityConstraintLE, BranchSecurityConstraintGE, BranchSecurityConstraintEQ
@@ -1395,12 +1932,13 @@ Model vSPD_MixedConstraintMIP /
 * Market node security constraints
   MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
 * Mixed constraints
-  Type1MixedConstraintMIP, Type1MixedConstraintLE_MIP, Type1MixedConstraintGE_MIP, Type1MixedConstraintEQ_MIP, Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
+  Type1MixedConstraintMIP, Type1MixedConstraintLE_MIP, Type1MixedConstraintGE_MIP
+  Type1MixedConstraintEQ_MIP, Type2MixedConstraintLE, Type2MixedConstraintGE, Type2MixedConstraintEQ
 * Generic constraints
   GenericSecurityConstraintLE, GenericSecurityConstraintGE, GenericSecurityConstraintEQ
 * ViolationCost
   TotalViolationCostDefinition
-* RDN - Generator island risk calculation considering more than one offer per generator
+* Generator island risk calculation considering more than one offer per generator
   GenIslandRiskCalculation_NonPS, GenIslandRiskCalculation_PS
   HVDCIslandSecRiskCalculation_GEN_NonPS, HVDCIslandSecRiskCalculation_GEN_PS
   / ;
@@ -1411,9 +1949,11 @@ Model vSPD_FTR /
 * Offer and purchase definitions
   GenerationOfferDefintion
 * Network
-  HVDClinkMaximumFlow, DCNodeNetInjection, ACNodeNetInjectionDefinition1, ACNodeNetInjectionDefinition2
+  HVDClinkMaximumFlow, DCNodeNetInjection
+  ACNodeNetInjectionDefinition1, ACNodeNetInjectionDefinition2
   ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow
 * Branch security constraints
   BranchSecurityConstraintLE
 * ViolationCost
-  TotalViolationCostDefinition / ;
+  TotalViolationCostDefinition
+  / ;
