@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     6 December 2013
+* Last modified on:     16 December 2013
 *=====================================================================================
 
 $ontext
@@ -515,13 +515,14 @@ $ontext
 $offtext
 
 Sets
-  tempPeriod  'Temporary list of trading period to be solved'
+  allPeriods   'All trading periods to be solved'     / all /
+  tempPeriod   'Temporary list of trading period to be solved'
 $ include vSPDtpsToSolve.inc
   ;
 
 i_studyTradePeriod(tp) = 0 ;
 i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tp,tempPeriod)] = 1 ;
-i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'All')] = 1 ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'all')] = 1 ;
 
 
 
@@ -1186,7 +1187,7 @@ for[iterationCount = 1 to numTradePeriods,
         PLSRReserveType(i_reserveType) $ (ord(i_reserveType) = 1) = yes ;
 
         TWDRReserveType(i_reserveType) $ (ord(i_reserveType) = 2) = yes ;
-        
+
         ILReserveType(i_reserveType)   $ (ord(i_reserveType) = 3) = yes ;
 
         reserveOfferProportion(offer,trdBlk,i_reserveClass) $ ( ord(i_reserveClass) = 1 )

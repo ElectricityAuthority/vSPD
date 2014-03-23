@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     6 December 2013
+* Last modified on:     24 March 2014
 *=====================================================================================
 
 $ontext
@@ -587,7 +587,7 @@ Equations
   GenIslandRiskCalculation_PS(tp,ild,o,i_reserveClass,i_riskClass)       'Calculation of the island risk for risk setting generators with more than one offer (3.4.1.6)'
   RiskOffsetCalculation_DCCE(tp,ild,i_reserveClass,i_riskClass)          'Calculation of the risk offset variable for the DCCE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.2)'
   RiskOffsetCalculation_DCECE(tp,ild,i_reserveClass,i_riskClass)         'Calculation of the risk offset variable for the DCECE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.4)'
-  RiskOffsetCalculation(tp,t1MixCstr,ild,i_reserveClass,i_riskClass)     'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
+  RiskOffsetCalculation(tp,t1MixCstr,ild,i_reserveClass,i_riskClass)  'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
 * Need to seperate the maximum island risk definition constraint to support the different CVPs defined for CE and ECE
   MaximumIslandRiskDefinition_CE(tp,ild,i_reserveClass,i_riskClass)      'Definition of the maximum CE risk in each island (3.4.3.1a)'
   MaximumIslandRiskDefinition_ECE(tp,ild,i_reserveClass,i_riskClass)     'Definition of the maximum ECE risk in each island (3.4.3.1b)'
@@ -957,15 +957,13 @@ HVDCRecCalculation(currTP,ild)..
   sum[ (b,br) $ { BusIsland(currTP,b,ild) and
                   ACBus(currTP,b) and
                   HVDClink(currTP,br) and
-                  HVDClinkSendingBus(currTP,br,b) and
-                  HVDCPoles(currTP,br)
+                  HVDClinkSendingBus(currTP,br,b)
                 }, -HVDCLINKFLOW(currTP,br)
      ]
 + sum[ (b,br) $ { BusIsland(currTP,b,ild) and
                   ACBus(currTP,b) and
                   HVDClink(currTP,br) and
-                  HVDClinkReceivingBus(currTP,br,b) and
-                  HVDCPoles(currTP,br)
+                  HVDClinkReceivingBus(currTP,br,b)
                 }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
      ]
   ;
