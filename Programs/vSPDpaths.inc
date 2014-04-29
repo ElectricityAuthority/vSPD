@@ -1,7 +1,7 @@
 $inlinecom ## ##
 $eolcom !
 
-$setglobal  runName            PhilTest
+$setglobal  runName            GDXtest_gams24_2_noX
 
 $setglobal  programPath       "%system.fp%"
 $setglobal  inputPath         "%system.fp%..\Input\"

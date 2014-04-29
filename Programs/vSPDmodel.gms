@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     24 March 2014
+* Last modified on:     29 April 2014
 *=====================================================================================
 
 $ontext
@@ -954,16 +954,14 @@ HVDCIslandRiskCalculation(currTP,ild,i_reserveClass,HVDCrisk)..
 HVDCRecCalculation(currTP,ild)..
   HVDCREC(currTP,ild)
 =e=
-  sum[ (b,br) $ { BusIsland(currTP,b,ild) and
-                  ACBus(currTP,b) and
-                  HVDClink(currTP,br) and
-                  HVDClinkSendingBus(currTP,br,b)
+  sum[ (b,br) $ { BusIsland(currTP,b,ild)
+              and HVDClinkSendingBus(currTP,br,b)
+              and HVDCPoles(currTP,br)
                 }, -HVDCLINKFLOW(currTP,br)
      ]
-+ sum[ (b,br) $ { BusIsland(currTP,b,ild) and
-                  ACBus(currTP,b) and
-                  HVDClink(currTP,br) and
-                  HVDClinkReceivingBus(currTP,br,b)
++ sum[ (b,br) $ { BusIsland(currTP,b,ild) 
+              and HVDClinkReceivingBus(currTP,br,b)
+              and HVDCPoles(currTP,br)
                 }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
      ]
   ;
