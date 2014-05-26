@@ -1,0 +1,1 @@
+Scalar FTRflag  / 0 / ;

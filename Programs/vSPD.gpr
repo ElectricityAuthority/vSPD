@@ -463,7 +463,7 @@ PlaneRownr=-1
 
 [GDXDISP: i_EnergyBidComponent Set 1]
 PlaneDim=0
-RowDim=0
+RowDim=1
 Squeeze=1
 Order=1
 Decim=5
@@ -478,13 +478,12 @@ Decim=5
 PlaneRownr=-1
 
 [GDXDISP: i_TradePeriodEnergyBid Par 4]
-PlaneDim=1
-RowDim=2
+PlaneDim=0
+RowDim=4
 Squeeze=1
 Order=1,2,3,4
 Decim=5
-PlaneRownr=16
-PlaneFilter1=TP17
+PlaneRownr=-1
 
 [GDXDISP: i_TradePeriodSustainedILRBid Par 4]
 PlaneDim=0
@@ -608,14 +607,14 @@ Decim=5
 PlaneRownr=-1
 
 [GDXDISP: i_TradePeriodBranchParameter Par 3]
-PlaneDim=1
-RowDim=2
+PlaneDim=0
+RowDim=3
 Squeeze=1
-Order=2,1,3
+Order=1,2,3
 Decim=5
-PlaneRownr=854
+PlaneRownr=-1
 Sorted=YYY
-PlaneFilter1=OTA_WKM2.1
+PlaneFilter1=TP23
 
 [GDXDISP: i_TradePeriodBranchCapacity Par 2]
 PlaneDim=1
@@ -894,7 +893,7 @@ PlaneRownr=-1
 
 [GDXDISP: i_TradePeriodType1MixedConstraintRHSParameters Par 3]
 PlaneDim=0
-RowDim=3
+RowDim=2
 Squeeze=1
 Order=1,2,3
 Decim=5
@@ -1747,9 +1746,6 @@ PlaneRownr=-1
 [RP:HSS_RUN]
 1=
 
-[RP:FTR_PATTERN]
-1=
-
 [RP:RUNVSPDREPORTSETUP]
 1=
 
@@ -1852,12 +1848,13 @@ Decim=6
 PlaneRownr=-1
 
 [GDXDISP: o_branchFromBusPrice_TP Par 2]
-PlaneDim=0
-RowDim=2
+PlaneDim=1
+RowDim=1
 Squeeze=1
-Order=1,2
+Order=2,1
 Decim=7
-PlaneRownr=-1
+PlaneRownr=98
+PlaneFilter1=BEN_HAY2.1
 
 [GDXDISP: o_branchToBusPrice_TP Par 2]
 PlaneDim=0
@@ -1891,16 +1888,10 @@ Order=1
 Decim=7
 PlaneRownr=-1
 
-[RP:FTR_CLAUSE7]
-1=
-
 [RP:DISPNUM]
 1=
 
 [RP:STRING]
-1=
-
-[RP:RUNVSPDSOLVE]
 1=
 
 [RP:GDXEXECINTRNSPORT]
@@ -1925,16 +1916,7 @@ PlaneRownr=-1
 [RP:FTRCALCULATERENTAL]
 1=
 
-[RP:FTRREPORTSETUP]
-1=
-
-[RP:FTRCALCULATESETUP]
-1=
-
 [RP:FTRINPUT]
-1=
-
-[RP:RUNFTRREPORTING]
 1=
 
 [RP:VSPDDECLARATIONS]
@@ -2101,19 +2083,10 @@ Order=
 Decim=7
 PlaneRownr=-1
 
-[RP:FTRDATACOMBINATION]
-1=
-
-[RP:RUNVSPDSETUP]
-1=
-
 [RP:VSPDSOLVE_ORIGINAL]
 1=
 
 [RP:VSPDSOLVE_BK1]
-1=
-
-[RP:FTRRENTALCALCULATION]
 1=
 
 [GDXDISP: i_TradePeriodMNodeReserveOfferConstraintFactors Par 5]
@@ -2163,9 +2136,6 @@ Squeeze=1
 Order=1,2
 Decim=7
 PlaneRownr=-1
-
-[RP:FTR_NORMAL]
-1=
 
 [GDXDISP: o_RegulationSummary Par 3]
 PlaneDim=0
@@ -2298,8 +2268,14 @@ Order=1,2,3
 Decim=7
 PlaneRownr=-1
 
-[RP:VSPDSOLVE - COPY]
-1=
+[GDXDISP: i_TradePeriodEnergyOffer Par 4]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=2,1,3,4
+Decim=7
+PlaneRownr=18
+PlaneFilter1=HLY2201 HLY5
 
 [RP:SCARCITY_VSPDMODEL]
 1=
@@ -2307,10 +2283,16 @@ PlaneRownr=-1
 [RP:SCARCITY_VSPDREPORT]
 1=
 
+[RP:VSPDREPORT]
+1=
+
 [RP:SCARCITY_VSPDREPORTSETUP]
 1=
 
 [RP:VSPDSOLVEOVERRIDES]
+1=
+
+[RP:VSPDREPORTSETUP]
 1=
 
 [RP:SCARCITY_VSPDSOLVE]
@@ -2575,15 +2557,6 @@ PlaneRownr=-1
 [RP:PEM_SOLVE]
 1=
 
-[RP:UNTITLED_1]
-1=
-
-[RP:VSPDSOLVE_SCARCITY]
-1=
-
-[RP:VSPDSOLVE_BASE]
-1=
-
 [RP:VSPDSOLVE_DD]
 1=
 
@@ -2601,14 +2574,8 @@ RowDim=3
 Squeeze=1
 Order=1,2,3,4,5
 Decim=7
-PlaneRownr=36
+PlaneRownr=-1
 PlaneFilter1=TP37
-
-[RP:VSPDMODEL - COPY]
-1=
-
-[RP:VSPDMODEL_1.3]
-1=
 
 [RP:VSPDMODEL_SCARCITY]
 1=
@@ -2624,10 +2591,25 @@ Order=1,2,3
 Decim=7
 PlaneRownr=-1
 
-[RP:VSPDOVERRIDES]
+[RP:UNTITLED_1]
 1=
 
-[GDXDISP: i_TradePeriodDispatchableBid Set 2]
+[RP:FTRCALCULATESETUP]
+1=
+
+[RP:RUNFTRREPORTING]
+1=
+
+[RP:MODEL]
+1=
+
+[RP:SOLVEOPTIMAL]
+1=
+
+[RP:SOLVESTAGING]
+1=
+
+[GDXDISP: FTRinjection Par 2]
 PlaneDim=0
 RowDim=1
 Squeeze=1
@@ -2635,38 +2617,85 @@ Order=1,2
 Decim=7
 PlaneRownr=-1
 
-[GDXDISP: i_TradePeriodEnergyOffer Par 4]
-PlaneDim=1
-RowDim=2
-Squeeze=1
-Order=1,2,3,4
-Decim=7
-PlaneRownr=16
-PlaneFilter1=TP17
+[RP:XXXTESTING]
+1=
+
+[RP:SCALAR]
+1=
+
+[RP:VSPDSOLVE1.3]
+1=
+
+[RP:VSPDMODEL_2_PHIL]
+1=
+
+[RP:FTR_PATTERN]
+1=
+
+[RP:FTR_NORMAL]
+1=
+
+[RP:FTR_CLAUSE7]
+1=
+
+[RP:VSPDSOLVE_V4]
+1=
+
+[RP:VSPDMODEL_V4]
+1=
+
+[RP:VSPDMODEL_1.3]
+1=
+
+[RP:FTRDATACOMBINATION]
+1=
+
+[RP:FTRRENTALCALCULATION]
+1=
+
+[RP:FTRREPORTSETUP]
+1=
+
+[RP:RUNVSPDSOLVE]
+1=
+
+[RP:RUNVSPDSETUP]
+1=
+
+[RP:VSPDSOLVE_SCARCITY]
+1=
+
+[RP:VSPDMODEL - COPY]
+1=
+
+[RP:VSPDSOLVE - COPY]
+1=
+
+[RP:VSPDSOLVE_BASE]
+1=
+
+[RP:VSPDSOLVE_V3X]
+1=
+
+[RP:VSPDSOLVE_BK]
+1=
 
 [OPENWINDOW_1]
 MAXIM=0
-TOP=50
-LEFT=50
-HEIGHT=707
-WIDTH=1566
+TOP=0
+LEFT=0
+HEIGHT=705
+WIDTH=1528
 
-[RP:VSPDMODEL]
-1=
+[GDXDISP: i_ILRofferOvrdDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
 
-[RP:VSPDREPORT]
-1=
-
-[RP:VSPDREPORTSETUP]
-1=
-
-[RP:VSPDSOLVEDDILADJUSTED]
-1=
-
-[RP:VSPDREPORTSETUP_DD]
-1=
-
-[RP:VSPDREPORT_DD]
+[RP:VSPDOVERRIDES - COPY]
 1=
 
 [RP:RUNVSPD]
@@ -2674,32 +2703,22 @@ WIDTH=1566
 2=e
 3=
 
+[RP:VSPDMODEL]
+1=
+
 [RP:VSPDSOLVE]
 1=
 
-[GDXDISP: i_islandDemandOvrd Par 2]
-PlaneDim=0
-RowDim=2
-Squeeze=1
-Order=1,2
-Decim=5
-PlaneRownr=-1
-
-[GDXDISP: i_nodeDemandOvrd Par 2]
-PlaneDim=0
-RowDim=2
-Squeeze=1
-Order=1,2
-Decim=5
-PlaneRownr=-1
+[RP:VSPDOVERRIDES]
+1=
 
 [MRUFILES]
-1=C:\a\vSPD\vSPD_onGithub\Programs\FTRinput.gdx
-2=C:\a\vSPD\vSPD_onGithub\Programs\overridesFromExcel.gdx
-3=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.1_Master_unpublished\vSPDsolve.gms
-4=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\vSPDsolve.gms
+1=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDoverrides.gms
+2=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\runvSPD.lst
+3=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\runvSPD.gms
+4=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Override\ara2201_maxlimit.gdx
 5=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDsolve.gms
-6=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\runvSPD.gms
-7=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\runvSPD.lst
-8=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.1_Master\runvSPD.gms
-9=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.1_Master\vSPDsolve.lst
+6=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDmodel.gms
+7=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\lst\FP_20140520_I.lst
+8=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Override\vSPDOvrdTemplate.gdx
+9=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\LatestvSPD\Override\ara2201_maxlimit.gdx

@@ -629,9 +629,9 @@ scarcityExists $ sum[ (tp,sarea), i_tradePeriodScarcitySituationExists(tp,sarea)
 sequentialSolve $ scarcityExists = 0;
 
 * Scarcity pricing updates - Update the runlog file
-putclose runlog / 'Scarcity situation exists. Vectorisation is switched OFF' / ;
-
-
+if(scarcityExists,
+   putclose runlog / 'Scarcity situation exists. Vectorisation is switched OFF' / ;
+) ;
 
 *=====================================================================================
 * 4. Establish which trading periods are to be solved
@@ -685,16 +685,13 @@ $if not %suppressOverrides%==1 $include vSPDoverrides.gms
 * FTR rental - extra output declaration
 Sets
   i_FTRdirection                                  'FTR flow direction'
-  i_FTRfrNode(i_Node)                             'Injection node'
-  i_FTRtoNode(i_Node)                             'Demand node'
-
   o_HVDClink(dt,br)                               'HVDC links (branches) defined for the current trading period'
   ;
 
 Alias (i_FTRdirection,ftr) ;
 
 Parameters
-  i_FTRinjection(ftr,n,n)                         'Maximun injection'
+  i_FTRinjection(ftr,n)                           'Maximun injection'
   i_TradePeriodHVDCDirection(tp, br)              '1 --> to NI, -1 --> to SI'
 
   o_ACbranchTotalRentals(dt)                      'Total AC rental by trading period for reporting'
@@ -716,9 +713,6 @@ $offmulti
 $gdxin FTRinput
 $load  i_FTRinjection = FTRinjection
 $gdxin
-
-i_FTRfrNode(n) $ { sum[ (i_FTRdirection,i_Node), i_FTRinjection(i_FTRdirection,n,i_Node) ] > 0 } = yes;
-i_FTRtoNode(n) $ { sum[ (i_FTRdirection,i_Node), i_FTRinjection(i_FTRdirection,i_Node,n) ] > 0 } = yes;
 
 
 * Clause 7 - vSPD setting to calculate branch and constraint participation loading start
@@ -765,25 +759,29 @@ i_FTRtoNode(n) $ { sum[ (i_FTRdirection,i_Node), i_FTRinjection(i_FTRdirection,i
 
 *   7.a.v --> Positive hub injections represented by fixing generation at relevant node
 $onmulti
-    Sets
-      i_Offer    'dummy Offer'  /'FTR2201 FTR0'/
-      ;
+    Set
+      i_Offer                    'dummy offer for FTR run'
+$include FTROffer.inc
+    ;
 $offmulti
 
-    i_TradePeriodOfferNode(tp,'FTR2201 FTR0',i_FTRfrNode) = yes;
+    Set
+      i_FTROfferNode(o,n)        'mapping FTR offer to FTR hubs'
+$include FTROfferNode.inc
+    ;
 
-    i_TradePeriodEnergyOffer(tp,'FTR2201 FTR0','t1','i_GenerationMWOffer') = 5000;
+    i_TradePeriodOfferNode(tp,i_FTROfferNode(o,n)) = yes;
 
-    i_TradePeriodEnergyOffer(tp,'FTR2201 FTR0','t1','i_GenerationMWOfferPrice') = 0.01;
+    i_TradePeriodEnergyOffer(tp,o,trdBlk,'i_GenerationMWOffer') $ (ord(trdBlk) = 1) = Max[0, Sum[ (ftr,n) $ i_FTROfferNode(o,n), i_FTRinjection(ftr,n)]];
 
-    i_TradePeriodOfferParameter(tp,'FTR2201 FTR0','i_InitialMW')
-        = sum[ (i_FTRdirection,n,n1), i_FTRinjection(i_FTRdirection,n,n1) ];
+    i_TradePeriodEnergyOffer(tp,o,trdBlk,'i_GenerationMWOfferPrice') $ {i_TradePeriodEnergyOffer(tp,o,trdBlk,'i_GenerationMWOffer') > 0} = 0.01;
 
-    i_TradePeriodOfferParameter(tp,'FTR2201 FTR0','i_ReserveGenerationMaximum') = 9999;
+    i_TradePeriodOfferParameter(tp,o,'i_InitialMW') = sum[ trdBlk, i_TradePeriodEnergyOffer(tp,o,trdBlk,'i_GenerationMWOffer') ];
+
+    i_TradePeriodOfferParameter(tp,o,'i_ReserveGenerationMaximum') $ i_TradePeriodOfferParameter(tp,o,'i_InitialMW') = 9999;
 
 *   7.a.vi --> Negative hub injections repesented by fixing demand at relevant node
-    i_TradePeriodNodeDemand(tp,i_FTRtoNode)
-        = sum[ (i_FTRdirection,n), i_FTRinjection(i_FTRdirection,n,i_FTRtoNode) ];
+    i_TradePeriodNodeDemand(tp,n) = Max[ 0, Sum[ ftr, -1 * i_FTRinjection(ftr,n) ] ];
 
 *   7.a.vii --> All fixed and variable losses disabled
     useAClossModel = 0;
@@ -804,7 +802,7 @@ $offmulti
 
     i_TradePeriodMNodeEnergyOfferConstraintFactors(tp,MnodeCstr,o) = 0;
 
-    i_UseMixedConstraint = 0;
+    useMixedConstraint(tp) = 0;
 
 *   Vectorised solve
     sequentialSolve = 0;
@@ -3175,8 +3173,8 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                 AvgPriorGWAP(currTP,ild) $ (pastTPcntforCPT(currTP,ild) = 336)
                     = pastGWAPsumforCPT(currTP,ild) / pastTPcntforCPT(currTP,ild) ;
 
-                display nodePriceforCPT, pastGWAPsumforCPT, pastTPcntforCPT ;
-                display currentDayGWAPsumforCPT, currentDayTPsumforCPT, AvgPriorGWAP;
+*                display nodePriceforCPT, pastGWAPsumforCPT, pastTPcntforCPT ;
+*                display currentDayGWAPsumforCPT, currentDayTPsumforCPT, AvgPriorGWAP;
 
                 loop[ sarea $ scarcitySituationExists(currTP,sarea),
 
@@ -3454,7 +3452,8 @@ $label Next
                 );
 
 
-*   Normal vSPD reporting processing
+$if exist FTRdirect.inc $goto SkipNormalReportingProcess
+*           Normal vSPD reporting processing
             else
 *               Check if reporting at trading period level purposes is required...
                 if((tradePeriodReports = 1),
@@ -4287,6 +4286,7 @@ $offtext
                                                                             * RESERVE.l(currTP,o,i_reserveClass,i_reserveType)
                                                                        ] ;
 
+$label SkipNormalReportingProcess
             );
 
 *       End of if statement for the resolve skipped
@@ -4334,6 +4334,7 @@ $offtext
 * Report the results from the above solves and write out summary report
 
 if( (FTRflag = 0),
+$if exist FTRdirect.inc $goto SkipNormalvSPDrunOutput
 *   Normal vSPD run output
 *   System level
     o_fromDateTime(dt)$( ord(dt) = 1 ) = yes ;
@@ -4437,6 +4438,7 @@ if( (FTRflag = 0),
         );
 
     );
+$label SkipNormalvSPDrunOutput
 
 elseif (FTRflag = 1),
 *   Normal FTR run output

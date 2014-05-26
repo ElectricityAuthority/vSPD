@@ -16,7 +16,7 @@ $onecho > con
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 
-
+$if not exist vSPDpaths.inc  $call "copy IncFiles\*.inc"
 * Include paths and settings files
 $include vSPDpaths.inc
 $include vSPDsettings.inc
@@ -69,20 +69,18 @@ $if not %calcFTRrentals%==1 $goto SkipFTRinput
 
 * Declare and install FTR rental sets and data
 Sets
-  FTRnode  'FTR node collection'
-$ include FTRnode.inc
-  FTRdirection  'FTR flow direction'
-$ include FTRdirection.inc
+  FTRdirection  'FTR flow pattern'
+$ include FTRPattern.inc
   ;
 
 Alias (FTRdirection,ftr) ;
 
-Parameters
-  FTRinjection(FTRdirection,FTRnode,FTRnode) 'Maximum injections'
+Table
+  FTRinjection(FTRdirection,*) 'Maximum injections'
 $ include FTRinjection.inc
   ;
 
-execute_unload '%programPath%FTRinput', FTRnode, FTRdirection, FTRinjection ;
+execute_unload '%programPath%FTRinput', FTRdirection, FTRinjection ;
 
 * Set FTR flag to 1 for FTR normal run
 FTRflag = 1;
@@ -131,7 +129,7 @@ $if not %calcFTRrentals%==1 $goto SkipFTRruns
 
   ) ;
 
-*   Setting FTR flag to 1 for FTR normal run
+*   Setting FTR flag back to 1 for FTR normal run
     putclose FTRrun "Scalar FTRflag  /1/;";
 
 $label SkipFTRruns
@@ -207,9 +205,14 @@ elseif (FTRflag = 1),
 * Clean up
 *=====================================================================================
 $label cleanUp
+*execute 'copy *.inc "%system.fp%"\IncFiles\ /y ';
+*execute 'del "*.inc"' ;
+execute 'move /y *.inc "%system.fp%"\IncFiles';
 execute 'del "*.lst"' ;
 execute 'del "*.~gm"' ;
 execute 'del "*.lxi"' ;
 execute 'del "*.log"' ;
 execute 'del "*.put"' ;
 execute 'del "*.txt"' ;
+execute 'del "*.gdx"' ; 
+

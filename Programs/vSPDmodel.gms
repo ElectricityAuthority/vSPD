@@ -113,7 +113,6 @@ Sets
   i_tradePeriodDispatchableBid(tp,i_bid)                            'Set of dispatchable bids'
   ;
 
-
 Parameters
 * 6 scalars - values are loaded from GDX file in vSPDsolve.gms
   i_day                                                             'Day number (1..31)'
@@ -1000,13 +999,14 @@ HVDCRecCalculation(currTP,ild)..
                 }, -HVDCLINKFLOW(currTP,br)
      ]
 + sum[ (b,br) $ { BusIsland(currTP,b,ild)
-*TN              and ACBus(currTP,b) and
-*TN              and HVDClink(currTP,br) and
+*TN              and ACBus(currTP,b)
+*TN              and HVDClink(currTP,br)
               and HVDClinkReceivingBus(currTP,br,b)
               and HVDCPoles(currTP,br)
                 }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
      ]
   ;
+
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
 GenIslandRiskCalculation(currTP,ild,o,i_reserveClass,GenRisk) $ { (not (UsePrimSecGenRiskModel)) and

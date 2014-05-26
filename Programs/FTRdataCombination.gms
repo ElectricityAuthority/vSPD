@@ -65,6 +65,8 @@ $load o_brConstraint_TP o_ACbranchLossMW o_ACbranchLossFactor
 $load o_branchFlow_TP o_branchFromBusPrice_TP o_branchToBusPrice_TP
 $load o_branchDynamicLoss_TP o_branchMarginalPrice_TP o_branchCapacity_TP
 $load o_brConstraintLHS_TP o_brConstraintPrice_TP o_ACbranchTotalRentals
+* No data exists for FTRbranchFlow and FTRbrCstrLHS from current FTRoutput.gdx
+* if this is the first FTR flow pattern run
 $if %FTRorder%==1 $goto Next
 $load FTRbranchFlow
 $load FTRbrCstrLHS

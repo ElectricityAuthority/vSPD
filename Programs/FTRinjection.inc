@@ -1,5 +1,0 @@
-*FTRdirection.FromNode.ToNode   XXX MW
-/ 
-1.BEN2201.OTA2201    700
-2.OTA2201.BEN2201    666
-/ 
