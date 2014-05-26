@@ -1,0 +1,2702 @@
+[PROJECT]
+
+[GDXDISP: CaseName Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Day Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_OfferType Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchCapacityOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchCapacityOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchConstraintRHSOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_OfferParamOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_OfferParamOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_OfferParamOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_OfferParamOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_PLSROfferOvrd Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NodePercDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ACLineUnit Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradeBlock Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TWDROfferOvrd Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriod Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: o_offer Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_offerParamOvrdDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ILRofferOvrd Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_PLSRofferOvrdDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_PLSRofferOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodFastPLSRoffer Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodFastILRoffer Par 4]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+PlaneFilter1=TP7
+
+[GDXDISP: i_tradePeriodSustainedTWDRoffer Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodSustainedPLSRoffer Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDIFF]
+FILE1=C:\a\vSPD\vSPD_onGithub\PhilOfferStuff_Base.gdx
+FILE2=C:\a\vSPD\vSPD_onGithub\PhilOfferStuff_CF.gdx
+OUTFL=
+EPS=0.0
+RELEPS=0.0
+SETIGN=0
+FIELD=All fields
+FIELDONLY=0
+DIFFONLY=0
+
+[GDXDISP: i_tradePeriodOfferParameter Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+PlaneFilter1=TP17
+
+[GDXDISP: i_tradePeriodSustainedILRoffer Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodEnergyOffer Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodOfferParameter Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=4
+PlaneRownr=-1
+
+[GDXDISP: i_energyOfferOvrd Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_DateTime Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Island Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Year Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodOfferNode Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodOfferTrader Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Offer Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_DateTimeTradePeriodMap Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_LossSegment Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_CVP Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_FlowDirection Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ConstraintRHS Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_StudyTradePeriod Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradingPeriodLength Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_CVPValues Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchReceivingEndLossProportion Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: I_OfferParam Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_EnergyOfferComponent Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_PLSROfferComponent Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TWDROfferComponent Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ILROfferComponent Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Trader Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodFastTWDROffer Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodNodeDemand Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Bid Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBidTrader Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBidNode Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_EnergyBidComponent Set 1]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ILRBidComponent Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodEnergyBid Par 4]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+PlaneFilter1=TP17
+
+[GDXDISP: i_TradePeriodSustainedILRBid Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodFastILRBid Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Node Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Bus Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodNode Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBusIsland Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBus Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodNodeBus Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Branch Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBranchDefn Set 4]
+PlaneDim=1
+RowDim=3
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=38
+PlaneFilter1=TP39
+
+[GDXDISP: i_BranchParameter Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_LossParameter Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodHVDCNode Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodReferenceNode Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodHVDCBranch Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBranchCapacity Par 2]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=2,1
+Decim=5
+PlaneRownr=-1
+PlaneFilter1=HWA_WVY1.1
+
+[GDXDISP: i_TradePeriodBranchOpenStatus Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NoLossBranch Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ACLossBranch Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_HVDCLossBranch Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodNodeBusAllocationFactor Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBusElectricalIsland Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_ReserveClass Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ReserveType Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_RiskClass Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_RiskParameter Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodRiskGenerator Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodManualRisk Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchConstraint Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBranchConstraintFactors Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ACNodeConstraint Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodACNodeConstraintFactors Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodACNodeConstraintRHS Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeConstraint Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodMNodeEnergyOfferConstraintFactors Par 3]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=6
+PlaneFilter1=TP7
+
+[GDXDISP: i_TradePeriodMNodeEnergyBidConstraintFactors Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodMNodeILReserveBidConstraintFactors Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodMNodeConstraintRHS Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=6
+PlaneFilter1=TP7
+
+[GDXDISP: i_Type1MixedConstraint Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type2MixedConstraint Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintReserveMap Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintRHS Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodType1MixedConstraint Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodType2MixedConstraint Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintBranchCondition Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintVarWeight Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintGenWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintResWeight Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintHVDCLineWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodType1MixedConstraintRHSParameters Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type2MixedConstraintLHSParameters Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodType2MixedConstraintRHSParameters Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_GenericConstraint Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericConstraint Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericEnergyOfferConstraintFactors Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericReserveOfferConstraintFactors Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericEnergyBidConstraintFactors Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericILReserveBidConstraintFactors Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericBranchConstraintFactors Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodGenericConstraintRHS Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodPrimarySecondaryOffer Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodManualRisk_ECE Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodHVDCSecRiskEnabled Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+PlaneFilter1=TP7
+
+[GDXDISP: i_TradePeriodHVDCSecRiskSubtractor Par 2]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=6
+PlaneFilter1=TP7
+
+[GDXDISP: i_TradePeriodAllowHVDCRoundpower Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodReserveClassGenerationMaximum Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintHVDCLineLossWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintHVDCLineFixedLossWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintACLineWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintACLineLossWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintACLineFixedLossWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchConstraintFactorOvrdToDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchConstraintFactorOvrdTP Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchConstraintRHSOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchConstraintRHSOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchConstraintRHSOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchOpenStatusOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchOpenStatusOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchOpenStatusOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchOpenStatusOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchParamOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchParamOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchParamOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_branchParamOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventNFROvrd Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventNFROvrdFromDate Set 7]
+PlaneDim=0
+RowDim=7
+Squeeze=1
+Order=1,2,3,4,5,6,7
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventNFROvrdTP Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventNFROvrdToDate Set 7]
+PlaneDim=0
+RowDim=7
+Squeeze=1
+Order=1,2,3,4,5,6,7
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventRAFOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventRAFOvrdFromDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventRAFOvrdTP Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_contingentEventRAFOvrdToDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_energyOfferOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_energyOfferOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_energyOfferOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_extendedContingentEventRAFOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_extendedContingentEventRAFOvrdFromDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_extendedContingentEventRAFOvrdTP Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_extendedContingentEventRAFOvrdToDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandDemandOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandDemandOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandDemandOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandNegMWDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandNegPercDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandNetMWDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandNetPercDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandPosMWDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_islandPosPercDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_nodeDemandOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_nodeDemandOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_nodeDemandOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_nodeMWDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NewOffer Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NewOfferFromDate Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NewOfferInherit Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NewOfferNode Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NewOfferToDate Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_NewOfferTrader Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_Type1MixedConstraintPurWeight Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: new_offer Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: new_offerDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: new_offerInherit Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: new_offerNode Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: new_offerRiskSetter Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: new_offerTrader Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[RP:ARA2201_MAXLIMIT]
+1=gdx=xxx
+
+[GDXDISP: i_energyOfferOvrdDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_offerParam Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_offerParamDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_ILRoffer Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TWDROfferOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_PLSROfferOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_PLSROfferOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TWDROfferOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_TWDROfferOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ILROfferOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ILROfferOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_ILROfferOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchCapacityOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchCapacityOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchConstraintFactorOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_BranchConstraintFactorOvrdFromDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeEnergyConstraintFactorOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeReserveConstraintFactorOvrd Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeEnergyConstraintFactorOvrdFromDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeEnergyConstraintFactorOvrdToDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeEnergyConstraintFactorOvrdTP Set 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeReserveConstraintFactorOvrdFromDate Set 7]
+PlaneDim=0
+RowDim=7
+Squeeze=1
+Order=1,2,3,4,5,6,7
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeReserveConstraintFactorOvrdToDate Set 7]
+PlaneDim=0
+RowDim=7
+Squeeze=1
+Order=1,2,3,4,5,6,7
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeReserveConstraintFactorOvrdTP Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeConstraintRHSOvrd Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeConstraintRHSOvrdFromDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeConstraintRHSOvrdToDate Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_MNodeConstraintRHSOvrdTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[RP:CALCFTRRENTALSETUP]
+1=
+
+[RP:FTRRENTALREPORTSETUP]
+1=
+
+[RP:CALCFTRRENTAL_B]
+1=
+
+[RP:CALCFTRRENTAL]
+1=
+
+[RP:GDXMERGE]
+1=
+
+[RP:HSS_RUN]
+1=
+
+[RP:FTR_PATTERN]
+1=
+
+[RP:RUNVSPDREPORTSETUP]
+1=
+
+[GDXDISP: FTRdirection Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: FTRnode Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: FTRinjection Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: FTRbranchConstraintLHS Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: FTRbranchFlow Par 3]
+Sorted=YYY
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=6
+PlaneRownr=-1
+PlaneFilter1=2
+
+[GDXDISP: o_dateTime Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_branch Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_HVDCLink Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_brConstraint_TP Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_ACBranchLossMW Par 3]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_ACBranchLossFactor Par 3]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_branchFlow_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=6
+PlaneRownr=-1
+
+[GDXDISP: o_branchFromBusPrice_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_branchToBusPrice_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_branchDynamicLoss_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_brConstraintLHS_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_ACBranchTotalRentals Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[RP:FTR_CLAUSE7]
+1=
+
+[RP:DISPNUM]
+1=
+
+[RP:STRING]
+1=
+
+[RP:RUNVSPDSOLVE]
+1=
+
+[RP:GDXEXECINTRNSPORT]
+1=
+
+[GDXDISP: FTRbrCstrLHS Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_brConstraintPrice_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[RP:FTRCALCULATERENTAL]
+1=
+
+[RP:FTRREPORTSETUP]
+1=
+
+[RP:FTRCALCULATESETUP]
+1=
+
+[RP:FTRINPUT]
+1=
+
+[RP:RUNFTRREPORTING]
+1=
+
+[RP:VSPDDECLARATIONS]
+1=
+
+[RP:FTRMAIN]
+1=
+
+[GDXDISP: i_fileName Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_branchMarginalPrice_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[RP:CREATEGDXFILELIST]
+1=
+
+[GDXDISP: ovrd_offerParamTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_energyOfferDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_energyOfferTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_PLSRofferDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_PLSRofferTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_TWDRofferDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_TWDRofferTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_ILRofferDate Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_ILRofferTP Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_energyOffer Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+Order=1,2,3,4
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_PLSRoffer Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ovrd_TWDRoffer Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_HVDCRiskParamOvrd Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_HVDCRiskParamOvrdFromDate Set 8]
+PlaneDim=0
+RowDim=8
+Squeeze=1
+Order=1,2,3,4,5,6,7,8
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_HVDCRiskParamOvrdToDate Set 8]
+PlaneDim=0
+RowDim=8
+Squeeze=1
+Order=1,2,3,4,5,6,7,8
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_HVDCRiskParamOvrdTP Set 6]
+PlaneDim=0
+RowDim=6
+Squeeze=1
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
+
+[RP:MYCALENDAR]
+1=
+
+[GDXDISP: i_Month Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[RP:FTRDATACOMBINATION]
+1=
+
+[RP:RUNVSPDSETUP]
+1=
+
+[RP:VSPDSOLVE_ORIGINAL]
+1=
+
+[RP:VSPDSOLVE_BK1]
+1=
+
+[RP:FTRRENTALCALCULATION]
+1=
+
+[GDXDISP: i_TradePeriodMNodeReserveOfferConstraintFactors Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_HVDCflow_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_islandRefPrice_TP Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_FIRprice_TP Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_FIRreqd_TP Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_SIRprice_TP Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[RP:FTR_NORMAL]
+1=
+
+[GDXDISP: o_RegulationSummary Par 3]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+PlaneFilter1=01-JUL-2013 05:00
+
+[GDXDISP: o_RegulationSharedHVDCLimit_Marginal Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_SchemeBlockSummary Par 4]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=1,2,3,4
+Decim=7
+PlaneRownr=26
+PlaneFilter1=01-JUL-2013 13:00
+
+[GDXDISP: o_SchemeSummary Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=1,3,2
+Decim=7
+PlaneRownr=10
+PlaneFilter1=01-JUL-2013 05:00
+
+[RP:VSPDMODEL_MIP]
+1=
+
+[RP:VSPDMODEL_BLOCK]
+1=
+
+[RP:VSPDSOLVE_BLOCK]
+1=
+
+[RP:VSPDSOLVE_LP]
+1=
+
+[GDXDISP: o_RegulationControlMaxLP_Marginal Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[RP:VSPDMODEL_LP]
+1=
+
+[GDXDISP: o_RegulationOfferDefinition_Marginal Par 2]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=27
+PlaneFilter1=01-JUL-2013 13:30
+
+[GDXDISP: o_RegulationOfferBlockDefinition_Marginal Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_RegulationEnergyAndReserveMaximum_Marginal Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_RegulationControlMinLP_Marginal Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_RegulationSupplyBalance_Marginal Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=2
+PlaneRownr=-1
+
+[GDXDISP: o_RegulationSharedAvailable_Marginal Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o_RegulationViolation Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: UseFKCtrLMinMaxMIP Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodBranchConstraintRHS Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[RP:SCARCITY_VSPDMODEL]
+1=
+
+[RP:SCARCITY_VSPDREPORT]
+1=
+
+[RP:SCARCITY_VSPDREPORTSETUP]
+1=
+
+[RP:VSPDSOLVEOVERRIDES]
+1=
+
+[RP:SCARCITY_VSPDSOLVE]
+1=
+
+[RP:VSPDSOLVE_WITH_WDV_MST_UPGRADE]
+1=
+
+[RP:VSPDSOLVE_NO_WDV_MST_UPGRADE]
+1=
+
+[RP:VSPDSOLVE_NO_ISL_KIK_2]
+1=
+
+[RP:IMPORT_DATA]
+1=
+
+[RP:CALCULATIONV2]
+1=
+
+[GDXDISP: Vio_SurplusGeneration Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: Vio_DeficitGeneration Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: Vio_BuildCapacity Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: Violation Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: AvgDemand Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=3
+PlaneRownr=-1
+
+[GDXDISP: PlantResult Par 3]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ReserveRatio Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: MustRunFactor Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LDFactor Par 7]
+PlaneDim=0
+RowDim=7
+Squeeze=1
+Order=1,2,3,4,5,6,7
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TxDefinition Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TxCapacity Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: Price Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: EnergyRevenue Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TimeSeriesMapping Set 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: MonthMinFactor Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: GenProjectData Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=2,1,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TxParameters Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TxProperties Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: WACC Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TaxRate Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: InflationRate Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: CO2Tax Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: PeriodLength Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: SystemLossRate Par 0]
+PlaneDim=0
+RowDim=0
+Squeeze=1
+Order=
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: MarginalCostofSupply Par 3]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2,3
+Decim=2
+PlaneRownr=-1
+
+[RP:PEM_MODEL]
+1=
+
+[GDXDISP: MaxCapFactor Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: MonthMaxFactor Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: Regions Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ReserveTechnology Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[RP:INPUTCREATEGDX]
+1=
+
+[RP:PEM]
+1=
+
+[RP:PEM_SOLVE]
+1=
+
+[RP:UNTITLED_1]
+1=
+
+[RP:VSPDSOLVE_SCARCITY]
+1=
+
+[RP:VSPDSOLVE_BASE]
+1=
+
+[RP:VSPDSOLVE_DD]
+1=
+
+[GDXDISP: i_DateTimeBid Par 4]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3,4
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodRiskParameter Par 5]
+PlaneDim=1
+RowDim=3
+Squeeze=1
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=36
+PlaneFilter1=TP37
+
+[RP:CREATEGDX]
+1=
+
+[GDXDISP: i_BidNodeTrader Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_TradePeriodDispatchableBid Set 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[OPENWINDOW_1]
+MAXIM=0
+TOP=0
+LEFT=0
+HEIGHT=707
+WIDTH=1566
+
+[RP:VSPDSOLVEDDILADJUSTED]
+1=
+
+[RP:VSPDREPORTSETUP_DD]
+1=
+
+[RP:VSPDREPORT_DD]
+1=
+
+[RP:VSPDMODEL_5HUBS]
+1=
+
+[GDXDISP: i_TradePeriodBranchParameter Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=2,1,3
+Decim=5
+PlaneRownr=94
+PlaneFilter1=BDE_EDN.1
+
+[RP:VSPDSOLVE1.3]
+1=
+
+[GDXDISP: i_TradePeriodEnergyOffer Par 4]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=1,2,3,4
+Decim=7
+PlaneRownr=-1
+
+[RP:VSPDMODEL_1.3]
+1=
+
+[RP:RUNVSPD]
+1=errmsg=1
+2=e
+3=
+
+[RP:VSPDMODEL_SCARCITY]
+1=
+
+[RP:VSPDREPORT]
+1=
+
+[RP:VSPDREPORT - COPY]
+1=
+
+[RP:VSPDOVERRIDES -FTR]
+1=
+
+[RP:VSPDMODEL]
+1=
+
+[RP:VSPDMODEL - COPY]
+1=
+
+[RP:VSPDREPORTSETUP - COPY]
+1=
+
+[RP:VSPDREPORTSETUP]
+1=
+
+[RP:VSPDSOLVE - COPY]
+1=
+
+[RP:VSPDOVERRIDES]
+1=
+
+[RP:VSPDSOLVE]
+1=
+
+[MRUFILES]
+1=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDsolve.gms
+2=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDoverrides.gms
+3=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\vSPDsolve - Copy.gms
+4=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\vSPDoverrides.gms
+5=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDreportSetup.gms
+6=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\vSPDreportSetup - Copy.gms
+7=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\vSPDmodel - Copy.gms
+8=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.3_FTR_unpublished\vSPDmodel.gms
+9=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v1.4.2_Scarcity_unpublished\vSPDmodel.gms

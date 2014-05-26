@@ -36,6 +36,8 @@ Sets
   o_dateTime(*)                       'Date and time set for output'
   o_bus(*,*)                          'Set of buses for the different time period'
   o_offer(*,*)                        'Set of offers for the different time period'
+* MODD modification
+  o_bid(*,*)                          'Set of bids for the different summary outputs'
   o_island(*,*)                       'Island definition for trade period outputs'
   i_offer(*)                          'Set of offers for the different summary outputs'
   i_trader(*)                         'Set of traders for the different summary outputs'
@@ -112,7 +114,9 @@ Parameters
 
 * Trading period level
   o_islandGen_TP(*,*)                'Island generation (MW) for each time period'
-  o_islandLoad_TP(*,*)               'Island load (MW) for each time period'
+  o_islandLoad_TP(*,*)               'Island fixed load (MW) for each time period'
+* MODD modification
+  o_islandClrBid_TP(*,*)             'Island cleared MW bid for each time period'
   o_islandEnergyRevenue_TP(*,*)      'Island energy revenue ($) for each time period'
   o_islandLoadCost_TP(*,*)           'Island load cost ($) for each time period'
   o_islandLoadRevenue_TP(*,*)        'Island load revenue (negative load cost) ($) for each time period'
@@ -135,6 +139,12 @@ Parameters
   o_nodeCost_TP(*,*)                 'Cost per node per time period for each input data set ($)'
   o_nodeDeficit_TP(*,*)              'Node deficit generation (MW)'
   o_nodeSurplus_TP(*,*)              'Node surplus generation (MW)'
+* MODD modification
+  o_bidTotalMW_TP(*,*)               'Total MW bidded for each energy bid for each trade period'
+  o_bidEnergy_TP(*,*)                'Output MW cleared for each energy bid for each trade period'
+  o_bidFIR_TP(*,*)                   'Output MW cleared for FIR for each trade period'
+  o_bidSIR_TP(*,*)                   'Output MW cleared for SIR for each trade period'
+* MODD modification end
   o_offerEnergy_TP(*,*)              'Energy per offer per time period for each input data set (MW)'
   o_offerFIR_TP(*,*)                 'FI reserves per offer per time period for each input data set (MW)'
   o_offerSIR_TP(*,*)                 'SI reserves per offer per time period for each input data set (MW)'
@@ -221,6 +231,11 @@ $load o_node
 $gdxin "%OutputPath%%runName%\RunNum%VSPDRunNum%_OfferOutput_TP.gdx"
 $load o_offer
 
+* MODD modification
+$gdxin "%OutputPath%%runName%\RunNum%VSPDRunNum%_bidOutput_TP.gdx"
+$load o_bid
+* MODD modification end
+
 $gdxin "%OutputPath%%runName%\RunNum%VSPDRunNum%_ReserveOutput_TP.gdx"
 $load o_island
 
@@ -247,7 +262,8 @@ if(tradePeriodReports = 1,
                  o_SurpGenericConst_TP, o_DefResv_TP, o_totalViolation_TP, o_ofv_TP, o_penaltyCost_TP
 
     execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_IslandOutput_TP.gdx"
-                 o_islandGen_TP, o_islandLoad_TP, o_islandBranchLoss_TP, o_HVDCFlow_TP
+* MODD modification
+                 o_islandGen_TP, o_islandLoad_TP, o_islandClrBid_TP, o_islandBranchLoss_TP, o_HVDCFlow_TP
                  o_HVDCLoss_TP, o_islandRefPrice_TP, o_islandEnergyRevenue_TP
                  o_islandLoadCost_TP, o_islandLoadRevenue_TP
 
@@ -261,6 +277,11 @@ if(tradePeriodReports = 1,
 
     execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_OfferOutput_TP.gdx"
                  o_offerEnergy_TP, o_offerFIR_TP, o_offerSIR_TP
+
+* MODD modification
+    execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_BidOutput_TP.gdx"
+                 o_bidTotalMW_TP, o_BidEnergy_TP, o_bidFIR_TP, o_bidSIR_TP
+* MODD modification end
 
     execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_ReserveOutput_TP.gdx"
                  o_FIRReqd_TP, o_SIRReqd_TP, o_FIRPrice_TP, o_SIRPrice_TP
@@ -304,6 +325,8 @@ Files
   BusResults_TP             / "%outputPath%\%runName%\%runName%_BusResults_TP.csv" /
   NodeResults_TP            / "%outputPath%\%runName%\%runName%_NodeResults_TP.csv" /
   OfferResults_TP           / "%outputPath%\%runName%\%runName%_OfferResults_TP.csv" /
+* MODD modification
+  BidResults_TP             / "%outputPath%\%runName%\%runName%_BidResults_TP.csv" /
   ReserveResults_TP         / "%outputPath%\%runName%\%runName%_ReserveResults_TP.csv" /
   BranchResults_TP          / "%outputPath%\%runName%\%runName%_BranchResults_TP.csv" /
   BrCnstrResults_TP         / "%outputPath%\%runName%\%runName%_BrConstraintResults_TP.csv" /
@@ -426,7 +449,7 @@ if( (opMode <> 1) and (opMode <> -1 ),
         IslandResults_TP.ap = 1 ;
         put IslandResults_TP ;
         loop( (dim1,dim2) $ { o_DateTime(dim1) and o_island(dim1,dim2) },
-            put dim1.tl, dim2.tl, o_islandGen_TP(dim1,dim2), o_islandLoad_TP(dim1,dim2)
+            put dim1.tl, dim2.tl, o_islandGen_TP(dim1,dim2), o_islandLoad_TP(dim1,dim2), o_islandClrBid_TP(dim1,dim2)
                 o_islandBranchLoss_TP(dim1,dim2), o_HVDCFlow_TP(dim1,dim2), o_HVDCLoss_TP(dim1,dim2)
                 o_islandRefPrice_TP(dim1,dim2), o_FIRReqd_TP(dim1,dim2), o_SIRReqd_TP(dim1,dim2)
                 o_FIRPrice_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2), o_islandEnergyRevenue_TP(dim1,dim2)
@@ -464,6 +487,18 @@ if( (opMode <> 1) and (opMode <> -1 ),
         loop( (dim2,dim3) $ { o_DateTime(dim2) and o_offer(dim2,dim3) },
             put dim2.tl, dim3.tl, o_offerEnergy_TP(dim2,dim3), o_offerFIR_TP(dim2,dim3), o_offerSIR_TP(dim2,dim3) / ;
         ) ;
+* MODD modification
+*       Trading period bid result
+        BidResults_TP.pc = 5 ;
+        BidResults_TP.lw = 0 ;
+        BidResults_TP.pw = 9999 ;
+        BidResults_TP.ap = 1 ;
+        put BidResults_TP ;
+        loop( (dim2,dim3) $ { o_DateTime(dim2) and o_bid(dim2,dim3) },
+            put dim2.tl, dim3.tl, o_bidTotalMW_TP(dim2,dim3), o_bidEnergy_TP(dim2,dim3)
+                o_bidFIR_TP(dim2,dim3), o_bidSIR_TP(dim2,dim3) / ;
+        ) ;
+* MODD modification end
 *       Trading period reserve result
         ReserveResults_TP.pc = 5 ;
         ReserveResults_TP.lw = 0 ;

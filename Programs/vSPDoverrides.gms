@@ -79,7 +79,7 @@ $onecho > overridesFromExcel.ins
 $offecho
 
 * Update the override path and file name for the xls overrides
-$call 'gdxxrw "%programPath%\%vSPDinputFileName%.xls" o=overridesFromExcel.gdx "@overridesFromExcel.ins"'
+$call 'gdxxrw "%programPath%\%vSPDinputFileName%.xls" o=%ovrdPath%\overridesFromExcel.gdx "@overridesFromExcel.ins"'
 $gdxin "%ovrdPath%\overridesFromExcel"
 $load i_energyOfferOvrd i_offerParamOvrd i_nodeDemandOvrd i_islandDemandOvrd
 $gdxin

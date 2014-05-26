@@ -154,6 +154,8 @@ Sets
   o_dateTime(dt)                                      'Date and time for reporting'
   o_bus(dt,b)                                         'Set of buses for output report'
   o_offer(dt,o)                                       'Set of offers for output report'
+* MODD modification
+  o_bid(dt,i_bid)                                     'Set of bids for output report'
   o_island(dt,ild)                                    'Island definition for trade period reserve output report'
   o_offerTrader(o,trdr)                               'Mapping of offers to traders for offer summary reports'
   o_trader(trdr)                                      'Set of traders for trader summary output report'
@@ -191,7 +193,9 @@ Parameters
 * Dispatch results for reporting
 * Trade period level
   o_islandGen_TP(dt,ild)                              'Island MW generation for the different time periods'
-  o_islandLoad_TP(dt,ild)                             'Island MW load for the different time periods'
+  o_islandLoad_TP(dt,ild)                             'Island MW fixed load for the different time periods'
+* MODD modification
+  o_islandClrBid_TP(dt,ild)                           'Island cleared MW bid for the different time periods'
   o_systemViolation_TP(dt,ild)                        'Island MW violation for the different time periods'
   o_islandEnergyRevenue_TP(dt,ild)                    'Island energy revenue ($) for the different time periods'
   o_islandReserveRevenue_TP(dt,ild)                   'Island reserve revenue ($) for the different time periods'
@@ -225,7 +229,11 @@ Parameters
   o_offerFIR_TP(dt,o)                                 'Output MW cleared for FIR for each trade period'
   o_offerSIR_TP(dt,o)                                 'Output MW cleared for SIR for each trade period'
   o_bidEnergy_TP(dt,i_bid)                            'Output MW cleared for each energy bid for each trade period'
-  o_bidReserve_TP(dt,i_bid,i_reserveClass)            'Output MW cleared for each reserve bid for each trade period'
+* MODD modification
+  o_bidTotalMW_TP(dt,i_bid)                           'Output total MW bidded for each energy bid for each trade period'
+  o_bidFIR_TP(dt,i_bid)                               'Output MW cleared for FIR for each trade period'
+  o_bidSIR_TP(dt,i_bid)                               'Output MW cleared for SIR for each trade period'
+* MODD modification end
   o_FIRreqd_TP(dt,ild)                                'Output MW required FIR for each trade period'
   o_SIRreqd_TP(dt,ild)                                'Output MW required SIR for each trade period'
   o_FIRprice_TP(dt,ild)                               'Output $/MW price for FIR reserve classes for each trade period'
@@ -413,6 +421,8 @@ Scalars
   primSecGenRiskModelGDXGDate       'Primary secondary risk model in use from       24 Feb 2013'    / 41328 /
 * Introduce MSP change-over date to account for change in the node-bus allocation factor from the input gdx files
   MSPchangeOverGDXGDate             'MSP change over from mid-day on                20 Jul 2009'    / 40014 /
+* MODD modification
+  DispatchableDemandGDXGDate        'Dispatchable Demand effective date             15 May 2014'    / 41773 /
   ;
 
 * Calculate the Gregorian date of the input data
@@ -471,6 +481,16 @@ if(inputGDXGDate >= reserveClassGenMaxGDXGDate,
 else
     i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass) = 0 ;
 ) ;
+
+* MODD modification
+if(inputGDXGDate >= DispatchableDemandGDXGDate,
+    execute_load i_tradePeriodDispatchableBid;
+else
+    i_tradePeriodDispatchableBid(tp,i_bid) = yes ;
+) ;
+
+* MODD modification end
+
 
 * Switch off the mixed constraint based risk offset calculation after 17 October 2011 (data stopped being populated in GDX file)
 useMixedConstraintRiskOffset = 1 $ (inputGDXGDate < mixedConstraintRiskOffsetGDXGDate) ;
@@ -1251,15 +1271,17 @@ for[iterationCount = 1 to numTradePeriods,
         validReserveOfferBlock(offer,trdBlk,i_reserveClass,i_reserveType)
             $ ( reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType) > 0 ) = yes ;
 
-
 *       Initialise demand/bid data for the current trade period start
         nodeDemand(node) = i_tradePeriodNodeDemand(node) ;
 
+* MODD Modification
         purchaseBidMW(bid,trdBlk) = sum[ NRGbidCmpnt $ ( ord(NRGbidCmpnt) = 1 )
-                                       , i_tradePeriodEnergyBid(bid,trdBlk,NRGbidCmpnt) ] ;
+                                       , i_tradePeriodEnergyBid(bid,trdBlk,NRGbidCmpnt)
+                                       ] $ i_tradePeriodDispatchableBid(bid) ;
 
         purchaseBidPrice(bid,trdBlk) = sum[ NRGbidCmpnt $ ( ord(NRGbidCmpnt) = 2 )
-                                          , i_tradePeriodEnergyBid(bid,trdBlk,NRGbidCmpnt) ] ;
+                                          , i_tradePeriodEnergyBid(bid,trdBlk,NRGbidCmpnt)
+                                          ] $ i_tradePeriodDispatchableBid(bid) ;
 
 *       Valid purchaser bid blocks are defined as those with with a positive block limit before DSBF
         validPurchaseBidBlock(bid,trdBlk) $ { ( not useDSBFDemandBidModel ) and
@@ -1269,27 +1291,28 @@ for[iterationCount = 1 to numTradePeriods,
 *       and negative limits are allowed with changes to the demand bids following DSBF implementation
         validPurchaseBidBlock(bid,trdBlk) $ { useDSBFDemandBidModel and
                                               ( purchaseBidMW(bid,trdBlk) <> 0) } = yes ;
+Display purchaseBidMW, purchaseBidPrice, validPurchaseBidBlock;
 
         purchaseBidILRMW(bid,trdBlk,i_reserveClass) $ ( ord(i_reserveClass) = 1 )
             = sum[ ILbidCmpnt $ ( ord(ILbidCmpnt ) = 1)
-                 , i_tradePeriodFastILRbid(bid,trdBlk,ILbidCmpnt) ] ;
+                 , i_tradePeriodFastILRbid(bid,trdBlk,ILbidCmpnt) ] $ i_tradePeriodDispatchableBid(bid) ;
 
         purchaseBidILRPrice(bid,trdBlk,i_reserveClass) $ ( ord(i_reserveClass) = 1 )
             = sum[ ILbidCmpnt $ ( ord(ILbidCmpnt) = 2 )
-                 , i_tradePeriodFastILRbid(bid,trdBlk,ILbidCmpnt) ] ;
+                 , i_tradePeriodFastILRbid(bid,trdBlk,ILbidCmpnt) ] $ i_tradePeriodDispatchableBid(bid) ;
 
         purchaseBidILRMW(bid,trdBlk,i_reserveClass) $ ( ord(i_reserveClass) = 2 )
             = sum[ ILbidCmpnt $ ( ord(ILbidCmpnt) = 1 )
-                 , i_tradePeriodSustainedILRbid(bid,trdBlk,ILbidCmpnt) ] ;
+                 , i_tradePeriodSustainedILRbid(bid,trdBlk,ILbidCmpnt) ] $ i_tradePeriodDispatchableBid(bid) ;
 
         purchaseBidILRPrice(bid,trdBlk,i_reserveClass) $ ( ord(i_reserveClass) = 2 )
             = sum[ ILbidCmpnt $ ( ord(ILbidCmpnt) = 2 )
-                 , i_tradePeriodSustainedILRbid(bid,trdBlk,ILbidCmpnt) ] ;
+                 , i_tradePeriodSustainedILRbid(bid,trdBlk,ILbidCmpnt) ] $ i_tradePeriodDispatchableBid(bid) ;
 
 *       Valid purchaser ILR blocks are defined as those with with a positive block limit
         validPurchaseBidILRBlock(bid,trdBlk,i_reserveClass)
             $ ( purchaseBidILRMW(bid,trdBlk,i_reserveClass) > 0 ) = yes ;
-
+* MODD Modification end
 
 *       Initialise network sets for the current trade period start
         HVDCnode(node) $ i_tradePeriodHVDCnode(node) = yes ;
@@ -2951,6 +2974,13 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                                              * NodeDemand(currTP,n)
                                         ] ;
 
+            busLoad(bus(currTP,b)) = sum[ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b)
+                                                             * ( NodeDemand(currTP,n)
+                                                               + sum[ bid(currTP,i_bid) $ bidNode(bid,n), PURCHASE.l(bid)
+                                                                    ]
+                                                               )
+                                        ] ;
+
             busPrice(bus(currTP,b)) $ { not sum[ NodeBus(HVDCnode(currTP,n),b), 1 ] }
                 = ACnodeNetInjectionDefinition2.m(currTP,b) ;
 
@@ -3158,7 +3188,9 @@ $label Next
 
                         o_nodeGeneration_TP(dt,n) $ Node(currTP,n) = sum[ o $ offerNode(currTP,o,n), GENERATION.l(currTP,o) ] ;
 
-                        o_nodeLoad_TP(dt,n) $ Node(currTP,n) = NodeDemand(currTP,n) ;
+                        o_nodeLoad_TP(dt,n) $ Node(currTP,n) = NodeDemand(currTP,n)
+                                                             + sum[ bid(currTP,i_bid) $ bidNode(bid,n), PURCHASE.l(currTP,i_bid)
+                                                                  ];
 
                         o_nodePrice_TP(dt,n) $ Node(currTP,n) = sum[ b $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b)
                                                                                             * busPrice(currTP,b)
@@ -3298,9 +3330,21 @@ $label Next
                         o_offerSIR_TP(dt,o) $ offer(currTP,o) = sum[ (i_reserveClass,i_reserveType) $ (ord(i_reserveClass) = 2)
                                                                      , RESERVE.l(currTP,o,i_reserveClass,i_reserveType) ] ;
 
+* MODD modification
+                        o_bid(dt,i_bid) $ bid(currTP,i_bid) = yes ;
+
+                        o_bidTotalMW_TP(dt,i_bid) $ bid(currTP,i_bid) = sum[ trdBlk, purchaseBidMW(currTP,i_bid,trdBlk) ] ;
+
                         o_bidEnergy_TP(dt,i_bid) $ bid(currTP,i_bid) = PURCHASE.l(currTP,i_bid) ;
 
-                        o_bidReserve_TP(dt,i_bid,i_reserveClass) $ bid(currTP,i_bid) = PURCHASEILR.l(currTP,i_bid,i_reserveClass) ;
+                        o_bidFIR_TP(dt,i_bid) $ bid(currTP,i_bid) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
+                                                                     , PURCHASEILR.l(currTP,i_bid,i_reserveClass) ] ;
+
+                        o_bidSIR_TP(dt,i_bid) $ bid(currTP,i_bid) = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
+                                                                     , PURCHASEILR.l(currTP,i_bid,i_reserveClass) ] ;
+
+* MODD modification end
+
 
 *                       Violation reporting based on the CE and ECE
                         o_FIRviolation_TP(dt,ild) $ (not diffCeECeCVP) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
@@ -3369,6 +3413,13 @@ $label Next
                         o_islandGen_TP(dt,ild) = sum[ b $ busIsland(currTP,b,ild), busGeneration(currTP,b) ] ;
 
                         o_islandLoad_TP(dt,ild) = sum[ b $ busIsland(currTP,b,ild), busLoad(currTP,b) ] ;
+
+* MODD modification
+                        o_islandClrBid_TP(dt,ild) = sum[ i_bid $ IslandBid(currTP,ild,i_bid), PURCHASE.l(currTP,i_bid) ] ;
+
+                        o_islandLoad_TP(dt,ild) = o_islandLoad_TP(dt,ild) - o_islandClrBid_TP(dt,ild) ;
+* MODD modification end
+
 
                         o_FIRcleared_TP(dt,ild) = sum[ (o,i_reserveClass,i_reserveType) $ { (ord(i_reserveClass) = 1) and
                                                                                             offer(currTP,o) and
@@ -3977,9 +4028,12 @@ if( (FTRflag = 0),
                        o_ofv_TP, o_penaltyCost_TP ;
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_IslandOutput_TP.gdx'
-                       o_islandGen_TP, o_islandLoad_TP, o_islandEnergyRevenue_TP
-                       o_islandLoadCost_TP, o_islandLoadRevenue_TP, o_islandBranchLoss_TP
+* MODD modification
+                       o_islandGen_TP, o_islandLoad_TP, o_islandClrBid_TP,
+                       o_islandEnergyRevenue_TP, o_islandLoadCost_TP
+                       o_islandLoadRevenue_TP, o_islandBranchLoss_TP
                        o_HVDCflow_TP, o_HVDCloss_TP, o_islandRefPrice_TP ;
+* MODD modification end
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_BusOutput_TP.gdx'
                        o_bus, o_busGeneration_TP, o_busLoad_TP, o_busPrice_TP, o_busRevenue_TP
@@ -3997,6 +4051,11 @@ if( (FTRflag = 0),
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_OfferOutput_TP.gdx'
                        o_offer, o_offerEnergy_TP, o_offerFIR_TP, o_offerSIR_TP ;
+
+* MODD modification
+        execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_BidOutput_TP.gdx'
+                       o_bid, o_bidTotalMW_TP, o_BidEnergy_TP, o_bidFIR_TP, o_bidSIR_TP ;
+* MODD modification end
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_ReserveOutput_TP.gdx'
                        o_island, o_FIRreqd_TP, o_SIRreqd_TP, o_FIRprice_TP, o_SIRprice_TP

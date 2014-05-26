@@ -1,14 +1,13 @@
-$inlinecom ## ##
-$eolcom !
-
-$setglobal  runName            GDXtest_gams24_2_noX
-
-$setglobal  programPath       "%system.fp%"
-$setglobal  inputPath         "%system.fp%..\Input\"
-$setglobal  ovrdPath          "%system.fp%..\Override\"
-$setglobal  outputPath        "%system.fp%..\Output\"
+$inlinecom ## ## 
+$eolcom ! 
  
-
-$setglobal  licenseMode        1
-$setglobal  vSPDinputFileName "vSPDrunFile"          ! Name of Excel run file when using the Excel interface
-$setglobal  vSPDinputOvrdData "ara2201_maxlimit"     ! Name of override file when using EMI tools
+$setglobal runName               TestMaster
+ 
+$setglobal programPath           '%system.fp%'
+$setglobal inputPath             '%system.fp%..\Input\'
+$setglobal ovrdPath              '%system.fp%..\Override\'
+$setglobal outputPath            '%system.fp%..\Output\'
+ 
+$setglobal licenseMode           1
+$setglobal vSPDinputFileName     'vSPDrunFile'              ! Name of Excel run file when using the Excel interface
+$setglobal vSPDinputOvrdData     'overridesFromExcel'       ! Name of override file when using EMI

@@ -107,6 +107,8 @@ Sets
   i_tradePeriodGenericConstraint(tp,gnrcCstr)                       'Generic constraints defined for the different trading periods'
 * 1 set loaded from GDX with conditional load statement in vSPDsolve.gms at execution time
   i_tradePeriodPrimarySecondaryOffer(tp,o,o1)                       'Primary-secondary offer mapping for the different trading periods'
+* MODD Modification
+  i_tradePeriodDispatchableBid(tp,i_bid)                            'Set of dispatchable bids'
   ;
 
 Parameters
@@ -959,12 +961,13 @@ HVDCRecCalculation(currTP,ild)..
               and HVDCPoles(currTP,br)
                 }, -HVDCLINKFLOW(currTP,br)
      ]
-+ sum[ (b,br) $ { BusIsland(currTP,b,ild) 
++ sum[ (b,br) $ { BusIsland(currTP,b,ild)
               and HVDClinkReceivingBus(currTP,br,b)
               and HVDCPoles(currTP,br)
                 }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
      ]
   ;
+
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
 GenIslandRiskCalculation(currTP,ild,o,i_reserveClass,GenRisk) $ { (not (UsePrimSecGenRiskModel)) and

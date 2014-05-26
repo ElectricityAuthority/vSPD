@@ -29,6 +29,7 @@ Files
   busResults_TP            / "%outputPath%\%runName%\%runName%_BusResults_TP.csv" /
   nodeResults_TP           / "%outputPath%\%runName%\%runName%_NodeResults_TP.csv" /
   offerResults_TP          / "%outputPath%\%runName%\%runName%_OfferResults_TP.csv" /
+  bidResults_TP            / "%outputPath%\%runName%\%runName%_BidResults_TP.csv" /
   reserveResults_TP        / "%outputPath%\%runName%\%runName%_ReserveResults_TP.csv" /
   branchResults_TP         / "%outputPath%\%runName%\%runName%_BranchResults_TP.csv" /
   brCnstrResults_TP        / "%outputPath%\%runName%\%runName%_BrConstraintResults_TP.csv" /
@@ -58,6 +59,7 @@ islandResults_TP.pc = 5 ;          islandResults_TP.lw = 0 ;             islandR
 busResults_TP.pc = 5 ;             busResults_TP.lw = 0 ;                busResults_TP.pw = 9999 ;
 nodeResults_TP.pc = 5 ;            nodeResults_TP.lw = 0 ;               nodeResults_TP.pw = 9999 ;
 offerResults_TP.pc = 5 ;           offerResults_TP.lw = 0 ;              offerResults_TP.pw = 9999 ;
+bidResults_TP.pc = 5 ;             bidResults_TP.lw = 0 ;                bidResults_TP.pw = 9999 ;
 reserveResults_TP.pc = 5 ;         reserveResults_TP.lw = 0 ;            reserveResults_TP.pw = 9999 ;
 branchResults_TP.pc = 5 ;          branchResults_TP.lw = 0 ;             branchResults_TP.pw = 9999 ;
 brCnstrResults_TP.pc = 5 ;         brCnstrResults_TP.lw = 0 ;            brCnstrResults_TP.pw = 9999 ;
@@ -100,7 +102,7 @@ if( (opMode <> 1) and (opMode <> -1 ),
      'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)', 'DeficitACNodeConstraintViol(MW)', 'SurplusACNodeConstraintViol (MW)'
      'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)', 'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)' ;
 
-    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Load (MW)', 'IslandACLoss (MW)', 'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)'
+    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Fixed Load (MW)', 'Bid Load (MW)', 'IslandACLoss (MW)', 'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)'
      'FIR (MW)', 'SIR (MW)', 'FIR Price ($/MWh)', 'SIR Price ($/MWh)', 'GenerationRevenue ($)', 'LoadCost ($)', 'NegativeLoadRevenue ($)' ;
 
     put busResults_TP 'DateTime', 'Bus', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
@@ -108,6 +110,8 @@ if( (opMode <> 1) and (opMode <> -1 ),
     put nodeResults_TP 'DateTime', 'Node', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
 
     put offerResults_TP 'DateTime', 'Offer', 'Generation (MW)', 'FIR (MW)', 'SIR (MW)' ;
+
+    put bidResults_TP 'DateTime', 'Bid', 'Total Bid (MW)', 'Cleared Bid (MW)', 'FIR (MW)', 'SIR (MW)' ;
 
     put reserveResults_TP 'DateTime', 'Island', 'FIR Reqd (MW)', 'SIR Reqd (MW)', 'FIR Price ($/MW)', 'SIR Price ($/MW)', 'FIR Violation (MW)', 'SIR Violation (MW)' ;
 
