@@ -81,9 +81,11 @@ objResults_Audit.pc = 5 ;          objResults_Audit.lw = 0 ;             objResu
 * If opMode is anything but 1 or -1, ie data warehouse or audit mode, write the following report templates
 if( (opMode <> 1) and (opMode <> -1 ),
 * System level summary
-  put systemResults 'Date', 'NumTradePeriodsStudied', 'ObjectiveFunctionValue ($)', 'SystemGen (MW(half)h)', 'SystemLoad (MW(half)h)'
-     'SystemLoss (MW(half)h)', 'SystemViolation (MW(half)h)', 'SystemFIR (MW(half)h)', 'SystemSIR (MW(half)h)', 'SystemGenerationRevenue ($)'
-     'SystemLoadCost ($)', 'SystemNegativeLoadRevenue ($)', 'SystemSurplus ($)' ;
+  put systemResults 'Date', 'NumTradePeriodsStudied', 'ObjectiveFunctionValue ($)'
+      'SystemGen (MW(half)h)', 'SystemLoad (MW(half)h)', 'SystemLoss (MW(half)h)'
+      'SystemViolation (MW(half)h)', 'SystemFIR (MW(half)h)', 'SystemSIR (MW(half)h)'
+      'SystemGenerationRevenue ($)', 'SystemLoadCost ($)', 'SystemNegativeLoadRevenue ($)'
+      'SystemSurplus ($)' ;
 
 * Offer level summary
   put offerResults 'Date', 'NumTradePeriodsStudied', 'Offer', 'Trader', 'Generation (MWh)', 'FIR (MWh)', 'SIR (MWh)' ;
@@ -94,33 +96,50 @@ if( (opMode <> 1) and (opMode <> -1 ),
 * In addition to the summary report templates above, write out the trade period report templates provided tradePeriodReports is set to 1
   if(tradePeriodReports = 1,
 
-*RDN - 20130730 - Additional reporting on system objective function and penalty cost
-*  put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
-    put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV ($)', 'SystemCost ($)', 'ViolationCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
-*RDN - 20130730 - Additional reporting on system objective function and penalty cost
-     'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)', 'SurplusBranchGroupConstraintViol (MW)', 'DeficitBranchGroupConstraintViol (MW)'
-     'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)', 'DeficitACNodeConstraintViol(MW)', 'SurplusACNodeConstraintViol (MW)'
-     'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)', 'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)' ;
+* Additional reporting on system objective function and penalty cost
+    put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV ($)', 'SystemCost ($)'
+        'ViolationCost ($)', 'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
+* Additional reporting on system objective function and penalty cost
+        'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)', 'SurplusRampRateViol (MW)'
+        'SurplusBranchGroupConstraintViol (MW)', 'DeficitBranchGroupConstraintViol (MW)'
+        'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)'
+        'DeficitACNodeConstraintViol(MW)', 'SurplusACNodeConstraintViol (MW)'
+        'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)'
+        'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)' ;
 
-    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Fixed Load (MW)', 'Bid Load (MW)', 'IslandACLoss (MW)', 'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)'
-     'FIR (MW)', 'SIR (MW)', 'FIR Price ($/MWh)', 'SIR Price ($/MWh)', 'GenerationRevenue ($)', 'LoadCost ($)', 'NegativeLoadRevenue ($)' ;
+    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Fixed Load (MW)', 'Bid Load (MW)', 'IslandACLoss (MW)'
+        'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)', 'FIR (MW)', 'SIR (MW)'
+        'FIR Price ($/MWh)', 'SIR Price ($/MWh)', 'GenerationRevenue ($)', 'LoadCost ($)', 'NegativeLoadRevenue ($)'
+*       Scarcity pricing updates - additional reporting for scarcity pricing
+        'Scarcity exists (0 = none, 1 = island, 2 = national)', 'CPT passed', 'AvgPriorGWAP ($/MWh)'
+        'IslandGWAP_before ($/MWh)', 'IslandGWAP_after ($/MWh)', 'ScarcityAreaGWAP_before ($/MWh)'
+        'ScarcityAreaGWAP_after ($/MWh)', 'ScarcityScalingFactor', 'CPT_GWAPthreshold ($/MWh)'
+        'GWAPfloor ($/MWh)', 'GWAPceiling ($/MWh)' ;
 
-    put busResults_TP 'DateTime', 'Bus', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
+    put busResults_TP 'DateTime', 'Bus', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)'
+        'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
 
-    put nodeResults_TP 'DateTime', 'Node', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)', 'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
+    put nodeResults_TP 'DateTime', 'Node', 'Generation (MW)', 'Load (MW)', 'Price ($/MWh)'
+        'Revenue ($)', 'Cost ($)', 'Deficit(MW)', 'Surplus(MW)' ;
 
     put offerResults_TP 'DateTime', 'Offer', 'Generation (MW)', 'FIR (MW)', 'SIR (MW)' ;
 
     put bidResults_TP 'DateTime', 'Bid', 'Total Bid (MW)', 'Cleared Bid (MW)', 'FIR (MW)', 'SIR (MW)' ;
 
-    put reserveResults_TP 'DateTime', 'Island', 'FIR Reqd (MW)', 'SIR Reqd (MW)', 'FIR Price ($/MW)', 'SIR Price ($/MW)', 'FIR Violation (MW)', 'SIR Violation (MW)' ;
+    put reserveResults_TP 'DateTime', 'Island', 'FIR Reqd (MW)', 'SIR Reqd (MW)'
+        'FIR Price ($/MW)', 'SIR Price ($/MW)', 'FIR Violation (MW)', 'SIR Violation (MW)'
+*       Scarcity pricing updates
+        'Virtual FIR (MW)', 'Virtual SIR (MW)' ;
 
-    put branchResults_TP 'DateTime', 'Branch', 'FromBus', 'ToBus', 'Flow (MW) (From->To)', 'Capacity (MW)', 'DynamicLoss (MW)', 'FixedLoss (MW)'
-     'FromBusPrice ($/MWh)', 'ToBusPrice ($/MWh)', 'BranchPrice ($/MWh)', 'BranchRentals ($)' ;
+    put branchResults_TP 'DateTime', 'Branch', 'FromBus', 'ToBus', 'Flow (MW) (From->To)'
+        'Capacity (MW)', 'DynamicLoss (MW)', 'FixedLoss (MW)', 'FromBusPrice ($/MWh)'
+        'ToBusPrice ($/MWh)', 'BranchPrice ($/MWh)', 'BranchRentals ($)' ;
 
-    put brCnstrResults_TP 'DateTime', 'BranchConstraint', 'LHS (MW)', 'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
+    put brCnstrResults_TP 'DateTime', 'BranchConstraint', 'LHS (MW)'
+        'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
 
-    put MNodeCnstrResults_TP 'DateTime', 'MNodeConstraint', 'LHS (MW)', 'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
+    put MNodeCnstrResults_TP 'DateTime', 'MNodeConstraint', 'LHS (MW)'
+        'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
 
   ) ;
 
@@ -138,16 +157,23 @@ if(opMode = 1,
 
 * Write out the audit mode report templates
 if(opMode = -1,
-  put branchLoss_Audit 'DateTime', 'Branch Name', 'LS1_MW', 'LS1_Factor', 'LS2_MW', 'LS2_Factor', 'LS3_MW', 'LS3_Factor', 'LS4_MW', 'LS4_Factor', 'LS5_MW'
-     'LS5_Factor', 'LS6_MW', 'LS6_Factor' ;
+  put branchLoss_Audit 'DateTime', 'Branch Name', 'LS1_MW', 'LS1_Factor'
+      'LS2_MW', 'LS2_Factor', 'LS3_MW', 'LS3_Factor', 'LS4_MW', 'LS4_Factor'
+      'LS5_MW', 'LS5_Factor', 'LS6_MW', 'LS6_Factor' ;
 
-  put busResults_Audit 'DateTime', 'Island', 'Bus', 'Angle', 'Price', 'Load', 'Cleared ILRO 6s', 'Cleared ILRO 60s'  ;
+  put busResults_Audit 'DateTime', 'Island', 'Bus', 'Angle', 'Price'
+      'Load', 'Cleared ILRO 6s', 'Cleared ILRO 60s'  ;
 
-  put marketNodeResults_Audit 'DateTime', 'Island', 'Generator', 'Cleared GenMW', 'Cleared PLRO 6s',  'Cleared PLRO 60s', 'Cleared TWRO 6s', 'Cleared TWRO 60s' ;
+  put marketNodeResults_Audit 'DateTime', 'Island', 'Generator', 'Cleared GenMW'
+      'Cleared PLRO 6s',  'Cleared PLRO 60s', 'Cleared TWRO 6s', 'Cleared TWRO 60s' ;
 
-  put branchResults_Audit 'DateTime', 'Branch Name', 'Flow', 'Variable Loss', 'Fixed Loss', 'Total Losses', 'Constrained', 'Shadow Price', 'NonPhysicalLoss' ;
+  put branchResults_Audit 'DateTime', 'Branch Name', 'Flow', 'Variable Loss'
+      'Fixed Loss', 'Total Losses', 'Constrained', 'Shadow Price', 'NonPhysicalLoss' ;
 
-  put riskResults_Audit 'DateTime', 'Island', 'ReserveClass', 'Risk Setter', 'RiskClass', 'Max Risk', 'Reserve Cleared', 'Violation', 'Reserve Price' ;
+  put riskResults_Audit 'DateTime', 'Island', 'ReserveClass', 'Risk Setter'
+      'RiskClass', 'Max Risk', 'Reserve Cleared', 'Violation', 'Reserve Price'
+*     Scarcity pricing updates
+      'Virtual Reserve MW' ;
 
   put objResults_Audit 'DateTime', 'Objective Function' ;
 

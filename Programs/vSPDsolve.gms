@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     16 December 2013
+* Last modified on:     6 December 2013
 *=====================================================================================
 
 $ontext
@@ -42,7 +42,7 @@ Aliases to be aware of:
   i_ILRofferComponent = ILofrCmpnt          i_energyBidComponent = NRGbidCmpnt
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
-  i_genericConstraint = gnrcCstr
+  i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
 $offtext
 
 
@@ -99,7 +99,19 @@ Sets
 * Initialise 21 fundamental sets by hard-coding (these sets can also be found in the daily GDX files)
   i_island                    / NI, SI /
   i_reserveClass              / FIR, SIR /
+
+$ontext
+ Scarcity pricing updates --> i_reserveType
+ Rather than include an additional reserve type element an additional virutal
+ reserve paramter and associated variable is created. This is more efficient
+ implementation in terms of the problem size as all other reserve providers
+ are indexed on i_reserveType which would include an additional index on all
+ these variables thus increasing the problem size. This increase would then
+ need additional pre-processing to fix variables to zero. To avoid this and
+ keep the problem size small the additional virtual reserve variable is included.
+$offtext
   i_reserveType               / PLSR, TWDR, ILR /
+
   i_riskClass                 / genRisk, DCCE, DCECE, manual, genRisk_ECE
                                 manual_ECE, HVDCsecRisk_CE, HVDCsecRisk_ECE /
   i_riskParameter             / i_freeReserve, i_riskAdjustmentFactor, i_HVDCpoleRampUp /
@@ -133,8 +145,11 @@ Sets
 * Initialise the set called pole
   pole  'HVDC poles'          / pole1, pole2 /
 
-* Initialise sets used when applying overrides. Declared and initialised now (ahead of input GDX load) so as to
-* preserve orderedness of elements
+* Scarcity pricing updates
+  i_scarcityArea            /NI, SI, National/
+
+* Initialise sets used when applying overrides. Declared and initialised now
+* (ahead of input GDX load) so as to preserve orderedness of elements
   tradePeriodNodeIslandTemp(tp,n,ild) 'Temporary mapping set of nodes to islands for island demand override'
   ovrd             'Number of overrides per parameter'    / 1*100 /
   i_dayNum         'Day number'                           / 1*31 /
@@ -165,6 +180,9 @@ Sets
   o_branchToBus_TP(dt,br,toB)                         'To bus for set of branches for output report'
   o_brConstraint_TP(dt,brCstr)                        'Set of branch constraints for output report'
   o_MnodeConstraint_TP(dt,MnodeCstr)                  'Set of Mnode constraints for output report'
+
+* Scarcity pricing updates
+  scarcityAreaIslandMap(sarea,ild)                    'Mapping of scarcity area to island'
   ;
 
 Parameters
@@ -314,6 +332,48 @@ Parameters
   busNodeAllocationFactor(dt,b,n)                     'Bus to node allocation factor'
 * Introduce i_useBusNetworkModel to account for MSP change-over date.
   i_useBusNetworkModel(tp)                            'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
+
+* Scarcity pricing updates
+  o_FIRvrMW_TP(dt,ild)                                                'MW scheduled from virtual FIR resource'
+  o_SIRvrMW_TP(dt,ild)                                                'MW scheduled from virtual SIR resource'
+
+  FIRprice(tp,ild)
+  SIRprice(tp,ild)
+
+  pastDaysGWAPsum(tp,ild)
+  pastDaysTPcnt(tp,ild)
+  nodePriceforCPT(tp,n)
+  pastGWAPsumforCPT(tp,ild)
+  pastTPcntforCPT(tp,ild)
+  currentDayGWAPsumforCPT(ild)
+  currentDayTPsumforCPT(ild)
+
+  AvgPriorGWAP(tp,ild)
+  cptIslandPassed(tp,sarea)
+  cptPassed(tp,sarea)
+  cptIslandReq(sarea)
+  scarcityScalingFactor(tp,sarea)
+
+  scaledbusPrice(tp,b)
+  scalednodePrice(tp,n)
+  scaledFIRprice(tp,ild)
+  scaledSIRprice(tp,ild)
+
+  scaledIslandGWAP(tp,ild)
+  scaledScarcityAreaGWAP(tp,sarea)
+
+  o_scarcityExists_TP(dt,ild)
+  o_cptPassed_TP(dt,ild)
+  o_avgPriorGWAP_TP(dt,ild)
+  o_islandGWAPbefore_TP(dt,ild)
+  o_islandGWAPafter_TP(dt,ild)
+  o_scarcityGWAPbefore_TP(dt,ild)
+  o_scarcityGWAPafter_TP(dt,ild)
+  o_scarcityScalingFactor_TP(dt,ild)
+  o_GWAPfloor_TP(dt,ild)
+  o_GWAPceiling_TP(dt,ild)
+  o_GWAPthreshold_TP(dt,ild)
+* Scarcity pricing updates end
   ;
 
 Scalars
@@ -423,6 +483,9 @@ Scalars
   MSPchangeOverGDXGDate             'MSP change over from mid-day on                20 Jul 2009'    / 40014 /
 * MODD modification
   DispatchableDemandGDXGDate        'Dispatchable Demand effective date             15 May 2014'    / 41773 /
+* Scarcity pricing updates
+*  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         22 May 2013'    / 41416 /
+  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         22 May 2013'    / 99999 /
   ;
 
 * Calculate the Gregorian date of the input data
@@ -488,15 +551,13 @@ if(inputGDXGDate >= DispatchableDemandGDXGDate,
 else
     i_tradePeriodDispatchableBid(tp,i_bid) = yes ;
 ) ;
-
 * MODD modification end
-
 
 * Switch off the mixed constraint based risk offset calculation after 17 October 2011 (data stopped being populated in GDX file)
 useMixedConstraintRiskOffset = 1 $ (inputGDXGDate < mixedConstraintRiskOffsetGDXGDate) ;
 
 * Switch off mixed constraint formulation if no data coming through
-useMixedConstraint(tp) $ sum(t1MixCstr$i_tradePeriodType1MixedConstraint(tp,t1MixCstr), 1) = 1 ;
+useMixedConstraint(tp) $ sum[t1MixCstr$i_tradePeriodType1MixedConstraint(tp,t1MixCstr), 1] = 1 ;
 useMixedConstraint(tp) $ suppressMixedConstraint = 0 ;
 
 * Do not use the extended risk class if no data coming through
@@ -520,6 +581,56 @@ i_useBusNetworkModel(tp) = 1 $ { ( inputGDXGDate >= MSPchangeOverGDXGDate ) and
                                  sum[ b, i_tradePeriodBusElectricalIsland(tp,b) ]
                                } ;
 
+* Scarcity pricing updates - Conditional load and processing of scarcity pricing parameters and sets
+if(inputGDXGDate >= scarcityPricingGDXGDate,
+  execute_load i_tradePeriodVROfferMax, i_tradePeriodVROfferPrice, i_tradePeriodScarcitySituationExists
+               i_tradePeriodGWAPFloor, i_tradePeriodGWAPCeiling, i_tradePeriodGWAPPastDaysAvg
+               i_tradePeriodGWAPCountForAvg, i_tradePeriodGWAPThreshold ;
+else
+  i_tradePeriodVROfferMax(tp,ild,i_reserveClass) = 0 ;
+  i_tradePeriodVROfferPrice(tp,ild,i_reserveClass) = 0 ;
+  i_tradePeriodScarcitySituationExists(tp,sarea) = 0;
+  i_tradePeriodGWAPFloor(tp,sarea) = 0;
+  i_tradePeriodGWAPCeiling(tp,sarea) = 0;
+  i_tradePeriodGWAPPastDaysAvg(tp,ild) = 0;
+  i_tradePeriodGWAPCountForAvg(tp,ild) = 0;
+  i_tradePeriodGWAPThreshold(tp,ild) = 0;
+) ;
+* Scarcity pricing updates end
+
+* Scarcity testing data
+$ontext
+  i_tradePeriodScarcitySituationExists('TP37','NI') = 0;
+  i_tradePeriodScarcitySituationExists('TP37','SI') = 1;
+  i_tradePeriodScarcitySituationExists('TP37','National') = 0;
+
+  i_tradePeriodGWAPFloor('TP37','NI') = 10000;
+  i_tradePeriodGWAPCeiling('TP37','NI') = 20000;
+  i_tradePeriodGWAPPastDaysAvg('TP37','NI') = 100;
+  i_tradePeriodGWAPCountForAvg('TP37','NI') = 300;
+
+  i_tradePeriodGWAPFloor('TP37','SI') = 10000;
+  i_tradePeriodGWAPCeiling('TP37','SI') = 20000;
+  i_tradePeriodGWAPPastDaysAvg('TP37','SI') = 100;
+  i_tradePeriodGWAPCountForAvg('TP37','SI') = 300;
+
+  i_tradePeriodGWAPFloor('TP37','National') = 10000;
+  i_tradePeriodGWAPCeiling('TP37','National') = 20000;
+
+  i_tradePeriodGWAPThreshold('TP37','NI') = 1000;
+  i_tradePeriodGWAPThreshold('TP37','SI') = 1000;
+$offtext
+* Scarcity testing data end
+
+* Scarcity pricing updates - Scarcity situation exists when the input flag is set
+scarcityExists $ sum[ (tp,sarea), i_tradePeriodScarcitySituationExists(tp,sarea) ] = 1;
+
+* Scarcity pricing updates - Switch off vectorisation when scarcity exists
+sequentialSolve $ scarcityExists = 0;
+
+* Scarcity pricing updates - Update the runlog file
+putclose runlog / 'Scarcity situation exists. Vectorisation is switched OFF' / ;
+
 
 
 *=====================================================================================
@@ -535,14 +646,14 @@ $ontext
 $offtext
 
 Sets
-  allPeriods   'All trading periods to be solved'     / all /
-  tempPeriod   'Temporary list of trading period to be solved'
+  AllPeriod  'All trading periods to be solved'  /All/
+  tempPeriod  'Temporary list of trading period to be solved'
 $ include vSPDtpsToSolve.inc
   ;
 
 i_studyTradePeriod(tp) = 0 ;
 i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tp,tempPeriod)] = 1 ;
-i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'all')] = 1 ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'All')] = 1 ;
 
 
 
@@ -566,7 +677,6 @@ $ontext
 $offtext
 
 $if not %suppressOverrides%==1 $include vSPDoverrides.gms
-
 
 
 *=====================================================================================
@@ -799,7 +909,7 @@ numTradePeriods = card(tp) ;
 * 8. The vSPD solve loop
 *=====================================================================================
 
-for[iterationCount = 1 to numTradePeriods,
+for[ iterationCount = 1 to numTradePeriods,
     skipResolve = 0 ;
 
 *   Determine which trading periods to solve when in sequential solve mode
@@ -1076,6 +1186,24 @@ for[iterationCount = 1 to numTradePeriods,
         option clear = busPrice ;
 *       Run logic
         option clear = skipResolve ;
+*       Scarcity pricing updates
+        option clear = virtualReserveMax ;
+        option clear = virtualReservePrice ;
+
+        option clear = scarcitySituationExists ;
+        option clear = GWAPFloor ;
+        option clear = GWAPCeiling ;
+        option clear = GWAPPastDaysAvg ;
+        option clear = GWAPCountForAvg ;
+        option clear = GWAPThreshold ;
+
+        option clear = nodeGeneration ;
+        option clear = nodePrice ;
+
+        option clear = islandGWAP ;
+        option clear = scarcityAreaGWAP ;
+*       Scarcity pricing updates end
+*       End reset
 
 
 *       b) Initialise current trade period and model data for the current trade period
@@ -1271,6 +1399,7 @@ for[iterationCount = 1 to numTradePeriods,
         validReserveOfferBlock(offer,trdBlk,i_reserveClass,i_reserveType)
             $ ( reserveOfferMaximum(offer,trdBlk,i_reserveClass,i_reserveType) > 0 ) = yes ;
 
+
 *       Initialise demand/bid data for the current trade period start
         nodeDemand(node) = i_tradePeriodNodeDemand(node) ;
 
@@ -1291,7 +1420,6 @@ for[iterationCount = 1 to numTradePeriods,
 *       and negative limits are allowed with changes to the demand bids following DSBF implementation
         validPurchaseBidBlock(bid,trdBlk) $ { useDSBFDemandBidModel and
                                               ( purchaseBidMW(bid,trdBlk) <> 0) } = yes ;
-Display purchaseBidMW, purchaseBidPrice, validPurchaseBidBlock;
 
         purchaseBidILRMW(bid,trdBlk,i_reserveClass) $ ( ord(i_reserveClass) = 1 )
             = sum[ ILbidCmpnt $ ( ord(ILbidCmpnt ) = 1)
@@ -2023,6 +2151,25 @@ Display purchaseBidMW, purchaseBidPrice, validPurchaseBidBlock;
         GenericConstraintLimit(GenericConstraint) = sum[ i_ConstraintRHS $ (ord(i_ConstraintRHS) = 2)
                                                        , i_tradePeriodGenericConstraintRHS(GenericConstraint,i_ConstraintRHS) ] ;
 
+*       Scarcity pricing updates
+        virtualReserveMax(currTP,ild,i_reserveClass) = i_tradePeriodVROfferMax(currTP,ild,i_reserveClass) ;
+        virtualReservePrice(currTP,ild,i_reserveClass) = i_tradePeriodVROfferPrice(currTP,ild,i_reserveClass) ;
+
+*       Mapping to scarcity area to island
+        scarcityAreaIslandMap(sarea,ild) = no ;
+        scarcityAreaIslandMap('NI','NI') = yes ;
+        scarcityAreaIslandMap('SI','SI') = yes ;
+        scarcityAreaIslandMap('National',ild) = yes ;
+
+        cptIslandReq(sarea) = sum(ild $ scarcityAreaIslandMap(sarea,ild),1) ;
+
+        scarcitySituationExists(currTP,sarea) = i_tradePeriodScarcitySituationExists(currTP,sarea) ;
+        GWAPFloor(currTP,sarea) = i_tradePeriodGWAPFloor(currTP,sarea) ;
+        GWAPCeiling(currTP,sarea) = i_tradePeriodGWAPCeiling(currTP,sarea) ;
+        GWAPPastDaysAvg(currTP,ild) = i_tradePeriodGWAPPastDaysAvg(currTP,ild) ;
+        GWAPCountForAvg(currTP,ild) = i_tradePeriodGWAPCountForAvg(currTP,ild) ;
+        GWAPThreshold(currTP,ild) = i_tradePeriodGWAPThreshold(currTP,ild) ;
+*       Scarcity pricing updates end
 
 
 *       c) Additional pre-processing on parameters and variables before model solve
@@ -2211,7 +2358,7 @@ Display purchaseBidMW, purchaseBidPrice, validPurchaseBidBlock;
                 (not sum[ t1MixCstr $ i_type1MixedConstraintReserveMap(t1MixCstr,ild,i_reserveClass,i_riskClass),1])
               } = 0 ;
 
-*       RDN - Fix the appropriate deficit variable to zero depending on whether the different CE and ECE CVP flag is set
+*       Fix the appropriate deficit variable to zero depending on whether the different CE and ECE CVP flag is set
         DEFICITRESERVE.fx(currTP,ild,i_reserveClass) $ diffCeECeCVP = 0 ;
 
         DEFICITRESERVE_CE.fx(currTP,ild,i_reserveClass) $ (not diffCeECeCVP) = 0 ;
@@ -2220,6 +2367,10 @@ Display purchaseBidMW, purchaseBidPrice, validPurchaseBidBlock;
 
 *       Mixed constraint
         MIXEDCONSTRAINTVARIABLE.fx(currTP,t1MixCstr) $ (not i_type1MixedConstraintVarWeight(t1MixCstr)) = 0 ;
+
+*       Scarcity pricing updates
+        VIRTUALRESERVE.up(currTP,ild,i_reserveClass) = virtualReserveMax(currTP,ild,i_reserveClass) ;
+
 
 
 *       d) Solve the model
@@ -2960,9 +3111,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
 
 
 
-*           g) Check for disconnected nodes and adjust prices accordingly
-
-*           See Rule Change Proposal August 2008 - Disconnected nodes available at www.systemoperator.co.nz/reports-papers
+*           g) Post-processing
 
             busGeneration(bus(currTP,b)) = sum[ (o,n) $ { offerNode(currTP,o,n) and
                                                           NodeBus(currTP,n,b)
@@ -2974,37 +3123,187 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                                              * NodeDemand(currTP,n)
                                         ] ;
 
-            busLoad(bus(currTP,b)) = sum[ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b)
-                                                             * ( NodeDemand(currTP,n)
-                                                               + sum[ bid(currTP,i_bid) $ bidNode(bid,n), PURCHASE.l(bid)
-                                                                    ]
-                                                               )
-                                        ] ;
-
             busPrice(bus(currTP,b)) $ { not sum[ NodeBus(HVDCnode(currTP,n),b), 1 ] }
                 = ACnodeNetInjectionDefinition2.m(currTP,b) ;
 
             busPrice(bus(currTP,b)) $ sum[ NodeBus(HVDCnode(currTP,n),b), 1 ] = DCNodeNetInjection.m(currTP,b) ;
 
-*           Disconnected nodes are defined as follows:
-*           Pre-MSP: Have no generation or load, are disconnected from the network and has a price = CVP.
-*           Post-MSP: Indication to SPD whether a bus is dead or not.  Dead buses are not processed by the SPD solved
-*           and have their prices set by the post-process with the following rules:
+*           Scarcity pricing updates --> post-processing
 
-*           Scenario A/B/D: Price for buses in live electrical island determined by the solved
-*           Scenario C/F/G/H/I: Buses in the dead electrical island with:
-*           a) Null/zero load: Marked as disconnected with $0 price.
-*           b) Positive load: Price = CVP for deficit generation
-*           c) Negative load: Price = -CVP for surplus generation
-*           Scenario E: Price for bus in live electrical island with zero load and zero cleared generation needs to be adjusted since actually is disconnected.
+            FIRprice(currTP,ild) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
+                                      , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass) ] ;
+            SIRprice(currTP,ild) = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
+                                      , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass) ] ;
 
-*           The Post-MSP implementation imply a mapping of a bus to an electrical island and an indication of whether this electrical island is live of dead.
-*           The correction of the prices is performed by SPD.
+            nodeGeneration(currTP,n) $ node(currTP,n) = sum[ o $ offerNode(currTP,o,n), GENERATION.l(currTP,o) ] ;
+            nodePrice(currTP,n) $ node(currTP,n) = sum[ b $ nodeBus(currTP,n,b)
+                                                      , NodeBusAllocationFactor(currTP,n,b) * busPrice(currTP,b) ] ;
 
-*           RDN - 20130302 - i_tradePeriodNodeBusAllocationFactor update - Start-----------
-*           Update the disconnected nodes logic to use the time-stamped i_useBusNetworkModel flag
-*           This allows disconnected nodes logic to work with both pre and post-MSP data structure in the same gdx file
+*           Calculate the island and any scarcity area GWAP - before scarcity adjustments (6.3.3)
+            islandGWAP(currTP,ild)
+                = sum[ n $ nodeIsland(currTP,n,ild), nodeGeneration(currTP,n) * nodePrice(currTP,n) ]
+                / sum[ n $ nodeIsland(currTP,n,ild), nodeGeneration(currTP,n) ] ;
 
+            scarcityAreaGWAP(currTP,sarea)$scarcitySituationExists(currTP,sarea)
+                = sum[ (n,ild) $ { nodeIsland(currTP,n,ild) and scarcityAreaIslandMap(sarea,ild) }
+                     , nodeGeneration(currTP,n) * nodePrice(currTP,n)
+                     ]
+                / sum[ (n,ild) $ { nodeIsland(currTP,n,ild) and scarcityAreaIslandMap(sarea,ild) }
+                     , nodeGeneration(currTP,n)
+                     ] ;
+
+*           Calculate the last 7 days GWAP for the CPT check
+*           Load the past days price x quantity (PQ) and trading period count for the calculation of the past days GWAP
+            pastDaysGWAPsum(currTP,ild) = GWAPPastDaysAvg(currTP,ild) * GWAPCountForAvg(currTP,ild) ;
+            pastDaysTPcnt(currTP,ild) = GWAPCountForAvg(currTP,ild) ;
+
+*           Initialise the node price used for the GWAP calculations - used for the cumulative price threshold (CPT)
+            nodePriceforCPT(currTP,n) = nodePrice(currTP,n) ;
+*           Initialise the parameters to be used to update the average prior GWAP for the current trade day
+            pastGWAPsumforCPT(currTP,ild) = pastDaysGWAPsum(currTP,ild) ;
+            pastTPcntforCPT(currTP,ild) = pastDaysTPcnt(currTP,ild) ;
+            currentDayGWAPsumforCPT(ild) = 0 ;
+            currentDayTPsumforCPT(ild) = 0 ;
+
+            loop[ currTP(tp ) $ { ord(tp) < 48 },
+
+*               Calculate the past GWAP and cnt with the current day to update the average prior GWAP calc
+                pastGWAPsumforCPT(currTP,ild) = pastGWAPsumforCPT(currTP,ild) + currentDayGWAPsumforCPT(ild) ;
+                pastTPcntforCPT(currTP,ild) = pastTPcntforCPT(currTP,ild) + currentDayTPsumforCPT(ild) ;
+
+*               Calculate the average prior GWAP for each island
+                AvgPriorGWAP(currTP,ild) $ (pastTPcntforCPT(currTP,ild) = 336)
+                    = pastGWAPsumforCPT(currTP,ild) / pastTPcntforCPT(currTP,ild) ;
+
+                display nodePriceforCPT, pastGWAPsumforCPT, pastTPcntforCPT ;
+                display currentDayGWAPsumforCPT, currentDayTPsumforCPT, AvgPriorGWAP;
+
+                loop[ sarea $ scarcitySituationExists(currTP,sarea),
+
+*                   Cumulative price threshold (CPT) check
+                    cptIslandPassed(currTP,sarea) = sum[ ild $ { scarcityAreaIslandMap(sarea,ild) and
+                                                                 (AvgPriorGWAP(currTP,ild) <= GWAPThreshold(currTP,ild))
+                                                               }, 1
+                                                       ] ;
+
+*                   Check of the required CPT thresholds are met
+                    cptPassed(currTP,sarea) $ (cptIslandPassed(currTP,sarea) = cptIslandReq(sarea)) = 1 ;
+
+*                   Scaling factor calculation (6.3.4) - If CPT is passed then if:
+*                       a. scarcity area GWAP < floor then scale prices up
+*                       b. scarcity area GWAP > ceiling then scale prices down
+*                       c. scarcity area GWAP >= floor and GWAP <= ceiling scaling factor = 1
+                    if( cptPassed(currTP,sarea) = 1,
+
+                        scarcityScalingFactor(currTP,sarea) $ { (scarcityAreaGWAP(currTP,sarea) < GWAPFloor(currTP,sarea)) and
+                                                                (scarcityAreaGWAP(currTP,sarea) <> 0) }
+                                                            = GWAPFloor(currTP,sarea) / scarcityAreaGWAP(currTP,sarea) ;
+
+                        scarcityScalingFactor(currTP,sarea) $ { scarcityAreaGWAP(currTP,sarea) > GWAPCeiling(currTP,sarea) }
+                                                            = GWAPCeiling(currTP,sarea)/scarcityAreaGWAP(currTP,sarea) ;
+
+                        scarcityScalingFactor(currTP,sarea) $ { (scarcityAreaGWAP(currTP,sarea) >= GWAPFloor(currTP,sarea)) and
+                                                                (scarcityAreaGWAP(currTP,sarea) <= GWAPCeiling(currTP,sarea)) }
+                                                            = 1 ;
+
+*                       Scale the bus prices and reserve prices in the scarcity area
+                        scaledBusPrice(bus(currTP,b)) $ sum[ ild $ { busIsland(currTP,b,ild) and
+                                                                     scarcityAreaIslandMap(sarea,ild)
+                                                                   }, 1 ]
+                            =  scarcityScalingFactor(currTP,sarea) * busPrice(currTP,b) ;
+
+                        scaledFIRprice(currTP,ild) $ scarcityAreaIslandMap(sarea,ild)
+                            = scarcityScalingFactor(currTP,sarea) * FIRprice(currTP,ild) ;
+
+                        scaledSIRprice(currTP,ild) $ scarcityAreaIslandMap(sarea,ild)
+                            = scarcityScalingFactor(currTP,sarea) * SIRprice(currTP,ild) ;
+
+
+*                       Allocate the scaled bus energy, FIR and SIR prices
+                        busPrice(bus(currTP,b)) $ sum[ ild $ { busIsland(currTP,b,ild) and
+                                                               scarcityAreaIslandMap(sarea,ild)
+                                                             }, 1
+                                                     ] = scaledBusPrice(currTP,b) ;
+
+                        FIRprice(currTP,ild) $ scarcityAreaIslandMap(sarea,ild) = scaledFIRprice(currTP,ild) ;
+
+                        SIRprice(currTP,ild) $ scarcityAreaIslandMap(sarea,ild) = scaledSIRprice(currTP,ild) ;
+
+*                       Update node price with scaling factor
+                        scaledNodePrice(node(currTP,n)) = sum[ b $ nodeBus(currTP,n,b)
+                                                             , NodeBusAllocationFactor(currTP,n,b)
+                                                             * busPrice(currTP,b)
+                                                             ] ;
+
+                        scaledIslandGWAP(currTP,ild) $ scarcityAreaIslandMap(sarea,ild)
+                            = sum[ n $ nodeIsland(currTP,n,ild), nodeGeneration(currTP,n)
+                                                               * scalednodePrice(currTP,n) ]
+                            / sum[ n $ nodeIsland(currTP,n,ild), nodeGeneration(currTP,n) ] ;
+
+                        scaledScarcityAreaGWAP(currTP,sarea) $ scarcitySituationExists(currTP,sarea)
+                            = sum[ (n,ild) $ { nodeIsland(currTP,n,ild) and
+                                               scarcityAreaIslandMap(sarea,ild)
+                                             }, nodeGeneration(currTP,n)
+                                              * scalednodePrice(currTP,n)
+                                 ]
+                            / sum[ (n,ild) $ { nodeIsland(currTP,n,ild) and
+                                               scarcityAreaIslandMap(sarea,ild)
+                                             }, nodeGeneration(currTP,n)
+                                 ] ;
+
+*                       Update the node price used for the GWAP calculation for the CPT
+                        nodePriceforCPT(currTP,n) = scalednodePrice(currTP,n) ;
+
+*                   End of if
+                    ) ;
+
+*               End of scarcity check loop
+                ] ;
+
+
+*               Calculate the GWAP for the current trade period in each island and the trading period
+                currentDayGWAPsumforCPT(ild)
+                    = currentDayGWAPsumforCPT(ild)
+                    + sum[ n $ nodeIsland(currTP,n,ild), nodeGeneration(currTP,n)
+                                                       * nodePriceforCPT(currTP,n) ]
+                    / sum[ n $ nodeIsland(currTP,n,ild), nodeGeneration(currTP,n) ] ;
+
+                currentDayTPsumforCPT(ild) = currentDayTPsumforCPT(ild) + 1 ;
+
+*           End of trade period loop
+            ] ;
+
+
+
+
+*           Scarcity pricing updates --> post-processing end
+
+
+
+*           h) Check for disconnected nodes and adjust prices accordingly
+
+*           See Rule Change Proposal August 2008 - Disconnected nodes available at www.systemoperator.co.nz/reports-papers
+$ontext
+            Disconnected nodes are defined as follows:
+            Pre-MSP: Have no generation or load, are disconnected from the network and has a price = CVP.
+            Post-MSP: Indication to SPD whether a bus is dead or not.  Dead buses are not processed by the SPD solved
+            and have their prices set by the post-process with the following rules:
+
+            Scenario A/B/D: Price for buses in live electrical island determined by the solved
+            Scenario C/F/G/H/I: Buses in the dead electrical island with:
+                a. Null/zero load: Marked as disconnected with $0 price.
+                b. Positive load: Price = CVP for deficit generation
+                c. Negative load: Price = -CVP for surplus generation
+            Scenario E: Price for bus in live electrical island with zero load and zero cleared
+                        generation needs to be adjusted since actually is disconnected.
+
+            The Post-MSP implementation imply a mapping of a bus to an electrical island
+            and an indication of whether this electrical island is live of dead.
+            The correction of the prices is performed by SPD.
+
+            Update the disconnected nodes logic to use the time-stamped i_useBusNetworkModel flag.
+            This allows disconnected nodes logic to work with both pre and post-MSP data structure in the same gdx file
+$offtext
             if((disconnectedNodePriceCorrection = 1),
 *               Pre-MSP case
                 busDisconnected(bus(currTP,b)) $ (i_useBusNetworkModel(currTP) = 0)
@@ -3046,7 +3345,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
 $label SkipLPResultChecking
 
 
-*       h) Collect and store results from the current model solve in the output (o_xxx) parameters
+*           i) Collect and store results from the current model solve in the output (o_xxx) parameters
 
 *           Normal FTR run reporting processing
             if( (FTRflag = 1),
@@ -3188,9 +3487,7 @@ $label Next
 
                         o_nodeGeneration_TP(dt,n) $ Node(currTP,n) = sum[ o $ offerNode(currTP,o,n), GENERATION.l(currTP,o) ] ;
 
-                        o_nodeLoad_TP(dt,n) $ Node(currTP,n) = NodeDemand(currTP,n)
-                                                             + sum[ bid(currTP,i_bid) $ bidNode(bid,n), PURCHASE.l(currTP,i_bid)
-                                                                  ];
+                        o_nodeLoad_TP(dt,n) $ Node(currTP,n) = NodeDemand(currTP,n) ;
 
                         o_nodePrice_TP(dt,n) $ Node(currTP,n) = sum[ b $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b)
                                                                                             * busPrice(currTP,b)
@@ -3345,7 +3642,6 @@ $label Next
 
 * MODD modification end
 
-
 *                       Violation reporting based on the CE and ECE
                         o_FIRviolation_TP(dt,ild) $ (not diffCeECeCVP) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
                                                                               , DEFICITRESERVE.l(currTP,ild,i_reserveClass) ] ;
@@ -3404,11 +3700,19 @@ $label Next
                                                                  nodeIsland(currTP,n,ild)
                                                                }, o_nodePrice_TP(dt,n) ] ;
 
+*                       Scarcity pricing updates
+$ontext
                         o_FIRprice_TP(dt,ild) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
                                                      , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass) ] ;
 
                         o_SIRprice_TP(dt,ild) = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
                                                      , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass) ] ;
+$offtext
+                        o_FIRprice_TP(dt,ild) = FIRprice(currTP,ild) ;
+
+                        o_SIRprice_TP(dt,ild) = SIRprice(currTP,ild) ;
+
+*                       Scarcity pricing updates end
 
                         o_islandGen_TP(dt,ild) = sum[ b $ busIsland(currTP,b,ild), busGeneration(currTP,b) ] ;
 
@@ -3419,7 +3723,6 @@ $label Next
 
                         o_islandLoad_TP(dt,ild) = o_islandLoad_TP(dt,ild) - o_islandClrBid_TP(dt,ild) ;
 * MODD modification end
-
 
                         o_FIRcleared_TP(dt,ild) = sum[ (o,i_reserveClass,i_reserveType) $ { (ord(i_reserveClass) = 1) and
                                                                                             offer(currTP,o) and
@@ -3792,6 +4095,52 @@ $label Next
                                                 + o_surpGenericConst_TP(dt)
                                                 + o_defResv_TP(dt) ;
 
+*====================== Scarcity pricing updates
+                        o_FIRvrMW_TP(dt,ild) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
+                                                  , VIRTUALRESERVE.l(currTP,ild,i_reserveClass) ] ;
+
+                        o_SIRvrMW_TP(dt,ild) = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
+                                                  , VIRTUALRESERVE.l(currTP,ild,i_reserveClass) ] ;
+$ontext
+                        Additional island reporting
+                        Scarcity situation exists reporting:
+                            0 = none
+                            1 = island-wide
+                            2 = national
+$offtext
+                        o_scarcityExists_TP(dt,ild) = 0 ;
+                        o_scarcityExists_TP(dt,'NI') $ scarcitySituationExists(currTP,'NI') = 1 ;
+                        o_scarcityExists_TP(dt,'SI') $ scarcitySituationExists(currTP,'SI') = 1 ;
+                        o_scarcityExists_TP(dt,ild) $ scarcitySituationExists(currTP,'National') = 2 ;
+
+                        o_cptPassed_TP(dt,ild) $ sum[ sarea $ { scarcityAreaIslandMap(sarea,ild) and
+                                                                cptPassed(currTP,sarea)
+                                                              }, 1 ] = 1 ;
+
+                         o_avgPriorGWAP_TP(dt,ild) = AvgPriorGWAP(currTP,ild) ;
+
+                         o_islandGWAPbefore_TP(dt,ild) = islandGWAP(currTP,ild) ;
+                         o_islandGWAPafter_TP(dt,ild) = scaledIslandGWAP(currTP,ild) ;
+
+                         o_scarcityGWAPbefore_TP(dt,ild) = sum[ sarea $ scarcityAreaIslandMap(sarea,ild)
+                                                              , scarcityAreaGWAP(currTP,sarea) ] ;
+                         o_scarcityGWAPafter_TP(dt,ild) = sum[ sarea $ scarcityAreaIslandMap(sarea,ild)
+                                                             , scaledScarcityAreaGWAP(currTP,sarea) ] ;
+
+                         o_scarcityScalingFactor_TP(dt,ild) = sum[ sarea $ scarcityAreaIslandMap(sarea,ild)
+                                                                 , scarcityScalingFactor(currTP,sarea) ] ;
+
+                         o_GWAPfloor_TP(dt,ild) = sum[ sarea $ { scarcityAreaIslandMap(sarea,ild) and
+                                                                 (scarcitySituationExists(currTP,sarea) = 1)
+                                                               }, GWAPFloor(currTP,sarea) ] ;
+
+                         o_GWAPceiling_TP(dt,ild) = sum[ sarea $ { scarcityAreaIslandMap(sarea,ild) and
+                                                                   (scarcitySituationExists(currTP,sarea) = 1)
+                                                                 }, GWAPCeiling(currTP,sarea) ] ;
+
+                         o_GWAPthreshold_TP(dt,ild) $ o_scarcityExists_TP(dt,ild) = GWAPThreshold(currTP,ild) ;
+*======================= Scarcity pricing updates end
+
                     ) ;
 
                 ) ;
@@ -3974,7 +4323,7 @@ $label Next
     ) ;
 
 
-* i) End of the solve vSPD loop
+* End of the solve vSPD loop
 ] ;
 
 
@@ -4029,11 +4378,15 @@ if( (FTRflag = 0),
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_IslandOutput_TP.gdx'
 * MODD modification
-                       o_islandGen_TP, o_islandLoad_TP, o_islandClrBid_TP,
+                       o_islandGen_TP, o_islandLoad_TP,  o_islandClrBid_TP
                        o_islandEnergyRevenue_TP, o_islandLoadCost_TP
                        o_islandLoadRevenue_TP, o_islandBranchLoss_TP
-                       o_HVDCflow_TP, o_HVDCloss_TP, o_islandRefPrice_TP ;
-* MODD modification end
+                       o_HVDCflow_TP, o_HVDCloss_TP, o_islandRefPrice_TP
+*                      Scarcity pricing updates - additional reporting for scarcity pricing
+                       o_scarcityExists_TP, o_cptPassed_TP, o_avgPriorGWAP_TP
+                       o_islandGWAPbefore_TP, o_islandGWAPafter_TP, o_scarcityGWAPbefore_TP
+                       o_scarcityGWAPafter_TP, o_scarcityScalingFactor_TP
+                       o_GWAPfloor_TP, o_GWAPceiling_TP, o_GWAPthreshold_TP ;
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_BusOutput_TP.gdx'
                        o_bus, o_busGeneration_TP, o_busLoad_TP, o_busPrice_TP, o_busRevenue_TP
@@ -4059,7 +4412,9 @@ if( (FTRflag = 0),
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_ReserveOutput_TP.gdx'
                        o_island, o_FIRreqd_TP, o_SIRreqd_TP, o_FIRprice_TP, o_SIRprice_TP
-                       o_FIRviolation_TP, o_SIRviolation_TP ;
+                       o_FIRviolation_TP, o_SIRviolation_TP
+*                      Scarcity pricing updates - additional reporting for scarcity pricing
+                       o_FIRvrMW_TP, o_SIRvrMW_TP
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_BrConstraintOutput_TP.gdx'
                        o_brConstraint_TP, o_brConstraintSense_TP, o_brConstraintLHS_TP

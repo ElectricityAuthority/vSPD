@@ -14,7 +14,6 @@ $include vSPDpaths.inc
 $include vSPDsettings.inc
 $include vSPDcase.inc
 
-
 * Perform integrity checks on operating mode and trade period reporting switches
 * Notes: Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vPSD mode.
 *        tradePeriodReports must be 0 or 1 (default = 1) - a value of 1 implies reports by trade period are generated
@@ -22,7 +21,6 @@ $include vSPDcase.inc
 if(tradePeriodReports < 0 or tradePeriodReports > 1, tradePeriodReports = 1 ) ;
 if( (opMode = -1) or (opMode = 1), tradePeriodReports = 1 ) ;
 *Display opMode, tradePeriodReports ;
-
 
 * If the input file does not exist then proceed to the next input file by skipping all of this program
 $if not exist "%inputPath%\%vSPDinputData%.gdx" $goto nextInput
@@ -191,6 +189,23 @@ Parameters
   o_HVDCriskSetter(*,*,*,*)          'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
   o_MANUriskSetter(*,*,*,*)          'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
   o_MANUHVDCriskSetter(*,*,*,*)      'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
+
+* Scarcity pricing updates
+  o_FIRvrMW_TP(*,*)                  'MW scheduled from virtual FIR resource'
+  o_SIRvrMW_TP(*,*)                  'MW scheduled from virtual SIR resource'
+
+  o_scarcityExists_TP(*,*)
+  o_cptPassed_TP(*,*)
+  o_avgPriorGWAP_TP(*,*)
+  o_islandGWAPbefore_TP(*,*)
+  o_islandGWAPafter_TP(*,*)
+  o_scarcityGWAPbefore_TP(*,*)
+  o_scarcityGWAPafter_TP(*,*)
+  o_scarcityScalingFactor_TP(*,*)
+  o_GWAPfloor_TP(*,*)
+  o_GWAPceiling_TP(*,*)
+  o_GWAPthreshold_TP(*,*)
+
   ;
 
 * Introduce zero tolerance due to numerical rounding issues - when detecting the risk setter
@@ -266,6 +281,10 @@ if(tradePeriodReports = 1,
                  o_islandGen_TP, o_islandLoad_TP, o_islandClrBid_TP, o_islandBranchLoss_TP, o_HVDCFlow_TP
                  o_HVDCLoss_TP, o_islandRefPrice_TP, o_islandEnergyRevenue_TP
                  o_islandLoadCost_TP, o_islandLoadRevenue_TP
+* Scarcity pricing updates - additional reporting for scarcity pricing
+                 o_scarcityExists_TP, o_cptPassed_TP, o_avgPriorGWAP_TP, o_islandGWAPbefore_TP, o_islandGWAPafter_TP, o_scarcityGWAPbefore_TP
+                 o_scarcityGWAPafter_TP, o_scarcityScalingFactor_TP, o_GWAPfloor_TP, o_GWAPceiling_TP, o_GWAPthreshold_TP
+* Scarcity pricing updates - additional reporting for scarcity pricing end
 
     execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_BusOutput_TP.gdx"
                  o_busGeneration_TP, o_busLoad_TP, o_busPrice_TP, o_busRevenue_TP
@@ -286,6 +305,8 @@ if(tradePeriodReports = 1,
     execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_ReserveOutput_TP.gdx"
                  o_FIRReqd_TP, o_SIRReqd_TP, o_FIRPrice_TP, o_SIRPrice_TP
                  o_FIRViolation_TP, o_SIRViolation_TP
+*                Scarcity pricing updates
+                 o_FIRvrMW_TP, o_SIRvrMW_TP
 
     execute_load "%outputPath%\%runName%\runNum%vSPDrunNum%_BranchOutput_TP.gdx"
                  o_branchFlow_TP, o_branchDynamicLoss_TP, o_branchFixedLoss_TP
@@ -343,36 +364,6 @@ Files
   RiskResults_Audit         / "%outputPath%\%runName%\%runName%_RiskResults_Audit.csv" /
   objResults_Audit          / "%outputPath%\%runName%\%runName%_objResults_Audit.csv" /
   ;
-
-* Set output file attributes
-*SystemResults.pc = 5 ;          SystemResults.lw = 0 ;          SystemResults.pw = 9999 ;              SystemResults.ap = 1 ;
-*OfferResults.pc = 5 ;           OfferResults.lw = 0 ;           OfferResults.pw = 9999 ;               OfferResults.ap = 1 ;
-*TraderResults.pc = 5 ;          TraderResults.lw = 0 ;          TraderResults.pw = 9999 ;              TraderResults.ap = 1 ;
-*SummaryResults_TP.pc = 5 ;      SummaryResults_TP.lw = 0 ;      SummaryResults_TP.pw = 9999 ;          SummaryResults_TP.ap = 1 ;
-*IslandResults_TP.pc = 5 ;       IslandResults_TP.lw = 0 ;       IslandResults_TP.pw = 9999 ;           IslandResults_TP.ap = 1 ;
-*BusResults_TP.pc = 5 ;          BusResults_TP.lw = 0 ;          BusResults_TP.pw = 9999 ;              BusResults_TP.ap = 1 ;
-*NodeResults_TP.pc = 5 ;         NodeResults_TP.lw = 0 ;         NodeResults_TP.pw = 9999 ;             NodeResults_TP.ap = 1 ;            NodeResults_TP.nd = 5 ;
-*OfferResults_TP.pc = 5 ;        OfferResults_TP.lw = 0 ;        OfferResults_TP.pw = 9999 ;            OfferResults_TP.ap = 1 ;
-*ReserveResults_TP.pc = 5 ;      ReserveResults_TP.lw = 0 ;      ReserveResults_TP.pw = 9999 ;          ReserveResults_TP.ap = 1 ;         ReserveResults_TP.nd = 5 ;
-*BranchResults_TP.pc = 5 ;       BranchResults_TP.lw = 0 ;       BranchResults_TP.pw = 9999 ;           BranchResults_TP.ap = 1 ;
-*BrCnstrResults_TP.pc = 5 ;      BrCnstrResults_TP.lw = 0 ;      BrCnstrResults_TP.pw = 9999 ;          BrCnstrResults_TP.ap = 1 ;
-*MnodeCnstrResults_TP.pc = 5 ;   MnodeCnstrResults_TP.lw = 0 ;   MnodeCnstrResults_TP.pw = 9999 ;       MnodeCnstrResults_TP.ap = 1 ;
-
-* Data warehouse file attributes
-*DWSummaryResults.pc = 5 ;       DWSummaryResults.lw = 0 ;       DWSummaryResults.pw = 9999 ;           DWSummaryResults.ap = 1 ;          DWSummaryResults.nd = 5 ;
-*DWEnergyResults.pc = 5 ;        DWEnergyResults.lw = 0 ;        DWEnergyResults.pw = 9999 ;            DWEnergyResults.ap = 1 ;           DWEnergyResults.nd = 5 ;
-*DWReserveResults.pc = 5 ;       DWReserveResults.lw = 0 ;       DWReserveResults.pw = 9999 ;           DWReserveResults.ap = 1 ;          DWReserveResults.nd = 5 ;
-
-* Audit file attributes
-*BranchLoss_Audit.pc = 5 ;       BranchLoss_Audit.lw = 0 ;       BranchLoss_Audit.pw = 9999 ;           BranchLoss_Audit.ap = 1 ;          BranchLoss_Audit.nd = 5 ;
-*BusResults_Audit.pc = 5 ;       BusResults_Audit.lw = 0 ;       BusResults_Audit.pw = 9999 ;           BusResults_Audit.ap = 1 ;          BusResults_Audit.nd = 5 ;
-*BranchResults_Audit.pc = 5 ;    BranchResults_Audit.lw = 0 ;    BranchResults_Audit.pw = 9999 ;        BranchResults_Audit.ap = 1 ;       BranchResults_Audit.nd = 5 ;
-*RiskResults_Audit.pc = 5 ;      RiskResults_Audit.lw = 0 ;      RiskResults_Audit.pw = 9999 ;          RiskResults_Audit.ap = 1 ;         RiskResults_Audit.nd = 5 ;
-*MarketNodeResults_Audit.pc = 5 ;MarketNodeResults_Audit.lw = 0 ;MarketNodeResults_Audit.pw = 9999 ;    MarketNodeResults_Audit.ap = 1 ;   MarketNodeResults_Audit.nd = 5 ;
-*objResults_Audit.pc = 5 ;       objResults_Audit.lw = 0 ;       objResults_Audit.pw = 9999 ;           objResults_Audit.ap = 1 ;          objResults_Audit.nd = 5 ;
-*objResults_Audit.nw = 20 ;
-
-
 
 *===================================================================================
 * Write vSPD results to the CSV report files
@@ -449,11 +440,18 @@ if( (opMode <> 1) and (opMode <> -1 ),
         IslandResults_TP.ap = 1 ;
         put IslandResults_TP ;
         loop( (dim1,dim2) $ { o_DateTime(dim1) and o_island(dim1,dim2) },
+* MODD modification
             put dim1.tl, dim2.tl, o_islandGen_TP(dim1,dim2), o_islandLoad_TP(dim1,dim2), o_islandClrBid_TP(dim1,dim2)
                 o_islandBranchLoss_TP(dim1,dim2), o_HVDCFlow_TP(dim1,dim2), o_HVDCLoss_TP(dim1,dim2)
                 o_islandRefPrice_TP(dim1,dim2), o_FIRReqd_TP(dim1,dim2), o_SIRReqd_TP(dim1,dim2)
                 o_FIRPrice_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2), o_islandEnergyRevenue_TP(dim1,dim2)
-                o_islandLoadCost_TP(dim1,dim2), o_islandLoadRevenue_TP(dim1,dim2) / ;
+                o_islandLoadCost_TP(dim1,dim2), o_islandLoadRevenue_TP(dim1,dim2)
+* Scarcity pricing updates - additional reporting for scarcity pricing
+                o_scarcityExists_TP(dim1,dim2), o_cptPassed_TP(dim1,dim2), o_avgPriorGWAP_TP(dim1,dim2)
+                o_islandGWAPbefore_TP(dim1,dim2), o_islandGWAPafter_TP(dim1,dim2), o_scarcityGWAPbefore_TP(dim1,dim2)
+                o_scarcityGWAPafter_TP(dim1,dim2), o_scarcityScalingFactor_TP(dim1,dim2), o_GWAPthreshold_TP(dim1,dim2)
+                o_GWAPfloor_TP(dim1,dim2), o_GWAPceiling_TP(dim1,dim2) / ;
+* Scarcity pricing updates - additional reporting for scarcity pricing end
         ) ;
 *       Trading period bus result
         BusResults_TP.pc = 5 ;
@@ -509,13 +507,16 @@ if( (opMode <> 1) and (opMode <> -1 ),
         loop( (dim2,dim3) $ { o_DateTime(dim2) and o_island(dim2,dim3) },
             put dim2.tl, dim3.tl, o_FIRReqd_TP(dim2,dim3), o_SIRReqd_TP(dim2,dim3)
                 o_FIRPrice_TP(dim2,dim3), o_SIRPrice_TP(dim2,dim3)
-                o_FIRViolation_TP(dim2,dim3), o_SIRViolation_TP(dim2,dim3) / ;
+                o_FIRViolation_TP(dim2,dim3), o_SIRViolation_TP(dim2,dim3)
+*               Scarcity pricing updates
+                o_FIRvrMW_TP(dim2,dim3), o_SIRvrMW_TP(dim2,dim3) / ;
         ) ;
 *       Trading period branch result
         BranchResults_TP.pc = 5 ;
         BranchResults_TP.lw = 0 ;
         BranchResults_TP.pw = 9999 ;
         BranchResults_TP.ap = 1 ;
+        BranchResults_TP.nd = 5 ;
         put BranchResults_TP ;
         loop( (dim2,dim3,dim4,dim5) $ { o_DateTime(dim2) and
                                         o_branch(dim2,dim3) and
@@ -596,7 +597,7 @@ if( opMode = -1,
     BranchLoss_Audit.lw = 0 ;
     BranchLoss_Audit.pw = 9999 ;
     BranchLoss_Audit.ap = 1 ;
-    BranchLoss_Audit.nd = 5 ;
+    BranchLoss_Audit.nd = 9 ;
     put BranchLoss_Audit ;
     loop( (dim1,dim2) $ { o_DateTime(dim1) and o_branch(dim1,dim2) },
         put dim1.tl, dim2.tl ;
@@ -638,7 +639,7 @@ if( opMode = -1,
     BranchResults_Audit.lw = 0 ;
     BranchResults_Audit.pw = 9999 ;
     BranchResults_Audit.ap = 1 ;
-    BranchResults_Audit.nd = 5 ;
+    BranchResults_Audit.nd = 9 ;
     put BranchResults_Audit ;
     loop( (dim1,dim2) $ { o_DateTime(dim1) and o_branch(dim1,dim2) },
         put dim1.tl, dim2.tl, o_branchFlow_TP(dim1,dim2), o_branchDynamicLoss_TP(dim1,dim2)
@@ -673,7 +674,9 @@ if( opMode = -1,
                     ),
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
                         o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
-                        o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2) / ;
+                        o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
+*                       Scarcity pricing updates
+                        o_FIRvrMW_TP(dim1,dim2) / ;
                 elseif ( ord(o_ReserveClass)=2 ) and
                        ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
                        ( abs[ o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
@@ -682,7 +685,9 @@ if( opMode = -1,
                        ) ,
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
                         o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
-                        o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;
+                        o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
+*                       Scarcity pricing updates
+                        o_SIRvrMW_TP(dim1,dim2) / ;
                 ) ;
             ) ;
 
@@ -695,7 +700,9 @@ if( opMode = -1,
                     ),
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
                         o_GenHVDCRiskSetter(dim1,dim2,dim3, o_ReserveClass,o_RiskClass)
-                        o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2) / ;
+                        o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
+*                       Scarcity pricing updates
+                        o_FIRvrMW_TP(dim1,dim2) / ;
                 elseif ( ord(o_ReserveClass)=2 ) and
                        ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
                        ( abs[ o_GenHVDCRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
@@ -704,7 +711,9 @@ if( opMode = -1,
                        ),
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
                         o_GenHVDCRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
-                        o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;
+                        o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
+*                       Scarcity pricing updates
+                        o_SIRvrMW_TP(dim1,dim2) / ;
                 ) ;
             ) ;
 
@@ -716,7 +725,9 @@ if( opMode = -1,
                 ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'HVDC', o_RiskClass.tl
                     o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
-                    o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2) / ;
+                    o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
+*                   Scarcity pricing updates
+                    o_FIRvrMW_TP(dim1,dim2) / ;
             elseif ( ord(o_ReserveClass)=2 ) and
                    ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
                    ( abs[ o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
@@ -725,13 +736,33 @@ if( opMode = -1,
                    ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'HVDC', o_RiskClass.tl
                     o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
-                    o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;
+                    o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
+*                   Scarcity pricing updates
+                    o_SIRvrMW_TP(dim1,dim2) / ;
             ) ;
 
-            if([ord(o_ReserveClass)=1] and (abs[o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)-o_FIRReqd_TP(dim1,dim2)] <= ZeroTolerance) and [o_FIRReqd_TP(dim1,dim2) > 0],
-                put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl, o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass), o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2) / ;
-            elseif [ord(o_ReserveClass)=2] and (abs[o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)-o_SIRReqd_TP(dim1,dim2)] <= ZeroTolerance) and [o_SIRReqd_TP(dim1,dim2) > 0],
-                put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl, o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass), o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;
+            if( ( ord(o_ReserveClass)=1 ) and
+                ( o_FIRReqd_TP(dim1,dim2) > 0 ) and
+                ( abs[ o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                     - o_FIRReqd_TP(dim1,dim2)
+                     ] <= ZeroTolerance
+                ),
+                put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
+                    o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
+*                   Scarcity pricing updates
+                    o_FIRvrMW_TP(dim1,dim2) / ;
+            elseif ( ord(o_ReserveClass)=2 ) and
+                   ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
+                   ( abs[ o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                        - o_SIRReqd_TP(dim1,dim2)
+                        ] <= ZeroTolerance
+                   ),
+                put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
+                    o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
+*                   Scarcity pricing updates
+                    o_SIRvrMW_TP(dim1,dim2) / ;
             ) ;
 
             if( ( ord(o_ReserveClass)=1 ) and
@@ -742,7 +773,9 @@ if( opMode = -1,
                 ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
                     o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
-                    o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2) / ;
+                    o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
+*                   Scarcity pricing updates
+                    o_FIRvrMW_TP(dim1,dim2) / ;
             elseif ( ord(o_ReserveClass)=2 ) and
                    ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
                    ( abs[ o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
@@ -751,17 +784,23 @@ if( opMode = -1,
                    ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
                     o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
-                    o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;
+                    o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
+*                   Scarcity pricing updates
+                    o_SIRvrMW_TP(dim1,dim2) / ;
             ) ;
         ) ;
 
 *   Ensure still reporting for conditions with zero FIR and/or SIR required
         if( ( ord(o_ReserveClass)=1 ) and ( o_FIRReqd_TP(dim1,dim2) = 0 ),
             put dim1.tl, dim2.tl, o_ReserveClass.tl, ' ', ' ', ' '
-                o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2) / ;
+                o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
+*               Scarcity pricing updates
+                o_FIRvrMW_TP(dim1,dim2) / ;
         elseif ( ord(o_ReserveClass)=2 ) and ( o_SIRReqd_TP(dim1,dim2) = 0 ),
             put dim1.tl, dim2.tl, o_ReserveClass.tl, ' ', ' ', ' '
-                o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;
+                o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
+*               Scarcity pricing updates
+                o_SIRvrMW_TP(dim1,dim2) / ;
         ) ;
     ) ;
 

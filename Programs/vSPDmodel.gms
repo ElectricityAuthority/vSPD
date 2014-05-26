@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     29 April 2014
+* Last modified on:     21 May 2014
 *=====================================================================================
 
 $ontext
@@ -75,17 +75,19 @@ Sets
   i_type1MixedConstraint(*)                'Type 1 mixed constraint definitions for all trading periods'
   i_type2MixedConstraint(*)                'Type 2 mixed constraint definitions for all trading periods'
   i_genericConstraint(*)                   'Generic constraint names for all trading periods'
+* Scarcity pricing updates
+  i_scarcityArea(*)                'Area to which scarcity pricing may apply'
   ;
 
 * Aliases
 Alias (i_dateTime,dt),                      (i_tradePeriod,tp),                 (i_island,ild,ild1)
-      (i_bus,b,b1,toB,frB),                 (i_node,n),                         (i_offer,o,o1)
+      (i_bus,b,b1,toB,frB),                 (i_node,n,n1),                      (i_offer,o,o1)
       (i_trader,trdr),                      (i_tradeBlock,trdBlk),              (i_branch,br,br1)
       (i_branchConstraint,brCstr),          (i_ACnodeConstraint,ACnodeCstr),    (i_MnodeConstraint,MnodeCstr)
       (i_energyOfferComponent,NRGofrCmpnt), (i_PLSRofferComponent,PLSofrCmpnt), (i_TWDRofferComponent,TWDofrCmpnt)
       (i_ILRofferComponent,ILofrCmpnt),     (i_energyBidComponent,NRGbidCmpnt), (i_ILRbidComponent,ILbidCmpnt)
       (i_type1MixedConstraint,t1MixCstr),   (i_type2MixedConstraint,t2MixCstr), (i_type1MixedConstraintRHS,t1MixCstrRHS),
-      (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1) ;
+      (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1),           (i_scarcityArea,sarea) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
@@ -110,6 +112,7 @@ Sets
 * MODD Modification
   i_tradePeriodDispatchableBid(tp,i_bid)                            'Set of dispatchable bids'
   ;
+
 
 Parameters
 * 6 scalars - values are loaded from GDX file in vSPDsolve.gms
@@ -191,6 +194,16 @@ Parameters
   i_type1MixedConstraintHVDClineFixedLossWeight(t1MixCstr,br)       'Type 1 mixed constraint HVDC branch fixed losses weight'
   i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)                  'Type 1 mixed constraint demand bid weights'
   i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)   'MW used to determine factor to adjust maximum reserve of a reserve class'
+* Scarcity pricing updates
+ i_tradePeriodVROfferMax(tp,ild,i_reserveClass)         'Maximum MW of the virtual reserve offer'
+ i_tradePeriodVROfferPrice(tp,ild,i_reserveClass)       'Price of the virtual reserve offer'
+
+ i_tradePeriodScarcitySituationExists(tp,sarea)         'Flag to indicate that a scarcity situation exists (1 = Yes)'
+ i_tradePeriodGWAPFloor(tp,sarea)                       'Floor price for the scarcity situation in scarcity area'
+ i_tradePeriodGWAPCeiling(tp,sarea)                     'Ceiling price for the scarcity situation in scarcity area'
+ i_tradePeriodGWAPPastDaysAvg(tp,ild)                   'Average GWAP over past days - number of periods in GWAP count'
+ i_tradePeriodGWAPCountForAvg(tp,ild)                   'Number of periods used for the i_gwapPastDaysAvg'
+ i_tradePeriodGWAPThreshold(tp,ild)                     'Threshold on previous 336 trading period GWAP - cumulative price threshold'
   ;
 
 * End of GDX declarations
@@ -415,6 +428,22 @@ Parameters
 * Post-processing
   useBranchFlowMIP(tp)                             'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
   useMixedConstraintMIP(tp)                        'Flag to indicate if integer constraints are needed in the mixed constraint formulation: 1 = Yes'
+* Scarcity pricing updates
+  virtualReserveMax(tp,ild,i_reserveClass)         'Maximum MW of virtual reserve offer in each island for each reserve class'
+  virtualReservePrice(tp,ild,i_reserveClass)       'Price of virtual reserve offer in each island for each reserve class'
+
+  scarcitySituationExists(tp,sarea)                'Flag to indicate that a scarcity situation exists (1 = Yes)'
+  GWAPFloor(tp,sarea)                              'Floor price for the scarcity situation in scarcity area'
+  GWAPCeiling(tp,sarea)                            'Ceiling price for the scarcity situation in scarcity area'
+  GWAPPastDaysAvg(tp,ild)                          'Average GWAP over past days - number of periods in GWAP count'
+  GWAPCountForAvg(tp,ild)                          'Number of periods used for the i_gwapPastDaysAvg'
+  GWAPThreshold(tp,ild)                            'Threshold on previous 336 trading period GWAP - cumulative price threshold'
+
+  nodeGeneration(tp,n)                             'Nodal generation used for scarcity GWAP calculations'
+  nodePrice(tp,n)                                  'Nodal price used for scarcity GWAP calculations'
+
+  islandGWAP(tp,ild)                               'Island GWAP calculation used to update GWAPPastDaysAvg'
+  scarcityAreaGWAP(tp,sarea)                       'Scarcity area GWAP used to calculate the scaling factor'
   ;
 
 Scalars
@@ -444,6 +473,9 @@ Scalars
   DiffCeECeCVP                                     'Flag to indicate if the separate CE and ECE CVP is applied'
   usePrimSecGenRiskModel                           'Flag to use the revised generator risk model for generators with primary and secondary offers'
   useDSBFDemandBidModel                            'Flag to use the demand model defined under demand-side bidding and forecasting (DSBF)'
+
+* Scarcity pricing updates
+  scarcityExists                                  'Flag to indicate that a scarcity situation exists for at least 1 trading period in the solve'
   ;
 
 
@@ -518,6 +550,8 @@ Positive variables
 * Seperate CE and ECE violation variables to support different CVPs for CE and ECE
   DEFICITRESERVE_CE(tp,ild,i_reserveClass)         'Deficit CE reserve generation in each island for each reserve class in MW'
   DEFICITRESERVE_ECE(tp,ild,i_reserveClass)        'Deficit ECE reserve generation in each island for each reserve class in MW'
+* Scarcity pricing updates
+  VIRTUALRESERVE(tp,ild,i_reserveClass)            'MW scheduled from virtual reserve'
   ;
 
 Binary variables
@@ -639,6 +673,8 @@ NETBENEFIT =e=
 - sum[ validReserveOfferBlock,    RESERVEBLOCK(validReserveOfferBlock)       * ReserveOfferPrice(validReserveOfferBlock) ]
 - sum[ validPurchaseBidILRBlock,  PURCHASEILRBLOCK(validPurchaseBidILRBlock) ]
 - TOTALPENALTYCOST
+* Scarcity pricing updates
+- sum((currTP,ild,i_reserveClass), virtualReservePrice(currTP,ild,i_reserveClass) * VIRTUALRESERVE(currTP,ild,i_reserveClass))
   ;
 
 * Defined as the sum of the individual violation costs
@@ -957,17 +993,20 @@ HVDCRecCalculation(currTP,ild)..
   HVDCREC(currTP,ild)
 =e=
   sum[ (b,br) $ { BusIsland(currTP,b,ild)
+*TN              and ACBus(currTP,b)
+*TN              and HVDClink(currTP,br)
               and HVDClinkSendingBus(currTP,br,b)
               and HVDCPoles(currTP,br)
                 }, -HVDCLINKFLOW(currTP,br)
      ]
 + sum[ (b,br) $ { BusIsland(currTP,b,ild)
+*TN              and ACBus(currTP,b) and
+*TN              and HVDClink(currTP,br) and
               and HVDClinkReceivingBus(currTP,br,b)
               and HVDCPoles(currTP,br)
                 }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
      ]
   ;
-
 
 * Calculation of the island risk for risk setting generators (3.4.1.6)
 GenIslandRiskCalculation(currTP,ild,o,i_reserveClass,GenRisk) $ { (not (UsePrimSecGenRiskModel)) and
@@ -1181,6 +1220,8 @@ SupplyDemandReserveRequirement(currTP,ild,i_reserveClass) $ useReserveModel..
                  IslandBid(currTP,ild,i_bid)
                }, PURCHASEILR(currTP,i_bid,i_reserveClass)
      ]
+* Scarcity pricing updates
++ VIRTUALRESERVE(currTP,ild,i_reserveClass)
   ;
 
 * Branch security constraint with LE sense (3.5.1.5a)
