@@ -3,7 +3,7 @@
 * Function:		Invokes vSPDreport.gms to generate output reports and creates
 *			a reporting progress report
 * Developed by:		Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:	Ramu Naidoo on 1 December 2010
+* Last modified on:     27 May 2014
 *=====================================================================================
 
 $include vSPDpaths.inc

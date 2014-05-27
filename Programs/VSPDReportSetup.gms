@@ -2,7 +2,7 @@
 * Name:                 vSPDreportSetup.gms
 * Function:             Creates the report templates
 * Developed by:         Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:     Ramu Naidoo on 30 July 2013
+* Last modified on:     27 May 2014
 *=====================================================================================
 
 

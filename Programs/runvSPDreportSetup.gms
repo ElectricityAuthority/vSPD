@@ -2,7 +2,7 @@
 * Name:			runvSPDreportSetup.gms
 * Function:		Invokes vSPDreportSetup.gms and creates a progress report
 * Developed by:		Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified by:	Tuong Nguyen on 9 April 2013
+* Last modified on:     27 May 2014
 *=====================================================================================
 
 $include vSPDpaths.inc

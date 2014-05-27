@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     6 December 2013
+* Last modified on:     27 May 2014
 *=====================================================================================
 
 $ontext
@@ -334,8 +334,8 @@ Parameters
   i_useBusNetworkModel(tp)                            'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
 
 * Scarcity pricing updates
-  o_FIRvrMW_TP(dt,ild)                                                'MW scheduled from virtual FIR resource'
-  o_SIRvrMW_TP(dt,ild)                                                'MW scheduled from virtual SIR resource'
+  o_FIRvrMW_TP(dt,ild)                                'MW scheduled from virtual FIR resource'
+  o_SIRvrMW_TP(dt,ild)                                'MW scheduled from virtual SIR resource'
 
   FIRprice(tp,ild)
   SIRprice(tp,ild)
@@ -484,8 +484,7 @@ Scalars
 * MODD modification
   DispatchableDemandGDXGDate        'Dispatchable Demand effective date             15 May 2014'    / 41773 /
 * Scarcity pricing updates
-*  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         22 May 2013'    / 41416 /
-  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         22 May 2013'    / 99999 /
+  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         27 May 2013'    / 41785 /
   ;
 
 * Calculate the Gregorian date of the input data
