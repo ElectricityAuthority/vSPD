@@ -11,6 +11,12 @@ The Electricity Authority created vSPD using the GAMS software in 2008. Dr Ramu 
 the original author and, until November 2013, the custodian of vSPD. Dr Phil Bishop and Tuong
 Nguyen now take care of vSPD. Others at the Electricity Authority also contribute.
 
+27 May 2014:
+ - uploaded v1.4.1 - includes modifications to accomodate dispatchable demand
+ - uploaded v1.4.2 - includes modifications to accomodate scarcity pricing and variable reserve
+ - uploaded v1.4.3 - includes modifications to accomodate FTR rental calculation with five hubs
+
+
 Several frequently-used basic sets are aliased as follows:
 - i_island = ild, ild1
 - i_dateTime = dt
