@@ -1,11 +1,12 @@
 *=====================================================================================
-* Name:                 calcFTRrental.gms
+* Name:                 FTRrentalCalculation.gms
 * Function:             Reads data, calculate FTR rentals and write output to GDX file
 *                       by day - ready to be reported on.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
-* Last modified on:     27 May 2014
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              emi@ea.govt.nz
+* Last modified on:     30 May 2014
 *=====================================================================================
 
 
@@ -367,3 +368,6 @@ FTR_TradePeriodBranchConstraintRent
 ;
 *-------------------------------------------------------------------------------------------------------------------------------------------------------
 $offtext
+
+
+* End of file.

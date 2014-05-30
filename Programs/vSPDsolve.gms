@@ -4,9 +4,9 @@
 *                       the model
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     27 May 2014
+* Last modified on:     30 May 2014
 *=====================================================================================
 
 $ontext
@@ -46,7 +46,7 @@ Aliases to be aware of:
 $offtext
 
 
-* Include paths, settings and case name files
+* Include paths, settings, case name and FTRrun files
 $include vSPDpaths.inc
 $include vSPDsettings.inc
 $include vSPDcase.inc
@@ -146,7 +146,7 @@ $offtext
   pole  'HVDC poles'          / pole1, pole2 /
 
 * Scarcity pricing updates
-  i_scarcityArea            /NI, SI, National/
+  i_scarcityArea              / NI, SI, National/
 
 * Initialise sets used when applying overrides. Declared and initialised now
 * (ahead of input GDX load) so as to preserve orderedness of elements
@@ -627,10 +627,11 @@ scarcityExists $ sum[ (tp,sarea), i_tradePeriodScarcitySituationExists(tp,sarea)
 * Scarcity pricing updates - Switch off vectorisation when scarcity exists
 sequentialSolve $ scarcityExists = 0;
 
-* Scarcity pricing updates - Update the runlog file
+* Scarcity pricing updateto the runlog file
 if(scarcityExists,
    putclose runlog / 'Scarcity situation exists. Vectorisation is switched OFF' / ;
 ) ;
+
 
 *=====================================================================================
 * 4. Establish which trading periods are to be solved
@@ -645,14 +646,14 @@ $ontext
 $offtext
 
 Sets
-  AllPeriod  'All trading periods to be solved'  /All/
-  tempPeriod  'Temporary list of trading period to be solved'
-$ include vSPDtpsToSolve.inc
+  allPeriod   'All trading periods to be solved'   / all /
+  tempPeriod  'Temporary list of trading periods to be solved'
+$include vSPDtpsToSolve.inc
   ;
 
 i_studyTradePeriod(tp) = 0 ;
 i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tp,tempPeriod)] = 1 ;
-i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'All')] = 1 ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'all')] = 1 ;
 
 
 
@@ -2382,7 +2383,7 @@ for[ iterationCount = 1 to numTradePeriods,
             solve VSPD_FTR using lp maximizing NETBENEFIT;
 *           Set the model solve status
             ModelSolved = 1 $ ((VSPD_FTR.modelstat = 1) and (VSPD_FTR.solvestat = 1));
-*           Post a progress message to report for use by GUI and to the console.
+*           Post a progress message to the runlog file.
             if( (ModelSolved = 1) and (sequentialSolve = 0),
                 putclose runlog / 'The case: %VSPDInputData% finished at ', system.time '. Solve successful.' /
                                   'Objective function value: ' NETBENEFIT.l:<12:1 /
@@ -2416,7 +2417,7 @@ for[ iterationCount = 1 to numTradePeriods,
 *           Set the model solve status
             ModelSolved = 1$((vSPD.modelstat = 1) and (vSPD.solvestat = 1)) ;
 
-*           Post a progress message to the console and for use by EMI.
+*           Post a progress message to the runlog file.
             if((ModelSolved = 1) and (sequentialSolve = 0),
                 putclose runlog / 'The case: %vSPDinputData% finished at ', system.time '. Solve successful.' /
                                   'Objective function value: ' NETBENEFIT.l:<12:1 /
@@ -2596,12 +2597,12 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                           } = 1 ;
 
 
-*           Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
+*           Post a progress message to the runlog file. Reverting to the sequential mode for integer resolves.
             if( { [not sequentialSolve] and sum[ currTP, UseBranchFlowMIP(currTP) + UseMixedConstraintMIP(currTP) ] },
                 putclose runlog / 'The case: %vSPDinputData% requires an integer resolve.  Switching Vectorisation OFF.' /
             ) ;
 
-*           Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
+*           Post a progress message to the runlog file. Reverting to the sequential mode for integer resolves.
             if( { sequentialSolve and sum[ currTP, UseBranchFlowMIP(currTP) + UseMixedConstraintMIP(currTP) ] },
                 loop(currTP(tp),
                     putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') requires an integer resolve.' /
@@ -2676,7 +2677,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                         [ vSPD_MIP.solvestat = 1 ]
                                       } ;
 
-*                   Post a progress message for use by EMI.
+*                   Post a progress message to the runlog file.
                     if(ModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') FULL integer solve finished at ', system.time '. Solve successful.' /
@@ -2747,7 +2748,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                         [ vSPD_BranchFlowMIP.solvestat = 1 ]
                                       } ;
 
-*                   Post a progress message for use by EMI.
+*                   Post a progress message to the runlog file.
                     if(ModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') branch integer solve finished at ', system.time '. Solve successful.' /
@@ -2786,7 +2787,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                         [ vSPD_MixedConstraintMIP.solvestat = 1 ]
                                       } ;
 
-*                   Post a progress message for use by EMI.
+*                   Post a progress message to the runlog file.
                     if(ModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') MIXED integer solve finished at ', system.time '. Solve successful.' /
@@ -3046,7 +3047,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                             [ vSPD_MIP.solvestat = 1 ]
                                           } ;
 
-*                       Post a progress message for use by EMI.
+*                       Post a progress message to the runlog file.
                         if(ModelSolved = 1,
                             loop(currTP(tp),
                                 putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') FULL integer solve finished at ', system.time '. Solve successful.' /
@@ -3085,7 +3086,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
 *                   Set the model solve status
                     LPModelSolved = 1 $ { (vSPD.modelstat = 1) and (vSPD.solvestat = 1) } ;
 
-*                   Post a progress message for use by EMI.
+*                   Post a progress message to the runlog file.
                     if( LPModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') integer resolve was unsuccessful. Reverting back to linear solve.' /
@@ -4460,7 +4461,7 @@ $label Next1
 );
 
 
-* Post a progress message for use by EMI.
+* Post a progress message to runlog file.
 putclose runlog / 'The case: %vSPDinputData% is complete. (', system.time, ').' //// ;
 
 
@@ -4468,5 +4469,8 @@ putclose runlog / 'The case: %vSPDinputData% is complete. (', system.time, ').' 
 $label nextInput
 
 
-* Post a progress message for use by EMI.
+* Post a progress message to runlog file.
 $ if not exist "%inputPath%\%vSPDinputData%.gdx" putclose runlog / 'The file %programPath%Input\%vSPDinputData%.gdx could not be found (', system.time, ').' // ;
+
+
+* End of file

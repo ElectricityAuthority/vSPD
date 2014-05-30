@@ -3,16 +3,17 @@
 * Function:             This file controls the whole FTR rental process.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
-* Last modified on:     27 May 2014
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              emi@ea.govt.nz
+* Last modified on:     30 May 2014
 *=====================================================================================
 
 
 $call cls
 $onecho > con
-*****************************************************************
-***************** EXECUTING vSPD with FTR rentals v1.0 **********
-*****************************************************************
+*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*+++++++++++++++++++++ Executing vSPD with FTR rentals +++++++++++
+*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 
 *==================================
@@ -78,3 +79,6 @@ loop(i_FileName,
 *==================================
 execute 'del *.ins';
 execute 'del InputFileName.gdx';
+
+
+* End of file

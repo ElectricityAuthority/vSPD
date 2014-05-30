@@ -3,21 +3,25 @@
 * Function:             This file is invoked to control the entire operation of vSPD.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     27 May 2014
+* Last modified on:     30 May 2014
 *=====================================================================================
 
 
 $call cls
 $onecho > con
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*+++++++++++++++++++++ EXECUTING vSPD v1.4 +++++++++++++++++++++++
+*+++++++++++++++++++++ Executing vSPD ++++++++++++++++++++++++++++
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 
-$if not exist vSPDpaths.inc  $call "copy IncFiles\*.inc"
-* Include paths and settings files
+* Get .inc files from IncFiles archive if not already present, and include paths and settings files.
+$if not exist vSPDpaths.inc      $call 'copy IncFiles\vSPDpaths.inc'
+$if not exist vSPDsettings.inc   $call 'copy IncFiles\vSPDsettings.inc'
+$if not exist vSPDfileList.inc   $call 'copy IncFiles\vSPDfileList.inc'
+$if not exist vSPDtpsToSolve.inc $call 'copy IncFiles\vSPDtpsToSolve.inc'
+
 $include vSPDpaths.inc
 $include vSPDsettings.inc
 
@@ -25,17 +29,18 @@ $include vSPDsettings.inc
 * Define external files
 Files
   temp       "A temporary, recyclable batch file"
-  vSPDcase   "The current input case file"      / "vSPDcase.inc" /
-  FTRrun     "Current FTR run type"             / "FTRrun.inc" /
-  FTRdirect  "Current FTR direction"            / "FTRdirect.inc" / ;
+  vSPDcase   "The current input case file"       / "vSPDcase.inc" /
+  FTRrun     "Current FTR run type"              / "FTRrun.inc" /
+  FTRdirect  "Current FTR direction"             / "FTRdirect.inc" / ;
 
   vSPDcase.lw = 0 ;   vSPDcase.sw = 0 ;
   FTRrun.lw = 0 ;     FTRrun.sw = 0 ;
   FTRdirect.lw = 0 ;  FTRdirect.sw = 0 ;
 
 
+
 *=====================================================================================
-* Perform integrity checks on operating modeand trade period reporting switches.
+* Perform integrity checks on operating mode and trade period reporting switches.
 *=====================================================================================
 * Notes: - Operating mode: 1 --> DW mode; -1 --> Audit mode; all else implies usual vSPD mode.
 *        - tradePeriodReports must be 0 or 1 (default = 1) - a value of 1 implies reports by trade
@@ -51,6 +56,7 @@ if( (opMode = -1) or (opMode = 1), tradePeriodReports = 1 ) ;
 *=====================================================================================
 * Install the set of input GDX file names over which the solve and reporting loops will operate
 *=====================================================================================
+
 Set i_fileName 'Input GDX file names'
 $include vSPDfileList.inc
   ;
@@ -61,7 +67,7 @@ $include vSPDfileList.inc
 * FTR rental data preparation
 *=====================================================================================
 
-* Set FTR flag to zero for normal vSPD run
+* Set FTR flag to zero for standard vSPD operation
 Scalar FTRflag  / 0 / ;
 putclose FTRrun "Scalar FTRflag  / 0 / ;"
 
@@ -70,7 +76,7 @@ $if not %calcFTRrentals%==1 $goto SkipFTRinput
 * Declare and install FTR rental sets and data
 Sets
   FTRdirection  'FTR flow pattern'
-$ include FTRPattern.inc
+$ include FTRpattern.inc
   ;
 
 Alias (FTRdirection,ftr) ;
@@ -82,7 +88,7 @@ $ include FTRinjection.inc
 
 execute_unload '%programPath%FTRinput', FTRdirection, FTRinjection ;
 
-* Set FTR flag to 1 for FTR normal run
+* Set FTR flag to 1 for FTR operation
 FTRflag = 1;
 putclose FTRrun "Scalar FTRflag  /1/;";
 
@@ -113,7 +119,7 @@ $if not %calcFTRrentals%==1 $goto SkipFTRruns
 
   loop(ftr,
 
-*   Set FTRflag to 2 for FTR flow run and set current i_FRdirection
+*   Set FTRflag to 2 for FTR flow run and set current i_FTRdirection
     putclose FTRrun  'scalar FTRflag  /2/;' /
                      '$setglobal  FTRorder     ' ord(ftr):0:0 ;
     putclose FTRdirect '/' ftr.tl:0 '/' ;
@@ -200,14 +206,14 @@ elseif (FTRflag = 1),
 ) ;
 
 
+*=====================================================================================
+* Clean up working directory
+*=====================================================================================
 
-*=====================================================================================
-* Clean up
-*=====================================================================================
-$label cleanUp
-*execute 'copy *.inc "%system.fp%"\IncFiles\ /y ';
-*execute 'del "*.inc"' ;
-execute 'move /y *.inc "%system.fp%"\IncFiles';
+$if %skipCleanUp%==1 $goto skipCleanup
+execute 'copy *.inc "%system.fp%"\IncFiles\ /y ';
+execute 'del "vSPDcase.inc"' ;
+execute 'del "FTR*.inc"' ;
 execute 'del "*.lst"' ;
 execute 'del "*.~gm"' ;
 execute 'del "*.lxi"' ;
@@ -215,4 +221,7 @@ execute 'del "*.log"' ;
 execute 'del "*.put"' ;
 execute 'del "*.txt"' ;
 execute 'del "*.gdx"' ; 
+$label skipCleanUp
 
+
+* End of file

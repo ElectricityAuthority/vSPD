@@ -1,8 +1,11 @@
 *=====================================================================================
 * Name:                 vSPDreportSetup.gms
 * Function:             Creates the report templates
-* Developed by:         Ramu Naidoo (Electricity Authority, New Zealand)
-* Last modified on:     27 May 2014
+* Developed by:         Electricity Authority, New Zealand
+* Source:               https://github.com/ElectricityAuthority/vSPD
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              emi@ea.govt.nz
+* Last modified on:     30 May 2014
 *=====================================================================================
 
 
@@ -178,3 +181,6 @@ if(opMode = -1,
   put objResults_Audit 'DateTime', 'Objective Function' ;
 
 ) ;
+
+
+* End of file.

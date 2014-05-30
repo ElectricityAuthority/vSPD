@@ -4,9 +4,9 @@
 *                       overrides.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     27 May 2014
+* Last modified on:     30 May 2014
 *=====================================================================================
 
 $ontext
@@ -1255,3 +1255,6 @@ $label endEMIandStandaloneOverrides
 
 
 $label theEnd
+
+
+* End of file.
