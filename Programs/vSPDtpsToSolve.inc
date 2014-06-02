@@ -2,7 +2,7 @@ $ontext
 Examples:
 a. to solve all trading periods
 /  
-all
+tp1 * tp50
 /  
 
 b. to solve trading periods 3 and 6
@@ -17,10 +17,11 @@ or
 
 c. to solve trading periods 1-10 and 20-35
 / tp1 * tp10, tp20 * tp35 /
+
                          
 $offtext
 *============================= // =============================
 
 / 
-all
+tp1 * tp50
 /

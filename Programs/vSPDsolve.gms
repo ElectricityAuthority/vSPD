@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     30 May 2014
+* Last modified on:     3 June 2014
 *=====================================================================================
 
 $ontext
@@ -636,24 +636,15 @@ if(scarcityExists,
 *=====================================================================================
 * 4. Establish which trading periods are to be solved
 *=====================================================================================
-$ontext
-  The symbol called i_tradePeriodSolve is used to change the values of i_studyTradePeriod, which
-  itself is loaded from the input GDX file and is by default set equal to 1 for all trading periods.
-  The procedure for setting the value of i_tradePeriodSolve depends on the user interface mode. The
-  $setglobal called interfaceMode is used to control the process of setting the values of i_tradePeriodSolve.
-  interfaceMode: a value of zero implies the EMI interface, a 1 implies the Excel interface; and all other
-  values imply standalone interface mode (although ideally users should set it equal to 2 for standalone).
-$offtext
+* The symbol called solvePeriod is used to intialise i_studyTradePeriod. Values for solvePeriod are inherited
+* from vSPDtpsToSolve.inc, which is edited by standalone user or created by interface tool - EMI tools or Excel.
 
-Sets
-  allPeriod   'All trading periods to be solved'   / all /
-  tempPeriod  'Temporary list of trading periods to be solved'
+Set solvePeriod 'List of trading periods to be solved'
 $include vSPDtpsToSolve.inc
   ;
 
 i_studyTradePeriod(tp) = 0 ;
-i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tp,tempPeriod)] = 1 ;
-i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'all')] = 1 ;
+i_studyTradePeriod(tp) $ sum[ solvePeriod, diag(tp,solvePeriod)] = 1 ;
 
 
 
