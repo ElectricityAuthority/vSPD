@@ -3,9 +3,9 @@
 * Function:             Creates the detailed reports
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://www.emi.ea.govt.nz/Tools/vSPD
+*                       http://reports.ea.govt.nz/EMIIntro.htm
 * Contact:              emi@ea.govt.nz
-* Last modified on:     30 May 2014
+* Last modified on:     17 July 2013
 *=====================================================================================
 
 
@@ -184,11 +184,11 @@ Parameters
   o_TWRO_SIR_TP(*,*)                 'Output TWR SIR (MWh)'
   o_FIRcleared_TP(*,*)               'FIR cleared - for audit report'
   o_SIRcleared_TP(*,*)               'SIR cleared - for audit report'
-  o_generationRiskSetter(*,*,*,*,*)  'i_DateTime,i_Island,i_Offer,i_ReserveClass,i_RiskClass'
-  o_genHVDCRiskSetter(*,*,*,*,*)     'i_DateTime,i_Island,i_Offer,i_ReserveClass,i_RiskClass'
-  o_HVDCriskSetter(*,*,*,*)          'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
-  o_MANUriskSetter(*,*,*,*)          'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
-  o_MANUHVDCriskSetter(*,*,*,*)      'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
+  o_generationRiskLevel(*,*,*,*,*)  'i_DateTime,i_Island,i_Offer,i_ReserveClass,i_RiskClass'
+  o_genHVDCRiskLevel(*,*,*,*,*)     'i_DateTime,i_Island,i_Offer,i_ReserveClass,i_RiskClass'
+  o_HVDCriskLevel(*,*,*,*)          'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
+  o_MANUriskLevel(*,*,*,*)          'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
+  o_MANUHVDCriskLevel(*,*,*,*)      'i_DateTime,i_Island,i_ReserveClass,i_RiskClass'
 
 * Scarcity pricing updates
   o_FIRvrMW_TP(*,*)                  'MW scheduled from virtual FIR resource'
@@ -329,8 +329,8 @@ if(opMode = -1,
                  o_busIsland_TP, o_marketNodeIsland_TP, o_ACBusAngle, o_LossSegmentBreakPoint
                  o_LossSegmentFactor, o_NonPhysicalLoss, o_PLRO_FIR_TP, o_PLRO_SIR_TP
                  o_TWRO_FIR_TP, o_TWRO_SIR_TP, o_ILRO_FIR_TP, o_ILRO_SIR_TP
-                 o_ILBus_FIR_TP, o_ILBus_SIR_TP, o_generationRiskSetter, o_GenHVDCRiskSetter
-                 o_HVDCRiskSetter, o_MANURiskSetter, o_MANUHVDCRiskSetter
+                 o_ILBus_FIR_TP, o_ILBus_SIR_TP, o_generationRiskLevel, o_GenHVDCRiskLevel
+                 o_HVDCRiskLevel, o_MANURiskLevel, o_MANUHVDCRiskLevel
                  o_FIRCleared_TP, o_SIRCleared_TP
 ) ;
 
@@ -668,23 +668,23 @@ if( opMode = -1,
             loop( dim3 $ o_offer(dim1,dim3),
                 if( ( ord(o_ReserveClass)=1 ) and
                     ( o_FIRReqd_TP(dim1,dim2) > 0 ) and
-                    ( abs[ o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                    ( abs[ o_GenerationRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                          - o_FIRReqd_TP(dim1,dim2)
                          ] <= ZeroTolerance
                     ),
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
-                        o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                        o_GenerationRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                         o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
 *                       Scarcity pricing updates
                         o_FIRvrMW_TP(dim1,dim2) / ;
                 elseif ( ord(o_ReserveClass)=2 ) and
                        ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
-                       ( abs[ o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                       ( abs[ o_GenerationRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                             - o_SIRReqd_TP(dim1,dim2)
                             ] <= ZeroTolerance
                        ) ,
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
-                        o_GenerationRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                        o_GenerationRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                         o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
 *                       Scarcity pricing updates
                         o_SIRvrMW_TP(dim1,dim2) / ;
@@ -694,23 +694,23 @@ if( opMode = -1,
             loop( dim3 $ o_offer(dim1,dim3),
                 if( ( ord(o_ReserveClass)=1 ) and
                     ( o_FIRReqd_TP(dim1,dim2) > 0 ) and
-                    ( abs[ o_GenHVDCRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                    ( abs[ o_GenHVDCRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                          - o_FIRReqd_TP(dim1,dim2)
                          ] <= ZeroTolerance
                     ),
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
-                        o_GenHVDCRiskSetter(dim1,dim2,dim3, o_ReserveClass,o_RiskClass)
+                        o_GenHVDCRiskLevel(dim1,dim2,dim3, o_ReserveClass,o_RiskClass)
                         o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
 *                       Scarcity pricing updates
                         o_FIRvrMW_TP(dim1,dim2) / ;
                 elseif ( ord(o_ReserveClass)=2 ) and
                        ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
-                       ( abs[ o_GenHVDCRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                       ( abs[ o_GenHVDCRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                             - o_SIRReqd_TP(dim1,dim2)
                             ] <= ZeroTolerance
                        ),
                     put dim1.tl, dim2.tl, o_ReserveClass.tl, dim3.tl, o_RiskClass.tl
-                        o_GenHVDCRiskSetter(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
+                        o_GenHVDCRiskLevel(dim1,dim2,dim3,o_ReserveClass,o_RiskClass)
                         o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
 *                       Scarcity pricing updates
                         o_SIRvrMW_TP(dim1,dim2) / ;
@@ -719,23 +719,23 @@ if( opMode = -1,
 
             if( ( ord(o_ReserveClass)=1 ) and
                 ( o_FIRReqd_TP(dim1,dim2) > 0 ) and
-                ( abs[ o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                ( abs[ o_HVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                      - o_FIRReqd_TP(dim1,dim2)
                      ] <= ZeroTolerance
                 ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'HVDC', o_RiskClass.tl
-                    o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_HVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                     o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
 *                   Scarcity pricing updates
                     o_FIRvrMW_TP(dim1,dim2) / ;
             elseif ( ord(o_ReserveClass)=2 ) and
                    ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
-                   ( abs[ o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                   ( abs[ o_HVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                         - o_SIRReqd_TP(dim1,dim2)
                         ] <= ZeroTolerance
                    ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'HVDC', o_RiskClass.tl
-                    o_HVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_HVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                     o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
 *                   Scarcity pricing updates
                     o_SIRvrMW_TP(dim1,dim2) / ;
@@ -743,23 +743,23 @@ if( opMode = -1,
 
             if( ( ord(o_ReserveClass)=1 ) and
                 ( o_FIRReqd_TP(dim1,dim2) > 0 ) and
-                ( abs[ o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                ( abs[ o_MANURiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                      - o_FIRReqd_TP(dim1,dim2)
                      ] <= ZeroTolerance
                 ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
-                    o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_MANURiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                     o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
 *                   Scarcity pricing updates
                     o_FIRvrMW_TP(dim1,dim2) / ;
             elseif ( ord(o_ReserveClass)=2 ) and
                    ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
-                   ( abs[ o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                   ( abs[ o_MANURiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                         - o_SIRReqd_TP(dim1,dim2)
                         ] <= ZeroTolerance
                    ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
-                    o_MANURiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_MANURiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                     o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
 *                   Scarcity pricing updates
                     o_SIRvrMW_TP(dim1,dim2) / ;
@@ -767,23 +767,23 @@ if( opMode = -1,
 
             if( ( ord(o_ReserveClass)=1 ) and
                 ( o_FIRReqd_TP(dim1,dim2) > 0 ) and
-                ( abs[ o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                ( abs[ o_MANUHVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                      - o_FIRReqd_TP(dim1,dim2)
                      ] <= ZeroTolerance
                 ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
-                    o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_MANUHVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                     o_FIRCleared_TP(dim1,dim2), o_FIRViolation_TP(dim1,dim2), o_FIRPrice_TP(dim1,dim2)
 *                   Scarcity pricing updates
                     o_FIRvrMW_TP(dim1,dim2) / ;
             elseif ( ord(o_ReserveClass)=2 ) and
                    ( o_SIRReqd_TP(dim1,dim2) > 0 ) and
-                   ( abs[ o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                   ( abs[ o_MANUHVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                         - o_SIRReqd_TP(dim1,dim2)
                         ] <= ZeroTolerance
                    ),
                 put dim1.tl, dim2.tl, o_ReserveClass.tl, 'Manual', o_RiskClass.tl
-                    o_MANUHVDCRiskSetter(dim1,dim2,o_ReserveClass,o_RiskClass)
+                    o_MANUHVDCRiskLevel(dim1,dim2,o_ReserveClass,o_RiskClass)
                     o_SIRCleared_TP(dim1,dim2), o_SIRViolation_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2)
 *                   Scarcity pricing updates
                     o_SIRvrMW_TP(dim1,dim2) / ;
@@ -822,6 +822,3 @@ if( opMode = -1,
 
 * Go to the next input file
 $ label nextInput
-
-
-* End of file.
