@@ -1,11 +1,11 @@
 *=====================================================================================
 * Name:                 vSPDmodel.gms
-* Function:             Mathematical formulation - based on the SPD formulation v7.0
+* Function:             Mathematical formulation - based on the SPD formulation v9.0
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     30 May 2014
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 $ontext
@@ -1997,6 +1997,3 @@ Model vSPD_FTR /
 * ViolationCost
   TotalViolationCostDefinition
   / ;
-
-
-* End of file

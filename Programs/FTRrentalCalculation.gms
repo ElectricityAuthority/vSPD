@@ -5,8 +5,7 @@
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              emi@ea.govt.nz
-* Last modified on:     30 May 2014
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 
@@ -368,6 +367,3 @@ FTR_TradePeriodBranchConstraintRent
 ;
 *-------------------------------------------------------------------------------------------------------------------------------------------------------
 $offtext
-
-
-* End of file.

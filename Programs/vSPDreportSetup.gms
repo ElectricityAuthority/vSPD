@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     30 May 2014
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 
@@ -110,7 +110,7 @@ if( (opMode <> 1) and (opMode <> -1 ),
         'DeficitMixedConstraintViol (MW)', 'SurplusMixedConstraintViol (MW)'
         'DeficitGenericConstraintViol (MW)', 'SurplusGenericConstraintViol (MW)' ;
 
-    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Fixed Load (MW)', 'Bid Load (MW)', 'IslandACLoss (MW)'
+    put islandResults_TP 'DateTime', 'Island', 'Gen (MW)', 'Load (MW)', 'Bid Load (MW)', 'IslandACLoss (MW)'
         'HVDCFlow (MW)', 'HVDCLoss (MW)', 'ReferencePrice ($/MWh)', 'FIR (MW)', 'SIR (MW)'
         'FIR Price ($/MWh)', 'SIR Price ($/MWh)', 'GenerationRevenue ($)', 'LoadCost ($)', 'NegativeLoadRevenue ($)'
 *       Scarcity pricing updates - additional reporting for scarcity pricing
@@ -181,6 +181,3 @@ if(opMode = -1,
   put objResults_Audit 'DateTime', 'Objective Function' ;
 
 ) ;
-
-
-* End of file.

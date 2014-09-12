@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     3 June 2014
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 $ontext
@@ -46,7 +46,7 @@ Aliases to be aware of:
 $offtext
 
 
-* Include paths, settings, case name and FTRrun files
+* Include paths, settings and case name files
 $include vSPDpaths.inc
 $include vSPDsettings.inc
 $include vSPDcase.inc
@@ -81,7 +81,7 @@ option mip = %Solver% ;
 option profile = 0 ;
 
 * Set the solution print status in the lst file
-option solprint = off ;
+option solprint = off;
 
 * Set the column (variable) and row (equation) listing in the lst file
 option limcol = 0 ;
@@ -146,7 +146,7 @@ $offtext
   pole  'HVDC poles'          / pole1, pole2 /
 
 * Scarcity pricing updates
-  i_scarcityArea              / NI, SI, National/
+  i_scarcityArea            /NI, SI, National/
 
 * Initialise sets used when applying overrides. Declared and initialised now
 * (ahead of input GDX load) so as to preserve orderedness of elements
@@ -247,6 +247,12 @@ Parameters
   o_offerFIR_TP(dt,o)                                 'Output MW cleared for FIR for each trade period'
   o_offerSIR_TP(dt,o)                                 'Output MW cleared for SIR for each trade period'
   o_bidEnergy_TP(dt,i_bid)                            'Output MW cleared for each energy bid for each trade period'
+*TN extra output
+  o_offerEnergyBlock_TP(dt,o,trdBlk)                  'Output MW cleared for each energy offer for each trade period'
+  o_offerFIRBlock_TP(dt,o,trdBlk,i_reserveType)       'Output MW cleared for FIR for each trade period'
+  o_offerSIRBlock_TP(dt,o,trdBlk,i_reserveType)       'Output MW cleared for SIR for each trade period'
+*TN extra output end
+
 * MODD modification
   o_bidTotalMW_TP(dt,i_bid)                           'Output total MW bidded for each energy bid for each trade period'
   o_bidFIR_TP(dt,i_bid)                               'Output MW cleared for FIR for each trade period'
@@ -334,8 +340,8 @@ Parameters
   i_useBusNetworkModel(tp)                            'Indicates if the post-MSP bus network model is used in vSPD (1 = Yes)'
 
 * Scarcity pricing updates
-  o_FIRvrMW_TP(dt,ild)                                'MW scheduled from virtual FIR resource'
-  o_SIRvrMW_TP(dt,ild)                                'MW scheduled from virtual SIR resource'
+  o_FIRvrMW_TP(dt,ild)                                                'MW scheduled from virtual FIR resource'
+  o_SIRvrMW_TP(dt,ild)                                                'MW scheduled from virtual SIR resource'
 
   FIRprice(tp,ild)
   SIRprice(tp,ild)
@@ -484,7 +490,7 @@ Scalars
 * MODD modification
   DispatchableDemandGDXGDate        'Dispatchable Demand effective date             15 May 2014'    / 41773 /
 * Scarcity pricing updates
-  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         27 May 2013'    / 41785 /
+  scarcityPricingGDXGDate           'Scarcity pricing scheme available from         27 May 2014'    / 41785 /
   ;
 
 * Calculate the Gregorian date of the input data
@@ -597,54 +603,38 @@ else
 ) ;
 * Scarcity pricing updates end
 
-* Scarcity testing data
-$ontext
-  i_tradePeriodScarcitySituationExists('TP37','NI') = 0;
-  i_tradePeriodScarcitySituationExists('TP37','SI') = 1;
-  i_tradePeriodScarcitySituationExists('TP37','National') = 0;
-
-  i_tradePeriodGWAPFloor('TP37','NI') = 10000;
-  i_tradePeriodGWAPCeiling('TP37','NI') = 20000;
-  i_tradePeriodGWAPPastDaysAvg('TP37','NI') = 100;
-  i_tradePeriodGWAPCountForAvg('TP37','NI') = 300;
-
-  i_tradePeriodGWAPFloor('TP37','SI') = 10000;
-  i_tradePeriodGWAPCeiling('TP37','SI') = 20000;
-  i_tradePeriodGWAPPastDaysAvg('TP37','SI') = 100;
-  i_tradePeriodGWAPCountForAvg('TP37','SI') = 300;
-
-  i_tradePeriodGWAPFloor('TP37','National') = 10000;
-  i_tradePeriodGWAPCeiling('TP37','National') = 20000;
-
-  i_tradePeriodGWAPThreshold('TP37','NI') = 1000;
-  i_tradePeriodGWAPThreshold('TP37','SI') = 1000;
-$offtext
-* Scarcity testing data end
-
 * Scarcity pricing updates - Scarcity situation exists when the input flag is set
 scarcityExists $ sum[ (tp,sarea), i_tradePeriodScarcitySituationExists(tp,sarea) ] = 1;
 
 * Scarcity pricing updates - Switch off vectorisation when scarcity exists
 sequentialSolve $ scarcityExists = 0;
 
-* Scarcity pricing updateto the runlog file
+* Scarcity pricing updates - Update the runlog file
 if(scarcityExists,
    putclose runlog / 'Scarcity situation exists. Vectorisation is switched OFF' / ;
 ) ;
 
-
 *=====================================================================================
 * 4. Establish which trading periods are to be solved
 *=====================================================================================
-* The symbol called solvePeriod is used to intialise i_studyTradePeriod. Values for solvePeriod are inherited
-* from vSPDtpsToSolve.inc, which is edited by standalone user or created by interface tool - EMI tools or Excel.
+$ontext
+  The symbol called i_tradePeriodSolve is used to change the values of i_studyTradePeriod, which
+  itself is loaded from the input GDX file and is by default set equal to 1 for all trading periods.
+  The procedure for setting the value of i_tradePeriodSolve depends on the user interface mode. The
+  $setglobal called interfaceMode is used to control the process of setting the values of i_tradePeriodSolve.
+  interfaceMode: a value of zero implies the EMI interface, a 1 implies the Excel interface; and all other
+  values imply standalone interface mode (although ideally users should set it equal to 2 for standalone).
+$offtext
 
-Set solvePeriod 'List of trading periods to be solved'
-$include vSPDtpsToSolve.inc
+Sets
+  AllPeriod  'All trading periods to be solved'  /All/
+  tempPeriod  'Temporary list of trading period to be solved'
+$ include vSPDtpsToSolve.inc
   ;
 
 i_studyTradePeriod(tp) = 0 ;
-i_studyTradePeriod(tp) $ sum[ solvePeriod, diag(tp,solvePeriod)] = 1 ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tp,tempPeriod)] = 1 ;
+i_studyTradePeriod(tp) $ sum[ tempPeriod, diag(tempPeriod,'All')] = 1 ;
 
 
 
@@ -668,7 +658,6 @@ $ontext
 $offtext
 
 $if not %suppressOverrides%==1 $include vSPDoverrides.gms
-
 
 *=====================================================================================
 * 6. FTR rental - vSPD setting to calculate branch and constraint participation loading
@@ -1429,6 +1418,16 @@ for[ iterationCount = 1 to numTradePeriods,
 *       Valid purchaser ILR blocks are defined as those with with a positive block limit
         validPurchaseBidILRBlock(bid,trdBlk,i_reserveClass)
             $ ( purchaseBidILRMW(bid,trdBlk,i_reserveClass) > 0 ) = yes ;
+
+*TN     If a Bid is valid and the Node connected to the Bid is the same name as the bid,
+*       the node demand should be set to zero (PA suggested during v1.4 Audit)
+        nodeDemand(currTP,n) $ { useDSBFDemandBidModel
+                             and Sum[ i_bid $ { sameas(n,i_bid)
+                                            and i_tradePeriodDispatchableBid(currTP,i_bid)
+                                              }, 1
+                                    ]
+                                } = 0;
+
 * MODD Modification end
 
 *       Initialise network sets for the current trade period start
@@ -2374,7 +2373,7 @@ for[ iterationCount = 1 to numTradePeriods,
             solve VSPD_FTR using lp maximizing NETBENEFIT;
 *           Set the model solve status
             ModelSolved = 1 $ ((VSPD_FTR.modelstat = 1) and (VSPD_FTR.solvestat = 1));
-*           Post a progress message to the runlog file.
+*           Post a progress message to report for use by GUI and to the console.
             if( (ModelSolved = 1) and (sequentialSolve = 0),
                 putclose runlog / 'The case: %VSPDInputData% finished at ', system.time '. Solve successful.' /
                                   'Objective function value: ' NETBENEFIT.l:<12:1 /
@@ -2408,7 +2407,7 @@ for[ iterationCount = 1 to numTradePeriods,
 *           Set the model solve status
             ModelSolved = 1$((vSPD.modelstat = 1) and (vSPD.solvestat = 1)) ;
 
-*           Post a progress message to the runlog file.
+*           Post a progress message to the console and for use by EMI.
             if((ModelSolved = 1) and (sequentialSolve = 0),
                 putclose runlog / 'The case: %vSPDinputData% finished at ', system.time '. Solve successful.' /
                                   'Objective function value: ' NETBENEFIT.l:<12:1 /
@@ -2588,12 +2587,12 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                           } = 1 ;
 
 
-*           Post a progress message to the runlog file. Reverting to the sequential mode for integer resolves.
+*           Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
             if( { [not sequentialSolve] and sum[ currTP, UseBranchFlowMIP(currTP) + UseMixedConstraintMIP(currTP) ] },
                 putclose runlog / 'The case: %vSPDinputData% requires an integer resolve.  Switching Vectorisation OFF.' /
             ) ;
 
-*           Post a progress message to the runlog file. Reverting to the sequential mode for integer resolves.
+*           Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
             if( { sequentialSolve and sum[ currTP, UseBranchFlowMIP(currTP) + UseMixedConstraintMIP(currTP) ] },
                 loop(currTP(tp),
                     putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') requires an integer resolve.' /
@@ -2668,7 +2667,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                         [ vSPD_MIP.solvestat = 1 ]
                                       } ;
 
-*                   Post a progress message to the runlog file.
+*                   Post a progress message for use by EMI.
                     if(ModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') FULL integer solve finished at ', system.time '. Solve successful.' /
@@ -2739,7 +2738,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                         [ vSPD_BranchFlowMIP.solvestat = 1 ]
                                       } ;
 
-*                   Post a progress message to the runlog file.
+*                   Post a progress message for use by EMI.
                     if(ModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') branch integer solve finished at ', system.time '. Solve successful.' /
@@ -2778,7 +2777,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                         [ vSPD_MixedConstraintMIP.solvestat = 1 ]
                                       } ;
 
-*                   Post a progress message to the runlog file.
+*                   Post a progress message for use by EMI.
                     if(ModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') MIXED integer solve finished at ', system.time '. Solve successful.' /
@@ -3038,7 +3037,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
                                             [ vSPD_MIP.solvestat = 1 ]
                                           } ;
 
-*                       Post a progress message to the runlog file.
+*                       Post a progress message for use by EMI.
                         if(ModelSolved = 1,
                             loop(currTP(tp),
                                 putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') FULL integer solve finished at ', system.time '. Solve successful.' /
@@ -3077,7 +3076,7 @@ $if exist FTRdirect.inc $goto SkipLPResultChecking
 *                   Set the model solve status
                     LPModelSolved = 1 $ { (vSPD.modelstat = 1) and (vSPD.solvestat = 1) } ;
 
-*                   Post a progress message to the runlog file.
+*                   Post a progress message for use by EMI.
                     if( LPModelSolved = 1,
                         loop(currTP(tp),
                             putclose runlog / 'The case: %vSPDinputData% (' currTP.tl ') integer resolve was unsuccessful. Reverting back to linear solve.' /
@@ -3456,7 +3455,13 @@ $if exist FTRdirect.inc $goto SkipNormalReportingProcess
 
                         o_busGeneration_TP(dt,b) $ bus(currTP,b) = busGeneration(currTP,b) ;
 
-                        o_busLoad_TP(dt,b) $ bus(currTP,b) = busLoad(currTP,b) ;
+                        o_busLoad_TP(dt,b) $ bus(currTP,b) = busLoad(currTP,b)
+*TN                     adding Bid cleared energy on bus load
+                                                           + Sum[ (i_bid,n) $ { bidNode(currTP,i_bid,n) and
+                                                                                 NodeBus(currTP,n,b)
+                                                                               },PURCHASE.l(currTP,i_bid)
+                                                                 ];
+*TN                     adding Bid cleared energy on bus load end
 
                         o_busPrice_TP(dt,b) $ bus(currTP,b) = busPrice(currTP,b) ;
 
@@ -3465,7 +3470,7 @@ $if exist FTRdirect.inc $goto SkipNormalReportingProcess
                                                               * busPrice(currTP,b) ;
 
                         o_busCost_TP(dt,b) $ bus(currTP,b) = (i_tradingPeriodLength / 60)
-                                                           * busLoad(currTP,b)
+                                                           * o_busLoad_TP(dt,b)
                                                            * busPrice(currTP,b) ;
 
                         o_busDeficit_TP(dt,b) $ bus(currTP,b) = DEFICITBUSGENERATION.l(currTP,b) ;
@@ -3477,7 +3482,11 @@ $if exist FTRdirect.inc $goto SkipNormalReportingProcess
 
                         o_nodeGeneration_TP(dt,n) $ Node(currTP,n) = sum[ o $ offerNode(currTP,o,n), GENERATION.l(currTP,o) ] ;
 
-                        o_nodeLoad_TP(dt,n) $ Node(currTP,n) = NodeDemand(currTP,n) ;
+                        o_nodeLoad_TP(dt,n) $ Node(currTP,n) = NodeDemand(currTP,n)
+*TN- adding Bid cleared energy on node load
+                                                             + Sum[ i_bid $ bidNode(currTP,i_bid,n), PURCHASE.l(currTP,i_bid)
+                                                                  ];
+*TN- adding Bid cleared energy on node load end
 
                         o_nodePrice_TP(dt,n) $ Node(currTP,n) = sum[ b $ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b)
                                                                                             * busPrice(currTP,b)
@@ -3617,6 +3626,14 @@ $if exist FTRdirect.inc $goto SkipNormalReportingProcess
                         o_offerSIR_TP(dt,o) $ offer(currTP,o) = sum[ (i_reserveClass,i_reserveType) $ (ord(i_reserveClass) = 2)
                                                                      , RESERVE.l(currTP,o,i_reserveClass,i_reserveType) ] ;
 
+*TN extra output
+                        o_offerEnergyBlock_TP(dt,o,trdBlk) = GENERATIONBLOCK.l(currTP,o,trdBlk);
+                        o_offerFIRBlock_TP(dt,o,trdBlk,i_reserveType) = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
+                                                                             , RESERVEBLOCK.l(currTP,o,trdBlk,i_reserveClass,i_reserveType) ];
+                        o_offerSIRBlock_TP(dt,o,trdBlk,i_reserveType) = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
+                                                                             , RESERVEBLOCK.l(currTP,o,trdBlk,i_reserveClass,i_reserveType) ];
+*TN extra output end
+
 * MODD modification
                         o_bid(dt,i_bid) $ bid(currTP,i_bid) = yes ;
 
@@ -3711,7 +3728,7 @@ $offtext
 * MODD modification
                         o_islandClrBid_TP(dt,ild) = sum[ i_bid $ IslandBid(currTP,ild,i_bid), PURCHASE.l(currTP,i_bid) ] ;
 
-                        o_islandLoad_TP(dt,ild) = o_islandLoad_TP(dt,ild) - o_islandClrBid_TP(dt,ild) ;
+                        o_islandLoad_TP(dt,ild) = o_islandLoad_TP(dt,ild);
 * MODD modification end
 
                         o_FIRcleared_TP(dt,ild) = sum[ (o,i_reserveClass,i_reserveType) $ { (ord(i_reserveClass) = 1) and
@@ -3817,9 +3834,15 @@ $offtext
                         o_ILRO_SIR_TP(dt,o) $ offer(currTP,o) = sum[ (i_reserveClass,ILReserveType) $ (ord(i_reserveClass) = 2)
                                                                    , RESERVE.l(currTP,o,i_reserveClass,ILReserveType)] ;
 
-                        o_ILbus_FIR_TP(dt,b) = sum[ o $ sameas(o,b), o_ILRO_FIR_TP(dt,o) ] ;
+*                        o_ILbus_FIR_TP(dt,b) = sum[ o $ sameas(o,b), o_ILRO_FIR_TP(dt,o) ] ;
 
-                        o_ILbus_SIR_TP(dt,b) = sum[ o $ sameas(o,b), o_ILRO_SIR_TP(dt,o) ] ;
+*                        o_ILbus_SIR_TP(dt,b) = sum[ o $ sameas(o,b), o_ILRO_SIR_TP(dt,o) ] ;
+
+                        o_ILbus_FIR_TP(dt,b) = sum[ (o,n) $ { NodeBus(currTP,n,b) and
+                                                              offerNode(currTP,o,n)} , o_ILRO_FIR_TP(dt,o) ] ;
+
+                        o_ILbus_SIR_TP(dt,b) = sum[ (o,n) $ { NodeBus(currTP,n,b) and
+                                                              offerNode(currTP,o,n)} , o_ILRO_SIR_TP(dt,o) ] ;
 
                         o_marketNodeIsland_TP(dt,o,ild) $ sum[ (n,b) $ { BusIsland(currTP,b,ild) and
                                                                          NodeBus(currTP,n,b) and
@@ -4395,7 +4418,10 @@ $if exist FTRdirect.inc $goto SkipNormalvSPDrunOutput
                        o_nodeRevenue_TP, o_nodeCost_TP, o_nodeDeficit_TP, o_nodeSurplus_TP ;
 
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_OfferOutput_TP.gdx'
-                       o_offer, o_offerEnergy_TP, o_offerFIR_TP, o_offerSIR_TP ;
+                       o_offer, o_offerEnergy_TP, o_offerFIR_TP, o_offerSIR_TP
+*TN extra output
+                       o_offerEnergyBlock_TP, o_offerFIRBlock_TP, o_offerSIRBlock_TP;
+*TN extra output end
 
 * MODD modification
         execute_unload '%outputPath%\%runName%\RunNum%vSPDRunNum%_BidOutput_TP.gdx'
@@ -4452,7 +4478,7 @@ $label Next1
 );
 
 
-* Post a progress message to runlog file.
+* Post a progress message for use by EMI.
 putclose runlog / 'The case: %vSPDinputData% is complete. (', system.time, ').' //// ;
 
 
@@ -4460,8 +4486,5 @@ putclose runlog / 'The case: %vSPDinputData% is complete. (', system.time, ').' 
 $label nextInput
 
 
-* Post a progress message to runlog file.
+* Post a progress message for use by EMI.
 $ if not exist "%inputPath%\%vSPDinputData%.gdx" putclose runlog / 'The file %programPath%Input\%vSPDinputData%.gdx could not be found (', system.time, ').' // ;
-
-
-* End of file

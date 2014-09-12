@@ -4,9 +4,9 @@
 *                       FTR rental calculation the model
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     27 May 2014
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 * Include paths, settings and case name files

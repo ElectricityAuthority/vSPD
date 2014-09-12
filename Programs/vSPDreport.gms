@@ -3,9 +3,9 @@
 * Function:             Creates the detailed reports
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://reports.ea.govt.nz/EMIIntro.htm
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     17 July 2013
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 

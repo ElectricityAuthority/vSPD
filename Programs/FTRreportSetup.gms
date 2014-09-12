@@ -1,11 +1,10 @@
 *=====================================================================================
 * Name:                 FTRreportSetup.gms
-* Function:             Setting up the columns (fields) for CSV report files.
+* Function:             Creates the output directories and cleans up the working directory.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              emi@ea.govt.nz
-* Last modified on:     3 June 2014
+* Last modified on:     12 September 2014
 *=====================================================================================
 
 
@@ -77,6 +76,3 @@ put TotalRent;
 put 'DateTime', 'HVDC FTR Rent ($)', 'AC Branch FTR Congestion Rent ($)' ;
 put 'AC Branch FTR Loss Rent ($)', 'AC Branch Group Constraint FTR Rent ($)' ;
 put 'Total FTR Rent ($)', 'AC Total Rent ($)'
-
-
-* End of file.
