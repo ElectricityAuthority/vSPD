@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 September 2014
+* Last modified on:     10 December 2014
 *=====================================================================================
 
 $ontext
@@ -727,7 +727,9 @@ $gdxin
                                                 i_TradePeriodNodeBus(tp,'BEN2201',toB)
                                              } = yes;
 
-*   7.a.iii --> All generation offer removed
+*   7.a.iii --> All generation offers and energy bids removed
+
+    i_TradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt) = 0;
 
     i_TradePeriodEnergyOffer(tp,o,trdBlk,NRGofrCmpnt) = 0;
 
@@ -4000,7 +4002,10 @@ $offtext
                                                  * reserveOfferPrice(currTP,o,trdBlk,i_reserveClass,i_reserveType)
                                                  ]
                                             + sum[ (i_bid,trdBlk,i_reserveClass) $ validPurchaseBidILRBlock(currTP,i_bid,trdBlk,i_reserveClass)
-                                                  , PURCHASEILRBLOCK.l(currTP,i_bid,trdBlk,i_reserveClass)
+                                                 , PURCHASEILRBLOCK.l(currTP,i_bid,trdBlk,i_reserveClass)
+                                                 ]
+                                            - sum[ (i_bid,trdBlk) $ validPurchaseBidBlock(currTP,i_bid,trdBlk)
+                                                 , PURCHASEBLOCK.l(currTP,i_bid,trdBlk) * purchaseBidPrice(currTP,i_bid,trdBlk)
                                                  ] ;
 
                         o_penaltyCost_TP(dt) = sum[ b $ bus(currTP,b)
@@ -4037,9 +4042,6 @@ $offtext
                                                     , DeficitReservePenalty(i_reserveClass) * DEFICITRESERVE.l(currTP,ild,i_reserveClass) $ (not diffCeECeCVP)
                                                     + DeficitReservePenalty_CE(i_reserveClass) * DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass) $ diffCeECeCVP
                                                     + DeficitReservePenalty_ECE(i_reserveClass) * DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass) $ diffCeECeCVP
-                                                  ]
-                                             - sum[ (i_bid,trdBlk) $ validPurchaseBidBlock(currTP,i_bid,trdBlk)
-                                                    , PURCHASEBLOCK.l(currTP,i_bid,trdBlk) * purchaseBidPrice(currTP,i_bid,trdBlk)
                                                   ] ;
 
                         o_ofv_TP(dt) = o_systemCost_TP(dt) + o_penaltyCost_TP(dt);
