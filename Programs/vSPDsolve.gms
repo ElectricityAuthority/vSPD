@@ -3567,192 +3567,97 @@ $else
 *   Reporting at trading period end
     ) ;
 
-
-*   Summary reports
-*   System level
-    o_numTradePeriods = o_numTradePeriods
-                      + sum[currTP  $ (not unsolvedPeriod(currTP)), 1 ] ;
-
-    o_systemOFV = o_systemOFV + NETBENEFIT.l ;
-
-    o_systemGen = o_systemGen + sum(bus,BusGeneration(bus)) ;
-
-    o_systemLoad = o_systemLoad + sum(bus,BusLoad(bus)) ;
-
-    o_systemLoss
-        = o_systemLoss
-        + sum[ (ClosedBranch,fd), ACBRANCHLOSSESDIRECTED.l(ClosedBranch,fd) ]
-        + sum[ ClosedBranch, branchFixedLoss(ClosedBranch) ]
-        + sum[ ClosedBranch, HVDCLINKLOSSES.l(ClosedBranch)] ;
-
-    o_systemViolation
-        = o_systemViolation
-        + sum[ bus
-             , DEFICITBUSGENERATION.l(bus)
-             + SURPLUSBUSGENERATION.l(bus)
-             ]
-        + sum[ (currTP,ild,i_reserveClass)
-             , DEFICITRESERVE.l(currTP,ild,i_reserveClass) $ (not diffCeECeCVP)
-             + DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass) $ (diffCeECeCVP)
-             + DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass) $ (diffCeECeCVP)
-             ]
-        + sum[ branchConstraint
-             , DEFICITBRANCHSECURITYCONSTRAINT.l(branchConstraint)
-             + SURPLUSBRANCHSECURITYCONSTRAINT.l(branchConstraint)
-             ]
-        + sum[ offer
-             , DEFICITRAMPRATE.l(offer)
-             + SURPLUSRAMPRATE.l(offer)
-             ]
-        + sum[ ACnodeConstraint
-             , DEFICITACnodeCONSTRAINT.l(ACnodeConstraint)
-             + SURPLUSACnodeCONSTRAINT.l(ACnodeConstraint)
-             ]
-        + sum[ branch
-             , DEFICITBRANCHFLOW.l(branch)
-             + SURPLUSBRANCHFLOW.l(branch)
-             ]
-        + sum[ MnodeConstraint
-             , DEFICITMnodeCONSTRAINT.l(MnodeConstraint)
-             + SURPLUSMnodeCONSTRAINT.l(MnodeConstraint)
-             ]
-        + sum[ (currTP,t1MixCstr)
-             , DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)
-             + SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)
-             ]
-        + sum[ GenericConstraint
-             , SURPLUSGENERICCONSTRAINT.l(GenericConstraint)
-             + DEFICITGENERICCONSTRAINT.l(GenericConstraint)
-             ] ;
-
-
-    o_systemFIR
-        = o_systemFIR
-        + sum[ (offer,i_reserveClass,i_reserveType) $ (ord(i_reserveClass) = 1)
-             , RESERVE.l(offer,i_reserveClass,i_reserveType)
-             ]
-        + sum[ (bid,i_reserveClass) $ (ord(i_reserveClass) = 1)
-             , PURCHASEILR.l(bid,i_reserveClass)
-             ] ;
-
-
-    o_systemSIR
-        = o_systemSIR
-        + sum[ (offer,i_reserveClass,i_reserveType) $ (ord(i_reserveClass) = 2)
-             , RESERVE.l(offer,i_reserveClass,i_reserveType)
-             ]
-        + sum[ (bid,i_reserveClass) $ (ord(i_reserveClass) = 2)
-             , PURCHASEILR.l(bid,i_reserveClass)
-             ] ;
-
-    o_systemEnergyRevenue
-        = o_systemEnergyRevenue
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,o,b,n) $ { offerNode(currTP,o,n) and NodeBus(currTP,n,b)}
-             , NodeBusAllocationFactor(currTP,n,b)
-             * GENERATION.l(currTP,o)
-             * busPrice(currTP,b)
-             ] ;
-
-    o_systemReserveRevenue
-        = o_systemReserveRevenue
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,ild,o,n,b,i_reserveClass,i_reserveType)
-             $ { offerNode(currTP,o,n) and
-                 NodeBus(currTP,n,b) and
-                 BusIsland(currTP,b,ild)
-               }
-             , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass)
-             * RESERVE.l(currTP,o,i_reserveClass,i_reserveType)
-             ] ;
-
-    o_systemLoadCost
-        = o_systemLoadCost
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,b,n) $ { NodeBus(currTP,n,b) and
-                                (NodeDemand(currTP,n) >= 0)
-                              } , NodeBusAllocationFactor(currTP,n,b)
-                                * NodeDemand(currTP,n) * busPrice(currTP,b)
-             ] ;
-
-    o_systemLoadRevenue
-        = o_systemLoadRevenue
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,b,n) $ { NodeBus(currTP,n,b) and
-                                (NodeDemand(currTP,n) < 0)
-                              }, - NodeBusAllocationFactor(currTP,n,b)
-                               * NodeDemand(currTP,n) * busPrice(currTP,b)
-             ] ;
-
-    o_systemACrentals
-        = o_systemACrentals
-        + sum[ (currTP,dt,br) $ { i_dateTimeTradePeriodMap(dt,currTP) and
-                                  ACbranch(currTP,br)
-                                }, o_branchTotalRentals_TP(dt,br) ] ;
-
-    o_systemDCrentals
-        = o_systemDCrentals
-        + sum[ (currTP,dt,br) $ { i_dateTimeTradePeriodMap(dt,currTP) and
-                                  HVDClink(currTP,br)
-                                }, o_branchTotalRentals_TP(dt,br) ] ;
-
-*   Offer level - This does not include revenue from wind generators for
-*   final pricing because the wind generation is netted off against load
-*   at the particular bus for the final pricing solves
-    o_offerTrader(o,trdr)
-        $ sum[ currTP $ i_tradePeriodOfferTrader(currTP,o,trdr), 1 ] = yes ;
-
-    o_offerGen(o)
-        = o_offerGen(o)
-        + (i_tradingPeriodLength/60) * sum[ currTP, GENERATION.l(currTP,o) ] ;
-
-    o_offerFIR(o)
-        = o_offerFIR(o)
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,i_reserveClass,i_reserveType) $ (ord(i_reserveClass) = 1)
-             , RESERVE.l(currTP,o,i_reserveClass,i_reserveType) ] ;
-
-    o_offerSIR(o)
-        = o_offerSIR(o)
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,i_reserveClass,i_reserveType) $ (ord(i_reserveClass) = 2)
-             , RESERVE.l(currTP,o,i_reserveClass,i_reserveType) ] ;
-
-    o_offerGenRevenue(o)
-        = o_offerGenRevenue(o)
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,b,n) $ { offerNode(currTP,o,n) and NodeBus(currTP,n,b) }
-             , NodeBusAllocationFactor(currTP,n,b)
-             * GENERATION.l(currTP,o)
-             * busPrice(currTP,b)
-             ] ;
-
-    o_offerFIRrevenue(o)
-        = o_offerFIRrevenue(o)
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,ild,n,b,i_reserveClass,i_reserveType)
-             $ { (ord(i_reserveClass) = 1) and offerNode(currTP,o,n) and
-                 NodeBus(currTP,n,b) and BusIsland(currTP,b,ild) }
-             , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass)
-             * RESERVE.l(currTP,o,i_reserveClass,i_reserveType)
-             ] ;
-
-    o_offerSIRrevenue(o)
-        = o_offerSIRrevenue(o)
-        + (i_tradingPeriodLength/60)
-        * sum[ (currTP,ild,n,b,i_reserveClass,i_reserveType)
-             $ { (ord(i_reserveClass) = 2) and offerNode(currTP,o,n) and
-                 NodeBus(currTP,n,b) and BusIsland(currTP,b,ild) }
-             , SupplyDemandReserveRequirement.m(currTP,ild,i_reserveClass)
-             * RESERVE.l(currTP,o,i_reserveClass,i_reserveType)
-             ] ;
-
 $endif
 
 * End of the solve vSPD loop
   ] ;
 * End of the While loop
 );
+
+$ifthen.SummaryReport not %opMode%==2
+*   Summary reports
+*   System level
+    o_numTradePeriods = card(tp) ;
+
+    o_systemOFV = - sum[ dt, o_ofv_TP(dt) ] ;
+
+    o_systemGen = sum[ (dt,ild), o_islandGen_TP(dt,ild) ] ;
+
+    o_systemLoad = sum[ (dt,ild), o_islandLoad_TP(dt,ild)
+                                - o_islandClrBid_TP(dt,ild) ] ;
+
+    o_systemLoss = sum[ (dt,ild), o_islandBranchLoss_TP(dt,ild)
+                                + o_HVDCloss_TP(dt,ild) ] ;
+
+    o_systemViolation = sum[ dt, o_totalViolation_TP(dt) ] ;
+
+    o_systemFIR = sum[ (dt,ild), o_FIRcleared_TP(dt,ild) ] ;
+
+    o_systemSIR = sum[ (dt,ild), o_SIRcleared_TP(dt,ild) ] ;
+
+    o_systemEnergyRevenue = sum[ (dt,ild), o_islandEnergyRevenue_TP(dt,ild) ] ;
+
+    o_systemReserveRevenue = sum[ (dt,ild), o_islandReserveRevenue_TP(dt,ild) ];
+
+    o_systemLoadCost = sum[ (dt,ild), o_islandLoadCost_TP(dt,ild) ];
+
+    o_systemLoadRevenue = sum[ (dt,ild), o_islandLoadRevenue_TP(dt,ild) ];
+
+    o_systemACrentals = sum[ (dt,tp,br) $ { i_dateTimeTradePeriodMap(dt,tp)
+                                        and (not i_tradePeriodHVDCBranch(tp,br))
+                                          }, o_branchTotalRentals_TP(dt,br) ] ;
+
+    o_systemDCrentals = sum[ (dt,tp,br) $ { i_dateTimeTradePeriodMap(dt,tp)
+                                        and i_tradePeriodHVDCBranch(tp,br)
+                                          }, o_branchTotalRentals_TP(dt,br) ] ;
+
+*   Offer level - This does not include revenue from wind generators for
+*   final pricing because the wind generation is netted off against load
+*   at the particular bus for the final pricing solves
+
+    o_offerTrader(o,trdr)
+        $ sum[ tp $ i_tradePeriodOfferTrader(tp,o,trdr), 1 ] = yes ;
+
+    o_offerGen(o) = (i_tradingPeriodLength/60)*sum[dt, o_offerEnergy_TP(dt,o)] ;
+
+    o_offerFIR(o) = (i_tradingPeriodLength/60)*sum[dt, o_offerFIR_TP(dt,o)] ;
+
+    o_offerSIR(o) = (i_tradingPeriodLength/60)*sum[dt, o_offerSIR_TP(dt,o)] ;
+
+    o_offerGenRevenue(o)
+        = sum[ (dt,tp,n) $ { i_dateTimeTradePeriodMap(dt,tp)
+                         and i_tradePeriodOfferNode(tp,o,n) }
+                         , (i_tradingPeriodLength/60)
+                         * o_offerEnergy_TP(dt,o)
+                         * o_nodePrice_TP(dt,n) ] ;
+
+IslandOffer(currTP,ild,o)
+        $ { offer(currTP,o) and
+            sum[ n $ { offerNode(currTP,o,n) and nodeIsland(currTP,n,ild) }, 1 ]
+          } = yes ;
+
+
+    o_offerFIRrevenue(o)
+        = sum[ (dt,tp,ild) $ { i_dateTimeTradePeriodMap(dt,tp)
+                           and sum[ (b,n) $ { i_tradePeriodOfferNode(tp,o,n)
+                                          and i_tradePeriodNodeBus(tp,n,b)
+                                          and i_tradePeriodBusIsland(tp,b,ild)
+                                            }, 1 ]
+                              }, (i_tradingPeriodLength/60)
+                               * o_offerFIR_TP(dt,o)
+                               * o_FIRprice_TP(dt,ild) ] ;
+
+    o_offerSIRrevenue(o)
+         = sum[ (dt,tp,ild) $ { i_dateTimeTradePeriodMap(dt,tp)
+                           and sum[ (b,n) $ { i_tradePeriodOfferNode(tp,o,n)
+                                          and i_tradePeriodNodeBus(tp,n,b)
+                                          and i_tradePeriodBusIsland(tp,b,ild)
+                                            }, 1 ]
+                              }, (i_tradingPeriodLength/60)
+                               * o_offerSIR_TP(dt,o)
+                               * o_SIRprice_TP(dt,ild) ] ;
+
+$endif.SummaryReport
 
 
 
