@@ -28,11 +28,11 @@ Scalar mixedMIPtolerance                 / 0.000001 / ;
 
 *+++ Solver +++
 $setglobal Solver                          Cplex
-Scalar LPtimeLimit                       / 600 / ;
-Scalar LPiterationLimit                  / 1000000 / ;
-Scalar MIPtimeLimit                      / 600 / ;
+Scalar LPtimeLimit                       / 3600 / ;
+Scalar LPiterationLimit                  / 2000000000 / ;
+Scalar MIPtimeLimit                      / 3600 / ;
 Scalar MIPoptimality                     / 0 / ;
-Scalar MIPiterationLimit                 / 1000000 / ;
+Scalar MIPiterationLimit                 / 2000000000 / ;
 
 
 *+++ Misc +++
@@ -53,6 +53,5 @@ Scalar maxFlowSegment                    / 10000 / ;
 *+++ Various switches +++
 $setglobal interfaceMode                   2       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
 $setglobal suppressOverrides               1       ! Specify 1 to suppress reading and implementing the selected override file
-$setglobal calcFTRrentals                  0       ! Specify 1 to calculate FTR rentals
-Scalar     opMode                        / 0 / ;   ! Specify 1 for data warehouse; -1 for audit; otherwise usual vSPD mode
+$setglobal opMode                          0       ! Specify 1 for data warehouse; -1 for audit; 2 for FTR Rental, otherwise usual vSPD mode
 Scalar     tradePeriodReports            / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise

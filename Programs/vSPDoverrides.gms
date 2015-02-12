@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 September 2014
+* Last modified on:     12 January 2015
 *=====================================================================================
 
 $ontext
@@ -148,7 +148,6 @@ $if exist vSPDnewElements.inc $include vSPDnewElements.inc
 
 
 * b) Declare override symbols to be loaded from override GDX
-
 * i) Offers - incl. energy, PLSR, TWDR, and ILR
 Sets
   new_offer(o)                                                   'New offer elements'

@@ -1,11 +1,11 @@
 *=====================================================================================
 * Name:                 vSPDmodel.gms
-* Function:             Mathematical formulation - based on the SPD formulation v9.0
+* Function:             Mathematical formulation - based on the SPD formulation v7.0
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 September 2014
+* Last modified on:     12 January 2015
 *=====================================================================================
 
 $ontext
@@ -76,18 +76,19 @@ Sets
   i_type2MixedConstraint(*)                'Type 2 mixed constraint definitions for all trading periods'
   i_genericConstraint(*)                   'Generic constraint names for all trading periods'
 * Scarcity pricing updates
-  i_scarcityArea(*)                'Area to which scarcity pricing may apply'
+  i_scarcityArea(*)                        'Area to which scarcity pricing may apply'
   ;
 
 * Aliases
-Alias (i_dateTime,dt),                      (i_tradePeriod,tp),                 (i_island,ild,ild1)
+Alias (i_dateTime,dt),                      (i_tradePeriod,tp,tp1),             (i_island,ild,ild1)
       (i_bus,b,b1,toB,frB),                 (i_node,n,n1),                      (i_offer,o,o1)
       (i_trader,trdr),                      (i_tradeBlock,trdBlk),              (i_branch,br,br1)
       (i_branchConstraint,brCstr),          (i_ACnodeConstraint,ACnodeCstr),    (i_MnodeConstraint,MnodeCstr)
       (i_energyOfferComponent,NRGofrCmpnt), (i_PLSRofferComponent,PLSofrCmpnt), (i_TWDRofferComponent,TWDofrCmpnt)
       (i_ILRofferComponent,ILofrCmpnt),     (i_energyBidComponent,NRGbidCmpnt), (i_ILRbidComponent,ILbidCmpnt)
-      (i_type1MixedConstraint,t1MixCstr),   (i_type2MixedConstraint,t2MixCstr), (i_type1MixedConstraintRHS,t1MixCstrRHS),
-      (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1),           (i_scarcityArea,sarea) ;
+      (i_type1MixedConstraint,t1MixCstr),   (i_type2MixedConstraint,t2MixCstr), (i_type1MixedConstraintRHS,t1MixCstrRHS)
+      (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1),           (i_scarcityArea,sarea)
+      (i_bid,bd,bd1),                        (i_flowDirection,fd,fd1);
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
@@ -193,10 +194,10 @@ Parameters
   i_type1MixedConstraintHVDClineFixedLossWeight(t1MixCstr,br)       'Type 1 mixed constraint HVDC branch fixed losses weight'
   i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)                  'Type 1 mixed constraint demand bid weights'
   i_tradePeriodReserveClassGenerationMaximum(tp,o,i_reserveClass)   'MW used to determine factor to adjust maximum reserve of a reserve class'
-* Scarcity pricing updates
+* Virtual reserve
  i_tradePeriodVROfferMax(tp,ild,i_reserveClass)         'Maximum MW of the virtual reserve offer'
  i_tradePeriodVROfferPrice(tp,ild,i_reserveClass)       'Price of the virtual reserve offer'
-
+* Scarcity pricing
  i_tradePeriodScarcitySituationExists(tp,sarea)         'Flag to indicate that a scarcity situation exists (1 = Yes)'
  i_tradePeriodGWAPFloor(tp,sarea)                       'Floor price for the scarcity situation in scarcity area'
  i_tradePeriodGWAPCeiling(tp,sarea)                     'Ceiling price for the scarcity situation in scarcity area'
@@ -241,7 +242,6 @@ Scalars
   lossCoeff_E
   lossCoeff_F
   maxFlowSegment
-  opMode
   tradePeriodReports
   ;
 
@@ -277,15 +277,15 @@ Sets
   Branch(tp,br)                                                     'Branches defined for the current trading period'
   BranchBusDefn(tp,br,frB,toB)                                      'Branch bus connectivity for the current trading period'
   BranchBusConnect(tp,br,b)                                         'Indication if a branch is connected to a bus for the current trading period'
-  ACBranchSendingBus(tp,br,b,i_flowDirection)                       'Sending (From) bus of AC branch in forward and backward direction'
-  ACBranchReceivingBus(tp,br,b,i_flowDirection)                     'Receiving (To) bus of AC branch in forward and backward direction'
+  ACBranchSendingBus(tp,br,b,fd)                                    'Sending (From) bus of AC branch in forward and backward direction'
+  ACBranchReceivingBus(tp,br,b,fd)                                  'Receiving (To) bus of AC branch in forward and backward direction'
   HVDClinkSendingBus(tp,br,b)                                       'Sending (From) bus of HVDC link'
   HVDClinkReceivingBus(tp,br,toB)                                   'Receiving (To) bus of HVDC link'
   HVDClinkBus(tp,br,b)                                              'Sending or Receiving bus of HVDC link'
   HVDClink(tp,br)                                                   'HVDC links (branches) defined for the current trading period'
   HVDCpoles(tp,br)                                                  'DC transmission between Benmore and Hayward'
   HVDCHalfPoles(tp,br)                                              'Connection DC Pole 1 between AC and DC systems at Benmore and Haywards'
-  HVDCpoleDirection(tp,br,i_flowDirection)                          'Direction defintion for HVDC poles S->N : Forward and N->S : Southward'
+  HVDCpoleDirection(tp,br,fd)                                       'Direction defintion for HVDC poles S->N : Forward and N->S : Southward'
   ACBranch(tp,br)                                                   'AC branches defined for the current trading period'
   ClosedBranch(tp,br)                                               'Set of branches that are closed'
   OpenBranch(tp,br)                                                 'Set of branches that are open'
@@ -356,24 +356,17 @@ Parameters
   PurchaseBidILRMW(tp,i_bid,trdBlk,i_reserveClass)                  'Purchase bid ILR block in MW for the different reserve classes'
   PurchaseBidILRPrice(tp,i_bid,trdBlk,i_reserveClass)               'Purchase bid ILR price in $/MW for the different reserve classes'
 * Network
-  ACBranchCapacity(tp,br)                                           'MW capacity of AC branch for the current trading period'
-  ACBranchResistance(tp,br)                                         'Resistance of the AC branch for the current trading period in per unit'
-  ACBranchSusceptance(tp,br)                                        'Susceptance (inverse of reactance) of the AC branch for the current trading period in per unit'
-  ACBranchFixedLoss(tp,br)                                          'Fixed loss of the AC branch for the current trading period in MW'
-  ACBranchLossBlocks(tp,br)                                         'Number of blocks in the loss curve for the AC branch in the current trading period'
-  ACBranchLossMW(tp,br,los)                                         'MW element of the loss segment curve in MW'
-  ACBranchLossFactor(tp,br,los)                                     'Loss factor element of the loss segment curve'
-
-  HVDClinkCapacity(tp,br)                                           'MW capacity of the HVDC link for the current trading period'
-  HVDClinkResistance(tp,br)                                         'Resistance of the HVDC link for the current trading period in Ohms'
-  HVDClinkFixedLoss(tp,br)                                          'Fixed loss of the HVDC link for the current trading period in MW'
-  HVDClinkLossBlocks(tp,br)                                         'Number of blocks in the loss curve for the HVDC link in the current trading period'
-  HVDCBreakPointMWFlow(tp,br,los)                                   'Value of power flow on the HVDC at the break point'
-  HVDCBreakPointMWLoss(tp,br,los)                                   'Value of variable losses on the HVDC at the break point'
-
+  branchCapacity(tp,br)                                             'MW capacity of a branch for the current trading period'
+  branchResistance(tp,br)                                           'Resistance of the a branch for the current trading period in per unit'
+  branchSusceptance(tp,br)                                          'Susceptance (inverse of reactance) of a branch for the current trading period in per unit'
+  branchFixedLoss(tp,br)                                            'Fixed loss of the a branch for the current trading period in MW'
+  branchLossBlocks(tp,br)                                           'Number of blocks in the loss curve for the a branch in the current trading period'
   lossSegmentMW(tp,br,los)                                          'MW capacity of each loss segment'
   lossSegmentFactor(tp,br,los)                                      'Loss factor of each loss segment'
-
+  ACBranchLossMW(tp,br,los)                                         'MW element of the loss segment curve in MW'
+  ACBranchLossFactor(tp,br,los)                                     'Loss factor element of the loss segment curve'
+  HVDCBreakPointMWFlow(tp,br,los)                                   'Value of power flow on the HVDC at the break point'
+  HVDCBreakPointMWLoss(tp,br,los)                                   'Value of variable losses on the HVDC at the break point'
   NodeBusAllocationFactor(tp,n,b)                                   'Allocation factor of market node to bus for the current trade period'
   BusElectricalIsland(tp,b)                                         'Bus electrical island status for the current trade period (0 = Dead)'
 * Flag to allow roundpower on the HVDC link
@@ -385,7 +378,7 @@ Parameters
   FreeReserve(tp,ild,i_reserveClass,i_riskClass)                    'MW free reserve for each island, reserve class and risk class'
   HVDCpoleRampUp(tp,ild,i_reserveClass,i_riskClass)                 'HVDC pole MW ramp up capability for each island, reserve class and risk class'
   IslandMinimumRisk(tp,ild,i_reserveClass,i_riskClass)              'Minimum MW risk level for each island for each reserve class and risk class'
-* RDN - HVDC secondary risk parameters
+* HVDC secondary risk parameters
   HVDCSecRiskEnabled(tp,ild,i_riskClass)                            'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
   HVDCSecRiskSubtractor(tp,ild)                                     'Ramp up capability on the HVDC pole that is not the secondary risk'
   HVDCSecIslandMinimumRisk(tp,ild,i_reserveClass,i_riskClass)       'Minimum risk in each island for the HVDC secondary risk'
@@ -427,22 +420,9 @@ Parameters
 * Post-processing
   useBranchFlowMIP(tp)                             'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
   useMixedConstraintMIP(tp)                        'Flag to indicate if integer constraints are needed in the mixed constraint formulation: 1 = Yes'
-* Scarcity pricing updates
+* Virtual reserve
   virtualReserveMax(tp,ild,i_reserveClass)         'Maximum MW of virtual reserve offer in each island for each reserve class'
   virtualReservePrice(tp,ild,i_reserveClass)       'Price of virtual reserve offer in each island for each reserve class'
-
-  scarcitySituationExists(tp,sarea)                'Flag to indicate that a scarcity situation exists (1 = Yes)'
-  GWAPFloor(tp,sarea)                              'Floor price for the scarcity situation in scarcity area'
-  GWAPCeiling(tp,sarea)                            'Ceiling price for the scarcity situation in scarcity area'
-  GWAPPastDaysAvg(tp,ild)                          'Average GWAP over past days - number of periods in GWAP count'
-  GWAPCountForAvg(tp,ild)                          'Number of periods used for the i_gwapPastDaysAvg'
-  GWAPThreshold(tp,ild)                            'Threshold on previous 336 trading period GWAP - cumulative price threshold'
-
-  nodeGeneration(tp,n)                             'Nodal generation used for scarcity GWAP calculations'
-  nodePrice(tp,n)                                  'Nodal price used for scarcity GWAP calculations'
-
-  islandGWAP(tp,ild)                               'Island GWAP calculation used to update GWAPPastDaysAvg'
-  scarcityAreaGWAP(tp,sarea)                       'Scarcity area GWAP used to calculate the scaling factor'
   ;
 
 Scalars
@@ -471,10 +451,7 @@ Scalars
 * Separate flag for the CE and ECE CVP
   DiffCeECeCVP                                     'Flag to indicate if the separate CE and ECE CVP is applied'
   usePrimSecGenRiskModel                           'Flag to use the revised generator risk model for generators with primary and secondary offers'
-  useDSBFDemandBidModel                            'Flag to use the demand model defined under demand-side bidding and forecasting (DSBF)'
-
-* Scarcity pricing updates
-  scarcityExists                                  'Flag to indicate that a scarcity situation exists for at least 1 trading period in the solve'
+  useDSBFDemandBidModel                            'Flag to use the demand model defined under demand-side bidding and forecasting (DSBF) - only applied for PRSS and PRSL run'
   ;
 
 
@@ -523,10 +500,10 @@ Positive variables
   HVDCLINKFLOW(tp,br)                                    'MW flow at the sending end scheduled for the HVDC link'
   HVDCLINKLOSSES(tp,br)                                  'MW losses on the HVDC link'
   LAMBDA(tp,br,los)                                      'Non-negative weight applied to the breakpoint of the HVDC link'
-  ACBRANCHFLOWDIRECTED(tp,br,i_flowDirection)            'MW flow on the directed branch'
-  ACBRANCHLOSSESDIRECTED(tp,br,i_flowDirection)          'MW losses on the directed branch'
-  ACBRANCHFLOWBLOCKDIRECTED(tp,br,los,i_flowDirection)   'MW flow on the different blocks of the loss curve'
-  ACBRANCHLOSSESBLOCKDIRECTED(tp,br,los,i_flowDirection) 'MW losses on the different blocks of the loss curve'
+  ACBRANCHFLOWDIRECTED(tp,br,fd)                         'MW flow on the directed branch'
+  ACBRANCHLOSSESDIRECTED(tp,br,fd)                       'MW losses on the directed branch'
+  ACBRANCHFLOWBLOCKDIRECTED(tp,br,los,fd)                'MW flow on the different blocks of the loss curve'
+  ACBRANCHLOSSESBLOCKDIRECTED(tp,br,los,fd)              'MW losses on the different blocks of the loss curve'
 * Violations
   TOTALPENALTYCOST                                 'Total violation costs'
   DEFICITBUSGENERATION(tp,b)                       'Deficit generation at a bus in MW'
@@ -558,10 +535,10 @@ Binary variables
   ;
 
 SOS1 Variables
-  ACBRANCHFLOWDIRECTED_INTEGER(tp,br,i_flowDirection)'Integer variables used to select branch flow direction in the event of circular branch flows (3.8.1)'
-  HVDCLINKFLOWDIRECTION_INTEGER(tp,i_flowDirection)'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
+  ACBRANCHFLOWDIRECTED_INTEGER(tp,br,fd)'Integer variables used to select branch flow direction in the event of circular branch flows (3.8.1)'
+  HVDCLINKFLOWDIRECTION_INTEGER(tp,fd)'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
 * Integer varaible to prevent intra-pole circulating branch flows
-  HVDCPOLEFLOW_INTEGER(tp,pole,i_flowDirection)    'Integer variables used to select the HVDC pole flow direction on in the event of circulating branch flows within a pole'
+  HVDCPOLEFLOW_INTEGER(tp,pole,fd)    'Integer variables used to select the HVDC pole flow direction on in the event of circulating branch flows within a pole'
   ;
 
 SOS2 Variables
@@ -584,27 +561,27 @@ Equations
   HVDClinkLossDefinition(tp,br)                    'Definition of losses on the HVDC link (3.2.1.2)'
   HVDClinkFlowDefinition(tp,br)                    'Definition of MW flow on the HVDC link (3.2.1.3)'
   HVDClinkFlowIntegerDefinition1(tp)               'Definition of the integer HVDC link flow variable (3.8.2a)'
-  HVDClinkFlowIntegerDefinition2(tp,i_flowDirection)               'Definition of the integer HVDC link flow variable (3.8.2b)'
+  HVDClinkFlowIntegerDefinition2(tp,fd)            'Definition of the integer HVDC link flow variable (3.8.2b)'
 * Additional constraints for the intra-pole circulating branch flows
-  HVDClinkFlowIntegerDefinition3(tp,pole)                          'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2c)'
-  HVDClinkFlowIntegerDefinition4(tp,pole,i_flowDirection)          'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2d)'
+  HVDClinkFlowIntegerDefinition3(tp,pole)          'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2c)'
+  HVDClinkFlowIntegerDefinition4(tp,pole,fd)       'Definition of the HVDC pole integer varaible to prevent intra-pole circulating branch flows (3.8.2d)'
 
-  LambdaDefinition(tp,br)                                          'Definition of weighting factor (3.2.1.4)'
-  LambdaIntegerDefinition1(tp,br)                                  'Definition of weighting factor when branch integer constraints are needed (3.8.3a)'
-  LambdaIntegerDefinition2(tp,br,los)                              'Definition of weighting factor when branch integer constraints are needed (3.8.3b)'
+  LambdaDefinition(tp,br)                          'Definition of weighting factor (3.2.1.4)'
+  LambdaIntegerDefinition1(tp,br)                  'Definition of weighting factor when branch integer constraints are needed (3.8.3a)'
+  LambdaIntegerDefinition2(tp,br,los)              'Definition of weighting factor when branch integer constraints are needed (3.8.3b)'
 
-  DCNodeNetInjection(tp,b)                                         'Definition of the net injection at buses corresponding to HVDC nodes (3.2.1.6)'
-  ACnodeNetInjectionDefinition1(tp,b)                              '1st definition of the net injection at buses corresponding to AC nodes (3.3.1.1)'
-  ACnodeNetInjectionDefinition2(tp,b)                              '2nd definition of the net injection at buses corresponding to AC nodes (3.3.1.2)'
-  ACBranchMaximumFlow(tp,br,i_flowDirection)                       'Maximum flow on the AC branch (3.3.1.3)'
-  ACBranchFlowDefinition(tp,br)                                    'Relationship between directed and undirected branch flow variables (3.3.1.4)'
-  LinearLoadFlow(tp,br)                                            'Equation that describes the linear load flow (3.3.1.5)'
-  ACBranchBlockLimit(tp,br,los,i_flowDirection)                    'Limit on each AC branch flow block (3.3.1.6)'
-  ACDirectedBranchFlowDefinition(tp,br,i_flowDirection)            'Composition of the directed branch flow from the block branch flow (3.3.1.7)'
-  ACBranchLossCalculation(tp,br,los,i_flowDirection)               'Calculation of the losses in each loss segment (3.3.1.8)'
-  ACDirectedBranchLossDefinition(tp,br,i_flowDirection)            'Composition of the directed branch losses from the block branch losses (3.3.1.9)'
-  ACDirectedBranchFlowIntegerDefinition1(tp,br)                    'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)'
-  ACDirectedBranchFlowIntegerDefinition2(tp,br,i_flowDirection)    'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)'
+  DCNodeNetInjection(tp,b)                         'Definition of the net injection at buses corresponding to HVDC nodes (3.2.1.6)'
+  ACnodeNetInjectionDefinition1(tp,b)              '1st definition of the net injection at buses corresponding to AC nodes (3.3.1.1)'
+  ACnodeNetInjectionDefinition2(tp,b)              '2nd definition of the net injection at buses corresponding to AC nodes (3.3.1.2)'
+  ACBranchMaximumFlow(tp,br,fd)                    'Maximum flow on the AC branch (3.3.1.3)'
+  ACBranchFlowDefinition(tp,br)                    'Relationship between directed and undirected branch flow variables (3.3.1.4)'
+  LinearLoadFlow(tp,br)                            'Equation that describes the linear load flow (3.3.1.5)'
+  ACBranchBlockLimit(tp,br,los,fd)                 'Limit on each AC branch flow block (3.3.1.6)'
+  ACDirectedBranchFlowDefinition(tp,br,fd)         'Composition of the directed branch flow from the block branch flow (3.3.1.7)'
+  ACBranchLossCalculation(tp,br,los,fd)            'Calculation of the losses in each loss segment (3.3.1.8)'
+  ACDirectedBranchLossDefinition(tp,br,fd)         'Composition of the directed branch losses from the block branch losses (3.3.1.9)'
+  ACDirectedBranchFlowIntegerDefinition1(tp,br)    'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)'
+  ACDirectedBranchFlowIntegerDefinition2(tp,br,fd) 'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)'
 * Risk and Reserve
   HVDCIslandRiskCalculation(tp,ild,i_reserveClass,i_riskClass)     'Calculation of the island risk for a DCCE and DCECE (3.4.1.1)'
   HVDCRecCalculation(tp,ild)                                       'Calculation of the net received HVDC MW flow into an island (3.4.1.5)'
@@ -622,7 +599,7 @@ Equations
   GenIslandRiskCalculation_PS(tp,ild,o,i_reserveClass,i_riskClass)       'Calculation of the island risk for risk setting generators with more than one offer (3.4.1.6)'
   RiskOffsetCalculation_DCCE(tp,ild,i_reserveClass,i_riskClass)          'Calculation of the risk offset variable for the DCCE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.2)'
   RiskOffsetCalculation_DCECE(tp,ild,i_reserveClass,i_riskClass)         'Calculation of the risk offset variable for the DCECE risk class.  Suppress this when suppressMixedConstraint flag is true (3.4.1.4)'
-  RiskOffsetCalculation(tp,t1MixCstr,ild,i_reserveClass,i_riskClass)  'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
+  RiskOffsetCalculation(tp,t1MixCstr,ild,i_reserveClass,i_riskClass)     'Risk offset definition. Suppress this when suppressMixedConstraint flag is true (3.4.1.5 - v4.4)'
 * Need to seperate the maximum island risk definition constraint to support the different CVPs defined for CE and ECE
   MaximumIslandRiskDefinition_CE(tp,ild,i_reserveClass,i_riskClass)      'Definition of the maximum CE risk in each island (3.4.3.1a)'
   MaximumIslandRiskDefinition_ECE(tp,ild,i_reserveClass,i_riskClass)     'Definition of the maximum ECE risk in each island (3.4.3.1b)'
@@ -677,7 +654,6 @@ NETBENEFIT =e=
   ;
 
 * Defined as the sum of the individual violation costs
-* RDN - Bug fix - used surplusBranchGroupConstraintPenalty rather than surplusBranchFlowPenalty
 TotalViolationCostDefinition..
 TOTALPENALTYCOST =e=
   sum[ Bus,    deficitBusGenerationPenalty * DEFICITBUSGENERATION(Bus) ]
@@ -722,7 +698,7 @@ PurchaseBidDefintion(Bid)..
 HVDClinkMaximumFlow(HVDClink) $ { ClosedBranch(HVDClink) and useHVDCbranchLimits }..
   HVDCLINKFLOW(HVDClink)
 =l=
-  HVDClinkCapacity(HVDClink)
+  branchCapacity(HVDClink)
   ;
 
 * Definition of losses on the HVDC link (3.2.1.2)
@@ -745,36 +721,38 @@ HVDClinkFlowIntegerDefinition1(currTP) $ { UseBranchFlowMIP(currTP) and
                                            resolveCircularBranchFlows and
                                            (1-AllowHVDCRoundpower(currTP))
                                          }..
-  sum[ i_flowDirection, HVDCLINKFLOWDIRECTION_INTEGER(currTP,i_flowDirection) ]
+  sum[ fd, HVDCLINKFLOWDIRECTION_INTEGER(currTP,fd) ]
 =e=
-  sum[ HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDCLINKFLOW(HVDClink) ]
+  sum[ HVDCpoleDirection(HVDClink(currTP,br),fd), HVDCLINKFLOW(HVDClink) ]
   ;
 
 * Definition of the integer HVDC link flow variable (3.8.2b)
 * Not used if roundpower is allowed
-HVDClinkFlowIntegerDefinition2(currTP,i_flowDirection) $ { UseBranchFlowMIP(currTP) and
-                                                           resolveCircularBranchFlows and
-                                                           (1-AllowHVDCRoundpower(currTP))
-                                                         }..
-  HVDCLINKFLOWDIRECTION_INTEGER(currTP,i_flowDirection)
+HVDClinkFlowIntegerDefinition2(currTP,fd) $ { UseBranchFlowMIP(currTP) and
+                                              resolveCircularBranchFlows and
+                                              (1-AllowHVDCRoundpower(currTP))
+                                            }..
+  HVDCLINKFLOWDIRECTION_INTEGER(currTP,fd)
 =e=
-  sum[ HVDCpoleDirection(HVDClink(currTP,br),i_flowDirection), HVDCLINKFLOW(HVDClink) ]
+  sum[ HVDCpoleDirection(HVDClink(currTP,br),fd), HVDCLINKFLOW(HVDClink) ]
   ;
 
 * Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2c)
 HVDClinkFlowIntegerDefinition3(currTP,pole) $ { UseBranchFlowMIP(currTP) and
                                                 resolveCircularBranchFlows }..
-  sum[ br $ { HVDCpoles(currTP,br) and HVDCpoleBranchMap(pole,br) }, HVDCLINKFLOW(currTP,br) ]
+  sum[ br $ { HVDCpoles(currTP,br) and HVDCpoleBranchMap(pole,br) }
+     , HVDCLINKFLOW(currTP,br) ]
 =e=
-  sum[ i_flowDirection, HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection) ]
+  sum[ fd, HVDCPOLEFLOW_INTEGER(currTP,pole,fd) ]
   ;
 
 * Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows e (3.8.2d)
-HVDClinkFlowIntegerDefinition4(currTP,pole,i_flowDirection) $ { UseBranchFlowMIP(currTP) and
-                                                                resolveCircularBranchFlows }..
-  sum[ HVDCpoleDirection(HVDCpoles(currTP,br),i_flowDirection) $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW(HVDCpoles) ]
+HVDClinkFlowIntegerDefinition4(currTP,pole,fd) $ { UseBranchFlowMIP(currTP) and
+                                                   resolveCircularBranchFlows }..
+  sum[ HVDCpoleDirection(HVDCpoles(currTP,br),fd) $ HVDCpoleBranchMap(pole,br)
+     , HVDCLINKFLOW(HVDCpoles) ]
 =e=
-  HVDCPOLEFLOW_INTEGER(currTP,pole,i_flowDirection)
+  HVDCPOLEFLOW_INTEGER(currTP,pole,fd)
   ;
 
 * Definition of weighting factor (3.2.1.4)
@@ -809,18 +787,18 @@ DCNodeNetInjection(DCBus(currTP,b))..
                                                                              - HVDCLINKLOSSES(HVDClink)
      ]
 - sum[ HVDClinkSendingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink),   HVDCLINKFLOW(HVDClink) ]
-- sum[ HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * HVDClinkFixedLoss(HVDClink) ]
+- sum[ HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * branchFixedLoss(HVDClink) ]
   ;
 
 * 1st definition of the net injection at buses corresponding to AC nodes (3.3.1.1)
 ACnodeNetInjectionDefinition1(ACBus(currTP,b))..
   ACNODENETINJECTION(currTP,b)
 =e=
-  sum[ ACBranchSendingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
-       , ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+  sum[ ACBranchSendingBus(ACBranch(currTP,br),b,fd) $ ClosedBranch(ACBranch)
+       , ACBRANCHFLOWDIRECTED(ACBranch,fd)
      ]
-- sum[ ACBranchReceivingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
-       , ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+- sum[ ACBranchReceivingBus(ACBranch(currTP,br),b,fd) $ ClosedBranch(ACBranch)
+       , ACBRANCHFLOWDIRECTED(ACBranch,fd)
      ]
   ;
 
@@ -834,21 +812,21 @@ ACnodeNetInjectionDefinition2(ACBus(currTP,b))..
 + sum[ HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink) ]
 - sum[ HVDClinkReceivingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKLOSSES(HVDClink) ]
 - sum[ HVDClinkSendingBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), HVDCLINKFLOW(HVDClink) ]
-- sum[ HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * HVDClinkFixedLoss(HVDClink) ]
-- sum[ ACBranchReceivingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
-       , i_branchReceivingEndLossProportion * ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection) ]
-- sum[ ACBranchSendingBus(ACBranch(currTP,br),b,i_flowDirection) $ ClosedBranch(ACBranch)
-       , (1 - i_branchReceivingEndLossProportion) * ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection) ]
-- sum[ BranchBusConnect(ACBranch(currTP,br),b) $ ClosedBranch(ACBranch), 0.5 * ACBranchFixedLoss(ACBranch) ]
+- sum[ HVDClinkBus(HVDClink(currTP,br),b) $ ClosedBranch(HVDClink), 0.5 * branchFixedLoss(HVDClink) ]
+- sum[ ACBranchReceivingBus(ACBranch(currTP,br),b,fd) $ ClosedBranch(ACBranch)
+       , i_branchReceivingEndLossProportion * ACBRANCHLOSSESDIRECTED(ACBranch,fd) ]
+- sum[ ACBranchSendingBus(ACBranch(currTP,br),b,fd) $ ClosedBranch(ACBranch)
+       , (1 - i_branchReceivingEndLossProportion) * ACBRANCHLOSSESDIRECTED(ACBranch,fd) ]
+- sum[ BranchBusConnect(ACBranch(currTP,br),b) $ ClosedBranch(ACBranch), 0.5 * branchFixedLoss(ACBranch) ]
 + DEFICITBUSGENERATION(currTP,b)
 - SURPLUSBUSGENERATION(currTP,b)
   ;
 
 * Maximum flow on the AC branch (3.3.1.3)
-ACBranchMaximumFlow(ClosedBranch(ACbranch),i_flowDirection) $ useACbranchLimits..
-  ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+ACBranchMaximumFlow(ClosedBranch(ACbranch),fd) $ useACbranchLimits..
+  ACBRANCHFLOWDIRECTED(ACBranch,fd)
 =l=
-  ACBranchCapacity(ACBranch)
+  branchCapacity(ACBranch)
 + SURPLUSBRANCHFLOW(ACBranch)
   ;
 
@@ -856,60 +834,62 @@ ACBranchMaximumFlow(ClosedBranch(ACbranch),i_flowDirection) $ useACbranchLimits.
 ACBranchFlowDefinition(ClosedBranch(ACBranch))..
   ACBRANCHFLOW(ACBranch)
 =e=
-  sum[ i_flowDirection $ (ord(i_flowDirection) = 1), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) ]
-- sum[ i_flowDirection $ (ord(i_flowDirection) = 2), ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) ]
+  sum[ fd $ (ord(fd) = 1), ACBRANCHFLOWDIRECTED(ACBranch,fd) ]
+- sum[ fd $ (ord(fd) = 2), ACBRANCHFLOWDIRECTED(ACBranch,fd) ]
   ;
 
 * Equation that describes the linear load flow (3.3.1.5)
 LinearLoadFlow(ClosedBranch(ACBranch(currTP,br)))..
   ACBRANCHFLOW(ACBranch)
 =e=
-  ACBranchSusceptance(ACBranch)
+  branchSusceptance(ACBranch)
   * sum[ BranchBusDefn(ACBranch,frB,toB), ACNODEANGLE(currTP,frB) - ACNODEANGLE(currTP,toB) ]
   ;
 
 * Limit on each AC branch flow block (3.3.1.6)
-ACBranchBlockLimit(validLossSegment(ClosedBranch(ACBranch),los),i_flowDirection)..
-  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection)
+ACBranchBlockLimit(validLossSegment(ClosedBranch(ACBranch),los),fd)..
+  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd)
 =l=
   ACBranchLossMW(ACBranch,los)
   ;
 
 * Composition of the directed branch flow from the block branch flow (3.3.1.7)
-ACDirectedBranchFlowDefinition(ClosedBranch(ACBranch),i_flowDirection)..
-  ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+ACDirectedBranchFlowDefinition(ClosedBranch(ACBranch),fd)..
+  ACBRANCHFLOWDIRECTED(ACBranch,fd)
 =e=
-  sum[ validLossSegment(ACBranch,los), ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection) ]
+  sum[ validLossSegment(ACBranch,los)
+     , ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd) ]
   ;
 
 * Calculation of the losses in each loss segment (3.3.1.8)
-ACBranchLossCalculation(validLossSegment(ClosedBranch(ACBranch),los),i_flowDirection)..
-  ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_flowDirection)
+ACBranchLossCalculation(validLossSegment(ClosedBranch(ACBranch),los),fd)..
+  ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,fd)
 =e=
-  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,i_flowDirection) * ACBranchLossFactor(ACBranch,los)
+  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd) * ACBranchLossFactor(ACBranch,los)
   ;
 
 * Composition of the directed branch losses from the block branch losses (3.3.1.9)
-ACDirectedBranchLossDefinition(ClosedBranch(ACBranch),i_flowDirection)..
-  ACBRANCHLOSSESDIRECTED(ACBranch,i_flowDirection)
+ACDirectedBranchLossDefinition(ClosedBranch(ACBranch),fd)..
+  ACBRANCHLOSSESDIRECTED(ACBranch,fd)
 =e=
-  sum[ validLossSegment(ACBranch,los), ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,i_flowDirection) ]
+  sum[ validLossSegment(ACBranch,los)
+     , ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,fd) ]
   ;
 
 * Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1a)
 ACDirectedBranchFlowIntegerDefinition1(ClosedBranch(ACBranch(lossBranch(currTP,br)))) $ { UseBranchFlowMIP(currTP) and
                                                                                           resolveCircularBranchFlows }..
-  sum[ i_flowDirection, ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection) ]
+  sum[ fd, ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,fd) ]
 =e=
-  sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection) ]
+  sum[ fd, ACBRANCHFLOWDIRECTED(ACBranch,fd) ]
   ;
 
 * Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses (3.8.1b)
-ACDirectedBranchFlowIntegerDefinition2(ClosedBranch(ACBranch(lossBranch(currTP,br))),i_flowDirection) $ { UseBranchFlowMIP(currTP) and
+ACDirectedBranchFlowIntegerDefinition2(ClosedBranch(ACBranch(lossBranch(currTP,br))),fd) $ { UseBranchFlowMIP(currTP) and
                                                                                                           resolveCircularBranchFlows }..
-  ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,i_flowDirection)
+  ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,fd)
 =e=
-  ACBRANCHFLOWDIRECTED(ACBranch,i_flowDirection)
+  ACBRANCHFLOWDIRECTED(ACBranch,fd)
   ;
 
 * Maximum movement of the generator downwards due to up ramp rate (3.7.1.1)
@@ -992,15 +972,11 @@ HVDCRecCalculation(currTP,ild)..
   HVDCREC(currTP,ild)
 =e=
   sum[ (b,br) $ { BusIsland(currTP,b,ild)
-*TN              and ACBus(currTP,b)
-*TN              and HVDClink(currTP,br)
               and HVDClinkSendingBus(currTP,br,b)
               and HVDCPoles(currTP,br)
                 }, -HVDCLINKFLOW(currTP,br)
      ]
 + sum[ (b,br) $ { BusIsland(currTP,b,ild)
-*TN              and ACBus(currTP,b)
-*TN              and HVDClink(currTP,br)
               and HVDClinkReceivingBus(currTP,br,b)
               and HVDCPoles(currTP,br)
                 }, HVDCLINKFLOW(currTP,br) - HVDCLINKLOSSES(currTP,br)
@@ -1384,15 +1360,15 @@ Type1MixedConstraintLE(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHFLOWDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHLOSSESDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
-       * ACBranchFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ br $ HVDClink(currTP,br)
        , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
@@ -1400,7 +1376,7 @@ Type1MixedConstraintLE(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
      ]
 + sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
-       * HVDClinkFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ i_bid $ Bid(currTP,i_bid)
        , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
@@ -1432,15 +1408,15 @@ Type1MixedConstraintGE(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHFLOWDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHLOSSESDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
-       * ACBranchFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ br $ HVDClink(currTP,br)
      , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
@@ -1448,7 +1424,7 @@ Type1MixedConstraintGE(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
      ]
 + sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
-       * HVDClinkFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ i_bid $ Bid(currTP,i_bid)
      , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
@@ -1479,15 +1455,15 @@ Type1MixedConstraintEQ(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHFLOWDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHLOSSESDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
-       * ACBranchFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ br $ HVDClink(currTP,br)
        , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
@@ -1495,7 +1471,7 @@ Type1MixedConstraintEQ(currTP,t1MixCstr) $ { useMixedConstraint(currTP) and
      ]
 + sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
-       * HVDClinkFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ i_bid $ Bid(currTP,i_bid)
        , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
@@ -1567,15 +1543,15 @@ Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedC
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHFLOWDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHLOSSESDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
-       * ACBranchFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ br $ HVDClink(currTP,br)
        , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
@@ -1583,7 +1559,7 @@ Type1MixedConstraintLE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedC
      ]
 + sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
-       * HVDClinkFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ i_bid $ Bid(currTP,i_bid)
        , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
@@ -1615,15 +1591,15 @@ Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedC
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHFLOWDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHLOSSESDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
-       * ACBranchFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ br $ HVDClink(currTP,br)
        , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
@@ -1631,7 +1607,7 @@ Type1MixedConstraintGE_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedC
      ]
 + sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
-       * HVDClinkFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ i_bid $ Bid(currTP,i_bid)
        , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)
@@ -1663,15 +1639,15 @@ Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedC
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHFLOWDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHFLOWDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ ACBranch(currTP,br)
        , i_type1MixedConstraintAClineLossWeight(t1MixCstr,br)
-       * sum[ i_flowDirection, ACBRANCHLOSSESDIRECTED(currTP,br,i_flowDirection) ]
+       * sum[ fd, ACBRANCHLOSSESDIRECTED(currTP,br,fd) ]
      ]
 + sum[ br $ { ACBranch(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintAClineFixedLossWeight(t1MixCstr,br)
-       * ACBranchFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ br $ HVDClink(currTP,br)
        , i_type1MixedConstraintHVDCLineLossWeight(t1MixCstr,br)
@@ -1679,7 +1655,7 @@ Type1MixedConstraintEQ_MIP(Type1MixedConstraint(currTP,t1MixCstr)) $ { useMixedC
      ]
 + sum[ br $ { HVDClink(currTP,br) and ClosedBranch(currTP,br) }
        , i_type1MixedConstraintHVDCLineFixedLossWeight(t1MixCstr,br)
-       * HVDClinkFixedLoss(currTP,br)
+       * branchFixedLoss(currTP,br)
      ]
 + sum[ i_bid $ Bid(currTP,i_bid)
        , i_type1MixedConstraintPurWeight(t1MixCstr,i_bid)

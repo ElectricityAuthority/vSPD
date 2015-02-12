@@ -13,7 +13,7 @@ et = datetime(2013,10,31)
 def createGDXfilelist(start,end,filename):
     file = open(filename, "w")
     file.write("/ \n")
-    days = pd.date_range(start=st,end=et).map(lambda x: 'FP_' + str(x.year) + str(x.month).zfill(2) + str(x.day).zfill(2))
+    days = pd.date_range(start=st,end=et).map(lambda x: 'FP_' + str(x.year) + str(x.month).zfill(2) + str(x.day).zfill(2) + '_F')
     days.tofile(file,sep="\r\n")
     file.write(" \n/")
     file.close()
