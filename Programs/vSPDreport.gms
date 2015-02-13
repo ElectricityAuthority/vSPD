@@ -272,7 +272,7 @@ DWsummaryResults.pc = 5 ;
 DWsummaryResults.lw = 0 ;
 DWsummaryResults.pw = 9999 ;
 DWSummaryResults.ap = 1 ;
-DWSummaryResults.nd = 5 ;
+DWSummaryResults.nd = 3 ;
 put DWSummaryResults ;
 loop( dim1 $ o_DateTime(dim1),
     o_systemCost_TP(dim1) = o_systemCost_TP(dim1) - o_systemBenefit_TP(dim1);
@@ -286,7 +286,7 @@ DWenergyResults.pc = 5 ;
 DWenergyResults.lw = 0 ;
 DWenergyResults.pw = 9999 ;
 DWEnergyResults.ap = 1 ;
-DWEnergyResults.nd = 5 ;
+DWEnergyResults.nd = 3 ;
 put DWEnergyResults ;
 loop( (dim1,dim2) $ { o_DateTime(dim1) and o_node(dim1,dim2) },
     put dim1.tl, dim2.tl, o_nodePrice_TP(dim1,dim2) / ;
@@ -298,7 +298,7 @@ DWreserveResults.pc = 5 ;
 DWreserveResults.lw = 0 ;
 DWreserveResults.pw = 9999 ;
 DWreserveResults.ap = 1 ;
-DWreserveResults.nd = 5 ;
+DWreserveResults.nd = 3 ;
 put DWReserveResults ;
 loop( (dim1,dim2) $ { o_DateTime(dim1) and o_island(dim1,dim2) },
     put dim1.tl, dim2.tl, o_FIRPrice_TP(dim1,dim2), o_SIRPrice_TP(dim1,dim2) / ;

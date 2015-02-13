@@ -75,7 +75,7 @@ option mip = %Solver% ;
 option profile = 0 ;
 
 * Set the solution print status in the lst file
-option solprint = on;
+option solprint = off;
 
 * Set the column (variable) and row (equation) listing in the lst file
 option limcol = 0 ;
@@ -2630,7 +2630,7 @@ $offtext
 
 *   6i. Collect and store results of solved periods into output parameters -----
 
-$ifthen %opMode%==2
+$ifthen.PeriodReport %opMode%==2
 *   Store results for FTR reporting at a trade period level
     loop(i_DateTimeTradePeriodMap(dt,currTP) $ (not unsolvedPeriod(currTP)),
         o_dateTime(dt) = yes;
@@ -2751,7 +2751,7 @@ $ifthen %opMode%==2
 
     ) ;
 
-$else
+$else.PeriodReport
 *   Normal vSPD reporting processing
 *   Check if reporting at trading period level purposes is required...
 
@@ -3567,7 +3567,7 @@ $else
 *   Reporting at trading period end
     ) ;
 
-$endif
+$endif.PeriodReport
 
 * End of the solve vSPD loop
   ] ;
@@ -4554,6 +4554,11 @@ $label SkipFTRrentalCalculation
 putclose runlog 'Case: %vSPDinputData% is complete in ',timeExec,'(secs)'/ ;
 putclose runlog 'Case: %vSPDinputData% is finished in ',timeElapsed,'(secs)'/ ;
 
+$ifthen.DWmode %opMode%==1
+File DWlog "File to signal DW run is sucessful"  /  "%outputPath%\%runName%\%runName%_RunLog.txt" / ;
+DWlog.lw = 0 ; DWlog.ap = 0 ;
+putclose DWlog / 'Case "%vSPDinputData%" run is sucessful at ' system.date " " system.time /;
+$endif.DWmode
 
 * Go to the next input file
 $label nextInput
