@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 January 2015
+* Last modified on:     25 February 2015
 *=====================================================================================
 
 $ontext
@@ -180,6 +180,10 @@ Sets
 
 * Tuong update
   unsolvedPeriod(tp)                                  'Set of periods that are not solved yet'
+
+* Unmapped deficit bus
+  o_unmappedDeficitBus(dt,b)                          'List of buses that have deficit generation (price) but are not mapped to any pnode'
+
   ;
 
 Parameters
@@ -1432,7 +1436,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
     LossSegmentMW(branch,los) $ { useExternalLossModel and
                                   (branchLossBlocks(branch) = 0) and
                                   (ord(los) = 1)
-                                } = maxFlowSegment ;
+                                } = branchCapacity(branch) ;
 
     LossSegmentFactor(branch,los) $ { useExternalLossModel and
                                       (branchLossBlocks(branch) = 0) and
@@ -2771,6 +2775,31 @@ $else.PeriodReport
             = sum[ b $ NodeBus(currTP,n,b)
                  , NodeBusAllocationFactor(currTP,n,b) * busPrice(currTP,b)
                   ] ;
+
+* If the deficit is assigned to a bus which does not map directly to a node, follow
+* the no-loss branches that connect this bus to the nearest bus mapped to a node, and
+* set that node price equal to the deficit generation price
+        o_unmappedDeficitBus(dt,b) = yes $ { (busPrice(currTP,b) = deficitBusGenerationPenalty)
+                                         and (busElectricalIsland(currTP,b) <> 0)
+                                         and (sum[ n $ NodeBus(currTP,n,b), 1] = 0) }
+
+$onend
+        While Sum[ (n,b) $ { o_unmappedDeficitBus(dt,b) and NodeBus(currTP,n,b) }, 1 ] = 0 do
+
+            o_unmappedDeficitBus(dt,b) $ Sum[ (b1,br) $ { o_unmappedDeficitBus(dt,b1)
+                                                      and branchLossBlocks(currTP,br) = 0
+                                                      and ( branchBusDefn(currTP,br,b1,b)
+                                                         or branchBusDefn(currTP,br,b,b1) )
+                                                    }, 1 ] = yes;
+
+            o_nodePrice_TP(dt,n) $ { Node(currTP,n)
+                                 and Sum[ b $ { NodeBus(currTP,n,b)
+                                            and o_unmappedDeficitBus(dt,b)
+                                              }, 1 ]
+                                   } = deficitBusGenerationPenalty ;
+
+        Endwhile;
+$offend
 
 *       Offer output
         o_offer(dt,o) $ offer(currTP,o) = yes ;
@@ -4554,11 +4583,6 @@ $label SkipFTRrentalCalculation
 putclose runlog 'Case: %vSPDinputData% is complete in ',timeExec,'(secs)'/ ;
 putclose runlog 'Case: %vSPDinputData% is finished in ',timeElapsed,'(secs)'/ ;
 
-$ifthen.DWmode %opMode%==1
-File DWlog "File to signal DW run is sucessful"  /  "%outputPath%\%runName%\%runName%_RunLog.txt" / ;
-DWlog.lw = 0 ; DWlog.ap = 0 ;
-putclose DWlog / 'Case "%vSPDinputData%" run is sucessful at ' system.date " " system.time /;
-$endif.DWmode
 
 * Go to the next input file
 $label nextInput
