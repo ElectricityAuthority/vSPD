@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     25 February 2015
+* Last modified on:     16 March 2015
 *=====================================================================================
 
 $ontext
@@ -180,10 +180,6 @@ Sets
 
 * Tuong update
   unsolvedPeriod(tp)                                  'Set of periods that are not solved yet'
-
-* Unmapped deficit bus
-  o_unmappedDeficitBus(dt,b)                          'List of buses that have deficit generation (price) but are not mapped to any pnode'
-
   ;
 
 Parameters
@@ -2776,31 +2772,6 @@ $else.PeriodReport
                  , NodeBusAllocationFactor(currTP,n,b) * busPrice(currTP,b)
                   ] ;
 
-* If the deficit is assigned to a bus which does not map directly to a node, follow
-* the no-loss branches that connect this bus to the nearest bus mapped to a node, and
-* set that node price equal to the deficit generation price
-        o_unmappedDeficitBus(dt,b) = yes $ { (busPrice(currTP,b) = deficitBusGenerationPenalty)
-                                         and (busElectricalIsland(currTP,b) <> 0)
-                                         and (sum[ n $ NodeBus(currTP,n,b), 1] = 0) }
-
-$onend
-        While Sum[ (n,b) $ { o_unmappedDeficitBus(dt,b) and NodeBus(currTP,n,b) }, 1 ] = 0 do
-
-            o_unmappedDeficitBus(dt,b) $ Sum[ (b1,br) $ { o_unmappedDeficitBus(dt,b1)
-                                                      and branchLossBlocks(currTP,br) = 0
-                                                      and ( branchBusDefn(currTP,br,b1,b)
-                                                         or branchBusDefn(currTP,br,b,b1) )
-                                                    }, 1 ] = yes;
-
-            o_nodePrice_TP(dt,n) $ { Node(currTP,n)
-                                 and Sum[ b $ { NodeBus(currTP,n,b)
-                                            and o_unmappedDeficitBus(dt,b)
-                                              }, 1 ]
-                                   } = deficitBusGenerationPenalty ;
-
-        Endwhile;
-$offend
-
 *       Offer output
         o_offer(dt,o) $ offer(currTP,o) = yes ;
 
@@ -4057,6 +4028,49 @@ $endif.ScarcityNormalReport
 
 
 $endif.Scarcity
+
+$onend
+
+* Unmapped deficit bus
+* If the deficit is assigned to a bus which does not map directly to a node, follow the no-loss branches
+* that connect this bus to the nearest bus mapped to a node, and set that node price equal to the deficit
+* generation price
+
+Set
+  o_unmappedDeficitBus(dt,b)   'List of buses that have deficit generation (price) but are not mapped to any pnode'
+;
+
+o_unmappedDeficitBus(dt,b) $ o_busDeficit_TP(dt,b)
+    = yes $ (Sum[ n, busNodeAllocationFactor(dt,b,n)] = 0);
+
+loop i_dateTimeTradePeriodMap(dt,tp)$Sum[b $ o_unmappedDeficitBus(dt,b), 1] do
+    While Sum[b $ o_unmappedDeficitBus(dt,b), 1] do
+      Loop b $ o_unmappedDeficitBus(dt,b) do
+        If Sum[ n, busNodeAllocationFactor(dt,b,n)] then
+            o_nodePrice_TP(dt,n) $ busNodeAllocationFactor(dt,b,n)
+                = deficitBusGenerationPenalty ;
+            o_nodeDeficit_TP(dt,n) $ busNodeAllocationFactor(dt,b,n)
+                = o_nodeDeficit_TP(dt,n)
+                + busNodeAllocationFactor(dt,b,n) * o_busDeficit_TP(dt,b);
+        Else
+            o_unmappedDeficitBus(dt,b1)
+                $ Sum[ br $ { ( branchLossBlocks(tp,br)=0 )
+                          and ( branchBusDefn(tp,br,b1,b)
+                             or branchBusDefn(tp,br,b,b1) )
+                            }, 1 ] = yes;
+            o_busDeficit_TP(dt,b1)
+                $ Sum[ br $ { (branchLossBlocks(tp,br)=0 )
+                          and ( branchBusDefn(tp,br,b1,b)
+                             or branchBusDefn(tp,br,b,b1) )
+                            }, 1 ] = o_busDeficit_TP(dt,b);
+        EndIf;
+        o_unmappedDeficitBus(dt,b) = no;
+        o_busDeficit_TP(dt,b) = 0;
+      EndLoop;
+    EndWhile;
+    o_busDeficit_TP(dt,b) $ bus(tp,b) = DEFICITBUSGENERATION.l(tp,b);
+Endloop;
+$offend
 
 
 

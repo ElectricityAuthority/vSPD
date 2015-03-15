@@ -3571,13 +3571,6 @@ Decim=7
 PlaneRownr=-1
 PlaneFilter1=HAM_KPO_Outage_Zero_6s
 
-[OPENWINDOW_1]
-MAXIM=0
-TOP=50
-LEFT=50
-HEIGHT=707
-WIDTH=1566
-
 [RP:VSPDSOLVE]
 1=
 
@@ -3726,4 +3719,12 @@ PlaneRownr=-1
 6=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\backup\vSPDoverrides - Copy.gms
 7=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\backup\runvSPD - Copy.gms
 8=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Input\FP_20141211_F.gdx
-9=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\backup\vSPDreport - Copy.gms
+
+[OPENWINDOW_1]
+FILE0=C:\a\vSPD\vSPD\Input\FP_20150115_F.gdx
+FILE1=C:\a\vSPD\vSPD\Input\FP_20150115_F.gdx
+MAXIM=0
+TOP=51
+LEFT=-35
+HEIGHT=707
+WIDTH=1566
