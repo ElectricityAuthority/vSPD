@@ -3710,21 +3710,104 @@ PlaneRownr=-1
 [RP:VSPDMODEL - COPY]
 1=
 
-[MRUFILES]
-1=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Input\FP_20141231_F.gdx
-2=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Input\FP_20150115_F.gdx
-3=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\vSPDmodel - Copy.gms
-4=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\backup\vSPDsolve - Copy.gms
-5=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Override\ara2201_maxlimit.gdx
-6=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\backup\vSPDoverrides - Copy.gms
-7=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Programs_v5_WIP\backup\runvSPD - Copy.gms
-8=C:\TUONG_NGUYEN\vSPD\vSPD_Versions\Input\FP_20141211_F.gdx
+[GDXDISP: i_islandDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: i_nodeDemandOvrd Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_tradePeriodIslandScaleDemand Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_tradePeriodNodeDemand Par 2]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+Order=2,1
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_tradePeriodNodeDemand Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=3,2,1
+Decim=5
+PlaneRownr=-1
+PlaneFilter1=increment
+
+[GDXDISP: ovrd_dateTimeIslandDemand Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_dateTimeNodeDemand Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: ovrd_tradePeriodIslandDemand Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+Order=1,2,3
+Decim=5
+PlaneRownr=-1
 
 [OPENWINDOW_1]
-FILE0=C:\a\vSPD\vSPD\Input\FP_20150115_F.gdx
-FILE1=C:\a\vSPD\vSPD\Input\FP_20150115_F.gdx
 MAXIM=0
-TOP=51
-LEFT=-35
+TOP=14
+LEFT=3
 HEIGHT=707
 WIDTH=1566
+
+[RP:OVERRIDESV1]
+1=
+
+[GDXDISP: demandOverrides Par 3]
+PlaneDim=1
+RowDim=1
+Squeeze=1
+Order=3,1,2
+Decim=5
+PlaneRownr=-1
+
+[GDXDISP: demandOveride Par 3]
+PlaneDim=1
+RowDim=2
+Squeeze=1
+Order=3,1,2
+Decim=5
+PlaneRownr=-1
+
+[MRUFILES]
+1=C:\a\vSPD\testvSPD\Override\overridesFromStandalone.gdx
+2=C:\a\vSPD\testvSPD\Override\overridesv1.gdx
+3=C:\a\vSPD\testvSPD\Override\overridesv3.gdx
+4=C:\a\vSPD\testvSPD\Override\overridesv2.gdx
+5=C:\a\vSPD\testvSPD\Input\FP_20150115_F.gdx
+6=C:\a\vSPD\testvSPD\Programs\overridesv3.gdx
+7=C:\a\vSPD\testvSPD\Programs\overridesv1.gdx
+8=C:\Users\bishopp\AppData\Local\Microsoft\Windows\Temporary Internet Files\Content.Outlook\FR1IW0C6\OvrdPeriodNodeValue.gdx
+9=C:\a\vSPD\testvSPD\Programs\overridesv2.gdx

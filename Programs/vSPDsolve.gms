@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     16 March 2015
+* Last modified on:     18 March 2015
 *=====================================================================================
 
 $ontext
@@ -150,6 +150,7 @@ $offtext
   i_monthNum       'Month number'                         / 1*12 /
   i_yearNum        'Year number'                          / 1900*2200 /
   fromTo           'From/To - for override dates'         / frm, to /
+  demMethod        'Demand override method'               / scale, increment, value /
   ;
 
 Alias (i_dayNum,day), (i_monthNum,mth), (i_yearNum,yr) ;
@@ -208,15 +209,15 @@ Parameters
   busPrice(tp,b)                                      '$/MW price at each bus for the study trade periods'
   busDisconnected(tp,b)                               'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
 * Scarcity pricing processing parameters
-  scarcitySituation(tp,sarea)                      'Flag to indicate that a scarcity situation exists (1 = Yes)'
-  GWAPFloor(tp,sarea)                              'Floor price for the scarcity situation in scarcity area'
-  GWAPCeiling(tp,sarea)                            'Ceiling price for the scarcity situation in scarcity area'
-  GWAPPastDaysAvg(tp,ild)                          'Average GWAP over past days - number of periods in GWAP count'
-  GWAPCountForAvg(tp,ild)                          'Number of periods used for the i_gwapPastDaysAvg'
-  GWAPThreshold(tp,ild)                            'Threshold on previous 336 trading period GWAP - cumulative price threshold'
+  scarcitySituation(tp,sarea)                         'Flag to indicate that a scarcity situation exists (1 = Yes)'
+  GWAPFloor(tp,sarea)                                 'Floor price for the scarcity situation in scarcity area'
+  GWAPCeiling(tp,sarea)                               'Ceiling price for the scarcity situation in scarcity area'
+  GWAPPastDaysAvg(tp,ild)                             'Average GWAP over past days - number of periods in GWAP count'
+  GWAPCountForAvg(tp,ild)                             'Number of periods used for the i_gwapPastDaysAvg'
+  GWAPThreshold(tp,ild)                               'Threshold on previous 336 trading period GWAP - cumulative price threshold'
 
-  islandGWAP(tp,ild)                               'Island GWAP calculation used to update GWAPPastDaysAvg'
-  scarcityAreaGWAP(tp,sarea)                       'Scarcity area GWAP used to calculate the scaling factor'
+  islandGWAP(tp,ild)                                  'Island GWAP calculation used to update GWAPPastDaysAvg'
+  scarcityAreaGWAP(tp,sarea)                          'Scarcity area GWAP used to calculate the scaling factor'
 
   pastGWAPsumforCPT(tp,ild)
   pastTPcntforCPT(tp,ild)
