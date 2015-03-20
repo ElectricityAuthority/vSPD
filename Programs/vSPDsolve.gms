@@ -4030,8 +4030,8 @@ $endif.ScarcityNormalReport
 
 $endif.Scarcity
 
+$ifthen.vSPDreport not %opMode%==2
 $onend
-
 * Unmapped deficit bus
 * If the deficit is assigned to a bus which does not map directly to a node, follow the no-loss branches
 * that connect this bus to the nearest bus mapped to a node, and set that node price equal to the deficit
@@ -4072,7 +4072,7 @@ loop i_dateTimeTradePeriodMap(dt,tp)$Sum[b $ o_unmappedDeficitBus(dt,b), 1] do
     o_busDeficit_TP(dt,b) $ bus(tp,b) = DEFICITBUSGENERATION.l(tp,b);
 Endloop;
 $offend
-
+$endif.vSPDreport
 
 
 *=====================================================================================
