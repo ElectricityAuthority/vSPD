@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     18 March 2015
+* Last modified on:     23 March 2015
 *=====================================================================================
 
 $ontext
@@ -45,6 +45,7 @@ Aliases to be aware of:
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
   i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
+  i_reserveType = resT                      i_reserveClass = resC 
 $offtext
 
 
@@ -175,17 +176,12 @@ Sets
   o_branchToBus_TP(dt,br,toB)                         'To bus for set of branches for output report'
   o_brConstraint_TP(dt,brCstr)                        'Set of branch constraints for output report'
   o_MnodeConstraint_TP(dt,MnodeCstr)                  'Set of Mnode constraints for output report'
-
-* Scarcity pricing updates
   scarcityAreaIslandMap(sarea,ild)                    'Mapping of scarcity area to island'
-
-* Tuong update
   unsolvedPeriod(tp)                                  'Set of periods that are not solved yet'
   ;
 
 Parameters
-* Tuong update
-  VSPDModel(tp)   'Applied model flag 0=VSPD, 1=VSPD_MIP, 2=vSPD_BranchFlowMIP, 3=vSPD_MixedConstraintMIP, 4=VSPD (last solve)'
+  vSPDmodel(tp)                                       'Applied model flag 0=vSPD, 1=vSPD_MIP, 2=vSPD_BranchFlowMIP, 3=vSPD_MixedConstraintMIP, 4=vSPD (last solve)'
 
 * Main iteration counter
   iterationCount                                      'Iteration counter for the solve'
@@ -735,7 +731,7 @@ numTradePeriods = card(tp) ;
 *=====================================================================================
 
 unsolvedPeriod(tp) = yes;
-VSPDModel(tp) = 0 ;
+vSPDmodel(tp) = 0 ;
 option clear = useBranchFlowMIP ;
 option clear = useMixedConstraintMIP ;
 
@@ -1364,204 +1360,117 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *   The loss factor coefficients assume that the branch capacity is in MW
 *   and the resistance is in p.u.
 
-*   Branches with zeor or 1 loss segment - External loss model not used
-    LossSegmentMW(branch,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(branch) <= 1) and
-            (ord(los) = 1)
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 1)
-                 , i_noLossBranch(los,i_lossParameter) ] ;
-
-    LossSegmentFactor(branch,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(branch) <= 1) and
-            (ord(los) = 1)
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 2)
-                 , i_noLossBranch(los,i_lossParameter)
-                 * branchResistance(branch)
-                 * branchCapacity(branch) ] ;
-
-*   AC loss branches with > one loss segment - External loss model not used
-    LossSegmentMW(ACbranch,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(ACbranch) > 1) and
-            (ord(los) < branchLossBlocks(ACbranch))
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 1)
-                 , i_AClossBranch(los,i_lossParameter)
-                 * branchCapacity(ACbranch) ] ;
-
-    LossSegmentMW(ACbranch,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(ACbranch) > 1) and
-            (ord(los) = branchLossBlocks(ACbranch))
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 1)
-                 , i_AClossBranch(los,i_lossParameter) ] ;
-
-    LossSegmentFactor(ACbranch,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(ACbranch) > 1)
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 2)
-                 , i_AClossBranch(los,i_lossParameter)
-                 * branchResistance(ACbranch)
-                 * branchCapacity(ACbranch) ] ;
-
-*   HVDC loss branches with > one loss segment - External loss model not used
-    LossSegmentMW(HVDClink,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(HVDClink) > 1) and
-            (ord(los) < branchLossBlocks(HVDClink))
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 1)
-                 , i_HVDClossBranch(los,i_lossParameter)
-                 * branchCapacity(HVDClink) ] ;
-
-    LossSegmentMW(HVDClink,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(HVDClink) > 1) and
-            (ord(los) = branchLossBlocks(HVDClink))
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 1)
-                 , i_HVDClossBranch(los,i_lossParameter) ] ;
-
-    LossSegmentFactor(HVDClink,los)
-        $ { (not useExternalLossModel) and
-            (branchLossBlocks(HVDClink) > 1)
-          } = sum[ i_lossParameter $ (ord(i_lossParameter) = 2)
-                 , i_HVDClossBranch(los,i_lossParameter)
-                 * branchResistance(HVDClink)
-                 * branchCapacity(HVDClink) ] ;
-
-*   Loss branches with 0 loss blocks - Use the external loss model
-    LossSegmentMW(branch,los) $ { useExternalLossModel and
-                                  (branchLossBlocks(branch) = 0) and
+*   Loss branches with 0 loss blocks
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 0) and
                                   (ord(los) = 1)
                                 } = branchCapacity(branch) ;
 
-    LossSegmentFactor(branch,los) $ { useExternalLossModel and
-                                      (branchLossBlocks(branch) = 0) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 0) and
                                       (ord(los) = 1)
                                     } = 0 ;
 
-*   Loss branches with 1 loss blocks - Use the external loss model
-    LossSegmentMW(branch,los) $ { useExternalLossModel and
-                                  (branchLossBlocks(branch) = 1) and
+*   Loss branches with 1 loss blocks
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 1) and
                                   (ord(los) = 1)
                                 } = maxFlowSegment ;
 
-    LossSegmentFactor(branch,los) $ { useExternalLossModel and
-                                      (branchLossBlocks(branch) = 1) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 1) and
                                       (ord(los) = 1)
                                     } = branchResistance(branch)
                                       * branchCapacity(branch) ;
 
-*   Loss branches with 3 loss blocks - Use the external loss model
+*   Loss branches with 3 loss blocks
 *   Segment 1
-    LossSegmentMW(branch,los) $ { useExternalLossModel and
-                                  (branchLossBlocks(branch) = 3) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 3) and
                                   (ord(los) = 1)
                                 } = branchCapacity(branch) * lossCoeff_A ;
 
-    LossSegmentFactor(branch,los) $ { useExternalLossModel and
-                                      (branchLossBlocks(branch) = 3) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 3) and
                                       (ord(los) = 1)
                                     } = 0.01 * 0.75 * lossCoeff_A
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 
 *   Segment 2
-    LossSegmentMW(branch,los) $ { useExternalLossModel and
-                                  (branchLossBlocks(branch) = 3) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 3) and
                                   (ord(los) = 2)
                                 } = branchCapacity(branch) * (1-lossCoeff_A) ;
 
-    LossSegmentFactor(branch,los) $ { useExternalLossModel and
-                                      (branchLossBlocks(branch) = 3) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 3) and
                                       (ord(los) = 2)
                                     } = 0.01
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 
 *   Segment 3
-    LossSegmentMW(branch,los) $ { useExternalLossModel and
-                                  (branchLossBlocks(branch) = 3) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 3) and
                                   (ord(los) = 3)
                                 } = maxFlowSegment ;
 
-    LossSegmentFactor(branch,los) $ { useExternalLossModel and
-                                      (branchLossBlocks(branch) = 3) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 3) and
                                       (ord(los) = 3)
                                     } = 0.01 * (2 - (0.75*lossCoeff_A))
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 
-*   Loss branches with 6 loss blocks - Use the external loss model
+*   Loss branches with 6 loss blocks
 *   Segment 1
-    LossSegmentMW(branch,los) $ { (useExternalLossModel) and
-                                  (branchLossBlocks(branch) = 6) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                   (ord(los) = 1)
                                 } = branchCapacity(branch)
                                   * lossCoeff_C ;
 
-    LossSegmentFactor(branch,los) $ { (useExternalLossModel) and
-                                      (branchLossBlocks(branch) = 6) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                       (ord(los) = 1)
                                     } = 0.01 * 0.75 * lossCoeff_C
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 *   Segment 2
-    LossSegmentMW(branch,los) $ { (useExternalLossModel) and
-                                  (branchLossBlocks(branch) = 6) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                   (ord(los) = 2)
                                 } = branchCapacity(branch) * lossCoeff_D ;
 
-    LossSegmentFactor(branch,los) $ { (useExternalLossModel) and
-                                      (branchLossBlocks(branch) = 6) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                       (ord(los) = 2)
                                     } = 0.01 * lossCoeff_E
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 *   Segment 3
-    LossSegmentMW(branch,los) $ { (useExternalLossModel) and
-                                  (branchLossBlocks(branch) = 6) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                   (ord(los) = 3)
                                 } = branchCapacity(branch) * 0.5 ;
 
-    LossSegmentFactor(branch,los) $ { (useExternalLossModel) and
-                                      (branchLossBlocks(branch) = 6) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                       (ord(los) = 3)
                                     } = 0.01 * lossCoeff_F
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 *   Segment 4
-    LossSegmentMW(branch,los) $ { (useExternalLossModel) and
-                                  (branchLossBlocks(branch) = 6) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                   (ord(los) = 4)
                                 } = branchCapacity(branch) * (1 - lossCoeff_D) ;
 
-    LossSegmentFactor(branch,los) $ { (useExternalLossModel) and
-                                      (branchLossBlocks(branch) = 6) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                       (ord(los) = 4)
                                     } = 0.01 * (2 - lossCoeff_F)
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 *   Segment 5
-    LossSegmentMW(branch,los) $ { (useExternalLossModel) and
-                                  (branchLossBlocks(branch) = 6) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                   (ord(los) = 5)
                                 } = branchCapacity(branch) * (1 - lossCoeff_C) ;
 
-    LossSegmentFactor(branch,los) $ { (useExternalLossModel) and
-                                      (branchLossBlocks(branch) = 6) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                       (ord(los) = 5)
                                     } = 0.01 * (2 - lossCoeff_E)
                                       * branchResistance(branch)
                                       * branchCapacity(branch) ;
 *   Segment 6
-    LossSegmentMW(branch,los) $ { (useExternalLossModel) and
-                                  (branchLossBlocks(branch) = 6) and
+    LossSegmentMW(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                   (ord(los) = 6)
                                 } = maxFlowSegment ;
 
-    LossSegmentFactor(branch,los) $ { (useExternalLossModel) and
-                                      (branchLossBlocks(branch) = 6) and
+    LossSegmentFactor(branch,los) $ { (branchLossBlocks(branch) = 6) and
                                       (ord(los) = 6)
                                     } = 0.01 * (2 - (0.75*lossCoeff_C))
                                       * branchResistance(branch)
@@ -2076,7 +1985,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *   6e. Solve Models
 
 *   Solve the LP model ---------------------------------------------------------
-    if( (Sum[currTP, VSPDModel(currTP)] = 0),
+    if( (Sum[currTP, vSPDmodel(currTP)] = 0),
         option bratio = 1 ;
         vSPD.reslim = LPTimeLimit ;
         vSPD.iterlim = LPIterationLimit ;
@@ -2117,8 +2026,8 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *   Solve the LP model end -----------------------------------------------------
 
 
-*   Solve the VSPD_MIP model ---------------------------------------------------
-    elseif (Sum[currTP, VSPDModel(currTP)] = 1),
+*   Solve the vSPD_MIP model ---------------------------------------------------
+    elseif (Sum[currTP, vSPDmodel(currTP)] = 1),
 *       Fix the values of the integer variables that are not needed
         ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),fd)
             $ { HVDClink(branch) or
@@ -2173,7 +2082,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         else
             loop(currTP,
                 unsolvedPeriod(currTP) = yes;
-                VSPDModel(currTP) = 4;
+                vSPDmodel(currTP) = 4;
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
                                 'is solved unsuccessfully for FULL integer.'/
             ) ;
@@ -2182,7 +2091,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *   Solve the vSPD_BranchFlowMIP -----------------------------------------------
-    elseif (Sum[currTP, VSPDModel(currTP)] = 2),
+    elseif (Sum[currTP, vSPDmodel(currTP)] = 2),
 *       Fix the values of these integer variables that are not needed
         ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),fd)
             $ { HVDClink(branch) or
@@ -2231,7 +2140,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         else
             loop(currTP,
                 unsolvedPeriod(currTP) = yes;
-                VSPDModel(currTP) = 4;
+                vSPDmodel(currTP) = 4;
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
                                 'is solved unsuccessfully for branch integer.'/
             ) ;
@@ -2240,7 +2149,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *   Solve the vSPD_MixedConstraintMIP model ------------------------------------
-    elseif (Sum[currTP, VSPDModel(currTP)] = 3),
+    elseif (Sum[currTP, vSPDmodel(currTP)] = 3),
 *       Fix the value of some binary variables used in the mixed constraints
 *       that have no alternate limit
         MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCstr))
@@ -2276,7 +2185,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         else
             loop(currTP,
                 unsolvedPeriod(currTP) = yes;
-                VSPDModel(currTP) = 1;
+                vSPDmodel(currTP) = 1;
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
                                 'is solved unsuccessfully for '
                                 'mixed constraint integer.'/
@@ -2286,7 +2195,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *   Solve the LP model and stop ------------------------------------------------
-    elseif (Sum[currTP, VSPDModel(currTP)] = 4),
+    elseif (Sum[currTP, vSPDmodel(currTP)] = 4),
         option bratio = 1 ;
         vSPD.reslim = LPTimeLimit ;
         vSPD.iterlim = LPIterationLimit ;
@@ -2332,7 +2241,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         useBranchFlowMIP(currTP) = 0 ;
         useMixedConstraintMIP(currTP) = 0 ;
 *       Check if there is no branch circular flow and non-physical losses
-        Loop( currTP $ { (VSPDModel(currTP)=0) or (VSPDModel(currTP)=3) } ,
+        Loop( currTP $ { (vSPDmodel(currTP)=0) or (vSPDmodel(currTP)=3) } ,
 
 *           Check if there are circulating branch flows on loss AC branches
             circularBranchFlowExist(ACbranch)
@@ -2447,7 +2356,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *       Check if there is mixed constraint integer is required
-        Loop( currTP $ { (VSPDModel(currTP)=0) or (VSPDModel(currTP)=2) } ,
+        Loop( currTP $ { (vSPDmodel(currTP)=0) or (vSPDmodel(currTP)=2) } ,
 
 *           Check if integer variables are needed for mixed constraint
             if( useMixedConstraintRiskOffset,
@@ -2492,34 +2401,34 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *       Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
         loop( unsolvedPeriod(currTP),
             if( UseBranchFlowMIP(currTP)*UseMixedConstraintMIP(currTP) >= 1,
-                VSPDModel(currTP) = 1;
+                vSPDmodel(currTP) = 1;
                 putclose runlog 'The case: %vSPDinputData% requires a'
-                                'VSPD_MIP resolve for period ' currTP.tl
+                                'vSPD_MIP resolve for period ' currTP.tl
                                 '. Switching Vectorisation OFF.' /
 
             elseif UseBranchFlowMIP(currTP) >= 1,
-                if( VSPDModel(currTP) = 0,
-                    VSPDModel(currTP) = 2;
+                if( vSPDmodel(currTP) = 0,
+                    vSPDmodel(currTP) = 2;
                     putclose runlog 'The case: %vSPDinputData% requires a '
                                     'vSPD_BranchFlowMIP resolve for period '
                                     currTP.tl '. Switching Vectorisation OFF.'/
-                elseif VSPDModel(currTP) = 3,
-                    VSPDModel(currTP) = 1;
+                elseif vSPDmodel(currTP) = 3,
+                    vSPDmodel(currTP) = 1;
                     putclose runlog 'The case: %vSPDinputData% requires a '
-                                    'VSPD_MIP resolve for period ' currTP.tl
+                                    'vSPD_MIP resolve for period ' currTP.tl
                                     '. Switching Vectorisation OFF.' /
                 );
 
             elseif UseMixedConstraintMIP(currTP) >= 1,
-                if( VSPDModel(currTP) = 0,
-                    VSPDModel(currTP) = 3;
+                if( vSPDmodel(currTP) = 0,
+                    vSPDmodel(currTP) = 3;
                     putclose runlog 'The case: %vSPDinputData% requires a '
                                     'vSPD_MixedConstraintMIP resolve for period '
                                     currTP.tl '. Switching Vectorisation OFF.' /
-                elseif VSPDModel(currTP) = 2,
-                    VSPDModel(currTP) = 1;
+                elseif vSPDmodel(currTP) = 2,
+                    vSPDmodel(currTP) = 1;
                     putclose runlog 'The case: %vSPDinputData% requires a '
-                                    'VSPD_MIP resolve for period ' currTP.tl
+                                    'vSPD_MIP resolve for period ' currTP.tl
                                     '. Switching Vectorisation OFF.' /
                 );
 
@@ -4027,23 +3936,31 @@ loop(i_dateTimeTradePeriodMap(dt,tp) $ Sum[ (tp1,sarea), cptPassed(tp1,sarea)],
 $endif.ScarcityNormalReport
 *   Recalculating price-relating summary outputs end
 
-
 $endif.Scarcity
 
+
 $ifthen.vSPDreport not %opMode%==2
-$onend
+
+$endif.vSPDreport
+
+
+*=====================================================================================
+* 8. Write results to GDX files
+*=====================================================================================
+
+* Normal vSPD run output
+$ifthen.NormalReport not %opMode%==2
+
 * Unmapped deficit bus
 * If the deficit is assigned to a bus which does not map directly to a node, follow the no-loss branches
 * that connect this bus to the nearest bus mapped to a node, and set that node price equal to the deficit
 * generation price
-
-Set
-  o_unmappedDeficitBus(dt,b)   'List of buses that have deficit generation (price) but are not mapped to any pnode'
-;
+Set o_unmappedDeficitBus(dt,b)   'List of buses that have deficit generation (price) but are not mapped to any pnode' ;
 
 o_unmappedDeficitBus(dt,b) $ o_busDeficit_TP(dt,b)
     = yes $ (Sum[ n, busNodeAllocationFactor(dt,b,n)] = 0);
 
+$onend
 loop i_dateTimeTradePeriodMap(dt,tp)$Sum[b $ o_unmappedDeficitBus(dt,b), 1] do
     While Sum[b $ o_unmappedDeficitBus(dt,b), 1] do
       Loop b $ o_unmappedDeficitBus(dt,b) do
@@ -4072,15 +3989,6 @@ loop i_dateTimeTradePeriodMap(dt,tp)$Sum[b $ o_unmappedDeficitBus(dt,b), 1] do
     o_busDeficit_TP(dt,b) $ bus(tp,b) = DEFICITBUSGENERATION.l(tp,b);
 Endloop;
 $offend
-$endif.vSPDreport
-
-
-*=====================================================================================
-* 8. Write results to GDX files
-*=====================================================================================
-
-* Normal vSPD run output
-$ifthen.NormalReport not %opMode%==2
 
 o_fromDateTime(dt)$( ord(dt) = 1 ) = yes ;
 

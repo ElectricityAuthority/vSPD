@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     19 March 2015
+* Last modified on:     23 March 2015
 *=====================================================================================
 
 $ontext
@@ -28,11 +28,9 @@ Use GAMS to process a text file (e.g. somefile.gms) into a GDX file called filen
 e.g. c:\>gams somefile.gms gdx=filename
 
 Directory of code sections in vSPDoverrides.gms:
-  1. Excel interface - declare and initialise overrides
-  2. Declare all symbols required for vSPD on EMI and standalone overrides and load data from GDX
-  3. Initialise the data
-     a) Demand overrides
-     b) Offers
+  1. Declare all symbols required for vSPD on EMI and standalone overrides and load data from GDX
+  2. Initialise the demand overrides
+  3. Initialise the offer overrides - incl. energy, PLSR, TWDR, and ILR
      ...
 
 Aliases to be aware of:
@@ -47,186 +45,139 @@ Aliases to be aware of:
   i_ILRofferComponent = ILofrCmpnt          i_energyBidComponent = NRGbidCmpnt
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
-  i_genericConstraint = gnrcCstr
+  i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
+  i_reserveType = resT                      i_reserveClass = resC 
 $offtext
 
+$onEnd
+
+
 
 *=========================================================================================================================
-* 1. Excel interface - declare and initialise overrides
+* 1. Declare all symbols required for vSPD on EMI and standalone overrides and load data from GDX
 *=========================================================================================================================
 
-$ifthen.ExcelInterface %interfaceMode%==1
-
-Parameters
-  i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt)  'Override for energy offers for specified trade period'
-  i_offerParamOvrd(tp,i_offer,i_offerParam)         'Override for energy offer parameters for specified trade period'
-  i_nodeDemandOvrd(tp,n)                            'Override MW nodal demand for specified trade period'
-  i_islandDemandOvrd(tp,ild)                        'Scaling factor for island demand for specified trade period'
-  tradePeriodNodeDemandTemp(tp,n)                   'Temporary trade period node demand for use in override calculations using i_islandDemandOvrd'
-  ;
-$onecho > overridesFromExcel.ins
-  par = i_energyOfferOvrd       rng = i_energyOfferOvrd       rdim = 4
-  par = i_offerParamOvrd        rng = i_offerParamOvrd        rdim = 3
-  par = i_nodeDemandOvrd        rng = i_nodeDemandOvrd        rdim = 2
-  par = i_islandDemandOvrd      rng = i_islandDemandOvrd      rdim = 2
-$offecho
-
-* Update the override path and file name for the xls overrides
-$call 'gdxxrw "%programPath%\%vSPDinputFileName%.xls" o=%ovrdPath%\overridesFromExcel.gdx "@overridesFromExcel.ins"'
-$gdxin "%ovrdPath%\overridesFromExcel"
-$load i_energyOfferOvrd i_offerParamOvrd i_nodeDemandOvrd i_islandDemandOvrd
-$gdxin
-
-* Island demand overrides
-tradePeriodNodeDemandTemp(tp,n) = 0 ;
-tradePeriodNodeDemandTemp(tp,n) = i_tradePeriodNodeDemand(tp,n) ;
-
-* Apply island scaling factor to a node if scaling factor > 0 and the node demand > 0
-i_tradePeriodNodeDemand(tp,n) $ { ( tradePeriodNodeDemandTemp(tp,n) > 0 ) and
-                                  ( sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
-                                                     i_tradePeriodBusIsland(tp,b,ild)
-                                                   }, i_islandDemandOvrd(tp,ild)
-                                       ] > 0
-                                   )
-                                }
-    = sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
-                       i_tradePeriodBusIsland(tp,b,ild)
-                     }, i_tradePeriodNodeBusAllocationFactor(tp,n,b)
-                      * i_islandDemandOvrd(tp,ild)
-                      * tradePeriodNodeDemandTemp(tp,n)
-         ] ;
-
-* Apply island scaling factor to a node if scaling factor = eps (0) and the node demand > 0
-i_tradePeriodNodeDemand(tp,n) $ { ( tradePeriodNodeDemandTemp(tp,n) > 0 ) and
-                                    ( sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
-                                                       i_tradePeriodBusIsland(tp,b,ild) and
-                                                       i_islandDemandOvrd(tp,ild) and
-                                                       ( i_islandDemandOvrd(tp,ild) = eps )
-                                                     }, 1
-                                         ] > 0 )
-                                }
-    = 0 ;
-
-* Node demand overrides
-i_tradePeriodNodeDemand(tp,n)$i_nodeDemandOvrd(tp,n) = i_nodeDemandOvrd(tp,n) ;
-i_tradePeriodNodeDemand(tp,n)$( i_nodeDemandOvrd(tp,n) * ( i_nodeDemandOvrd(tp,n) = eps ) ) = 0 ;
-
-* Energy offer overrides
-i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) > 0 )
-  = i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) ;
-i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)$
-  ( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) * ( i_energyOfferOvrd(tp,i_offer,trdBlk,NRGofrCmpnt) = eps ) )
-   = 0 ;
-
-* Offer parameter overrides
-i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)$( i_offerParamOvrd(tp,i_offer,i_offerParam) > 0 ) = i_offerParamOvrd(tp,i_offer,i_offerParam) ;
-i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)${ i_offerParamOvrd(tp,i_offer,i_offerParam) and
-                                                       ( i_offerParamOvrd(tp,i_offer,i_offerParam) = eps ) } = 0 ;
-
-$endif.ExcelInterface
-
-
-
-
-
-$ifthen.NotExcelInterface not %interfaceMode%==1
-*=========================================================================================================================
-* 2. Declare all symbols required for vSPD on EMI and standalone overrides and load data from GDX
-*=========================================================================================================================
+Set resCmpnt 'Components of the reserve offer' / set.PLSofrCmpnt, set.TWDofrCmpnt, set.ILofrCmpnt /;
+Display resCmpnt;
 
 Parameters
 * Demand
-  ovrd_tradePeriodNodeDemand(tp,n,demMethod)       'Override the i_tradePeriodNodeDemand parameter'
-  ovrd_tradePeriodIslandDemand(tp,ild,demMethod)   'Override the i_tradePeriodNodeDemand parameter with island-based data'
-  ovrd_dateTimeNodeDemand(dt,n,demMethod)          'Override the i_tradePeriodNodeDemand parameter with dateTime data'
-  ovrd_dateTimeIslandDemand(dt,ild,demMethod)      'Override the i_tradePeriodNodeDemand parameter with dateTime and island-based data'
-  tempTradePeriodNodeDemand(tp,n)                  'Temporary container for node demand value while implementing the node-based scaling factor'
-  tempTradePeriodIslandDemand(tp,ild)              'Temporary container for island positive demand value while implementing the island-based scaling factor'
-  usedTradePeriodIslandScale(tp,ild)               'Final value used for island-based scaling'
+  ovrd_tradePeriodNodeDemand(tp,n,demMethod)                 'Override the i_tradePeriodNodeDemand parameter'
+  ovrd_dateTimeNodeDemand(dt,n,demMethod)                    'Override the i_tradePeriodNodeDemand parameter with dateTime data'
+
+  ovrd_tradePeriodIslandDemand(tp,ild,demMethod)             'Override the i_tradePeriodNodeDemand parameter with island-based data'
+  ovrd_dateTimeIslandDemand(dt,ild,demMethod)                'Override the i_tradePeriodNodeDemand parameter with dateTime and island-based data'
+
+  temp_TradePeriodNodeDemand(tp,n)                           'Temporary container for node demand value while implementing the node-based scaling factor'
+  temp_TradePeriodIslandDemand(tp,ild)                       'Temporary container for island positive demand value while implementing the island-based scaling factor'
+  used_TradePeriodIslandScale(tp,ild)                        'Final value used for island-based scaling'
+
 * Offers - incl. energy, PLSR, TWDR, and ILR
-* ... TBD
+  ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt) 'Override for energy offers for specified trade period'
+  ovrd_dateTimeEnergyOffer(dt,i_offer,trdBlk,NRGofrCmpnt)    'Override for energy offers for specified datetime'
+
+  ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam)    'Override for energy offer parameters for specified trade period'
+  ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam)       'Override for energy offer parameters for specified datetime'
+
+  ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt)    'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeReserveOffer(dt,o,trdBlk,resC,resCmpnt)       'Override for reserve offers for specified datetime'
+
+* Bid data
+  ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)     'Override for energy bids for specified trading periods'
+  ovrd_dateTimeEnergyBid(dt,i_bid,trdBlk,NRGbidCmpnt)        'Override for energy bids for specified datetime'
   ;
 
-$gdxin "%ovrdPath%%vSPDinputOvrdData%.gdx"
-$load ovrd_tradePeriodNodeDemand = demandOverrides
-$load ovrd_tradePeriodIslandDemand = demandOverrides
-$load ovrd_dateTimeNodeDemand = demandOverrides
-$load ovrd_dateTimeIslandDemand = demandOverrides
-$gdxin
-
 
 
 *=========================================================================================================================
-* 3. Initialise the data
+* 2. Initialise the demand overrides
 *=========================================================================================================================
-
-* a) Demand overrides
 *    Note that demMethod is declared in vSPDsolve.gms. Elements include scale, increment, and value where:
 *      - scaling is applied first,
 *      - increments are applied second and take precedence over scaling, and
 *      - values are applied last and take precedence over increments.
 
+* Loading data from GDX file
+$gdxin "%ovrdPath%%vSPDinputOvrdData%.gdx"
+$load ovrd_tradePeriodNodeDemand = ovrd_tradePeriodNodeDemand
+$load ovrd_tradePeriodIslandDemand = ovrd_tradePeriodNodeDemand
+$load ovrd_dateTimeNodeDemand = ovrd_tradePeriodNodeDemand
+$load ovrd_dateTimeIslandDemand = ovrd_tradePeriodNodeDemand
+$gdxin
+
+
+* Overwrite period demand override by datetime demand override if datetime demand override exists (>0)
+Loop i_dateTimeTradePeriodMap(dt,tp) do
+    ovrd_tradePeriodNodeDemand(tp,n,demMethod)
+        $ ovrd_dateTimeNodeDemand(dt,n,demMethod)
+        = ovrd_dateTimeNodeDemand(dt,n,demMethod);
+
+    ovrd_tradePeriodIslandDemand(tp,ild,demMethod)
+        $ ovrd_dateTimeIslandDemand(dt,ild,demMethod)
+        = ovrd_dateTimeIslandDemand(dt,ild,demMethod);
+endLoop ;
+
+
 * Store current node and island demand into temporary parameters
-tempTradePeriodNodeDemand(tp,n) = 0 ;
-tempTradePeriodIslandDemand(tp,ild) = 0;
+temp_TradePeriodNodeDemand(tp,n) = 0 ;
+temp_TradePeriodIslandDemand(tp,ild) = 0;
 
-tempTradePeriodNodeDemand(tp,n) = i_tradePeriodNodeDemand(tp,n) ;
-
-tempTradePeriodIslandDemand(tp,ild)
+temp_TradePeriodNodeDemand(tp,n) = i_tradePeriodNodeDemand(tp,n) ;
+temp_TradePeriodIslandDemand(tp,ild)
     = Sum[ (n,b) $ { i_tradePeriodNodeBus(tp,n,b) and
                      i_tradePeriodBusIsland(tp,b,ild) and
-                     (tempTradePeriodNodeDemand(tp,n) > 0) and
+                     (temp_TradePeriodNodeDemand(tp,n) > 0) and
                      (Sum[ bd $ { sameas(n,bd) and
                                   i_tradePeriodDispatchableBid(tp,bd)
                                 }, 1 ] = 0)
                      }
-                 , tempTradePeriodNodeDemand(tp,n)
+                 , temp_TradePeriodNodeDemand(tp,n)
                  * i_tradePeriodNodeBusAllocationFactor(tp,n,b)
          ] ;
 
-usedTradePeriodIslandScale(tp,ild) = 1;
+used_TradePeriodIslandScale(tp,ild) = 1;
 
 * Apply island scaling factor to an island if scaling factor exist
-usedTradePeriodIslandScale(tp,ild)
+used_TradePeriodIslandScale(tp,ild)
     $ ovrd_tradePeriodIslandDemand(tp,ild,'scale')
     = ovrd_tradePeriodIslandDemand(tp,ild,'scale') ;
 
 * Apply island scaling factor to an island if scaling factor = eps (i.e. zero)
-usedTradePeriodIslandScale(tp,ild)
+used_TradePeriodIslandScale(tp,ild)
     $ { ovrd_tradePeriodIslandDemand(tp,ild,'scale')
     and (ovrd_tradePeriodIslandDemand(tp,ild,'scale') = eps) }
     = 0 ;
 
 * Apply island increments to an island if increments exist
-usedTradePeriodIslandScale(tp,ild)
+used_TradePeriodIslandScale(tp,ild)
     $ ovrd_tradePeriodIslandDemand(tp,ild,'increment')
     = 1 + [ ovrd_tradePeriodIslandDemand(tp,ild,'increment')
-          / tempTradePeriodIslandDemand(tp,ild)  ] ;
+          / temp_TradePeriodIslandDemand(tp,ild)  ] ;
 
 * Apply island values to an island if values exist
-usedTradePeriodIslandScale(tp,ild)
+used_TradePeriodIslandScale(tp,ild)
     $ ovrd_tradePeriodIslandDemand(tp,ild,'value')
     = ovrd_tradePeriodIslandDemand(tp,ild,'value')
-    / tempTradePeriodIslandDemand(tp,ild) ;
+    / temp_TradePeriodIslandDemand(tp,ild) ;
 
 * Apply island values to an island if value = eps (i.e. zero)
-usedTradePeriodIslandScale(tp,ild)
+used_TradePeriodIslandScale(tp,ild)
     $ { ovrd_tradePeriodIslandDemand(tp,ild,'value')
     and (ovrd_tradePeriodIslandDemand(tp,ild,'value') = eps) }
     = 0 ;
 
 * Allocate island demand override value to node demand
-i_tradePeriodNodeDemand(tp,n) $ (tempTradePeriodNodeDemand(tp,n) > 0)
+i_tradePeriodNodeDemand(tp,n) $ (temp_TradePeriodNodeDemand(tp,n) > 0)
     = Sum[ (b,ild) $ { i_tradePeriodNodeBus(tp,n,b) and
                        i_tradePeriodBusIsland(tp,b,ild)
-                     } , usedTradePeriodIslandScale(tp,ild)
+                     } , used_TradePeriodIslandScale(tp,ild)
                        * i_tradePeriodNodeBusAllocationFactor(tp,n,b)
-                       * tempTradePeriodNodeDemand(tp,n)
+                       * temp_TradePeriodNodeDemand(tp,n)
          ]  ;
 
 * Node demand overrides --> overwriten island override as node level
 i_tradePeriodNodeDemand(tp,n) $ ovrd_tradePeriodNodeDemand(tp,n,'scale')
-    = tempTradePeriodNodeDemand(tp,n)
+    = temp_TradePeriodNodeDemand(tp,n)
     * ovrd_tradePeriodNodeDemand(tp,n,'scale') ;
 
 i_tradePeriodNodeDemand(tp,n)
@@ -235,7 +186,7 @@ i_tradePeriodNodeDemand(tp,n)
     = 0;
 
 i_tradePeriodNodeDemand(tp,n) $ ovrd_tradePeriodNodeDemand(tp,n,'increment')
-    = tempTradePeriodNodeDemand(tp,n)
+    = temp_TradePeriodNodeDemand(tp,n)
     + ovrd_tradePeriodNodeDemand(tp,n,'increment');
 
 i_tradePeriodNodeDemand(tp,n) $ ovrd_tradePeriodNodeDemand(tp,n,'value')
@@ -247,19 +198,110 @@ i_tradePeriodNodeDemand(tp,n)
     = 0;
 
 
-* b) Offers - incl. energy, PLSR, TWDR, and ILR
-* ... TBD
 
 
 
-* End of vSPD on EMI and standalone override assignments
-$endif.NotExcelInterface
+*=========================================================================================================================
+* 3. Initialise the offer overrides - incl. energy, PLSR, TWDR, and ILR
+*=========================================================================================================================
+$ifthen.ExcelInterface %interfaceMode%==1
+
+*Loading data from gdx file
+$gdxin "%ovrdPath%%vSPDinputOvrdData%.gdx"
+$load ovrd_tradePeriodEnergyOffer ovrd_tradePeriodOfferParameter
+$load ovrd_dateTimeEnergyOffer = ovrd_tradePeriodEnergyOffer
+$load ovrd_dateTimeOfferParameter = ovrd_tradePeriodOfferParameter
+$load ovrd_tradePeriodReserveOffer
+$load ovrd_dateTimeReserveOffer = ovrd_tradePeriodReserveOffer
+$gdxin
+*  ovrd_tradePeriodReserveOffer(tp,o,trdBlk,i_reserveClass,i_reserveType,PLSofrCmpnt)   'Override for reserve offers for specified trading periods'
+*  ovrd_dateTimeReserveOffer(dt,o,trdBlk,i_reserveClass,i_reserveType,PLSofrCmpnt)      'Override for reserve offers for specified datetime'
+
+* Overwrite period offer override by datetime offer override if datetime offer override exists (>0)
+Loop i_dateTimeTradePeriodMap(dt,tp) do
+    ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)
+        $ ovrd_dateTimeEnergyOffer(dt,i_offer,trdBlk,NRGofrCmpnt)
+        = ovrd_dateTimeEnergyOffer(dt,i_offer,trdBlk,NRGofrCmpnt);
+
+    ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam)
+        $ ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam)
+        = ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam);
+
+    ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt)
+        $ ovrd_dateTimeReserveOffer(dt,o,trdBlk,resC,resCmpnt)
+        = ovrd_dateTimeReserveOffer(dt,o,trdBlk,resC,resCmpnt);
+EndLoop;
+
+
+* Energy offer overrides
+i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)
+    $ (ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt) > 0)
+    = ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt) ;
+
+i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)
+    $ { ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)
+    and (ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt) = eps)
+      } = 0 ;
+
+* Offer parameter overrides
+i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)
+    $ (ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam) > 0)
+    = ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam) ;
+
+i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)
+    $ { ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam)
+    and (ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam) = eps )
+      } = 0 ;
+
+* PLSR offer overrides
+i_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(PLSofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
+    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(PLSofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+
+i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(PLSofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
+    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(PLSofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+
+* TWDR offer overrides
+i_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(TWDofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
+    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(TWDofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+
+i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(TWDofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
+    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(TWDofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+
+* ILR offer overrides
+i_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)
+    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(ILofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
+    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(ILofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+
+i_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)
+    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(ILofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
+    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(ILofrCmpnt,resCmpnt)}
+         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+
+
+$endif.ExcelInterface
+
+$offEnd
+
+
+
+
 
 $goto theEnd
-
-
-
-
 
 $ontext
 
@@ -1181,4 +1223,6 @@ i_tradePeriodRiskParameter(tp,ild,i_reserveClass,i_riskClass,i_riskParameter)$(t
 $offtext
 
 $label theEnd
+
+
 * End of file

@@ -5,7 +5,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 January 2015
+* Last modified on:     23 March 2015
 *=====================================================================================
 
 $ontext
@@ -15,6 +15,7 @@ Directory of code sections in vSPDmodel.gms:
   3. Declare model variables and constraints, and initialise constraints
 
 Aliases to be aware of:
+
   i_island = ild, ild1                      i_dateTime = dt
   i_tradePeriod = tp                        i_node = n
   i_offer = o, o1                           i_trader = trdr
@@ -26,7 +27,8 @@ Aliases to be aware of:
   i_ILRofferComponent = ILofrCmpnt          i_energyBidComponent = NRGbidCmpnt
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
-  i_genericConstraint = gnrcCstr
+  i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
+  i_reserveType = resT                      i_reserveClass = resC 
 $offtext
 
 
@@ -88,7 +90,8 @@ Alias (i_dateTime,dt),                      (i_tradePeriod,tp,tp1),             
       (i_ILRofferComponent,ILofrCmpnt),     (i_energyBidComponent,NRGbidCmpnt), (i_ILRbidComponent,ILbidCmpnt)
       (i_type1MixedConstraint,t1MixCstr),   (i_type2MixedConstraint,t2MixCstr), (i_type1MixedConstraintRHS,t1MixCstrRHS)
       (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1),           (i_scarcityArea,sarea)
-      (i_bid,bd,bd1),                        (i_flowDirection,fd,fd1);
+      (i_bid,bd,bd1),                       (i_flowDirection,fd,fd1)
+      (i_reserveType,resT),                 (i_reserveClass,resC) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
@@ -235,14 +238,14 @@ Scalars
   MIPiterationLimit                        'Iteration limit allowed for MIP solves'
   MIPoptimality
   disconnectedNodePriceCorrection
-  useExternalLossModel
-  lossCoeff_A
-  lossCoeff_C
-  lossCoeff_D
-  lossCoeff_E
-  lossCoeff_F
-  maxFlowSegment
   tradePeriodReports
+* External loss model from Transpower
+  lossCoeff_A                             / 0.3101 /
+  lossCoeff_C                             / 0.14495 /
+  lossCoeff_D                             / 0.32247 /
+  lossCoeff_E                             / 0.46742 /
+  lossCoeff_F                             / 0.82247 /
+  maxFlowSegment                          / 10000 /
   ;
 
 Sets

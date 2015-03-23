@@ -40,18 +40,8 @@ Scalar disconnectedNodePriceCorrection   / 1 / ;
 $setglobal varResv                        -1
 
 
-*+++ External loss model from Transpower +++
-Scalar useExternalLossModel              / 1 / ;
-Scalar lossCoeff_A                       / 0.3101 / ;
-Scalar lossCoeff_C                       / 0.14495 / ;
-Scalar lossCoeff_D                       / 0.32247 / ;
-Scalar lossCoeff_E                       / 0.46742 / ;
-Scalar lossCoeff_F                       / 0.82247 / ;
-Scalar maxFlowSegment                    / 10000 / ;
-
-
 *+++ Various switches +++
-$setglobal interfaceMode                   2       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
-$setglobal suppressOverrides               1       ! Specify 1 to suppress reading and implementing the selected override file
+$setglobal interfaceMode                   1       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
+$setglobal suppressOverrides               0       ! Specify 1 to suppress reading and implementing the selected override file
 $setglobal opMode                          0       ! Specify 1 for data warehouse; -1 for audit; 2 for FTR Rental, otherwise usual vSPD mode
 Scalar     tradePeriodReports            / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
