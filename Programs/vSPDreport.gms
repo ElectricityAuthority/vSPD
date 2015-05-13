@@ -5,12 +5,12 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 January 2015
+* Last modified on:     8 May 2015
 *=====================================================================================
 
 
 * Include some settings
-$include vSPDpaths.inc
+$include vSPDpaths.inc 
 $include vSPDsettings.inc
 $include vSPDcase.inc
 

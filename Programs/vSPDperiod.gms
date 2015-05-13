@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 January 2015
+* Last modified on:     11 May 2015
 *=====================================================================================
 
 $include vSPDpaths.inc
@@ -82,10 +82,9 @@ scarcityPricingGDXGDate = 41785;
 * Calculate the Gregorian date of the input data
 inputGDXGDate = jdate(i_year,i_month,i_day) ;
 
-$gdxin "%inputPath%\%vSPDinputData%.gdx"
 * Scarcity pricing flag
 if(inputGDXGDate >= scarcityPricingGDXGDate,
-    execute_load ScarcitySituationExists = i_tradePeriodScarcitySituationExists;
+    execute_load "%inputPath%\%vSPDinputData%.gdx" ScarcitySituationExists = i_tradePeriodScarcitySituationExists;
     if( Sum[ (stp,sarea), ScarcitySituationExists(stp,sarea) ] > 0,
         putclose vSPDcase "$setglobal  scarcityExists 1 ";
     else

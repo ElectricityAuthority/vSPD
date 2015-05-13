@@ -5,14 +5,14 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 January 2015
+* Last modified on:     8 May 2015
 *=====================================================================================
 
 
 $call cls
 $onecho > con
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*+++++++++++++++++++++ EXECUTING vSPD v2.0.0 +++++++++++++++++++++++
+*+++++++++++++++++++++ EXECUTING vSPD v2.0.4 +++++++++++++++++++++++
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 
@@ -20,9 +20,9 @@ $offecho
 *=====================================================================================
 *Include paths and settings files
 *=====================================================================================
-$if not exist vSPDpaths.inc  $call "copy IncFiles\*.inc"
-$include vSPDpaths.inc
+$if not exist vSPDsettings.inc  $call "copy IncFiles\*.inc"
 $include vSPDsettings.inc
+$include vSPDpaths.inc
 $setglobal outputfolder "%outputPath%%runName%\"
 
 
@@ -48,10 +48,11 @@ vSPDcase.lw = 0 ;   vSPDcase.sw = 0 ;
 *=====================================================================================
 * Install the set of input GDX file names over which the solve and reporting loops will operate
 *=====================================================================================
-Set i_fileName 'Input GDX file names'
+$Onempty
+Set i_fileName(*) 'Input GDX file names'
 $include vSPDfileList.inc
 ;
-
+$Offempty
 
 *=====================================================================================
 * Call vSPDsetup to establish the output folders etc for the current job

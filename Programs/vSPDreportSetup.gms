@@ -10,11 +10,10 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     12 January 2015
+* Last modified on:     8 May 2015
 *=====================================================================================
 
-
-$include vSPDpaths.inc
+$include vSPDpaths.inc  
 $include vSPDsettings.inc
 $setglobal outputfolder "%outputPath%%runName%\%runName%"
 $if not %opMode%==0 tradePeriodReports = 1;

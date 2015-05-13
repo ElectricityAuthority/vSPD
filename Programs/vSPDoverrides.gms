@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     23 March 2015
+* Last modified on:     8 May 2015
 *=====================================================================================
 
 $ontext
@@ -29,8 +29,9 @@ e.g. c:\>gams somefile.gms gdx=filename
 
 Directory of code sections in vSPDoverrides.gms:
   1. Declare all symbols required for vSPD on EMI and standalone overrides and load data from GDX
-  2. Initialise the demand overrides
-  3. Initialise the offer overrides - incl. energy, PLSR, TWDR, and ILR
+  2. Initialise the data
+     a) Demand overrides
+     b) Offers
      ...
 
 Aliases to be aware of:
@@ -45,68 +46,86 @@ Aliases to be aware of:
   i_ILRofferComponent = ILofrCmpnt          i_energyBidComponent = NRGbidCmpnt
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
-  i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
-  i_reserveType = resT                      i_reserveClass = resC 
+  i_genericConstraint = gnrcCstr            i_reserveType = resT
+  i_reserveClass =resC
 $offtext
-
-$onEnd
-
-
-
+$OnEnd
 *=========================================================================================================================
 * 1. Declare all symbols required for vSPD on EMI and standalone overrides and load data from GDX
 *=========================================================================================================================
-
-Set resCmpnt 'Components of the reserve offer' / set.PLSofrCmpnt, set.TWDofrCmpnt, set.ILofrCmpnt /;
-Display resCmpnt;
+Set demMethod        'Demand override method'               / scale, increment, value / ;
 
 Parameters
 * Demand
-  ovrd_tradePeriodNodeDemand(tp,n,demMethod)                 'Override the i_tradePeriodNodeDemand parameter'
-  ovrd_dateTimeNodeDemand(dt,n,demMethod)                    'Override the i_tradePeriodNodeDemand parameter with dateTime data'
+  ovrd_tradePeriodNodeDemand(tp,n,demMethod)       'Override the i_tradePeriodNodeDemand parameter'
+  ovrd_dateTimeNodeDemand(dt,n,demMethod)          'Override the i_tradePeriodNodeDemand parameter with dateTime data'
 
-  ovrd_tradePeriodIslandDemand(tp,ild,demMethod)             'Override the i_tradePeriodNodeDemand parameter with island-based data'
-  ovrd_dateTimeIslandDemand(dt,ild,demMethod)                'Override the i_tradePeriodNodeDemand parameter with dateTime and island-based data'
+  ovrd_tradePeriodIslandDemand(tp,ild,demMethod)   'Override the i_tradePeriodNodeDemand parameter with island-based data'
+  ovrd_dateTimeIslandDemand(dt,ild,demMethod)      'Override the i_tradePeriodNodeDemand parameter with dateTime and island-based data'
 
-  temp_TradePeriodNodeDemand(tp,n)                           'Temporary container for node demand value while implementing the node-based scaling factor'
-  temp_TradePeriodIslandDemand(tp,ild)                       'Temporary container for island positive demand value while implementing the island-based scaling factor'
-  used_TradePeriodIslandScale(tp,ild)                        'Final value used for island-based scaling'
+  temp_TradePeriodNodeDemand(tp,n)                 'Temporary container for node demand value while implementing the node-based scaling factor'
+  temp_TradePeriodIslandDemand(tp,ild)             'Temporary container for island positive demand value while implementing the island-based scaling factor'
+  used_TradePeriodIslandScale(tp,ild)              'Final value used for island-based scaling'
+;
 
+Parameters
 * Offers - incl. energy, PLSR, TWDR, and ILR
-  ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt) 'Override for energy offers for specified trade period'
-  ovrd_dateTimeEnergyOffer(dt,i_offer,trdBlk,NRGofrCmpnt)    'Override for energy offers for specified datetime'
+  ovrd_tradePeriodEnergyOffer(tp,o,trdBlk,NRGofrCmpnt)         'Override for energy offers for specified trade period'
+  ovrd_dateTimeEnergyOffer(dt,o,trdBlk,NRGofrCmpnt)            'Override for energy offers for specified datetime'
 
-  ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam)    'Override for energy offer parameters for specified trade period'
-  ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam)       'Override for energy offer parameters for specified datetime'
+  ovrd_tradePeriodOfferParameter(tp,o,i_offerParam)            'Override for energy offer parameters for specified trade period'
+  ovrd_dateTimeOfferParameter(dt,o,i_offerParam)               'Override for energy offer parameters for specified datetime'
 
-  ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt)    'Override for reserve offers for specified trading periods'
-  ovrd_dateTimeReserveOffer(dt,o,trdBlk,resC,resCmpnt)       'Override for reserve offers for specified datetime'
+  ovrd_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)  'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeSustainedPLSRoffer(dt,o,trdBlk,PLSofrCmpnt)     'Override for reserve offers for specified datetime'
+
+  ovrd_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)       'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeFastPLSRoffer(dt,o,trdBlk,PLSofrCmpnt)          'Override for reserve offers for specified datetime'
+
+  ovrd_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)  'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeSustainedTWDRoffer(dt,o,trdBlk,TWDofrCmpnt)     'Override for reserve offers for specified datetime'
+
+  ovrd_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)       'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeFastTWDRoffer(dt,o,trdBlk,TWDofrCmpnt)          'Override for reserve offers for specified datetime'
+
+  ovrd_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)    'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeSustainedILRoffer(dt,o,trdBlk,ILofrCmpnt)       'Override for reserve offers for specified datetime'
+
+  ovrd_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)         'Override for reserve offers for specified trading periods'
+  ovrd_dateTimeFastILRoffer(dt,o,trdBlk,ILofrCmpnt)            'Override for reserve offers for specified datetime'
+
+  ovrd_tradePeriodReserveClassGenerationMaximum(tp,o,resC)     'Override for MW used to determine factor to adjust maximum reserve of a reserve class'
+  ovrd_dateTimeReserveClassGenerationMaximum(dt,o,resC)        'Override for MW used to determine factor to adjust maximum reserve of a reserve class'
+
 
 * Bid data
-  ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)     'Override for energy bids for specified trading periods'
-  ovrd_dateTimeEnergyBid(dt,i_bid,trdBlk,NRGbidCmpnt)        'Override for energy bids for specified datetime'
-  ;
+  ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)       'Override for energy bids for specified trading periods'
+  ovrd_dateTimeEnergyBid(dt,i_bid,trdBlk,NRGbidCmpnt)          'Override for energy bids for specified datetime'
+  ovrd_tradePeriodDispatchableBid(tp,i_bid)                    'Override for energy bids for specified trading periods'
+  ovrd_datetimeDispatchableBid(dt,i_bid)                       'Override for energy bids for specified datetime'
+;
 
 
 
 *=========================================================================================================================
-* 2. Initialise the demand overrides
+* 2. Demand overrides
 *=========================================================================================================================
 *    Note that demMethod is declared in vSPDsolve.gms. Elements include scale, increment, and value where:
 *      - scaling is applied first,
 *      - increments are applied second and take precedence over scaling, and
 *      - values are applied last and take precedence over increments.
 
-* Loading data from GDX file
+
+*Loading data from gdx file
 $gdxin "%ovrdPath%%vSPDinputOvrdData%.gdx"
-$load ovrd_tradePeriodNodeDemand = ovrd_tradePeriodNodeDemand
-$load ovrd_tradePeriodIslandDemand = ovrd_tradePeriodNodeDemand
-$load ovrd_dateTimeNodeDemand = ovrd_tradePeriodNodeDemand
-$load ovrd_dateTimeIslandDemand = ovrd_tradePeriodNodeDemand
+$load ovrd_tradePeriodNodeDemand = demandOverrides
+$load ovrd_tradePeriodIslandDemand = demandOverrides
+$load ovrd_dateTimeNodeDemand = demandOverrides
+$load ovrd_dateTimeIslandDemand = demandOverrides
 $gdxin
 
 
-* Overwrite period demand override by datetime demand override if datetime demand override exists (>0)
+*overwrite period demand override by datetime demand override if datetime demand override exists (>0)
 Loop i_dateTimeTradePeriodMap(dt,tp) do
     ovrd_tradePeriodNodeDemand(tp,n,demMethod)
         $ ovrd_dateTimeNodeDemand(dt,n,demMethod)
@@ -115,7 +134,7 @@ Loop i_dateTimeTradePeriodMap(dt,tp) do
     ovrd_tradePeriodIslandDemand(tp,ild,demMethod)
         $ ovrd_dateTimeIslandDemand(dt,ild,demMethod)
         = ovrd_dateTimeIslandDemand(dt,ild,demMethod);
-endLoop ;
+EndLoop;
 
 
 * Store current node and island demand into temporary parameters
@@ -199,39 +218,91 @@ i_tradePeriodNodeDemand(tp,n)
 
 
 
-
-
 *=========================================================================================================================
-* 3. Initialise the offer overrides - incl. energy, PLSR, TWDR, and ILR
+* 3. Bid and Offer overrides - incl. bid, energy, PLSR, TWDR, and ILR
 *=========================================================================================================================
-$ifthen.ExcelInterface %interfaceMode%==1
-
 *Loading data from gdx file
 $gdxin "%ovrdPath%%vSPDinputOvrdData%.gdx"
-$load ovrd_tradePeriodEnergyOffer ovrd_tradePeriodOfferParameter
-$load ovrd_dateTimeEnergyOffer = ovrd_tradePeriodEnergyOffer
-$load ovrd_dateTimeOfferParameter = ovrd_tradePeriodOfferParameter
-$load ovrd_tradePeriodReserveOffer
-$load ovrd_dateTimeReserveOffer = ovrd_tradePeriodReserveOffer
-$gdxin
-*  ovrd_tradePeriodReserveOffer(tp,o,trdBlk,i_reserveClass,i_reserveType,PLSofrCmpnt)   'Override for reserve offers for specified trading periods'
-*  ovrd_dateTimeReserveOffer(dt,o,trdBlk,i_reserveClass,i_reserveType,PLSofrCmpnt)      'Override for reserve offers for specified datetime'
+$load ovrd_tradePeriodEnergyOffer = energyOfferOverrides
+$load ovrd_dateTimeEnergyOffer = energyOfferOverrides
 
-* Overwrite period offer override by datetime offer override if datetime offer override exists (>0)
+$load ovrd_tradePeriodOfferParameter = offerParameterOverrides
+$load ovrd_dateTimeOfferParameter = offerParameterOverrides
+$load ovrd_tradePeriodReserveClassGenerationMaximum = offerParameterOverrides
+$load ovrd_dateTimeReserveClassGenerationMaximum = offerParameterOverrides
+
+$load ovrd_tradePeriodFastILRoffer = fastILROfferOverrides
+$load ovrd_dateTimeFastILRoffer = fastILROfferOverrides
+$load ovrd_tradePeriodSustainedILRoffer = sustainedILROfferOverrides
+$load ovrd_dateTimeSustainedILRoffer = sustainedILROfferOverrides
+
+$load ovrd_tradePeriodFastPLSRoffer = fastPLSROfferOverrides
+$load ovrd_dateTimeFastPLSRoffer = fastPLSROfferOverrides
+$load ovrd_tradePeriodSustainedPLSRoffer = sustainedPLSROfferOverrides
+$load ovrd_dateTimeSustainedPLSRoffer = sustainedPLSROfferOverrides
+
+$load ovrd_tradePeriodFastTWDRoffer = fastTWDROfferOverrides
+$load ovrd_dateTimeFastTWDRoffer = fastTWDROfferOverrides
+$load ovrd_tradePeriodSustainedTWDRoffer = sustainedTWDROfferOverrides
+$load ovrd_dateTimeSustainedTWDRoffer = sustainedTWDROfferOverrides
+
+$load ovrd_tradePeriodEnergyBid = energyBidOverrides
+$load ovrd_dateTimeEnergyBid = energyBidOverrides
+$load ovrd_tradePeriodDispatchableBid = dispatchableEnergyBidOverrides
+$load ovrd_datetimeDispatchableBid = dispatchableEnergyBidOverrides
+;
+
+
+
+$gdxin
+
+*overwrite period offer override by datetime offer override if datetime offer override exists (>0)
 Loop i_dateTimeTradePeriodMap(dt,tp) do
-    ovrd_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)
-        $ ovrd_dateTimeEnergyOffer(dt,i_offer,trdBlk,NRGofrCmpnt)
-        = ovrd_dateTimeEnergyOffer(dt,i_offer,trdBlk,NRGofrCmpnt);
+    ovrd_tradePeriodEnergyOffer(tp,o,trdBlk,NRGofrCmpnt)
+        $ ovrd_dateTimeEnergyOffer(dt,o,trdBlk,NRGofrCmpnt)
+        = ovrd_dateTimeEnergyOffer(dt,o,trdBlk,NRGofrCmpnt) ;
 
     ovrd_tradePeriodOfferParameter(tp,i_offer,i_offerParam)
         $ ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam)
-        = ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam);
+        = ovrd_dateTimeOfferParameter(dt,i_offer,i_offerParam) ;
 
-    ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt)
-        $ ovrd_dateTimeReserveOffer(dt,o,trdBlk,resC,resCmpnt)
-        = ovrd_dateTimeReserveOffer(dt,o,trdBlk,resC,resCmpnt);
+    ovrd_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+        $ ovrd_dateTimeFastPLSRoffer(dt,o,trdBlk,PLSofrCmpnt)
+        = ovrd_dateTimeFastPLSRoffer(dt,o,trdBlk,PLSofrCmpnt) ;
+
+    ovrd_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+        $ ovrd_dateTimeSustainedPLSRoffer(dt,o,trdBlk,PLSofrCmpnt)
+        = ovrd_dateTimeSustainedPLSRoffer(dt,o,trdBlk,PLSofrCmpnt) ;
+
+    ovrd_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+        $ ovrd_dateTimeFastTWDRoffer(dt,o,trdBlk,TWDofrCmpnt)
+        = ovrd_dateTimeFastTWDRoffer(dt,o,trdBlk,TWDofrCmpnt) ;
+
+    ovrd_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+        $ ovrd_dateTimeSustainedTWDRoffer(dt,o,trdBlk,TWDofrCmpnt)
+        = ovrd_dateTimeSustainedTWDRoffer(dt,o,trdBlk,TWDofrCmpnt) ;
+
+    ovrd_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)
+        $ ovrd_dateTimeFastILRoffer(dt,o,trdBlk,ILofrCmpnt)
+        = ovrd_dateTimeFastILRoffer(dt,o,trdBlk,ILofrCmpnt) ;
+
+    ovrd_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)
+        $ ovrd_dateTimeSustainedILRoffer(dt,o,trdBlk,ILofrCmpnt)
+        = ovrd_dateTimeSustainedILRoffer(dt,o,trdBlk,ILofrCmpnt) ;
+
+    ovrd_tradePeriodReserveClassGenerationMaximum(tp,o,resC)
+        $ ovrd_dateTimeReserveClassGenerationMaximum(dt,o,resC)
+        = ovrd_dateTimeReserveClassGenerationMaximum(dt,o,resC) ;
+
+    ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)
+        $ ovrd_dateTimeEnergyBid(dt,i_bid,trdBlk,NRGbidCmpnt)
+        = ovrd_dateTimeEnergyBid(dt,i_bid,trdBlk,NRGbidCmpnt) ;
+
+    ovrd_tradePeriodDispatchableBid(tp,i_bid)
+        $ ovrd_datetimeDispatchableBid(dt,i_bid)
+        = ovrd_datetimeDispatchableBid(dt,i_bid) ;
 EndLoop;
-
+Display ovrd_tradePeriodOfferParameter;
 
 * Energy offer overrides
 i_tradePeriodEnergyOffer(tp,i_offer,trdBlk,NRGofrCmpnt)
@@ -255,47 +326,100 @@ i_tradePeriodOfferParameter(tp,i_offer,i_offerParam)
 
 * PLSR offer overrides
 i_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
-    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(PLSofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
-    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(PLSofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+    $ (ovrd_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt) > 0)
+    = ovrd_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt) ;
+
+i_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+    $ { ovrd_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+    and (ovrd_tradePeriodFastPLSRoffer(tp,o,trdBlk,PLSofrCmpnt) = eps)
+      } = 0 ;
 
 i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
-    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(PLSofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
-    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(PLSofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+    $ (ovrd_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt) > 0)
+    = ovrd_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt) ;
+
+i_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+    $ { ovrd_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt)
+    and (ovrd_tradePeriodSustainedPLSRoffer(tp,o,trdBlk,PLSofrCmpnt) = eps)
+      } = 0 ;
 
 * TWDR offer overrides
 i_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
-    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(TWDofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
-    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(TWDofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+    $ (ovrd_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt) > 0)
+    = ovrd_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt) ;
+
+i_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+    $ { ovrd_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+    and (ovrd_tradePeriodFastTWDRoffer(tp,o,trdBlk,TWDofrCmpnt) = eps)
+      } = 0 ;
 
 i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
-    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(TWDofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
-    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(TWDofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+    $ (ovrd_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt) > 0)
+    = ovrd_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt) ;
+
+i_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+    $ { ovrd_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt)
+    and (ovrd_tradePeriodSustainedTWDRoffer(tp,o,trdBlk,TWDofrCmpnt) = eps)
+      } = 0 ;
 
 * ILR offer overrides
 i_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)
-    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(ILofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
-    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 1) and sameas(ILofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+    $ (ovrd_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt) > 0)
+    =  ovrd_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt) ;
+
+i_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)
+    $ { ovrd_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt)
+    and (ovrd_tradePeriodFastILRoffer(tp,o,trdBlk,ILofrCmpnt) = eps)
+      } = 0 ;
 
 i_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)
-    $ Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(ILofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ]
-    = Sum[ (resC,resCmpnt) $ {(ord(resC) = 2) and sameas(ILofrCmpnt,resCmpnt)}
-         , ovrd_tradePeriodReserveOffer(tp,o,trdBlk,resC,resCmpnt) ] ;
+    $ (ovrd_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt) > 0)
+    =  ovrd_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt) ;
+
+i_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)
+    $ { ovrd_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt)
+    and (ovrd_tradePeriodSustainedILRoffer(tp,o,trdBlk,ILofrCmpnt) = eps)
+      } = 0 ;
+
+* Genertion Reserve Class Capacity
+i_tradePeriodReserveClassGenerationMaximum(tp,o,resC)
+    $ (ovrd_tradePeriodReserveClassGenerationMaximum(tp,o,resC) > 0)
+    = ovrd_tradePeriodReserveClassGenerationMaximum(tp,o,resC) ;
+
+i_tradePeriodReserveClassGenerationMaximum(tp,o,resC)
+    $ { ovrd_tradePeriodReserveClassGenerationMaximum(tp,o,resC)
+    and (ovrd_tradePeriodReserveClassGenerationMaximum(tp,o,resC) = eps)
+      } = 0 ;
+
+* Enegry bid overrides
+i_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)
+    $ (ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt) > 0)
+    = ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt) ;
+
+i_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)
+    $ { ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt)
+    and (ovrd_tradePeriodEnergyBid(tp,i_bid,trdBlk,NRGbidCmpnt) = eps)
+      } = 0 ;
+
+i_tradePeriodDispatchableBid(tp,i_bid)
+    $ (ovrd_tradePeriodDispatchableBid(tp,i_bid) > 0) = yes ;
+
+i_tradePeriodDispatchableBid(tp,i_bid)
+    $ { ovrd_tradePeriodDispatchableBid(tp,i_bid)
+    and (ovrd_tradePeriodDispatchableBid(tp,i_bid) = eps)
+      } = no ;
 
 
-$endif.ExcelInterface
 
-$offEnd
+
+
+$OffEnd
+
+
+
+
+
+
 
 
 
@@ -1223,6 +1347,4 @@ i_tradePeriodRiskParameter(tp,ild,i_reserveClass,i_riskClass,i_riskParameter)$(t
 $offtext
 
 $label theEnd
-
-
 * End of file

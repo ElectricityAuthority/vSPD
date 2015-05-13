@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     23 March 2015
+* Last modified on:     8 May 2015
 *=====================================================================================
 
 $ontext
@@ -45,12 +45,12 @@ Aliases to be aware of:
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
   i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
-  i_reserveType = resT                      i_reserveClass = resC 
+  i_reserveType = resT                      i_reserveClass = resC
 $offtext
 
 
 * Include paths, settings and case name files
-$include vSPDpaths.inc
+$include vSPDpaths.inc 
 $include vSPDsettings.inc
 $include vSPDcase.inc
 
@@ -151,7 +151,6 @@ $offtext
   i_monthNum       'Month number'                         / 1*12 /
   i_yearNum        'Year number'                          / 1900*2200 /
   fromTo           'From/To - for override dates'         / frm, to /
-  demMethod        'Demand override method'               / scale, increment, value /
   ;
 
 Alias (i_dayNum,day), (i_monthNum,mth), (i_yearNum,yr) ;
@@ -176,12 +175,17 @@ Sets
   o_branchToBus_TP(dt,br,toB)                         'To bus for set of branches for output report'
   o_brConstraint_TP(dt,brCstr)                        'Set of branch constraints for output report'
   o_MnodeConstraint_TP(dt,MnodeCstr)                  'Set of Mnode constraints for output report'
+
+* Scarcity pricing updates
   scarcityAreaIslandMap(sarea,ild)                    'Mapping of scarcity area to island'
+
+* Tuong update
   unsolvedPeriod(tp)                                  'Set of periods that are not solved yet'
   ;
 
 Parameters
-  vSPDmodel(tp)                                       'Applied model flag 0=vSPD, 1=vSPD_MIP, 2=vSPD_BranchFlowMIP, 3=vSPD_MixedConstraintMIP, 4=vSPD (last solve)'
+* Tuong update
+  VSPDModel(tp)   'Applied model flag 0=VSPD, 1=VSPD_MIP, 2=vSPD_BranchFlowMIP, 3=vSPD_MixedConstraintMIP, 4=VSPD (last solve)'
 
 * Main iteration counter
   iterationCount                                      'Iteration counter for the solve'
@@ -630,8 +634,8 @@ $ontext
    etc. But it probably makes sense to mimic the GDX file as used by EMI.
 $offtext
 
-
-$if not %suppressOverrides%==1 $include vSPDoverrides.gms
+$if exist %ovrdPath%%vSPDinputOvrdData%.gdx  $include vSPDoverrides.gms
+*$if not %suppressOverrides%==1 $include vSPDoverrides.gms
 
 
 
@@ -731,7 +735,7 @@ numTradePeriods = card(tp) ;
 *=====================================================================================
 
 unsolvedPeriod(tp) = yes;
-vSPDmodel(tp) = 0 ;
+VSPDModel(tp) = 0 ;
 option clear = useBranchFlowMIP ;
 option clear = useMixedConstraintMIP ;
 
@@ -1985,7 +1989,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *   6e. Solve Models
 
 *   Solve the LP model ---------------------------------------------------------
-    if( (Sum[currTP, vSPDmodel(currTP)] = 0),
+    if( (Sum[currTP, VSPDModel(currTP)] = 0),
         option bratio = 1 ;
         vSPD.reslim = LPTimeLimit ;
         vSPD.iterlim = LPIterationLimit ;
@@ -2026,8 +2030,8 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *   Solve the LP model end -----------------------------------------------------
 
 
-*   Solve the vSPD_MIP model ---------------------------------------------------
-    elseif (Sum[currTP, vSPDmodel(currTP)] = 1),
+*   Solve the VSPD_MIP model ---------------------------------------------------
+    elseif (Sum[currTP, VSPDModel(currTP)] = 1),
 *       Fix the values of the integer variables that are not needed
         ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),fd)
             $ { HVDClink(branch) or
@@ -2082,7 +2086,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         else
             loop(currTP,
                 unsolvedPeriod(currTP) = yes;
-                vSPDmodel(currTP) = 4;
+                VSPDModel(currTP) = 4;
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
                                 'is solved unsuccessfully for FULL integer.'/
             ) ;
@@ -2091,7 +2095,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *   Solve the vSPD_BranchFlowMIP -----------------------------------------------
-    elseif (Sum[currTP, vSPDmodel(currTP)] = 2),
+    elseif (Sum[currTP, VSPDModel(currTP)] = 2),
 *       Fix the values of these integer variables that are not needed
         ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(currTP,br),fd)
             $ { HVDClink(branch) or
@@ -2140,7 +2144,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         else
             loop(currTP,
                 unsolvedPeriod(currTP) = yes;
-                vSPDmodel(currTP) = 4;
+                VSPDModel(currTP) = 4;
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
                                 'is solved unsuccessfully for branch integer.'/
             ) ;
@@ -2149,7 +2153,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *   Solve the vSPD_MixedConstraintMIP model ------------------------------------
-    elseif (Sum[currTP, vSPDmodel(currTP)] = 3),
+    elseif (Sum[currTP, VSPDModel(currTP)] = 3),
 *       Fix the value of some binary variables used in the mixed constraints
 *       that have no alternate limit
         MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCstr))
@@ -2185,7 +2189,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         else
             loop(currTP,
                 unsolvedPeriod(currTP) = yes;
-                vSPDmodel(currTP) = 1;
+                VSPDModel(currTP) = 1;
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
                                 'is solved unsuccessfully for '
                                 'mixed constraint integer.'/
@@ -2195,7 +2199,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *   Solve the LP model and stop ------------------------------------------------
-    elseif (Sum[currTP, vSPDmodel(currTP)] = 4),
+    elseif (Sum[currTP, VSPDModel(currTP)] = 4),
         option bratio = 1 ;
         vSPD.reslim = LPTimeLimit ;
         vSPD.iterlim = LPIterationLimit ;
@@ -2241,7 +2245,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
         useBranchFlowMIP(currTP) = 0 ;
         useMixedConstraintMIP(currTP) = 0 ;
 *       Check if there is no branch circular flow and non-physical losses
-        Loop( currTP $ { (vSPDmodel(currTP)=0) or (vSPDmodel(currTP)=3) } ,
+        Loop( currTP $ { (VSPDModel(currTP)=0) or (VSPDModel(currTP)=3) } ,
 
 *           Check if there are circulating branch flows on loss AC branches
             circularBranchFlowExist(ACbranch)
@@ -2356,7 +2360,7 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 
 
 *       Check if there is mixed constraint integer is required
-        Loop( currTP $ { (vSPDmodel(currTP)=0) or (vSPDmodel(currTP)=2) } ,
+        Loop( currTP $ { (VSPDModel(currTP)=0) or (VSPDModel(currTP)=2) } ,
 
 *           Check if integer variables are needed for mixed constraint
             if( useMixedConstraintRiskOffset,
@@ -2401,34 +2405,34 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
 *       Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
         loop( unsolvedPeriod(currTP),
             if( UseBranchFlowMIP(currTP)*UseMixedConstraintMIP(currTP) >= 1,
-                vSPDmodel(currTP) = 1;
+                VSPDModel(currTP) = 1;
                 putclose runlog 'The case: %vSPDinputData% requires a'
-                                'vSPD_MIP resolve for period ' currTP.tl
+                                'VSPD_MIP resolve for period ' currTP.tl
                                 '. Switching Vectorisation OFF.' /
 
             elseif UseBranchFlowMIP(currTP) >= 1,
-                if( vSPDmodel(currTP) = 0,
-                    vSPDmodel(currTP) = 2;
+                if( VSPDModel(currTP) = 0,
+                    VSPDModel(currTP) = 2;
                     putclose runlog 'The case: %vSPDinputData% requires a '
                                     'vSPD_BranchFlowMIP resolve for period '
                                     currTP.tl '. Switching Vectorisation OFF.'/
-                elseif vSPDmodel(currTP) = 3,
-                    vSPDmodel(currTP) = 1;
+                elseif VSPDModel(currTP) = 3,
+                    VSPDModel(currTP) = 1;
                     putclose runlog 'The case: %vSPDinputData% requires a '
-                                    'vSPD_MIP resolve for period ' currTP.tl
+                                    'VSPD_MIP resolve for period ' currTP.tl
                                     '. Switching Vectorisation OFF.' /
                 );
 
             elseif UseMixedConstraintMIP(currTP) >= 1,
-                if( vSPDmodel(currTP) = 0,
-                    vSPDmodel(currTP) = 3;
+                if( VSPDModel(currTP) = 0,
+                    VSPDModel(currTP) = 3;
                     putclose runlog 'The case: %vSPDinputData% requires a '
                                     'vSPD_MixedConstraintMIP resolve for period '
                                     currTP.tl '. Switching Vectorisation OFF.' /
-                elseif vSPDmodel(currTP) = 2,
-                    vSPDmodel(currTP) = 1;
+                elseif VSPDModel(currTP) = 2,
+                    VSPDModel(currTP) = 1;
                     putclose runlog 'The case: %vSPDinputData% requires a '
-                                    'vSPD_MIP resolve for period ' currTP.tl
+                                    'VSPD_MIP resolve for period ' currTP.tl
                                     '. Switching Vectorisation OFF.' /
                 );
 
