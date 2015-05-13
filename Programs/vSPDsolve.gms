@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     8 May 2015
+* Last modified on:     14 May 2015
 *=====================================================================================
 
 $ontext
@@ -50,7 +50,7 @@ $offtext
 
 
 * Include paths, settings and case name files
-$include vSPDpaths.inc 
+$include vSPDpaths.inc
 $include vSPDsettings.inc
 $include vSPDcase.inc
 
@@ -3387,8 +3387,9 @@ $else.PeriodReport
                        $ diffCeECeCVP )
                      ] ;
 
-            o_ofv_TP(dt) = o_systemCost_TP(dt) + o_penaltyCost_TP(dt)
-                         - o_systemBenefit_TP(dt);
+            o_ofv_TP(dt) = o_systemBenefit_TP(dt)
+                         - o_systemCost_TP(dt)
+                         - o_penaltyCost_TP(dt);
 
 
 *           Separete violation reporting at trade period level
@@ -3493,7 +3494,7 @@ $ifthen.SummaryReport not %opMode%==2
 *   System level
     o_numTradePeriods = card(tp) ;
 
-    o_systemOFV = - sum[ dt, o_ofv_TP(dt) ] ;
+    o_systemOFV = sum[ dt, o_ofv_TP(dt) ] ;
 
     o_systemGen = sum[ (dt,ild), o_islandGen_TP(dt,ild) ] ;
 

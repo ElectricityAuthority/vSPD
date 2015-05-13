@@ -10,10 +10,10 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     8 May 2015
+* Last modified on:     14 May 2015
 *=====================================================================================
 
-$include vSPDpaths.inc  
+$include vSPDpaths.inc
 $include vSPDsettings.inc
 $setglobal outputfolder "%outputPath%%runName%\%runName%"
 $if not %opMode%==0 tradePeriodReports = 1;
@@ -109,7 +109,7 @@ File systemResults    / "%outputPath%\%runName%\%runName%_SystemResults.csv" /;
 systemResults.pc = 5 ;
 systemResults.lw = 0 ;
 systemResults.pw = 9999 ;
-put systemResults 'Date','NumTradePeriodsStudied', 'ObjectiveFunctionValue ($)'
+put systemResults 'Date','NumTradePeriodsStudied', 'ObjectiveFunctionValue'
     'SystemGen (MW(half)h)','SystemLoad (MW(half)h)', 'SystemLoss (MW(half)h)'
     'SystemViolation (MW(half)h)','SystemFIR (MW(half)h)'
     'SystemSIR (MW(half)h)','SystemGenerationRevenue ($)','SystemLoadCost ($)'
@@ -153,8 +153,8 @@ if(tradePeriodReports <> 0,
   summaryResults_TP.pc = 5 ;
   summaryResults_TP.lw = 0 ;
   summaryResults_TP.pw = 9999 ;
-  put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV ($)'
-      'SystemCost ($)', 'SystemBenefit ($)', 'ViolationCost ($)'
+  put summaryResults_TP 'DateTime', 'SolveStatus (1=OK)', 'SystemOFV'
+      'SystemCost', 'SystemBenefit', 'ViolationCost'
       'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
       'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)'
       'SurplusRampRateViol (MW)', 'DeficitBranchGroupConstraintViol (MW)'
