@@ -1,11 +1,11 @@
 *=====================================================================================
 * Name:                 vSPDmodel.gms
-* Function:             Mathematical formulation - based on the SPD formulation v7.0
+* Function:             Mathematical formulation - based on the SPD formulation v9.0
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     23 March 2015
+* Last modified on:     26 June 2015
 *=====================================================================================
 
 $ontext
@@ -88,8 +88,8 @@ Alias (i_dateTime,dt),                      (i_tradePeriod,tp,tp1),             
       (i_ILRofferComponent,ILofrCmpnt),     (i_energyBidComponent,NRGbidCmpnt), (i_ILRbidComponent,ILbidCmpnt)
       (i_type1MixedConstraint,t1MixCstr),   (i_type2MixedConstraint,t2MixCstr), (i_type1MixedConstraintRHS,t1MixCstrRHS)
       (i_genericConstraint,gnrcCstr),       (i_lossSegment,los,los1),           (i_scarcityArea,sarea)
-      (i_bid,bd,bd1),                       (i_flowDirection,fd,fd1)
-      (i_reserveType,resT),                 (i_reserveClass,resC) ;
+      (i_bid,bd,bd1),                       (i_flowDirection,fd,fd1),           (i_reserveType,resT)
+      (i_reserveClass,resC),                (i_riskClass,riskC) ;
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms

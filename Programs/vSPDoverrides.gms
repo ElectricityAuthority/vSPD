@@ -6,23 +6,24 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     8 May 2015
+* Last modified on:     26 June 2015
 *=====================================================================================
 
 $ontext
-This code is included into vSPDsolve.gms unless suppressOverrides in vSPDpaths.inc is set equal to 1.
-The procedure for introducing data overrides depends on the user interface mode. The $setglobal called
-interfaceMode in vSPDsettings.inc is used to control the process of introducing data overrides.
-  interfaceMode:
-  - a value of zero implies the EMI interface
-  - a 1 implies the Excel interface
-  - all other values imply standalone interface mode (ideally, users should set it equal to 2 for standalone).
-The prefix ovrd_ inidcates that the symbol contains data to override the original input data, prefixed with i_.
-After declaring the override symbols, the override data is installed and the original symbols are overwritten.
-Note that the Excel interface permits a limited number of input data symbols to be overridden. The EMI interface
-will create a GDX file of override values for all data inputs to be overridden. If operating in standalone mode,
-overrides can be installed by any means the user prefers - GDX file, $include file, hard-coding, etc. But it
-probably makes sense to mimic the GDX file as used by EMI.
+This code is included into vSPDsolve.gms if an override file defined by
+the $setglobal vSPDinputOvrdData in vSPDSetting.inc exists.
+
+The prefix ovrd_ inidcates that the symbol contains data to override
+the original input data, prefixed with i_.
+
+After declaring the override symbols, the override data is installed and
+the original symbols are overwritten.
+
+Note that:
+The Excel interface permits a limited number of input data symbols to be overridden.
+The EMI interface will create a GDX file of override values for all data inputs to be overridden.
+If operating in standalone mode,overrides can be installed by any means the user prefers - GDX file, $include file, hard-coding, etc.
+But it probably makes sense to mimic the GDX file as used by EMI.
 
 Use GAMS to process a text file (e.g. somefile.gms) into a GDX file called filename.gdx,
 e.g. c:\>gams somefile.gms gdx=filename
@@ -47,7 +48,7 @@ Aliases to be aware of:
   i_ILRbidComponent = ILbidCmpnt            i_type1MixedConstraint = t1MixCstr
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
   i_genericConstraint = gnrcCstr            i_reserveType = resT
-  i_reserveClass =resC
+  i_reserveClass =resC                      i_riskClass =riskC
 $offtext
 $OnEnd
 *=========================================================================================================================

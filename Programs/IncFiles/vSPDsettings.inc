@@ -2,9 +2,21 @@
 $inlinecom ## ##
 $eolcom !
 
+*+++ Paths +++
+$setglobal runName                       FTR_201507_v2.0.5
+
+$setglobal programPath                   '%system.fp%'
+$setglobal inputPath                     '%system.fp%..\Input\'
+$setglobal ovrdPath                      '%system.fp%..\Override\'
+$setglobal outputPath                    '%system.fp%..\Output\'
+
+$setglobal vSPDinputOvrdData             ''  ! Name of override file
+
 
 *+++ Model +++
 Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+Scalar disconnectedNodePriceCorrection   / 1 / ;
+Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
 
 
 *+++ Network +++
@@ -27,21 +39,15 @@ Scalar mixedMIPtolerance                 / 0.000001 / ;
 
 
 *+++ Solver +++
-$setglobal Solver                          Cplex
 Scalar LPtimeLimit                       / 3600 / ;
 Scalar LPiterationLimit                  / 2000000000 / ;
 Scalar MIPtimeLimit                      / 3600 / ;
-Scalar MIPoptimality                     / 0 / ;
 Scalar MIPiterationLimit                 / 2000000000 / ;
-
-
-*+++ Misc +++
-Scalar disconnectedNodePriceCorrection   / 1 / ;
-$setglobal varResv                        -1
+Scalar MIPoptimality                     / 0 / ;
+$setglobal Solver                          Cplex
+$setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal interfaceMode                   1       ! interfaceMode: Specify 0 for EMI tools; 1 for Excel; and 2 for Standalone
-$setglobal suppressOverrides               0       ! Specify 1 to suppress reading and implementing the selected override file
-$setglobal opMode                          0       ! Specify 1 for data warehouse; -1 for audit; 2 for FTR Rental, otherwise usual vSPD mode
-Scalar     tradePeriodReports            / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
+$setglobal varResv                         -1
+$setglobal opMode                          2       ! Specify 1 for data warehouse; -1 for audit; 2 for FTR Rental, otherwise usual vSPD mode

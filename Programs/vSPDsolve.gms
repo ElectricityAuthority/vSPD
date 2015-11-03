@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     14 May 2015
+* Last modified on:     26 June 2015
 *=====================================================================================
 
 $ontext
@@ -46,6 +46,7 @@ Aliases to be aware of:
   i_type2MixedConstraint = t2MixCstr        i_type1MixedConstraintRHS = t1MixCstrRHS
   i_genericConstraint = gnrcCstr            i_scarcityArea = sarea
   i_reserveType = resT                      i_reserveClass = resC
+  i_riskClass = riskC
 $offtext
 
 
@@ -620,23 +621,20 @@ else
 *=====================================================================================
 
 $ontext
- - At this point, vSPDoverrides.gms is included into vSPDsolve.gms unless suppressOverrides in
-   vSPDpaths.inc is set equal to 1.
- - The procedure for introducing data overrides depends on the user interface mode. The $setglobal called
-   interfaceMode is used to control the process of introducing data overrides.
- - interfaceMode: a value of zero implies the EMI interface, a 1 implies the Excel interface; and all other
-   values imply standalone interface mode (although ideally users should set it equal to 2 for standalone).
- - All override data symbols have the characters 'Ovrd' appended to the original symbol name. After declaring
-   the override symbols, the override data is installed and the original symbols are overwritten.
- - Note that the Excel interface permits a very limited number of input data symbols to be overridden. The EMI
-   interface will create a GDX file of override values for all data inputs to be overridden. If operating in
-   standalone mode, overrides can be installed by any means the user prefers - GDX file, $include file, hard-coding,
-   etc. But it probably makes sense to mimic the GDX file as used by EMI.
+ - At this point, vSPDoverrides.gms is included into vSPDsolve.gms if an override
+   file defined by the $setglobal vSPDinputOvrdData in vSPDSetting.inc exists.
+ - All override data symbols have the characters 'Ovrd' appended to the original
+   symbol name. After declaring the override symbols, the override data is
+   installed and the original symbols are overwritten.
+ - Note that the Excel interface permits a limited number of input data symbols
+   to be overridden. The EMI interface will create a GDX file of override values
+   for all data inputs to be overridden. If operating in standalone mode,
+   overrides can be installed by any means the user prefers - GDX file, $include
+   file, hard-coding, etc. But it probably makes sense to mimic the GDX file as
+   used by EMI.
 $offtext
 
 $if exist %ovrdPath%%vSPDinputOvrdData%.gdx  $include vSPDoverrides.gms
-*$if not %suppressOverrides%==1 $include vSPDoverrides.gms
-
 
 
 *=====================================================================================
@@ -998,6 +996,18 @@ While ( Sum[ tp $ unsolvedPeriod(tp), 1 ],
                          ( (not i_useBusNetworkModel(currTP)) or
                          i_tradePeriodBusElectricalIsland(currTP,b))
                        }, 1 ] = yes ;
+
+*   IL offer mapped to a node that is mapped to a bus always valid
+*   (updated on 23 July 2015 based on an email from SO Bennet Tucker on 21 July 2015))
+    offer(currTP,o)
+        $ sum[ (n,b) $ { i_tradePeriodOfferNode(currTP,o,n) and
+                         i_tradePeriodNodeBus(currTP,n,b) and
+                         Sum[ (trdBlk,ILofrCmpnt),
+                              i_tradePeriodFastILRoffer(currTP,o,trdBlk,ILofrCmpnt)
+                            + i_tradePeriodSustainedILRoffer(currTP,o,trdBlk,ILofrCmpnt)
+                            ]
+                       }, 1 ] = yes ;
+
 
 *   Bid initialisation - bid must be mapped to a node that is mapped to a bus
 *   bus that is not in electrical island = 0 if i_useBusNetworkModel flag is 1
@@ -3944,11 +3954,6 @@ $endif.ScarcityNormalReport
 $endif.Scarcity
 
 
-$ifthen.vSPDreport not %opMode%==2
-
-$endif.vSPDreport
-
-
 *=====================================================================================
 * 8. Write results to GDX files
 *=====================================================================================
@@ -4326,7 +4331,8 @@ AssBranchCap(dt,br) = Min[ BranchPL(dt,br), o_branchCapacity_TP(dt,br) ] ;
 
 * Schedule 14.6 Clause 8.3 determine assinged AC branch loss block -------------
 AssLossBlock(dt,br,los) = 0 ;
-Loop(los $ Sum[ i_lossParameter, i_AClossBranch(los,i_lossParameter) ],
+*Loop(los $ Sum[ i_lossParameter, i_AClossBranch(los,i_lossParameter) ], --> this code is deleted because i_AClossBranch are not updated in gdx --> loss segment 4 to 6 are ignored --> underestimated AC loss rental
+Loop(los,
     AssLossBlock(dt,br,los)
         $ { Sum[los1 $ (ord(los1) < ord(los)), AssLossBlock(dt,br,los1)]
           < AssBranchCap(dt,br) }
@@ -4365,7 +4371,8 @@ FTR_BrCstr_Rent(dt,brCstr)
 
 * Schedule 14.6 Clause 9.5 determine LC excess generated by each AC line loss --
 SchLossBlock(dt,br,los) = 0 ;
-Loop(los $ Sum[ i_lossParameter, i_AClossBranch(los,i_lossParameter) ],
+*Loop(los $ Sum[ i_lossParameter, i_AClossBranch(los,i_lossParameter) ], --> this code is deleted because i_AClossBranch are not updated in gdx --> loss segment 4 to 6 are ignored --> underestimated AC loss rental
+Loop(los,
     SchLossBlock(dt,br,los)
         $ { Sum[los1 $ (ord(los1) < ord(los)), SchLossBlock(dt,br,los1)]
           < abs(o_BranchFlow_TP(dt,br)) }
@@ -4511,6 +4518,11 @@ $label SkipFTRrentalCalculation
 putclose runlog 'Case: %vSPDinputData% is complete in ',timeExec,'(secs)'/ ;
 putclose runlog 'Case: %vSPDinputData% is finished in ',timeElapsed,'(secs)'/ ;
 
+$ifthen.DWmode %opMode%==1
+File DWlog "File to signal DW run is sucessful"  /  "%outputPath%\%runName%\%runName%_RunLog.txt" / ;
+DWlog.lw = 0 ; DWlog.ap = 0 ;
+putclose DWlog / 'Case "%vSPDinputData%" run is sucessful at ' system.date " " system.time /;
+$endif.DWmode
 
 * Go to the next input file
 $label nextInput

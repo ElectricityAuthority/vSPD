@@ -6,11 +6,11 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     8 May 2015
+* Last modified on:     26 June 2015
 *=====================================================================================
 
 * Include paths and settings files
-$include vSPDpaths.inc 
+$include vSPDpaths.inc
 $include vSPDsettings.inc
 
 File rep "Write a progess report" /"ProgressReport.txt"/ ;

@@ -6,7 +6,7 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     11 May 2015
+* Last modified on:     10 September 2015
 *=====================================================================================
 
 $include vSPDpaths.inc
@@ -21,12 +21,12 @@ $ifthen exist "%inputPath%\%vSPDinputData%.gdx"
 * 1. Initialize set and data
 *===============================================================================
 Sets
-sarea                  / NI, SI, National /
-tp                       'Trading periods'
-dt                       'Datetime'
-dt2tp(dt,tp)             'Mapping datetime to trading periods'
-stp(tp)                  'Trading periods to be solved'
-sdt(dt)                  'Date time to be solved'
+sarea                                                        /NI, SI, National/
+tp                      'Set of trading periods'
+dt                      'Set of datetime'
+dt2tp(dt,tp)            'Mapping datetime to trading periods'
+stp(tp)                 'Trading periods to be solved'
+sdt(dt)                 'Date time to be solved'
 ;
 
 Scalars
@@ -53,7 +53,7 @@ $gdxin
 * 2. Establish which trading periods are to be solved
 *===============================================================================
 Sets
-alp            'All trading periods to be solved'  / all /
+alp            'All trading periods to be solved'  / All /
 tmp            'Temporary list of trading period to be solved'
 $include vSPDtpsToSolve.inc
 ;
@@ -61,7 +61,7 @@ $include vSPDtpsToSolve.inc
 stp(tp) = no ;
 stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
 stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
-
+$if %opMode% == 1 stp(tp) = yes;
 sdt(dt) = no;
 sdt(dt) $ sum[ stp(tp) $ dt2tp(dt,tp), 1 ] = yes ;
 
@@ -95,6 +95,5 @@ else
     putclose vSPDcase "$setglobal  scarcityExists 0 ";
 ) ;
 * Scarcity pricing flag end
-$gdxin
 
 $endif

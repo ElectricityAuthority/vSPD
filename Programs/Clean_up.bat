@@ -4,5 +4,5 @@ del "*.lxi"
 del "*.log"
 del "*.put"
 del "*.txt"
+del "*.gdx"
 del "temp.bat"
-move /y *.inc IncFiles

@@ -5,14 +5,14 @@
 * Source:               https://github.com/ElectricityAuthority/vSPD
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              emi@ea.govt.nz
-* Last modified on:     8 May 2015
+* Last modified on:     10 September 2015
 *=====================================================================================
 
 
 $call cls
 $onecho > con
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*+++++++++++++++++++++ EXECUTING vSPD v2.0.4 +++++++++++++++++++++++
+*+++++++++++++++++++++ EXECUTING vSPD v2.0.5 +++++++++++++++++++++
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 
@@ -99,10 +99,12 @@ putclose rep / "Total execute time: " timeExec "(secs)" /;
 * Clean up
 *=====================================================================================
 $label cleanUp
-execute 'del "overridesFromExcel.ins"' ;
 execute 'del "vSPDcase.inc"' ;
-execute 'move /y *.inc "%system.fp%"\IncFiles';
+$ifthen %opMode%==1
+execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"';
+$else
 execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
+$endif
 execute 'del "*.lst"' ;
 execute 'del "*.~gm"' ;
 execute 'del "*.lxi"' ;
@@ -111,3 +113,5 @@ execute 'del "*.put"' ;
 execute 'del "*.txt"' ;
 execute 'del "*.gdx"' ;
 execute 'del "temp.bat"' ;
+
+
