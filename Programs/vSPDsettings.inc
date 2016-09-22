@@ -4,9 +4,8 @@ $eolcom !
 
 *+++ Paths +++
 $setglobal runName                       Test
-
 $setglobal programPath                   '%system.fp%'
-$setglobal inputPath                     '%system.fp%..\Input\'
+$setglobal inputPath                     '%system.fp%'..\Input\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 
@@ -50,4 +49,5 @@ $setglobal licenseMode                     1
 
 *+++ Various switches +++
 $setglobal varResv                         -1
-$setglobal opMode                          0       ! Specify 1 for data warehouse; -1 for audit; 2 for FTR Rental, otherwise usual vSPD mode
+$setglobal opMode                          SPD    ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+
