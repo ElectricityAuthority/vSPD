@@ -7,7 +7,7 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     23 Sept 2016
+* Last modified on:     17 October 2016
 *=====================================================================================
 
 $ontext
@@ -635,9 +635,6 @@ else
 ) ;
 
 UseShareReserve = 1 $ sum[ (tp,resC), reserveShareEnabled(tp,resC)] ;
-
-* Manually modify data - to be deleted
-*$Include IncFiles\vSPDZeroOfferPrice.gms
 
 *=====================================================================================
 * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
@@ -1268,6 +1265,39 @@ HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 2)
 HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 1)
     = Sum[ br $ monoPoleCapacity(tp,ild,br), branchResistance(tp,br) ] ;
 
+* Note: in October 2016, the SO decided to change the calculation of the HVDC loss curve for
+* reserve sharing to be based on the HVDC capacity only.
+HVDCCapacity(tp,ild)
+    = Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+                  and i_tradePeriodBusIsland(tp,b,ild)
+                  and i_tradePeriodBranchDefn(tp,br,b,b1)
+                    }, i_tradePeriodBranchCapacity(tp,br) ] ;
+
+numberOfPoles(tp,ild)
+    =Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+                  and i_tradePeriodBusIsland(tp,b,ild)
+                  and i_tradePeriodBranchDefn(tp,br,b,b1)
+                  and i_tradePeriodBranchCapacity(tp,br)
+                    }, 1 ] ;
+
+HVDCResistance(tp,ild)
+    =  Sum[ (br,b,b1,i_branchParameter)
+          $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+          and i_tradePeriodBusIsland(tp,b,ild)
+          and i_tradePeriodBranchDefn(tp,br,b,b1)
+          and (ord(i_branchParameter) = 1)
+            }, i_tradePeriodBranchParameter(tp,br,i_branchParameter) ] ;
+
+HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 2)
+    = Prod[ (br,b,b1,i_branchParameter)
+          $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+          and i_tradePeriodBusIsland(tp,b,ild)
+          and i_tradePeriodBranchDefn(tp,br,b,b1)
+          and i_tradePeriodBranchCapacity(tp,br)
+          and (ord(i_branchParameter) = 1)
+            }, i_tradePeriodBranchParameter(tp,br,i_branchParameter)
+          ] / HVDCResistance(tp,ild) ;
+
 * Segment 1
 HVDCLossSegmentMW(tp,ild,los) $ (ord(los) = 1)
     = HVDCCapacity(tp,ild) * lossCoeff_C ;
@@ -1397,7 +1427,8 @@ FreeReserve(tp,ild,resC,riskC)
                    , i_tradePeriodRiskParameter(tp,ild,resC,riskC,riskPar) ]
 * NMIR - Subtract shareNFRMax from current NFR -(5.2.1.4) - SPD version 11
     - sum[ ild1 $ (not sameas(ild,ild1)),sharedNFRMax(tp,ild1)
-         ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) }
+         ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) )
+           and (inputGDXGDate >= jdate(2016,10,20)) }
     ;
 
 IslandRiskAdjustmentFactor(tp,ild,resC,riskC) $ useReserveModel
