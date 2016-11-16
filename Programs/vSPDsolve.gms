@@ -7,7 +7,7 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     17 October 2016
+* Last modified on:     16 Nov 2016
 *=====================================================================================
 
 $ontext
@@ -1246,57 +1246,64 @@ HVDCMax(tp,ild)
     = Min( biPoleCapacity(tp,ild), Sum[ br, monoPoleCapacity(tp,ild,br) ] ) ;
 
 * Calculate HVDC HVDC Loss segment applied for NMIR
-HVDCCapacity(tp,ild)
-    = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
-                  and HVDClinkSendingBus(tp,br,b) }, branchCapacity(tp,br) ] ;
 
-numberOfPoles(tp,ild)
-    = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
-                  and HVDClinkSendingBus(tp,br,b) }, 1 ] ;
+$ontext
+* Note: When NMIR started on 20/10/2016, the SOdecided to incorrectly calculate the HVDC loss
+* curve for reserve sharing based on the HVDC capacity only (i.e. not based on in-service HVDC poles)
+* Tuong Nguyen @ EA discovered this bug and the SO has fixed it as of 22/11/2016.
+$offtext
+if (inputGDXGDate >= jdate(2016,11,22),
+      HVDCCapacity(tp,ild)
+          = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
+                        and HVDClinkSendingBus(tp,br,b)
+                          }, branchCapacity(tp,br) ] ;
 
-HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 2)
-    = Prod[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
-                   and HVDClinkSendingBus(tp,br,b)
-                     }, branchResistance(tp,br) ]
-    / Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
-                  and HVDClinkSendingBus(tp,br,b)
-                    }, branchResistance(tp,br) ] ;
+      numberOfPoles(tp,ild)
+          = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
+                        and HVDClinkSendingBus(tp,br,b) }, 1 ] ;
 
-HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 1)
-    = Sum[ br $ monoPoleCapacity(tp,ild,br), branchResistance(tp,br) ] ;
+      HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 2)
+          = Prod[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
+                         and HVDClinkSendingBus(tp,br,b)
+                           }, branchResistance(tp,br) ]
+          / Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
+                        and HVDClinkSendingBus(tp,br,b)
+                          }, branchResistance(tp,br) ] ;
 
-* Note: in October 2016, the SO decided to change the calculation of the HVDC loss curve for
-* reserve sharing to be based on the HVDC capacity only.
-HVDCCapacity(tp,ild)
-    = Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
-                  and i_tradePeriodBusIsland(tp,b,ild)
-                  and i_tradePeriodBranchDefn(tp,br,b,b1)
-                    }, i_tradePeriodBranchCapacity(tp,br) ] ;
+      HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 1)
+          = Sum[ br $ monoPoleCapacity(tp,ild,br), branchResistance(tp,br) ] ;
+else
+    HVDCCapacity(tp,ild)
+        = Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+                      and i_tradePeriodBusIsland(tp,b,ild)
+                      and i_tradePeriodBranchDefn(tp,br,b,b1)
+                        }, i_tradePeriodBranchCapacity(tp,br) ] ;
 
-numberOfPoles(tp,ild)
-    =Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
-                  and i_tradePeriodBusIsland(tp,b,ild)
-                  and i_tradePeriodBranchDefn(tp,br,b,b1)
-                  and i_tradePeriodBranchCapacity(tp,br)
-                    }, 1 ] ;
+    numberOfPoles(tp,ild)
+        =Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+                      and i_tradePeriodBusIsland(tp,b,ild)
+                      and i_tradePeriodBranchDefn(tp,br,b,b1)
+                      and i_tradePeriodBranchCapacity(tp,br)
+                        }, 1 ] ;
 
-HVDCResistance(tp,ild)
-    =  Sum[ (br,b,b1,i_branchParameter)
-          $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
-          and i_tradePeriodBusIsland(tp,b,ild)
-          and i_tradePeriodBranchDefn(tp,br,b,b1)
-          and (ord(i_branchParameter) = 1)
-            }, i_tradePeriodBranchParameter(tp,br,i_branchParameter) ] ;
+    HVDCResistance(tp,ild)
+        =  Sum[ (br,b,b1,i_branchParameter)
+              $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+              and i_tradePeriodBusIsland(tp,b,ild)
+              and i_tradePeriodBranchDefn(tp,br,b,b1)
+              and (ord(i_branchParameter) = 1)
+                }, i_tradePeriodBranchParameter(tp,br,i_branchParameter) ] ;
 
-HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 2)
-    = Prod[ (br,b,b1,i_branchParameter)
-          $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
-          and i_tradePeriodBusIsland(tp,b,ild)
-          and i_tradePeriodBranchDefn(tp,br,b,b1)
-          and i_tradePeriodBranchCapacity(tp,br)
-          and (ord(i_branchParameter) = 1)
-            }, i_tradePeriodBranchParameter(tp,br,i_branchParameter)
-          ] / HVDCResistance(tp,ild) ;
+    HVDCResistance(tp,ild) $ (numberOfPoles(tp,ild) = 2)
+        = Prod[ (br,b,b1,i_branchParameter)
+              $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+              and i_tradePeriodBusIsland(tp,b,ild)
+              and i_tradePeriodBranchDefn(tp,br,b,b1)
+              and i_tradePeriodBranchCapacity(tp,br)
+              and (ord(i_branchParameter) = 1)
+                }, i_tradePeriodBranchParameter(tp,br,i_branchParameter)
+              ] / HVDCResistance(tp,ild) ;
+) ;
 
 * Segment 1
 HVDCLossSegmentMW(tp,ild,los) $ (ord(los) = 1)
