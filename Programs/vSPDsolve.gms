@@ -7,7 +7,7 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     16 Nov 2016
+* Last modified on:     18 Jan 2017
 *=====================================================================================
 
 $ontext
@@ -2018,6 +2018,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 
         if( UseShareReserve,
             option bratio = 1 ;
+            vSPD_NMIR.Optfile = 1 ;
             vSPD_NMIR.optcr = MIPOptimality ;
             vSPD_NMIR.reslim = MIPTimeLimit ;
             vSPD_NMIR.iterlim = MIPIterationLimit ;
@@ -2095,6 +2096,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             $ (not Type1MixedConstraintCondition(Type1MixedConstraint)) = 0 ;
 
         option bratio = 1 ;
+        vSPD_MIP.Optfile = 1 ;
         vSPD_MIP.optcr = MIPOptimality ;
         vSPD_MIP.reslim = MIPTimeLimit ;
         vSPD_MIP.iterlim = MIPIterationLimit ;
@@ -2151,6 +2153,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
         LAMBDAINTEGER.fx(currTP,br,bp) $ (not branch(currTP,br)) = 0 ;
 
         option bratio = 1 ;
+        vSPD_BranchFlowMIP.Optfile = 1 ;
         vSPD_BranchFlowMIP.optcr = MIPOptimality ;
         vSPD_BranchFlowMIP.reslim = MIPTimeLimit ;
         vSPD_BranchFlowMIP.iterlim = MIPIterationLimit ;
@@ -2193,6 +2196,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 
 *       Use the advanced basis here
         option bratio = 0.25 ;
+        vSPD_MixedConstraintMIP.Optfile = 1 ;
 *       Set the optimality criteria for the MIP
         vSPD_MixedConstraintMIP.optcr = MIPOptimality ;
         vSPD_MixedConstraintMIP.reslim = MIPTimeLimit ;
@@ -2235,6 +2239,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 
         if( UseShareReserve,
             option bratio = 1 ;
+            vSPD_NMIR.Optfile = 1 ;
             vSPD_NMIR.optcr = MIPOptimality ;
             vSPD_NMIR.reslim = MIPTimeLimit ;
             vSPD_NMIR.iterlim = MIPIterationLimit ;
