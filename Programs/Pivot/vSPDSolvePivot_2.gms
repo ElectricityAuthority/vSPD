@@ -10,6 +10,10 @@
 *                       to revised initialised data according to net pivotal scenario.
 *=====================================================================================
 
+* If pivot generator is too expensive - should be able to ramp down
+    generationEndDown(offer(currTP,o))
+        $ sum[ ild $ pivotOffer(pvt,ild,o), 1 ] = 0 ;
+
 * The code below is used to set bus deficit generation <= total bus load (positive) for simulation run
     DEFICITBUSGENERATION.up(currTP,b)
         $ ( sum[ NodeBus(currTP,n,b), NodeBusAllocationFactor(currTP,n,b)

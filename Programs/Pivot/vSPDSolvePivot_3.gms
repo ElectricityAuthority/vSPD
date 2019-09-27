@@ -11,6 +11,7 @@
 *=====================================================================================
 
 $onend
+
     Loop i_dateTimeTradePeriodMap(dt,currTP) $ (not unsolvedPeriod(currTP)) do
 
         o_node(dt,n) $ {Node(currTP,n) and (not HVDCnode(currTP,n))} = yes ;
@@ -67,7 +68,8 @@ $onend
 
 *       Energy offer cleared for pivot offers
         o_pivotOfferGen(dt,pvt,o) $ offer(currTP,o)
-          = GENERATION.l(currTP,o);
+          = sum[ trdr $ { pivotTrader(pvt,trdr) and o_offerTrader(o,trdr) }
+               ,GENERATION.l(currTP,o) ] ;
 
     EndLoop;
 

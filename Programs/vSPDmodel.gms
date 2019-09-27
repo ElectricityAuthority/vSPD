@@ -419,7 +419,6 @@ Parameters
 * The follwing are calculated parameters for NMIR
   reserveShareEnabledOverall(tp)                                    'An internal parameter based on the FIR and SIR enabled, and used as a switch in various places'
   modulationRisk(tp)                                                'Max of HVDC energy modulation due to frequency keeping action'
-  revZoneEntry(tp,resC)                                             'HVDC level to enter the zone where reverse reserve is constrained by MonopoleMinimum.'
   roPwrZoneExit(tp,resC)                                            'Above this point there is no guarantee that HVDC sent can be reduced below MonopoleMinimum.'
   sharedNFRLoad(tp,ild)                                             'Island load, calculated in pre-processing from the required load and the bids. Used as an input to the calculation of SharedNFRMax.'
   sharedNFRMax(tp,ild)                                              'Amount of island free reserve that can be shared through HVDC'

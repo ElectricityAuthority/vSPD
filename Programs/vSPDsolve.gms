@@ -7,7 +7,7 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     18 Jan 2017
+* Last modified on:     28 Feb 2019
 *=====================================================================================
 
 $ontext
@@ -502,8 +502,8 @@ inputGDXGDate = jdate(i_year,i_month,i_day) ;
 * island paramter specified since it uses the market node network model.
 * This flag is introduced to allow the i_tradePeriodBusElectricalIsland parameter
 * to be used in the post-MSP solves to indentify 'dead' electrical buses.
-* MSP change over from mid-day on 20 Jul 2009
-i_useBusNetworkModel(tp) = 1 $ { ( inputGDXGDate >= jdate(2009,7,20) ) and
+* MSP change over from mid-day on 21 Jul 2009
+i_useBusNetworkModel(tp) = 1 $ { ( inputGDXGDate >= jdate(2009,7,21) ) and
                                  sum[ b, i_tradePeriodBusElectricalIsland(tp,b) ]
                                } ;
 
@@ -655,6 +655,7 @@ $ontext
 $offtext
 
 $if exist "%ovrdPath%%vSPDinputOvrdData%.gdx"  $include vSPDoverrides.gms
+
 
 *=====================================================================================
 * 5. Initialise constraint violation penalties (CVPs)
@@ -1184,14 +1185,25 @@ modulationRisk(tp) = smax[ riskC, modulationRiskClass(tp,RiskC) ];
 
 reserveShareEnabledOverall(tp) = smax[ resC, reserveShareEnabled(tp,resC) ];
 
-revZoneEntry(tp,resC)
-    = monopoleMinimum(tp) + modulationRisk(tp)
-    + [ bipole2MonoLevel(tp) - monopoleMinimum(tp) - modulationRisk(tp)
-      ] * reserveRoundPower(tp,resC)$(ord(resC) = 2) ;
-
 roPwrZoneExit(tp,resC)
     = [ roundPower2MonoLevel(tp) - modulationRisk(tp) ]$(ord(resC)=1)
     + bipole2MonoLevel(tp)$(ord(resC)=2) ;
+
+* National market refinement - effective date 28 Mar 2019 12:00
+$ontext
+   SPD pre-processing is changed so that the roundpower settings for FIR are now the same as for SIR. Specifically:
+   -  The RoundPowerZoneExit for FIR will be set at BipoleToMonopoleTransition by SPD pre-processing (same as for SIR),
+      a change from the existing where the RoundPowerZoneExit for FIR is set at RoundPowerToMonopoleTransition by SPD pre-processing.
+   -  Provided that roundpower is not disabled by the MDB, the InNoReverseZone for FIR will be removed by SPD pre-processing (same as for SIR),
+      a change from the existing where the InNoReverseZone for FIR is never removed by SPD pre-processing.
+$offtext
+
+if (inputGDXGDate >= jdate(2019,03,28),
+    roPwrZoneExit(tp,resC) = bipole2MonoLevel(tp) ;
+) ;
+
+* National market refinement end
+
 
 * Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (5.2.1.2)
 sharedNFRLoad(tp,ild)
@@ -1203,20 +1215,31 @@ sharedNFRMax(tp,ild) = Min{ RMTReserveLimitTo(tp,ild,'FIR'),
                             sharedNFRFactor(tp)*sharedNFRLoad(tp,ild) } ;
 
 * Calculate HVDC constraint sets and HVDC Max Flow - NMIR (4.1.8 - NMIR06)
+* TN on 22 May 2017: Usually a branch group constraint that limits the HVDC flow only involves
+* the HVDC branch(s) in the same direction. However, during TP6 to TP9 of 18 May 2017, the
+* constraint HAY_BEN_High_Frequency_limit involved all four branches in the form:
+*   HAY_BEN1.1 + HAY_BEN2.1 - BEN_HAY1.1 - BEN_HAY2.1 <= 530 MW
+* This method of formulating the constraint prevented the previous formulation of monopoleConstraint
+* and bipoleConstraintfrom working properly. Those constraints have been reformulated (see below)
+* in order to cope with the formulation observed on 18 May 2017.
 monopoleConstraint(tp,ild,brCstr,br)
-    $ { HVDCpoles(tp,br) and (not rampingConstraint(tp,brCstr))
-    and (Sum[ br1 $ { branchConstraintSense(tp,brCstr) = -1 }
-                  , branchConstraintFactors(tp,brCstr,br1)    ] = 1)
+    $ { HVDCpoles(tp,br)
+    and ( not rampingConstraint(tp,brCstr) )
+    and ( branchConstraintSense(tp,brCstr) = -1 )
+    and (Sum[ (br1,b) $ {HVDClinkSendingBus(tp,br1,b) and busIsland(tp,b,ild)}
+                      , branchConstraintFactors(tp,brCstr,br1)    ] = 1)
     and (Sum[ b $ {HVDClinkSendingBus(tp,br,b) and busIsland(tp,b,ild)}
-                 , branchConstraintFactors(tp,brCstr,br)      ] = 1) } = yes ;
+                 , branchConstraintFactors(tp,brCstr,br)      ] = 1)
+       } = yes ;
 
 bipoleConstraint(tp,ild,brCstr)
-    $ { (not rampingConstraint(tp,brCstr))
-    and (Sum[ br1 $ { branchConstraintSense(tp,brCstr) = -1 }
-                    , branchConstraintFactors(tp,brCstr,br1)  ] = 2)
-    and (Sum[ (br,b) $ { HVDCpoles(tp,br) and HVDClinkSendingBus(tp,br,b)
+    $ { ( not rampingConstraint(tp,brCstr) )
+    and ( branchConstraintSense(tp,brCstr) = -1 )
+    and (Sum[ (br,b) $ { HVDCpoles(tp,br)
+                     and HVDClinkSendingBus(tp,br,b)
                      and busIsland(tp,b,ild) }
-                     , branchConstraintFactors(tp,brCstr,br)  ] = 2) } = yes ;
+                    , branchConstraintFactors(tp,brCstr,br)  ] = 2)
+                       } = yes ;
 
 monoPoleCapacity(tp,ild,br)
     = Sum[ b $ { BusIsland(tp,b,ild)
@@ -1940,6 +1963,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
     VIRTUALRESERVE.up(currTP,ild,resC) = virtualReserveMax(currTP,ild,resC) ;
 
 * TN - The code below is used to set bus deficit generation <= total bus load (positive)
+$ontext
     DEFICITBUSGENERATION.up(currTP,b)
         $ ( sum[ NodeBus(currTP,n,b)
                , NodeBusAllocationFactor(currTP,n,b) * NodeDemand(currTP,n)
@@ -1952,8 +1976,8 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
                , NodeBusAllocationFactor(currTP,n,b) * NodeDemand(currTP,n)
                ] <= 0 )
         = 0 ;
-
-*   NMIR project variales
+$offtext
+*   NMIR project variables
     HVDCSENT.fx(currTP,ild) $ (HVDCCapacity(currTP,ild) = 0) = 0 ;
     HVDCSENTLOSS.fx(currTP,ild) $ (HVDCCapacity(currTP,ild) = 0) = 0 ;
 

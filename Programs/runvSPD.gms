@@ -68,6 +68,7 @@ execute 'mkdir "%programPath%lst"';
 execute 'mkdir "%outputPath%%runName%\Programs"';
 execute 'copy /y vSPD*.inc "%outputPath%%runName%\Programs"'
 execute 'copy /y *.gms "%outputPath%%runName%\Programs"'
+execute 'copy /y cplex.opt "%outputPath%%runName%\Programs"'
 
 $ifthen exist "%ovrdPath%%vSPDinputOvrdData%.gdx"
   execute 'mkdir  "%outputPath%%runName%\Override"'
@@ -115,7 +116,7 @@ loop(i_fileName,
    put_utility temp 'exec' / 'gams vSPDperiod' ;
 
 *  Solve the model for the current input file
-   put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1' ;
+   put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1 holdFixed = 0' ;
 
 *  Copy the vSPDsolve.lst file to i_fileName.lst in ..\Programs\lst\
    put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', i_fileName.tl:0, '.lst' ;
@@ -136,7 +137,7 @@ execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"
 $else
 execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
 $endif
-*$ontext
+$ontext
 execute 'if exist *.lst   erase /q *.lst '
 execute 'if exist *.~gm   erase /q *.~gm '
 execute 'if exist *.lxi   erase /q *.lxi '
@@ -145,6 +146,6 @@ execute 'if exist *.put   erase /q *.put '
 execute 'if exist *.txt   erase /q *.txt '
 execute 'if exist *.gdx   erase /q *.gdx '
 execute 'if exist temp.*  erase /q temp.*'
-*$offtext
+$offtext
 
 

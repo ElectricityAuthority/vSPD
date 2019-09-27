@@ -10,6 +10,9 @@
 *                       vSPDSolve to begin the net pivotal analysis loop
 *=====================================================================================
 
+o_offerTrader(o,trdr) $ sum[tp $ i_tradePeriodOfferTrader(tp,o,trdr), 1] = yes ;
+
+
 * Scalars applied to net pivotal test
 Scalars
   pivotGENTriggerPrice  'Offer prices above this will be changed to pivot price'    /   -1/
@@ -114,6 +117,8 @@ Parameters
 
 * Begin a loop through each pivot scenario and produce pivot data
 Loop[ pvt,
+    sequentialSolve  = 0 ;
+    sequentialSolve $ UseShareReserve = 1 ;
 * Set FKmin for pivot offers to zero if i_RemoveFKPivot = 1
     MnodeConstraintLimit(MnodeConstraint(tp,MnodeCstr))
     = sum[ CstrRHS $ (ord(CstrRHS) = 2)
@@ -156,10 +161,3 @@ Loop[ pvt,
       and (reserveOfferPrice(offer,trdBlk,resC,resT) >= pivotSIRTriggerPrice)
         } = pivotPrice ;
 
-
-* If pivot generator is too expensive - should be able to ramp down
-    generationEndDown(offer) $ (not hasPrimaryOffer(offer))
-    = Max[ 0, generationStart(offer)
-            - rampRateDown(offer)*rampTimeDown(offer) ] ;
-
-    generationEndDown(offer(tp,o)) $ sum[ ild $ pivotOffer(pvt,ild,o), 1 ] = 0 ;
