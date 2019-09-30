@@ -10,6 +10,6 @@ The Electricity Authority created vSPD using the GAMS software in 2008. Dr Ramu 
 the original author and, until November 2013, the custodian of vSPD. Tuong Nguyen and Dr Phil Bishop
 from the Market Analytics team now maintain the vSPD model.
 
-vSPD was most recently audited in August 2019 - see the audited vSPD codes and the auditor's certification on the [EMI vSPD page](https://www.emi.ea.govt.nz/Tools/vSPD).
+vSPD was most recently audited in August 2019 - see the audited vSPD codes and the auditor's certification on the [EMI vSPD page](https://www.emi.ea.govt.nz/Wholesale/Tools/vSPD).
 
 Contact: emi@ea.govt.nz
