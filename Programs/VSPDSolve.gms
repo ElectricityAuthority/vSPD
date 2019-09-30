@@ -4,10 +4,12 @@
 *                       the model
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              Forum: http://www.emi.ea.govt.nz/forum/
+*                       https://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              Forum: https://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     29 Feb 2019
+* Last modified on:     1 Oct 2019
+*                       New feature added: new wind offer arrangements
+*
 *=====================================================================================
 
 $ontext
@@ -113,7 +115,8 @@ $offtext
   i_riskParameter             / i_freeReserve, i_riskAdjustmentFactor, i_HVDCpoleRampUp /
   i_offerType                 / energy, PLSR, TWDR, ILR /
   i_offerParam                / i_initialMW, i_rampUpRate, i_rampDnRate
-                                i_reserveGenerationMaximum, i_windOffer, i_FKbandMW /
+                                i_reserveGenerationMaximum, i_windOffer, i_FKbandMW,
+                                i_IsPriceResponse, i_PotentialMW  /
   i_energyOfferComponent      / i_generationMWoffer, i_generationMWofferPrice /
   i_PLSRofferComponent        / i_PLSRofferPercentage, i_PLSRofferMax, i_PLSRofferPrice /
   i_TWDRofferComponent        / i_TWDRofferMax, i_TWDRofferPrice /
@@ -799,6 +802,15 @@ windOffer(offer)
 FKband(offer)
     = sum[ offerPar $ ( ord(offerPar) = 6 )
                     , i_tradePeriodOfferParameter(offer,offerPar) ] ;
+
+priceResponsive(offer)
+    = sum[ offerPar $ ( ord(offerPar) = 7 )
+                    , i_tradePeriodOfferParameter(offer,offerPar) ] ;
+
+potentialMW(offer)
+    = sum[ offerPar $ ( ord(offerPar) = 8 )
+                    , i_tradePeriodOfferParameter(offer,offerPar) ] ;
+
 
 * Initialise energy offer data for the current trade period start
 generationOfferMW(offer,trdBlk)
@@ -1847,6 +1859,11 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *   Constraint 3.1.1.2 - Fix the generation variable for generators
 *   that are not connected or do not have a non-zero energy offer
     GENERATION.fx(offer(currTP,o)) $ (not PositiveEnergyOffer(offer)) = 0 ;
+
+*   Constraint 5.1.1.3 - Set Upper Bound for Wind Offer - Tuong
+    GENERATION.up(offer(currTP,o))
+        $ { windOffer(offer) and priceResponsive(offer) }
+        = min[ potentialMW(offer), ReserveGenerationMaximum(offer) ] ;
 
 *   Change to demand bid - Constraint 3.1.1.3 and 3.1.1.4
     PURCHASEBLOCK.up(validPurchaseBidBlock(currTP,bd,trdBlk))

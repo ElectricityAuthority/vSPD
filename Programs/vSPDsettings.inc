@@ -3,14 +3,14 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTD_201903020010
+$setglobal runName                       NRSL_201903030200
 
 $setglobal programPath                   '%system.fp%'
 $setglobal inputPath                     '%system.fp%..\Input\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 
-$setglobal vSPDinputOvrdData             'excelOverrides'  ! Name of override file
+$setglobal vSPDinputOvrdData             ''        ! Name of override file
 
 
 *+++ Model +++
@@ -51,4 +51,3 @@ $setglobal licenseMode                     1
 *+++ Various switches +++
 $setglobal varResv                         -1
 $setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
-

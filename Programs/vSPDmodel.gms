@@ -3,10 +3,12 @@
 * Function:             Mathematical formulation - based on the SPD formulation v9.0
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              Forum: http://www.emi.ea.govt.nz/forum/
+*                       https://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              Forum: https://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     23 Sept 2016
+* Last modified on:     1 Oct 2019
+*                       New feature added: New wind offer arrangements
+*
 *=====================================================================================
 
 $ontext
@@ -349,6 +351,8 @@ Parameters
   GenerationStart(tp,o)                                             'The MW generation level associated with the offer at the start of a trading period'
   ReserveGenerationMaximum(tp,o)                                    'Maximum generation and reserve capability for the current trading period (MW)'
   WindOffer(tp,o)                                                   'Flag to indicate if offer is from wind generator (1 = Yes)'
+  PriceResponsive(tp,o)                                             'Flag to indicate if wind offer is price responsive (1 = Yes)'
+  PotentialMW(tp,o)                                                 'Potential max output of Wind offer'
 * Primary-secondary offer parameters
   HasSecondaryOffer(tp,o)                                           'Flag to indicate if offer has a secondary offer (1 = Yes)'
   HasPrimaryOffer(tp,o)                                             'Flag to indicate if offer has a primary offer (1 = Yes)'
