@@ -3,17 +3,17 @@
 * Function:             This file is invoked to control the entire operation of vSPD.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       https://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              Forum: https://www.emi.ea.govt.nz/forum/
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     1 Oct 2019
+* Last modified on:     23 Sept 2016
 *=====================================================================================
 
 
 $call cls
 $onecho > con
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*+++++++++++++++++++++ EXECUTING vSPD ++++++++++++++++++++++++++++
+*+++++++++++++++++++++ EXECUTING vSPD v3.0.0 +++++++++++++++++++++
 *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $offecho
 

@@ -3,20 +3,20 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       NRSL_201903030200
+$setglobal runName                       RTP_20200108_1430
 
 $setglobal programPath                   '%system.fp%'
 $setglobal inputPath                     '%system.fp%..\Input\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 
-$setglobal vSPDinputOvrdData             ''        ! Name of override file
+$setglobal vSPDinputOvrdData             ''  ! Name of override file
 
 
 *+++ Model +++
 Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
 Scalar disconnectedNodePriceCorrection   / 1 / ;
-Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
+Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise , no longer used?
 
 
 *+++ Network +++
@@ -51,3 +51,4 @@ $setglobal licenseMode                     1
 *+++ Various switches +++
 $setglobal varResv                         -1
 $setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+

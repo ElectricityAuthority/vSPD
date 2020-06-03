@@ -10465,6 +10465,7 @@ SqTrail0=0
 Order=1,2,3
 Decim=7
 PlaneRownr=-1
+Sorted=YYY
 
 [GDXDISP: HVDClinkReceivingBus Set 3]
 PlaneDim=0
@@ -12333,12 +12334,6 @@ PlaneRownr=-1
 [RP:VSPDPERIOD]
 1=
 
-[RP:VSPDREPORT]
-1=
-
-[RP:VSPDREPORTSETUP]
-1=
-
 [RP:VSPDOVERRIDES]
 1=
 
@@ -12346,9 +12341,6 @@ PlaneRownr=-1
 1=
 
 [RP:VSPDSOLVEPIVOT_2]
-1=
-
-[RP:VSPDSOLVEPIVOT_1]
 1=
 
 [RP:VSPDSOLVEPIVOT_3]
@@ -12507,11 +12499,6 @@ Decim=6
 PlaneRownr=139
 PlaneFilter1=TKR0331
 
-[RP:RUNVSPD]
-1=
-2=errmsg=1
-3=e
-
 [GDXDISP: i_tradePeriodOfferParameter Par 3]
 Sorted=YYY
 PlaneDim=0
@@ -12598,19 +12585,33 @@ PlaneRownr=-1
 [RP:SCENARIOS]
 1=
 
-[RP:VSPDSOLVE]
-1=
-
 [RP:VSPDMODEL]
 1=
 
+[RP:VSPDREPORT]
+1=
+
+[RP:VSPDREPORTSETUP]
+1=
+
+[RP:VSPDSOLVE]
+1=
+
+[RP:RUNVSPD]
+1=
+2=errmsg=1
+3=e
+
+[RP:VSPDSOLVEPIVOT_1]
+1=
+
 [MRUFILES]
-1=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Input\RTD_20190506_0825_372.gdx
-2=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\diffile.log
-3=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDmodel.gms
-4=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDsolve.gms
-5=C:\vSPD\vSPD_v3.0.4\Programs\Demand\Scenarios.gms
-6=C:\Users\nguyent\AppData\Local\Temp\7zO46191696\Scenarios.gms
-7=G:\vSPD_Inputs\FP\FP_20190710_2.gdx
-8=G:\vSPD_Inputs\FP\FP_20190507_Fx.gdx
-9=G:\vSPD_Inputs\FP\FP_20190502_F.gdx
+1=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\Pivot\vSPDSolvePivot_1.gms
+2=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\runvSPD.gms
+3=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\vSPDsolve.gms
+4=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\vSPDsettings.inc
+5=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\vSPDreportSetup.gms
+6=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\vSPDreport.gms
+7=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\vSPDmodel.gms
+8=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\runvSPD.lst
+9=A:\Tuong Nguyen\vSPD\vSPD_v3.0.6_Reverse_Branch_Capacity\Programs\lst\FP_20200527_625.lst

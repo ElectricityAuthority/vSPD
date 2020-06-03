@@ -3,12 +3,11 @@
 * Function:             Mathematical formulation - based on the SPD formulation v9.0
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       https://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              Forum: https://www.emi.ea.govt.nz/forum/
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     1 Oct 2019
-*                       New feature added: New wind offer arrangements
-*
+* Last modified on:     30 June 2020
+* Feature added:        Branch Reverse Rating
 *=====================================================================================
 
 $ontext
@@ -35,7 +34,6 @@ Aliases to be aware of:
   i_riskClass = riskC                       i_constraintRHS = CstrRHS
   i_riskParameter = riskPar                 i_dczone =  z, z1
 $offtext
-
 
 *===================================================================================
 * 1. Declare sets and parameters for all symbols to be loaded from daily GDX files
@@ -161,6 +159,7 @@ Parameters
   i_tradePeriodHVDCBranch(tp,br)                                    'HVDC branch indicator for the different trading periods'
   i_tradePeriodBranchParameter(tp,br,i_branchParameter)             'Branch resistance, reactance, fixed losses and number of loss tranches for the different time periods'
   i_tradePeriodBranchCapacity(tp,br)                                'Branch capacity for the different trading periods in MW'
+  i_tradePeriodBranchCapacityDirected(tp,br,fd)                     'Branch directed capacity for the different trading periods in MW (Branch Reverse Ratings)'
   i_tradePeriodBranchOpenStatus(tp,br)                              'Branch open status for the different trading periods, 1 = Open'
   i_noLossBranch(los,i_lossParameter)                               'Loss parameters for no loss branches'
   i_AClossBranch(los,i_lossParameter)                               'Loss parameters for AC loss branches'
@@ -250,8 +249,9 @@ Scalars
   MIPtimeLimit                             'CPU seconds allowed for MIP solves'
   MIPiterationLimit                        'Iteration limit allowed for MIP solves'
   MIPoptimality
-  disconnectedNodePriceCorrection
-  tradePeriodReports
+  disconnectedNodePriceCorrection          'Flag to apply price correction methods to disconnected node'
+  tradePeriodReports                       'Specify 1 for reports at trading period level, 0 otherwise , no longer used?'
+
 * External loss model from Transpower
   lossCoeff_A                       / 0.3101 /
   lossCoeff_C                       / 0.14495 /
@@ -303,7 +303,7 @@ Sets
   HVDCHalfPoles(tp,br)                                              'Connection DC Pole 1 between AC and DC systems at Benmore and Haywards'
   HVDCpoleDirection(tp,br,fd)                                       'Direction defintion for HVDC poles S->N : Forward and N->S : Southward'
   ACBranch(tp,br)                                                   'AC branches defined for the current trading period'
-  validLossSegment(tp,br,los)                                       'Valid loss segments for a branch'
+  validLossSegment(tp,br,los,fd)                                    'Valid loss segments for a branch'
   lossBranch(tp,br)                                                 'Subset of branches that have non-zero loss factors'
 * Mapping set of branches to HVDC pole
   HVDCpoleBranchMap(pole,br)                                        'Mapping of HVDC  branch to pole number'
@@ -379,19 +379,20 @@ Parameters
   PurchaseBidILRMW(tp,bd,trdBlk,resC)                               'Purchase bid ILR block in MW for the different reserve classes'
   PurchaseBidILRPrice(tp,bd,trdBlk,resC)                            'Purchase bid ILR price in $/MW for the different reserve classes'
 * Network
-  branchCapacity(tp,br)                                             'MW capacity of a branch for the current trading period'
+  branchCapacity(tp,br,fd)                                          'MW capacity of a branch for the current trading period'
   branchResistance(tp,br)                                           'Resistance of the a branch for the current trading period in per unit'
   branchSusceptance(tp,br)                                          'Susceptance (inverse of reactance) of a branch for the current trading period in per unit'
   branchFixedLoss(tp,br)                                            'Fixed loss of the a branch for the current trading period in MW'
   branchLossBlocks(tp,br)                                           'Number of blocks in the loss curve for the a branch in the current trading period'
-  lossSegmentMW(tp,br,los)                                          'MW capacity of each loss segment'
-  lossSegmentFactor(tp,br,los)                                      'Loss factor of each loss segment'
-  ACBranchLossMW(tp,br,los)                                         'MW element of the loss segment curve in MW'
-  ACBranchLossFactor(tp,br,los)                                     'Loss factor element of the loss segment curve'
-  HVDCBreakPointMWFlow(tp,br,bp)                                    'Value of power flow on the HVDC at the break point'
-  HVDCBreakPointMWLoss(tp,br,bp)                                    'Value of variable losses on the HVDC at the break point'
+  lossSegmentMW(tp,br,los,fd)                                       'MW capacity of each loss segment'
+  lossSegmentFactor(tp,br,los,fd)                                   'Loss factor of each loss segment'
+  ACBranchLossMW(tp,br,los,fd)                                      'MW element of the loss segment curve in MW'
+  ACBranchLossFactor(tp,br,los,fd)                                  'Loss factor element of the loss segment curve'
+  HVDCBreakPointMWFlow(tp,br,bp,fd)                                 'Value of power flow on the HVDC at the break point'
+  HVDCBreakPointMWLoss(tp,br,bp,fd)                                 'Value of variable losses on the HVDC at the break point'
   NodeBusAllocationFactor(tp,n,b)                                   'Allocation factor of market node to bus for the current trade period'
   BusElectricalIsland(tp,b)                                         'Bus electrical island status for the current trade period (0 = Dead)'
+
 * Flag to allow roundpower on the HVDC link
   AllowHVDCRoundpower(tp)                                           'Flag to allow roundpower on the HVDC (1 = Yes)'
 * Risk/Reserve
@@ -878,23 +879,23 @@ PurchaseBidDefintion(bid(currTP,bd))..
 HVDClinkMaximumFlow(HVDClink(currTP,br)) $ useHVDCbranchLimits ..
   HVDCLINKFLOW(HVDClink)
 =l=
-  branchCapacity(HVDClink)
+  sum[ fd $ ( ord(fd)=1 ), branchCapacity(HVDClink,fd) ]
   ;
 
 * Definition of losses on the HVDC link (3.2.1.2)
 HVDClinkLossDefinition(HVDClink(currTP,br))..
   HVDCLINKLOSSES(HVDClink)
 =e=
-  sum[ validLossSegment(HVDClink,bp)
-     , HVDCBreakPointMWLoss(HVDClink,bp) * LAMBDA(HVDClink,bp) ]
+  sum[ validLossSegment(HVDClink,bp,fd)
+     , HVDCBreakPointMWLoss(HVDClink,bp,fd) * LAMBDA(HVDClink,bp) ]
   ;
 
 * Definition of MW flow on the HVDC link (3.2.1.3)
 HVDClinkFlowDefinition(HVDClink(currTP,br))..
   HVDCLINKFLOW(HVDClink)
 =e=
-  sum[ validLossSegment(HVDClink,bp)
-  , HVDCBreakPointMWFlow(HVDClink,bp) * LAMBDA(HVDClink,bp) ]
+  sum[ validLossSegment(HVDClink,bp,fd)
+  , HVDCBreakPointMWFlow(HVDClink,bp,fd) * LAMBDA(HVDClink,bp) ]
   ;
 
 * Definition of the integer HVDC link flow variable (3.8.2a)
@@ -939,7 +940,7 @@ HVDClinkFlowIntegerDefinition4(currTP,pole,fd) $ { UseBranchFlowMIP(currTP) and
 
 * Definition of weighting factor (3.2.1.4)
 LambdaDefinition(HVDClink(currTP,br))..
-  sum(validLossSegment(HVDClink,bp), LAMBDA(HVDClink,bp))
+  sum(validLossSegment(HVDClink,bp,fd), LAMBDA(HVDClink,bp))
 =e=
   1
   ;
@@ -947,14 +948,15 @@ LambdaDefinition(HVDClink(currTP,br))..
 * Definition of weighting factor when branch integer constraints are needed (3.8.3a)
 LambdaIntegerDefinition1(HVDClink(currTP,br)) $ { UseBranchFlowMIP(currTP) and
                                                   resolveHVDCnonPhysicalLosses }..
-  sum[ validLossSegment(HVDClink,bp), LAMBDAINTEGER(HVDClink,bp) ]
+  sum[ validLossSegment(HVDClink,bp,fd), LAMBDAINTEGER(HVDClink,bp) ]
 =e=
   1
   ;
 
 * Definition of weighting factor when branch integer constraints are needed (3.8.3b)
-LambdaIntegerDefinition2(validLossSegment(HVDClink(currTP,br),bp))
-  $ { UseBranchFlowMIP(currTP) and resolveHVDCnonPhysicalLosses }..
+LambdaIntegerDefinition2(HVDClink(currTP,br),bp)
+  $ { UseBranchFlowMIP(currTP) and resolveHVDCnonPhysicalLosses
+  and sum[ fd $ validLossSegment(HVDClink,bp,fd), 1] }..
   LAMBDAINTEGER(HVDClink,bp)
 =e=
   LAMBDA(HVDClink,bp)
@@ -1015,11 +1017,11 @@ ACnodeNetInjectionDefinition2(ACBus(currTP,b))..
 + DEFICITBUSGENERATION(currTP,b) - SURPLUSBUSGENERATION(currTP,b)
   ;
 
-* Maximum flow on the AC branch (3.3.1.3)
+* Maximum flow on the AC branch (3.3.1.3) - Modified for BranchcReverseRatings
 ACBranchMaximumFlow(ACbranch(currTP,br),fd) $ useACbranchLimits..
   ACBRANCHFLOWDIRECTED(ACBranch,fd) - SURPLUSBRANCHFLOW(ACBranch)
 =l=
-  branchCapacity(ACBranch)
+  branchCapacity(ACBranch,fd)
   ;
 
 * Relationship between directed and undirected branch flow variables (3.3.1.4)
@@ -1039,33 +1041,34 @@ LinearLoadFlow(ACBranch(currTP,br))..
        , ACNODEANGLE(currTP,frB) - ACNODEANGLE(currTP,toB) ]
   ;
 
-* Limit on each AC branch flow block (3.3.1.6)
-ACBranchBlockLimit(validLossSegment(ACBranch(currTP,br),los),fd)..
+* Limit on each AC branch flow block (3.3.1.6) - Modified for BranchcReverseRatings
+ACBranchBlockLimit(validLossSegment(ACBranch(currTP,br),los,fd))..
   ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd)
 =l=
-  ACBranchLossMW(ACBranch,los)
+  ACBranchLossMW(ACBranch,los,fd)
   ;
 
 * Composition of the directed branch flow from the block branch flow (3.3.1.7)
 ACDirectedBranchFlowDefinition(ACBranch(currTP,br),fd)..
   ACBRANCHFLOWDIRECTED(ACBranch,fd)
 =e=
-  sum[ validLossSegment(ACBranch,los)
+  sum[ validLossSegment(ACBranch,los,fd)
      , ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd) ]
   ;
 
-* Calculation of the losses in each loss segment (3.3.1.8)
-ACBranchLossCalculation(validLossSegment(ACBranch(currTP,br),los),fd)..
+* Calculation of the losses in each loss segment (3.3.1.8) - Modified for BranchcReverseRatings
+ACBranchLossCalculation(validLossSegment(ACBranch(currTP,br),los,fd))..
   ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,fd)
 =e=
-  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd) * ACBranchLossFactor(ACBranch,los)
+  ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd)
+  * ACBranchLossFactor(ACBranch,los,fd)
   ;
 
 * Composition of the directed branch losses from the block branch losses (3.3.1.9)
 ACDirectedBranchLossDefinition(ACBranch(currTP,br),fd)..
   ACBRANCHLOSSESDIRECTED(ACBranch,fd)
 =e=
-  sum[ validLossSegment(ACBranch,los)
+  sum[ validLossSegment(ACBranch,los,fd)
      , ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,fd) ]
   ;
 
@@ -1392,7 +1395,7 @@ ReverseReserveLimitInReserveZone(currTP,ild,resC,rd,z)
 ZeroReserveInNoReserveZone(currTP,ild,resC,z)
   $ { reserveShareEnabled(currTP,resC) and (ord(z) = 2) }..
   Sum[ rd $ (ord(rd) = 2), RESERVESHARERECEIVED(currTP,ild,resC,rd) ]
-+ Sum[ rd $ (ord(rd) = 1), RESERVESHARESENT(currTP,ild,resC,rd) ]${reserveRoundPower(currTP,resC) = 0}
++ Sum[ rd $ (ord(rd) = 1), RESERVESHARESENT(currTP,ild,resC,rd) ] $ {reserveRoundPower(currTP,resC) = 0}
 =l=
   BigM * [ 1 - INZONE(currTP,ild,resC,z) ]
   ;

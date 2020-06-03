@@ -4,12 +4,11 @@
 *                       the model
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       https://www.emi.ea.govt.nz/Tools/vSPD
-* Contact:              Forum: https://www.emi.ea.govt.nz/forum/
+*                       http://www.emi.ea.govt.nz/Tools/vSPD
+* Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     1 Oct 2019
-*                       New feature added: new wind offer arrangements
-*
+* Last modified on:     30 June 2020
+* Feature added:        Branch Reverse Rating
 *=====================================================================================
 
 $ontext
@@ -55,7 +54,7 @@ $offtext
 * Include paths, settings and case name files
 $include vSPDsettings.inc
 $include vSPDcase.inc
-$if not %opMode%=='SPD' tradePeriodReports = 1 ;
+$if not %opMode%=='SPD' tradePeriodReports = 1 ;                                
 
 
 * Update the runlog file
@@ -177,7 +176,7 @@ Parameters
   northHVDC(tp)                                       'HVDC MW sent from from SI to NI'
   southHVDC(tp)                                       'HVDC MW sent from from NI to SI'
   nonPhysicalLossExist(tp,br)                         'Flag to indicate if non-physical losses exist on branch: 1 = Yes'
-  manualBranchSegmentMWFlow(tp,br,los)                'Manual calculation of the branch loss segment MW flow'
+  manualBranchSegmentMWFlow(tp,br,los,fd)             'Manual calculation of the branch loss segment MW flow'
   manualLossCalculation(tp,br)                        'MW losses calculated manually from the solution for each loss branch'
   HVDChalfPoleSouthFlow(tp)                           'Flag to indicate if south flow on HVDC halfpoles'
   type1MixedConstraintLimit2Violation(tp, t1MixCstr)  'Type 1 mixed constraint MW violaton of the alternate limit value'
@@ -597,47 +596,55 @@ else
 
 * Scarcity pricing scheme for reserve available from 27 May 2014
 if(inputGDXGDate >= jdate(2014,5,27),
-  execute_load i_tradePeriodVROfferMax, i_tradePeriodVROfferPrice ;
+    execute_load i_tradePeriodVROfferMax, i_tradePeriodVROfferPrice ;
 else
-  i_tradePeriodVROfferMax(tp,ild,resC) = 0 ;
-  i_tradePeriodVROfferPrice(tp,ild,resC) = 0 ;
+    i_tradePeriodVROfferMax(tp,ild,resC) = 0 ;
+    i_tradePeriodVROfferPrice(tp,ild,resC) = 0 ;
 ) ;
 
 
 * National market for IR effective date 20 Oct 2016
 if (inputGDXGDate >= jdate(2016,10,20),
-  execute_load
-  reserveRoundPower     = i_tradePeriodReserveRoundPower
-  reserveShareEnabled   = i_tradePeriodReserveSharing
-  modulationRiskClass   = i_tradePeriodModulationRisk
-  roundPower2MonoLevel  = i_tradePeriodRoundPower2Mono
-  bipole2MonoLevel      = i_tradePeriodBipole2Mono
-  monopoleMinimum       = i_tradePeriodReserveSharingPoleMin
-  HVDCControlBand       = i_tradePeriodHVDCcontrolBand
-  HVDClossScalingFactor = i_tradePeriodHVDClossScalingFactor
-  sharedNFRfactor       = i_tradePeriodSharedNFRfactor
-  sharedNFRLoadOffset   = i_tradePeriodSharedNFRLoadOffset
-  effectiveFactor       = i_tradePeriodReserveEffectiveFactor
-  RMTreserveLimitTo     = i_tradePeriodRMTreserveLimit
-  rampingConstraint     = i_tradePeriodRampingConstraint
+    execute_load
+    reserveRoundPower     = i_tradePeriodReserveRoundPower
+    reserveShareEnabled   = i_tradePeriodReserveSharing
+    modulationRiskClass   = i_tradePeriodModulationRisk
+    roundPower2MonoLevel  = i_tradePeriodRoundPower2Mono
+    bipole2MonoLevel      = i_tradePeriodBipole2Mono
+    monopoleMinimum       = i_tradePeriodReserveSharingPoleMin
+    HVDCControlBand       = i_tradePeriodHVDCcontrolBand
+    HVDClossScalingFactor = i_tradePeriodHVDClossScalingFactor
+    sharedNFRfactor       = i_tradePeriodSharedNFRfactor
+    sharedNFRLoadOffset   = i_tradePeriodSharedNFRLoadOffset
+    effectiveFactor       = i_tradePeriodReserveEffectiveFactor
+    RMTreserveLimitTo     = i_tradePeriodRMTreserveLimit
+    rampingConstraint     = i_tradePeriodRampingConstraint
   ;
 else
-  reserveRoundPower(tp,resC)         = 0    ;
-  reserveShareEnabled(tp,resC)       = 0    ;
-  modulationRiskClass(tp,riskC)      = 0    ;
-  roundPower2MonoLevel(tp)           = 0    ;
-  bipole2MonoLevel(tp)               = 0    ;
-  MonopoleMinimum(tp)                = 0    ;
-  HVDCControlBand(tp,fd)             = 0    ;
-  HVDClossScalingFactor(tp)          = 0    ;
-  sharedNFRfactor(tp)                = 0    ;
-  sharedNFRloadOffset(tp,ild)        = 0    ;
-  effectiveFactor(tp,ild,resC,riskC) = 0    ;
-  RMTreserveLimitTo(tp,ild,resC)     = 0    ;
-  rampingConstraint(tp,brCstr)       = no   ;
+    reserveRoundPower(tp,resC)         = 0    ;
+    reserveShareEnabled(tp,resC)       = 0    ;
+    modulationRiskClass(tp,riskC)      = 0    ;
+    roundPower2MonoLevel(tp)           = 0    ;
+    bipole2MonoLevel(tp)               = 0    ;
+    MonopoleMinimum(tp)                = 0    ;
+    HVDCControlBand(tp,fd)             = 0    ;
+    HVDClossScalingFactor(tp)          = 0    ;
+    sharedNFRfactor(tp)                = 0    ;
+    sharedNFRloadOffset(tp,ild)        = 0    ;
+    effectiveFactor(tp,ild,resC,riskC) = 0    ;
+    RMTreserveLimitTo(tp,ild,resC)     = 0    ;
+    rampingConstraint(tp,brCstr)       = no   ;
 ) ;
 
 UseShareReserve = 1 $ sum[ (tp,resC), reserveShareEnabled(tp,resC)] ;
+
+* Branch Reverse Ratings application effective date 1/12/2020 (just guessing)
+if (inputGDXGDate >= jdate(2020,01,01),
+    execute_load i_tradePeriodBranchCapacityDirected ;
+else
+    i_tradePeriodBranchCapacityDirected(tp,br,fd)
+        = i_tradePeriodBranchCapacity(tp,br) ;
+) ;
 
 *=====================================================================================
 * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
@@ -920,10 +927,12 @@ nodeDemand(node(tp,n))
 * Branch is defined if there is a defined terminal bus, it has a non-zero
 * capacity and is closed for that trade period
 branch(tp,br) $ { (not i_tradePeriodBranchOpenStatus(tp,br)) and
-                  i_tradePeriodBranchCapacity(tp,br)         and
+                  sum[ fd, i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
                   sum[ (b,b1) $ { bus(tp,b) and bus(tp,b1) and
                                   i_tradePeriodBranchDefn(tp,br,b,b1) }, 1 ]
                 } = yes ;
+
+
 
 branchBusDefn(branch,b,b1) $ i_tradePeriodBranchDefn(branch,b,b1)    = yes ;
 branchBusConnect(branch,b) $ sum[b1 $ branchBusDefn(branch,b,b1), 1] = yes ;
@@ -987,9 +996,13 @@ nodeBusAllocationFactor(tp,n,b) $ { node(tp,n) and bus(tp,b) }
 * Flag to allow roundpower on the HVDC link
 allowHVDCroundpower(tp) = i_tradePeriodAllowHVDCroundpower(tp) ;
 
-* Allocate the input branch parameters to the defined model parameters
-branchCapacity(branch) = i_tradePeriodBranchCapacity(branch) ;
+* Allocate the input branch parameters to the defined branchCapacity
+branchCapacity(branch,fd)
+    = i_tradePeriodBranchCapacityDirected(branch,fd) ;
+* HVDC Links do not have reverse capacity
+branchCapacity(HVDClink,fd) $ ( ord(fd) = 2 ) = 0 ;
 
+* Allocate the input branch parameters to the defined branchResistance
 branchResistance(branch)
     = sum[ i_branchParameter $ (ord(i_branchParameter) = 1)
          , i_tradePeriodBranchParameter(branch,i_branchParameter) ] ;
@@ -1026,150 +1039,155 @@ branchFixedLoss(HVDClink)  $ (not useHVDClossModel) = 0 ;
 * and the resistance is in p.u.
 
 * Loss branches with 0 loss blocks
-LossSegmentMW(branch,los)
+lossSegmentMW(branch,los,fd)
     $ { (branchLossBlocks(branch) = 0) and (ord(los) = 1) }
-    = branchCapacity(branch) ;
+    = branchCapacity(branch,fd) ;
 
-LossSegmentFactor(branch,los)
+LossSegmentFactor(branch,los,fd)
     $ { (branchLossBlocks(branch) = 0) and (ord(los) = 1) }
     = 0 ;
 
 * Loss branches with 1 loss blocks
-LossSegmentMW(branch,los)
+LossSegmentMW(branch,los,fd)
     $ { (branchLossBlocks(branch) = 1) and (ord(los) = 1) }
     = maxFlowSegment ;
 
-LossSegmentFactor(branch,los)
+LossSegmentFactor(branch,los,fd)
     $ { (branchLossBlocks(branch) = 1) and (ord(los) = 1) }
-    = 0.01 * branchResistance(branch) * branchCapacity(branch) ;
+    = 0.01 * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 * Loss branches with 3 loss blocks
 loop( branch $ (branchLossBlocks(branch) = 3),
 *   Segment 1
-    LossSegmentMW(branch,los) $ (ord(los) = 1)
-        = lossCoeff_A * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 1)
+        = lossCoeff_A * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 1)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 1)
         = 0.01 * 0.75 * lossCoeff_A
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 2
-    LossSegmentMW(branch,los) $ (ord(los) = 2)
-        = (1-lossCoeff_A) * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 2)
+        = (1-lossCoeff_A) * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 2)
-        = 0.01 * branchResistance(branch) * branchCapacity(branch) ;
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 2)
+        = 0.01 * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 3
-    LossSegmentMW(branch,los) $ (ord(los) = 3)
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 3)
         = maxFlowSegment ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 3)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 3)
         = 0.01 * (2 - (0.75*lossCoeff_A))
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 );
 
 * Loss branches with 6 loss blocks
 loop( branch $ (branchLossBlocks(branch) = 6),
 *   Segment 1
-    LossSegmentMW(branch,los) $ (ord(los) = 1)
-        = lossCoeff_C  * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 1)
+        = lossCoeff_C  * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 1)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 1)
         = 0.01 * 0.75 * lossCoeff_C
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 2
-    LossSegmentMW(branch,los) $ (ord(los) = 2)
-        = lossCoeff_D * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 2)
+        = lossCoeff_D * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 2)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 2)
         = 0.01 * lossCoeff_E
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 3
-    LossSegmentMW(branch,los) $ (ord(los) = 3)
-        = 0.5 * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 3)
+        = 0.5 * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 3)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 3)
         = 0.01 * lossCoeff_F
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 4
-    LossSegmentMW(branch,los) $ (ord(los) = 4)
-        = (1 - lossCoeff_D) * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 4)
+        = (1 - lossCoeff_D) * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 4)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 4)
         = 0.01 * (2 - lossCoeff_F)
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 5
-    LossSegmentMW(branch,los) $ (ord(los) = 5)
-        = (1 - lossCoeff_C) * branchCapacity(branch) ;
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 5)
+        = (1 - lossCoeff_C) * branchCapacity(branch,fd) ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 5)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 5)
         = 0.01 * (2 - lossCoeff_E)
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 
 *   Segment 6
-    LossSegmentMW(branch,los) $ (ord(los) = 6)
+    LossSegmentMW(branch,los,fd) $ (ord(los) = 6)
         = maxFlowSegment ;
 
-    LossSegmentFactor(branch,los) $ (ord(los) = 6)
+    LossSegmentFactor(branch,los,fd) $ (ord(los) = 6)
         = 0.01 * (2 - (0.75*lossCoeff_C))
-        * branchResistance(branch) * branchCapacity(branch) ;
+        * branchResistance(branch) * branchCapacity(branch,fd) ;
 ) ;
+
+* HVDC does not have backward flow --> No loss segment for backward flow
+LossSegmentMW(HVDClink,los,fd) $ (ord(fd) = 2) = 0;
+LossSegmentFactor(HVDClink,los,fd) $ (ord(fd) = 2) = 0;
+
 
 * Valid loss segment for a branch is defined as a loss segment that
 * has a non-zero LossSegmentMW or a non-zero LossSegmentFactor.
-validLossSegment(branch,los) = yes $ { (ord(los) = 1) or
-                                       LossSegmentMW(branch,los) or
-                                       LossSegmentFactor(branch,los) } ;
+validLossSegment(branch,los,fd) = yes $ { (ord(los) = 1) or
+                                          LossSegmentMW(branch,los,fd) or
+                                          LossSegmentFactor(branch,los,fd) } ;
 
 * HVDC loss model requires at least two loss segments and
 * an additional loss block due to cumulative loss formulation
-validLossSegment(HVDClink,los)
+validLossSegment(HVDClink,los,fd)
     $ { (branchLossBlocks(HVDClink) <= 1) and (ord(los) = 2) } = yes ;
 
-validLossSegment(HVDClink,los)
+validLossSegment(HVDClink,los,fd)
     $ { (branchLossBlocks(HVDClink) > 1) and
         (ord(los) = (branchLossBlocks(HVDClink) + 1)) and
-        (sum[ los1, LossSegmentMW(HVDClink,los1)
-                  + LossSegmentFactor(HVDClink,los1) ] > 0)
+        (sum[ los1, LossSegmentMW(HVDClink,los1,fd)
+                  + LossSegmentFactor(HVDClink,los1,fd) ] > 0)
       } = yes ;
 
 * branches that have non-zero loss factors
-LossBranch(branch) $ sum[ los, LossSegmentFactor(branch,los) ] = yes ;
+LossBranch(branch) $ sum[ (los,fd), LossSegmentFactor(branch,los,fd) ] = yes ;
 
 * Create AC branch loss segments
-ACbranchLossMW(ACbranch,los)
-    $ { validLossSegment(ACbranch,los) and (ord(los) = 1) }
-    = LossSegmentMW(ACbranch,los) ;
+ACbranchLossMW(ACbranch,los,fd)
+    $ { validLossSegment(ACbranch,los,fd) and (ord(los) = 1) }
+    = LossSegmentMW(ACbranch,los,fd) ;
 
-ACbranchLossMW(ACbranch,los)
-    $ { validLossSegment(ACbranch,los) and (ord(los) > 1) }
-    = LossSegmentMW(ACbranch,los) - LossSegmentMW(ACbranch,los-1) ;
+ACbranchLossMW(ACbranch,los,fd)
+    $ { validLossSegment(ACbranch,los,fd) and (ord(los) > 1) }
+    = LossSegmentMW(ACbranch,los,fd) - LossSegmentMW(ACbranch,los-1,fd) ;
 
-ACbranchLossFactor(ACbranch,los)
-    $ validLossSegment(ACbranch,los) = LossSegmentFactor(ACbranch,los) ;
+ACbranchLossFactor(ACbranch,los,fd)
+    $ validLossSegment(ACbranch,los,fd) = LossSegmentFactor(ACbranch,los,fd) ;
 
 * Create HVDC loss break points
-HVDCBreakPointMWFlow(HVDClink,bp) $ (ord(bp) = 1) = 0 ;
-HVDCBreakPointMWLoss(HVDClink,bp) $ (ord(bp) = 1) = 0 ;
+HVDCBreakPointMWFlow(HVDClink,bp,fd) $ (ord(bp) = 1) = 0 ;
+HVDCBreakPointMWLoss(HVDClink,bp,fd) $ (ord(bp) = 1) = 0 ;
 
-HVDCBreakPointMWFlow(HVDClink,bp)
-    $ { validLossSegment(HVDClink,bp) and (ord(bp) > 1) }
-    = LossSegmentMW(HVDClink,bp-1) ;
+HVDCBreakPointMWFlow(HVDClink,bp,fd)
+    $ { validLossSegment(HVDClink,bp,fd) and (ord(bp) > 1) }
+    = LossSegmentMW(HVDClink,bp-1,fd) ;
 
-HVDCBreakPointMWLoss(HVDClink,bp)
-    $ { validLossSegment(HVDClink,bp) and (ord(bp) = 2) }
-    =  LossSegmentMW(HVDClink,bp-1) * LossSegmentFactor(HVDClink,bp-1)  ;
+HVDCBreakPointMWLoss(HVDClink,bp,fd)
+    $ { validLossSegment(HVDClink,bp,fd) and (ord(bp) = 2) }
+    =  LossSegmentMW(HVDClink,bp-1,fd) * LossSegmentFactor(HVDClink,bp-1,fd) ;
 
 loop( (HVDClink(branch),bp) $ (ord(bp) > 2),
-    HVDCBreakPointMWLoss(branch,bp) $ validLossSegment(branch,bp)
-        = LossSegmentFactor(branch,bp-1)
-        * [ LossSegmentMW(branch,bp-1) - LossSegmentMW(branch,bp-2) ]
-        + HVDCBreakPointMWLoss(branch,bp-1) ;
+    HVDCBreakPointMWLoss(branch,bp,fd) $ validLossSegment(branch,bp,fd)
+        = LossSegmentFactor(branch,bp-1,fd)
+        * [ LossSegmentMW(branch,bp-1,fd) - LossSegmentMW(branch,bp-2,fd) ]
+        + HVDCBreakPointMWLoss(branch,bp-1,fd) ;
 ) ;
 
 * Initialise branch constraint data for the current trading period
@@ -1254,10 +1272,11 @@ bipoleConstraint(tp,ild,brCstr)
                        } = yes ;
 
 monoPoleCapacity(tp,ild,br)
-    = Sum[ b $ { BusIsland(tp,b,ild)
-             and HVDCPoles(tp,br)
-             and HVDClinkSendingBus(tp,br,b)
-               }, branchCapacity(tp,br) ] ;
+    = Sum[ (b,fd) $ { BusIsland(tp,b,ild)
+                  and HVDCPoles(tp,br)
+                  and HVDClinkSendingBus(tp,br,b)
+                  and ( ord(fd) = 1 )
+                    }, branchCapacity(tp,br,fd) ] ;
 
 monoPoleCapacity(tp,ild,br)
     $ Sum[ brCstr $ monopoleConstraint(tp,ild,brCstr,br), 1]
@@ -1265,7 +1284,8 @@ monoPoleCapacity(tp,ild,br)
           , branchConstraintLimit(tp,brCstr) ];
 
 monoPoleCapacity(tp,ild,br)
-    = Min( monoPoleCapacity(tp,ild,br), branchCapacity(tp,br) );
+    = Min( monoPoleCapacity(tp,ild,br),
+           sum[ fd $ ( ord(fd) = 1 ), branchCapacity(tp,br,fd) ] );
 
 biPoleCapacity(tp,ild)
     $ Sum[ brCstr $ bipoleConstraint(tp,ild,brCstr), 1]
@@ -1274,8 +1294,10 @@ biPoleCapacity(tp,ild)
 
 biPoleCapacity(tp,ild)
     $ { Sum[ brCstr $ bipoleConstraint(tp,ild,brCstr), 1] = 0 }
-    = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
-                  and HVDClinkSendingBus(tp,br,b) }, branchCapacity(tp,br) ] ;
+    = Sum[ (b,br,fd) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
+                     and HVDClinkSendingBus(tp,br,b)
+                     and ( ord(fd) = 1 )
+                       }, branchCapacity(tp,br,fd) ] ;
 
 HVDCMax(tp,ild)
     = Min( biPoleCapacity(tp,ild), Sum[ br, monoPoleCapacity(tp,ild,br) ] ) ;
@@ -1289,9 +1311,10 @@ $ontext
 $offtext
 if (inputGDXGDate >= jdate(2016,11,22),
       HVDCCapacity(tp,ild)
-          = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
-                        and HVDClinkSendingBus(tp,br,b)
-                          }, branchCapacity(tp,br) ] ;
+          = Sum[ (b,br,fd) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
+                           and HVDClinkSendingBus(tp,br,b)
+                           and ( ord(fd) = 1 )
+                             }, branchCapacity(tp,br,fd) ] ;
 
       numberOfPoles(tp,ild)
           = Sum[ (b,br) $ { BusIsland(tp,b,ild) and HVDCPoles(tp,br)
@@ -1309,16 +1332,18 @@ if (inputGDXGDate >= jdate(2016,11,22),
           = Sum[ br $ monoPoleCapacity(tp,ild,br), branchResistance(tp,br) ] ;
 else
     HVDCCapacity(tp,ild)
-        = Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
-                      and i_tradePeriodBusIsland(tp,b,ild)
-                      and i_tradePeriodBranchDefn(tp,br,b,b1)
-                        }, i_tradePeriodBranchCapacity(tp,br) ] ;
+        = Sum[ (br,b,b1,fd) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
+                            and i_tradePeriodBusIsland(tp,b,ild)
+                            and i_tradePeriodBranchDefn(tp,br,b,b1)
+                            and ( ord(fd) = 1 )
+                              }, i_tradePeriodBranchCapacityDirected(tp,br,fd) ] ;
 
     numberOfPoles(tp,ild)
         =Sum[ (br,b,b1) $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
                       and i_tradePeriodBusIsland(tp,b,ild)
                       and i_tradePeriodBranchDefn(tp,br,b,b1)
-                      and i_tradePeriodBranchCapacity(tp,br)
+                      and sum[ fd $ ( ord(fd) = 1 )
+                             , i_tradePeriodBranchCapacityDirected(tp,br,fd) ]
                         }, 1 ] ;
 
     HVDCResistance(tp,ild)
@@ -1334,7 +1359,8 @@ else
               $ { (i_tradePeriodHVDCBranch(tp,br) = 1)
               and i_tradePeriodBusIsland(tp,b,ild)
               and i_tradePeriodBranchDefn(tp,br,b,b1)
-              and i_tradePeriodBranchCapacity(tp,br)
+              and sum[ fd $ ( ord(fd) = 1 )
+                             , i_tradePeriodBranchCapacityDirected(tp,br,fd) ]
               and (ord(i_branchParameter) = 1)
                 }, i_tradePeriodBranchParameter(tp,br,i_branchParameter)
               ] / HVDCResistance(tp,ild) ;
@@ -1906,7 +1932,8 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 
 *   Ensure that the weighting factor value is zero for AC branches and for
 *   invalid loss segments on HVDC links
-    LAMBDA.fx(HVDClink,bp)  $ (not validLossSegment(HVDClink,bp)) = 0 ;
+    LAMBDA.fx(HVDClink,bp)
+        $ ( sum[fd $ validLossSegment(HVDClink,bp,fd),1] = 0 ) = 0 ;
     LAMBDA.fx(currTP,br,bp) $ (not HVDClink(currTP,br)) = 0 ;
 
 *======= HVDC TRANSMISSION EQUATIONS END =======================================
@@ -1923,10 +1950,10 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *   Ensure directed block flow and loss block variables are zero for
 *   non-AC branches and invalid loss segments on AC branches
    ACBRANCHFLOWBLOCKDIRECTED.fx(currTP,br,los,fd)
-       $ { not(ACbranch(currTP,br) and validLossSegment(currTP,br,los)) } = 0 ;
+       $ { not(ACbranch(currTP,br) and validLossSegment(currTP,br,los,fd)) } = 0 ;
 
    ACBRANCHLOSSESBLOCKDIRECTED.fx(currTP,br,los,fd)
-       $ { not(ACbranch(currTP,br) and validLossSegment(currTP,br,los)) } = 0 ;
+       $ { not(ACbranch(currTP,br) and validLossSegment(currTP,br,los,fd)) } = 0 ;
 
 
 *   Constraint 3.3.1.10 - Ensure that the bus voltage angle for the buses
@@ -2126,7 +2153,9 @@ $offtext
 *       Ensure that the weighting factor value is zero for AC branches
 *       and for invalid loss segments on HVDC links
         LAMBDAINTEGER.fx(branch(currTP,br),bp)
-            $ { ACbranch(branch) or (not validLossSegment(branch,bp)) } = 0 ;
+            $ { ACbranch(branch)
+            or ( sum[fd $ validLossSegment(branch,bp,fd),1 ] = 0 )
+              } = 0 ;
 
 *       Fix the lambda integer variable to zero for invalid branches
         LAMBDAINTEGER.fx(currTP,br,bp) $ (not branch(currTP,br)) = 0 ;
@@ -2188,7 +2217,9 @@ $offtext
 *       Ensure that the weighting factor value is zero for AC branches
 *       and for invalid loss segments on HVDC links
         LAMBDAINTEGER.fx(branch(currTP,br),bp)
-            $ {ACbranch(branch) or (not  validLossSegment(branch,bp)) } = 0 ;
+            $ { ACbranch(branch)
+            or ( sum[fd $ validLossSegment(branch,bp,fd),1 ] = 0 )
+              } = 0 ;
 
 *       Fix the lambda integer variable to zero for invalid branches
         LAMBDAINTEGER.fx(currTP,br,bp) $ (not branch(currTP,br)) = 0 ;
@@ -2385,22 +2416,24 @@ $offtext
                   } = 1 ;
 
 *           Check if there are non-physical losses on HVDC links
-            ManualBranchSegmentMWFlow(LossBranch(HVDClink(currTP,br)),los)
+            ManualBranchSegmentMWFlow(LossBranch(HVDClink(currTP,br)),los,fd)
                 $ { ( ord(los) <= branchLossBlocks(HVDClink) )
-                and validLossSegment(currTP,br,los) }
+                and validLossSegment(currTP,br,los,fd) }
                 = Min[ Max( 0,
                             [ abs(HVDCLINKFLOW.l(HVDClink))
-                            - [LossSegmentMW(HVDClink,los-1) $ (ord(los) > 1)]
+                            - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)]
                             ]
                           ),
-                       ( LossSegmentMW(HVDClink,los)
-                       - [LossSegmentMW(HVDClink,los-1) $ (ord(los) > 1)]
+                       ( LossSegmentMW(HVDClink,los,fd)
+                       - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)]
                        )
                      ] ;
 
             ManualLossCalculation(LossBranch(HVDClink(currTP,br)))
-                = sum[ los, LossSegmentFactor(HVDClink,los)
-                          * ManualBranchSegmentMWFlow(HVDClink,los) ] ;
+                = sum[ (los,fd) $ validLossSegment(currTP,br,los,fd)
+                                , LossSegmentFactor(HVDClink,los,fd)
+                                * ManualBranchSegmentMWFlow(HVDClink,los,fd)
+                     ] ;
 
             NonPhysicalLossExist(LossBranch(HVDClink(currTP,br)))
                 $ { abs( HVDCLINKLOSSES.l(HVDClink)
@@ -2778,7 +2811,13 @@ $offtext
             = HVDClinkMaximumFlow.m(currTP,br) ;
 
         o_branchCapacity_TP(dt,br) $ branch(currTP,br)
-            = i_tradePeriodBranchCapacity(currTP,br) ;
+            = sum[ fd $ ( ord(fd) = 1 )
+                      , i_tradePeriodBranchCapacityDirected(currTP,br,fd)
+                 ] $  { o_branchFlow_TP(dt,br) >= 0 }
+            + sum[ fd $ ( ord(fd) = 2 )
+                      , i_tradePeriodBranchCapacityDirected(currTP,br,fd)
+                 ] $  { o_branchFlow_TP(dt,br) < 0 } ;
+
 
 *       Offer output
         o_offerEnergyBlock_TP(dt,o,trdBlk)
@@ -2993,31 +3032,59 @@ $offtext
         o_ACbusAngle(dt,b) = ACNODEANGLE.l(currTP,b) ;
 
 *       Check if there are non-physical losses on AC branches
-        ManualBranchSegmentMWFlow(LossBranch(branch(currTP,br)),los)
-                $ { ( ord(los) <= branchLossBlocks(branch) )
-                and validLossSegment(branch,los) }
+        ManualBranchSegmentMWFlow(LossBranch(ACbranch(currTP,br)),los,fd)
+                $ { ( ord(los) <= branchLossBlocks(ACbranch) )
+                and validLossSegment(ACbranch,los,fd)
+                and ( ACBRANCHFLOWDIRECTED.l(ACbranch,fd) > 0 )
+                  }
                 = Min[ Max( 0,
                             [ abs(o_branchFlow_TP(dt,br))
-                            - [LossSegmentMW(branch,los-1) $ (ord(los) > 1)]
+                            - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)]
                             ]
                           ),
-                       ( LossSegmentMW(branch,los)
-                       - [LossSegmentMW(branch,los-1) $ (ord(los) > 1)]
+                       ( LossSegmentMW(ACbranch,los,fd)
+                       - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)]
+                       )
+                     ] ;
+
+        ManualBranchSegmentMWFlow(LossBranch(HVDClink(currTP,br)),los,fd)
+                $ { ( ord(los) <= branchLossBlocks(HVDClink) )
+                and validLossSegment(HVDClink,los,fd) and ( ord(fd) = 1 )
+                  }
+                = Min[ Max( 0,
+                            [ abs(o_branchFlow_TP(dt,br))
+                            - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)]
+                            ]
+                          ),
+                       ( LossSegmentMW(HVDClink,los,fd)
+                       - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)]
                        )
                      ] ;
 
         ManualLossCalculation(LossBranch(branch(currTP,br)))
-            = sum[ los, LossSegmentFactor(branch,los)
-                      * ManualBranchSegmentMWFlow(branch,los) ] ;
+            = sum[ (los,fd), LossSegmentFactor(branch,los,fd)
+                           * ManualBranchSegmentMWFlow(branch,los,fd) ] ;
 
         o_nonPhysicalLoss(dt,br) = o_branchDynamicLoss_TP(dt,br)
                                  - ManualLossCalculation(currTP,br) ;
 
-        o_lossSegmentBreakPoint(dt,br,los) $ validLossSegment(currTP,br,los)
-                                           = LossSegmentMW(currTP,br,los) ;
+        o_lossSegmentBreakPoint(dt,br,los)
+            = sum [ fd $ { validLossSegment(currTP,br,los,fd)
+                       and (ord(fd) = 1)
+                         }, LossSegmentMW(currTP,br,los,fd) ] $ { o_branchFlow_TP(dt,br) >= 0 }
+            + sum [ fd $ { validLossSegment(currTP,br,los,fd)
+                       and (ord(fd) = 2)
+                         }, LossSegmentMW(currTP,br,los,fd) ] $ { o_branchFlow_TP(dt,br) < 0 }
+        ;
 
-        o_lossSegmentFactor(dt,br,los) $ validLossSegment(currTP,br,los)
-                                       = LossSegmentFactor(currTP,br,los) ;
+        o_lossSegmentFactor(dt,br,los)
+            = sum [ fd $ { validLossSegment(currTP,br,los,fd)
+                       and (ord(fd) = 1)
+                         }, LossSegmentFactor(currTP,br,los,fd) ] $ { o_branchFlow_TP(dt,br) >= 0 }
+            + sum [ fd $ { validLossSegment(currTP,br,los,fd)
+                       and (ord(fd) = 2)
+                         }, LossSegmentFactor(currTP,br,los,fd) ] $ { o_branchFlow_TP(dt,br) < 0 }
+        ;
 
         o_busIsland_TP(dt,b,ild) $ busIsland(currTP,b,ild) = yes ;
 
