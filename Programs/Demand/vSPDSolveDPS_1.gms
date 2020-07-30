@@ -15,6 +15,7 @@ $include "%system.fp%Scenarios.gms"
 * Define output required for pivotal test
 
 Parameters
+  o_drsnodeprice(dt,drs,n)                 'Price at each reference pricng node for each demand scenario'
   o_drsGen(dt,drs,ild)                     'Total island scheduled generation for each demand scenario'
   o_drsPosDemand(dt,drs,ild)               'Total island non-negative demand for each demand scenario'
   o_drsNegDemand(dt,drs,ild)               'Total island negative demand for each demand scenario'
@@ -26,18 +27,25 @@ Parameters
 ;
 
 * Reset island reference node for demand sensitivity analysis
-referenceNode(node(tp,n))
-  = yes $ { sameas(n,'OTA2201') or sameas(n,'BEN2201') } ;
+*referenceNode(node(tp,n))
+*  = yes $ { sameas(n,'OTA2201') or sameas(n,'BEN2201') } ;
 
 * Begin a loop through each pivot scenario and produce pivot data
 Loop[ drs,
 *   apply demand scale for current demand scenario
-    nodeDemand(node) $ (nodeDemand(node) > 0)
-                     = demandscale(drs) * i_tradePeriodNodeDemand(node);
+    nodeDemand(node) = i_tradePeriodNodeDemand(node) ;
+
+    nodeDemand(node) $ { ( nodeDemand(node) > 0 )
+                     and ( not drs_conforming(drs) ) }
+    = demandscale(drs) * nodeDemand(node) ;
+
+    nodeDemand(node(tp,n)) $ { ( nodeDemand(node) > 0 )
+                           and ( drs_conforming(drs) )
+                           and ( not non_conforming_nodes(n) )}
+    = demandscale(drs) * nodeDemand(node) ;
 
 
-
-* ]; the end of loop will apprear in vSPDDRSEndding.gms
+* ]; the end of loop will apprear in vSPDSolveDPS_4.gms
 
 
 
