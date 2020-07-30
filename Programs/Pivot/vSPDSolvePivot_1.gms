@@ -10,6 +10,40 @@
 *                       vSPDSolve to begin the net pivotal analysis loop
 *=====================================================================================
 
+* Added on 5 May 2020 - estimate DCECE NFR for pivot simulation purpose
+Parameters
+est_FreeReserve(tp,ild,resC,riskC) 'Estimate DCECE NFR based on island load'
+;
+
+* NI FIR DCECE free reserve estimation
+est_FreeReserve(tp,ild,resC,riskC)
+    $ {(ord(riskC) = 3) and (ord(ild) = 1) and (ord(resC) = 1)}
+    = sum[n $ nodeIsland(tp,n,ild), nodeDemand(tp,n)] * 0.296 - 179;
+
+* NI SIR DCECE free reserve estimation
+est_FreeReserve(tp,ild,resC,riskC)
+    $ {(ord(riskC) = 3) and (ord(ild) = 1) and (ord(resC) = 2)}
+    = sum[n $ nodeIsland(tp,n,ild), nodeDemand(tp,n)] * 0.287 - 221;
+
+* SI FIR DCECE free reserve estimation
+est_FreeReserve(tp,ild,resC,riskC)
+    $ {(ord(riskC) = 3) and (ord(ild) = 2) and (ord(resC) = 1)}
+    = sum[n $ nodeIsland(tp,n,ild), nodeDemand(tp,n)] * 0.381 - 290;
+
+* SI SIR DCECE free reserve estimation
+est_FreeReserve(tp,ild,resC,riskC)
+    $ {(ord(riskC) = 3) and (ord(ild) = 2) and (ord(resC) = 2)}
+    = sum[n $ nodeIsland(tp,n,ild), nodeDemand(tp,n)] * 0.228 - 36.9;
+
+* Assign new DCECE NFR value if the estimated value greater than existing value
+FreeReserve(tp,ild,resC,riskC)
+    $ {(ord(riskC) = 3) and est_FreeReserve(tp,ild,resC,riskC) > FreeReserve(tp,ild,resC,riskC)}
+    = est_FreeReserve(tp,ild,resC,riskC) ;
+
+* Added on 5 May 2020 - estimate DCECE NFR for pivot simulation purpose - END
+
+
+* Mapping offer -trader to be used in later stage (vSPDSolvePivot_3.gms)
 o_offerTrader(o,trdr) $ sum[tp $ i_tradePeriodOfferTrader(tp,o,trdr), 1] = yes ;
 
 
@@ -113,7 +147,6 @@ Parameters
   o_pivotNodePrice(dt,pvt,n)     'Energy nodal price for all nodes in pivot island'
   o_pivotOfferGen(dt,pvt,o)      'Energy offer cleared for pivot offers'
 ;
-
 
 * Begin a loop through each pivot scenario and produce pivot data
 Loop[ pvt,
