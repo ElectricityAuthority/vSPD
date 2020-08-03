@@ -23,6 +23,13 @@
 *       Node level output
         o_node(dt,n) $ {Node(currTP,n) and (not HVDCnode(currTP,n))} = yes ;
 
+        o_nodeGeneration_TP(dt,n) $ Node(currTP,n)
+            = sum[ o $ offerNode(currTP,o,n), GENERATION.l(currTP,o) ] ;
+
+        o_nodeLoad_TP(dt,n) $ Node(currTP,n)
+           = NodeDemand(currTP,n)
+           + Sum[ bd $ bidNode(currTP,bd,n), PURCHASE.l(currTP,bd) ];
+
         o_nodePrice_TP(dt,n) $ Node(currTP,n)
             = sum[ b $ NodeBus(currTP,n,b)
                  , NodeBusAllocationFactor(currTP,n,b) * busPrice(currTP,b)
@@ -94,6 +101,14 @@ $offend
         o_SIRprice_TP(dt,ild)
             = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
             , IslandReserveCalculation.m(currTP,ild,i_reserveClass) ];
+
+        o_ResCleared_TP(dt,ild,resC) = ISLANDRESERVE.l(currTP,ild,resC);
+
+        o_FirCleared_TP(dt,ild) = Sum[ resC $ (ord(resC) = 1)
+                                            , o_ResCleared_TP(dt,ild,resC) ];
+
+        o_SirCleared_TP(dt,ild) = Sum[ resC $ (ord(resC) = 2)
+                                            , o_ResCleared_TP(dt,ild,resC) ];
 
 *       Summary reporting by trading period
         o_solveOK_TP(dt) = ModelSolved ;

@@ -20,6 +20,9 @@ $onend
                , NodeBusAllocationFactor(currTP,n,b) * busPrice(currTP,b)
                ] ;
 
+*       Get price at each reference pricng node for each demand scenario
+        o_drsnodeprice(dt,drs,pricing_nodes(n)) = o_nodePrice_TP(dt,n);
+
 *       Total island scheduled generation for each demand scenario
         o_drsGen(dt,drs,ild)
           = sum[ n $ nodeIsland(currTP,n,ild) , o_nodeGeneration_TP(dt,n)] ;
