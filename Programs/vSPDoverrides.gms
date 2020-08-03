@@ -7,7 +7,7 @@
 *                       https://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     1 Oct 2019
+* Last modified on:     3 August 2020
 *
 *=====================================================================================
 
@@ -71,6 +71,16 @@ Parameters
   temp_TradePeriodIslandDemand(tp,ild)             'Temporary container for island positive demand value while implementing the island-based scaling factor'
   used_TradePeriodIslandScale(tp,ild)              'Final value used for island-based scaling'
 ;
+
+
+* The parameters below added to fix the bug in vSPD online overrides
+Set ovrdtypo 'wrong enrgy offer price in vSPD online' /'i_GenerationOfferPrice'/;
+Parameters
+  ovrd_tradePeriodEnergyOfferX(tp,o,trdBlk,ovrdtypo)         'Override for energy offers for specified trade period'
+  ovrd_dateTimeEnergyOfferX(dt,o,trdBlk,ovrdtypo)            'Override for energy offers for specified datetime'
+;
+* The parameters above added to fix the bug in vSPD online overrides
+
 
 Parameters
 * Offers - incl. energy, PLSR, TWDR, and ILR
@@ -228,6 +238,9 @@ i_tradePeriodNodeDemand(tp,n)
 *Loading data from gdx file
 $gdxin "%ovrdPath%%vSPDinputOvrdData%.gdx"
 
+$load ovrd_tradePeriodEnergyOfferX = energyOfferOverrides
+$load ovrd_dateTimeEnergyOfferX = energyOfferOverrides
+
 $load ovrd_tradePeriodEnergyOffer = energyOfferOverrides
 $load ovrd_dateTimeEnergyOffer = energyOfferOverrides
 
@@ -257,6 +270,16 @@ $load ovrd_tradePeriodDispatchableBid = dispatchableEnergyBidOverrides
 $load ovrd_datetimeDispatchableBid = dispatchableEnergyBidOverrides
 
 $gdxin
+
+* The parameters below added to fix the bug in vSPD online overrides
+ovrd_tradePeriodEnergyOffer(tp,o,trdBlk,'i_generationMWofferPrice')
+    $ ovrd_tradePeriodEnergyOfferX(tp,o,trdBlk,'i_generationofferPrice')
+    = ovrd_tradePeriodEnergyOfferX(tp,o,trdBlk,'i_generationofferPrice');
+
+ovrd_dateTimeEnergyOffer(dt,o,trdBlk,'i_generationMWofferPrice')
+    $ ovrd_dateTimeEnergyOfferX(dt,o,trdBlk,'i_generationofferPrice')
+    = ovrd_dateTimeEnergyOfferX(dt,o,trdBlk,'i_generationofferPrice');
+* The parameters above added to fix the bug in vSPD online overrides
 
 *overwrite period offer override by datetime offer override if datetime offer override exists (>0)
 Loop i_dateTimeTradePeriodMap(dt,tp) do
