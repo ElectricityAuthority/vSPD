@@ -1,0 +1,4185 @@
+Run: 'DPS_20200630'
+
+runvSPD started at: 09/16/20 16:09:55
+vSPDsetup started at: 09/16/20 16:09:55
+
+Case "FP_20200630_F" started at: 09/16/20 16:09:56
+Vectorisation is switched ON
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -18652.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -18108.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -14561.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -19706.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -16877.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -16198.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -16644.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -17398.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -17723.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -21465.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -24685.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -24581.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -24743.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -35436.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -51111.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -66077.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -63986.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -69459.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -79928.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -87796.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -72899.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -81901.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -63238.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -49889.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -42232.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -40499.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -39026.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -44383.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -48393.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -52370.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -54079.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -52468.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -71196.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -79679.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -96292.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -150044.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -163201.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -149443.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -146032.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -143964.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -123879.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -110314.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -126006.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -105269.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -84455.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -57029.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -54364.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -45619.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -20322.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -19812.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -16233.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -21591.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -18731.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -18022.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -18469.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -19227.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -19562.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -23380.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -26716.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -26757.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -27185.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -38422.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -55060.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -71621.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -69506.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -75533.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -86944.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -97477.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -78805.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -88072.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -68277.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -53699.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -45356.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -43587.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -42061.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -47816.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -51940.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -56202.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -58030.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -56485.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -76825.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -85700.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -107116.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -165860.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -178963.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -164937.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -161062.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -158981.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -138307.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -120882.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -136898.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -113687.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -89972.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -59959.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -57188.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -48071.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -22086.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -21566.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -17951.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -23496.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -20600.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -19856.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -20305.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -21096.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -21410.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -25311.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -28785.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -28952.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -29649.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -41412.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -59898.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -77878.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -75672.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -82447.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -94365.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -107436.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -85097.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -95327.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -73846.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -57767.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -48602.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -46712.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -45249.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -51351.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -55780.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -60183.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -62096.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -60616.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -82669.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -92455.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -119483.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -181693.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -194737.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -180507.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -176263.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -174056.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -152994.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -134984.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -149699.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -122293.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -95529.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -63086.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -60202.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -50622.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -23871.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -23435.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -19805.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -25455.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -22509.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -21700.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -22207.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -23063.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -23292.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -27306.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -31036.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -31272.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -32243.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -44467.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -65051.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -84743.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -82570.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -89838.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -103805.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -118260.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -92451.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -102789.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -79563.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -62054.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -52424.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -50193.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -48729.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -55045.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -59767.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -64271.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -66634.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -64917.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -88851.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -100590.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -134103.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -197556.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -210537.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -196125.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -191529.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -189169.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -167756.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -149721.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -163024.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -133840.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -101124.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -66255.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -63256.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -53178.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -25779.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -25335.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -21682.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -27712.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -24532.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -23600.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -24281.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -25151.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -25264.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -29598.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -33321.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -33700.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -34940.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -47565.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -70290.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -91950.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -89731.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -98154.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -113733.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -129902.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -100041.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -110682.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -85557.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -66726.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -56565.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -54197.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -52311.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -59042.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -63874.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -69199.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -71754.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -70097.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -95275.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -110498.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -149144.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -213444.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -226353.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -211758.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -206823.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -204343.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -182667.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -164471.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -176591.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -146168.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -107197.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -69503.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -66383.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -55761.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -30251.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -29198.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -25559.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -32560.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -29093.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -28037.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -28802.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -29682.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -29765.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -34482.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -37935.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -38673.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -40391.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -54470.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -83166.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -110563.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -108166.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -118116.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -136177.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -157745.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -116809.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -132800.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -99989.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -77442.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -65401.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -62699.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -60280.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -67457.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -73982.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -79621.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -82387.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -80913.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -110466.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -137959.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -179409.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -245296.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -259218.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -243081.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -237767.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -234833.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -212543.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -194038.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -204418.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -171842.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -120768.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -76313.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -73683.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -61419.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -35241.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -33266.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -29549.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -37763.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -34009.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -32877.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -33674.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -34541.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -34696.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -39675.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -43025.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -44119.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -46033.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -62912.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -98559.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -132605.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -130131.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -141189.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -163936.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -186762.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -142784.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -160738.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -116411.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -89357.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -75804.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -72532.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -68962.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -77090.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -84786.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -91675.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -95357.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -94372.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -132542.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -166900.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -209885.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -280405.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -296332.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -277019.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -269155.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -267733.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -242718.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -223819.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -232364.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -197560.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -136903.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -84764.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -84089.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -67327.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -40581.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -37937.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -34214.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -44058.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -39273.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -37950.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -38836.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -39743.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -39928.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -46189.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -48957.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -50482.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -52572.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -72973.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -117927.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -159335.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -156927.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -169656.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -193832.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -216338.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -171086.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -189097.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -141011.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -103615.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -87329.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -83381.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -78974.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -87711.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -98349.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -105668.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -109970.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -109441.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -159962.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -196058.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -240600.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -319751.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -337468.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -314873.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -303436.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -307999.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -275403.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -254389.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -260424.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -223386.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -155556.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -95166.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -95144.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -74538.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -17027.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -16526.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -13012.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -17922.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -15038.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -14402.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -14828.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -15579.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -15964.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -19571.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -22672.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -22504.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -22624.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -32615.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -47436.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -60690.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -58640.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -63921.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -73323.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -80126.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -67144.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -76070.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -58644.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -46590.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -39117.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -37423.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -36003.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -41221.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -44877.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -48831.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -50375.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -48749.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -65749.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -73951.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -88435.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -134289.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -147470.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -134023.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -131105.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -129243.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -110795.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -102407.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -116567.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -98045.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -79460.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -54221.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -51673.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -43321.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -15639.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -14977.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -11478.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -16230.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -13368.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -12918.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -13284.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -13899.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -14474.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -17713.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -20814.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -20650.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -20606.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -29860.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -44113.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -55998.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -54024.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -58554.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -67062.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -73725.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -62273.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -70366.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -54683.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -43429.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -36052.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -34425.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -32994.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -38189.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -41500.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -45322.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -46841.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -45413.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -61034.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -68872.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -80977.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -118686.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -131848.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -118726.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -116520.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -117048.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -102492.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -94668.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -107386.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -91687.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -75150.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -51427.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -48994.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -41069.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -14286.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -13671.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -10171.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -14706.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -11874.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -11436.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -11809.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -12425.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -12995.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -15945.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -19133.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -18881.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -18683.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -27251.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -40838.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -51944.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -49906.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -53675.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -61223.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -67585.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -58005.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -65289.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -51112.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -40271.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -33055.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -31461.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -30065.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -35159.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -38425.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -41847.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -43403.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -42291.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -56759.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -64587.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -74509.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -104678.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -116394.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -104638.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -103197.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -107392.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -94427.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -87499.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -98584.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -85528.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -71389.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -48639.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -46319.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -38897.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -12964.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -12371.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -8896.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -13202.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -10390.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -10063.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -10388.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -10960.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -11654.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -14439.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -17501.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -17160.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -16872.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -24951.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -37737.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -48442.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -46416.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -49561.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -55861.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -61647.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -54157.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -60651.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -47869.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -37159.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -30181.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -28777.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -27181.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -32148.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -35401.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -38736.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -40325.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -39190.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -52767.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -60610.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -68512.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -93759.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -102485.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -93723.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -93730.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -99522.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -86903.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -81449.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -91077.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -80296.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -67894.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -46097.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -43853.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -36740.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -10458.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -9834.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -6422.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -10591.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -7818.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -7555.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -7865.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -8406.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -9098.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -11569.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -14665.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -14185.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -13440.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -20455.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -32000.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -41735.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -39639.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -42656.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -47841.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -51874.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -47418.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -52841.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -41434.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -31169.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -25276.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -23993.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -22357.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -26355.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -29447.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -32708.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -34257.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -33092.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -45618.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -53733.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -58325.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -77358.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -83833.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -77511.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -77968.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -84498.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -74778.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -70880.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -78128.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -72160.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -61058.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -41213.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -39166.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -32462.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -8225.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -7585.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -4408.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -8081.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -5375.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -5163.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -5426.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -5947.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -6667.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -8977.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -11937.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -11265.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -10244.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -16353.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -26589.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -35720.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -33619.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -36242.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -41087.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -44902.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -40869.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -46203.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -35260.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -26165.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -20671.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -19489.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -18036.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -21537.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -24075.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -26909.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -28362.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -27543.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -39142.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -46998.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -51180.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -62749.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -68106.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -62910.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -64357.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -73041.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -65070.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -62445.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -69116.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -64837.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -54838.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -36440.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -34602.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -28313.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -6137.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -5534.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -3779.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -5842.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -3262.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -3282.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -3209.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -3621.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -4425.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -6489.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -9288.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -8447.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -7374.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -12647.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -21447.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -30019.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -27870.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -30425.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -34917.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -38255.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -34759.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -39755.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -29806.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -21507.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -16473.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -15372.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -14039.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -17253.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -19565.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -22133.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -23283.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -22774.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -32853.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -40697.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -44214.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -51906.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -55216.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -51961.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -54740.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -64111.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -57097.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -55282.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -61296.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -58195.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -48866.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -32049.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -30340.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -24445.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -19893.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -19369.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -15795.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -21086.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -18228.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -17523.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -17967.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -18723.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -19066.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -22873.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -26205.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -26248.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -26675.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -37868.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -54389.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -70775.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -68691.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -74563.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -85867.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -95983.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -77881.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -86956.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -67384.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -53057.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -44843.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -43072.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -41572.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -47214.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -51315.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -55516.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -57339.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -55808.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -75870.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -84742.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -105551.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -163865.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -176975.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -162979.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -159145.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -157077.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -136317.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -118929.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -135043.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -112301.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -88957.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -59344.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -56564.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -47494.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -21225.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -20679.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -17056.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -22474.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -19584.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -18853.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -19297.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -20069.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -20412.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -24282.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -27740.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -27920.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -28618.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -40304.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -58204.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -75829.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -73680.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -80349.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -91966.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -104288.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -83008.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -93028.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -72043.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -56383.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -47499.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -45647.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -44179.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -50142.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -54416.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -58765.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -60682.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -59231.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -80712.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -90152.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -115970.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -177699.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -190757.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -176571.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -172405.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -170243.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -148982.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -130757.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -145669.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -119371.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -93490.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -61826.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -58923.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -49465.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -22566.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -22016.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -18367.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -23885.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -20962.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -20189.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -20639.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -21443.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -21775.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -25722.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -29332.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -29615.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -30597.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -42755.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -62467.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -81579.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -79546.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -86381.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -99287.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -113068.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -89039.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -99233.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -76764.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -59915.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -50471.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -48380.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -47022.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -53110.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -57656.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -62104.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -64105.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -62694.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -85790.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -96632.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -128153.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -191542.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -204545.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -190199.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -185725.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -183439.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -161712.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -143360.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -156905.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -127852.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -98039.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -64359.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -61325.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -51439.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -23917.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -23415.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -19744.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -25325.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -22358.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -21531.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -22029.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -22865.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -23153.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -27192.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -31025.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -31429.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -32694.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -45264.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -66794.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -87527.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -85506.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -93046.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -107611.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -122623.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -95330.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -105585.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -81623.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -63650.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -53838.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -51485.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -49983.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -56296.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -60994.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -65629.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -68197.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -66629.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -91014.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -104073.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -141009.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -205404.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -218342.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -203833.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -199066.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -196665.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -174590.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -155981.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -168253.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -138010.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -102652.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -66901.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -63737.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -53416.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -26837.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -26255.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -22534.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -28495.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -25360.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -24362.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -25049.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -25900.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -26068.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -30353.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -34450.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -35151.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -36965.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -50522.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -76376.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -101393.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -99454.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -109083.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -125302.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -144597.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -108438.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -120744.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -92898.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -72034.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -60883.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -58325.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -56352.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -63014.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -68581.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -74050.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -76757.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -75384.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -102368.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -124745.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -167155.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -233208.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -246771.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -231153.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -226024.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -223208.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -200398.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -181273.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -191665.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -159165.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -112895.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -72167.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -68729.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -57511.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -29813.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -29143.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -25429.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -31740.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -28535.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -27468.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -28161.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -29013.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -29192.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -33598.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -37903.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -38875.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -41302.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -56523.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -87952.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -118719.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -116833.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -126867.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -146233.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -168707.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -125644.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -142844.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -105267.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -81317.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -68778.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -65747.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -63188.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -70317.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -77136.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -82830.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -85893.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -85160.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -116952.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -149225.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -193471.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -262386.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -278714.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -260267.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -253425.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -250581.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -226313.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -206633.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -215341.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -180629.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -124870.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -77726.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -75301.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -61972.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -32830.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -32090.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -28361.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -34990.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -31810.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -30587.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -31276.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -32193.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -32365.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -37063.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -41651.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -43032.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -45775.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -63593.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -101798.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -138461.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -136678.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -147902.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -170989.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -193507.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -149215.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -166437.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -120648.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -91860.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -77791.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -74313.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -70729.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -78602.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -86357.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -93274.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -97103.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -96738.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -137333.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -173794.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -219963.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -296068.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -314391.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -293090.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -282806.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -286153.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -253057.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -232628.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -239080.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -202154.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -138231.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -84801.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -83523.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -66524.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -17421.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -16926.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -13407.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -18376.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -15535.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -14882.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -15323.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -16079.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -16389.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -20069.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -23177.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -22953.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -23052.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -33127.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -48003.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -61504.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -59413.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -64741.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -74317.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -81138.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -68019.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -76972.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -59317.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -47111.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -39624.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -37933.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -36491.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -41740.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -45491.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -49448.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -50996.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -49358.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -66642.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -74827.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -89468.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -136265.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -149440.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -135958.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -133009.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -131087.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -112201.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -103537.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -118013.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -99154.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -80260.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -54781.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -52241.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -43837.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -16300.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -15744.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -12269.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -17134.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -14199.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -13728.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -14094.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -14764.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -15277.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -18693.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -21719.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -21500.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -21434.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -30880.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -45213.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -57288.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -55288.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -60137.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -68963.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -75675.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -63691.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -72167.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -55950.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -44465.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -37037.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -35410.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -33958.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -39224.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -42647.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -46556.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -48071.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -46473.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -62453.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -70257.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -82973.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -122579.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -135773.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -122579.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -120221.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -119881.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -104740.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -96895.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -110142.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -93727.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -76729.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -52539.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -50126.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -42076.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -15275.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -14659.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -11159.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -15928.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -13087.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -12650.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -13022.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -13639.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -14189.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -17330.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -20397.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -20114.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -19881.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -28639.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -42450.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -53746.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -51638.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -55655.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -63756.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -70422.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -59930.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -67595.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -52755.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -41823.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -34519.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -32936.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -31479.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -36711.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -40010.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -43665.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -45153.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -43849.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -58847.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -66474.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -77040.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -109744.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -122207.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -109800.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -108033.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -110758.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -97677.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -90436.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -102566.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -88567.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -73364.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -50300.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -48013.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -40366.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -14254.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -13684.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -10210.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -14812.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -11992.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -11572.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -11951.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -12570.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -13102.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -16029.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -19146.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -18768.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -18363.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -26662.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -39795.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -50567.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -48439.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -51963.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -59121.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -65302.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -56462.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -63512.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -49969.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -39182.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -32013.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -30467.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -29028.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -34199.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -37513.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -40886.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -42442.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -41255.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -55367.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -63019.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -71753.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -98324.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -109276.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -98394.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -97989.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -103490.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -90929.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -84912.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -95515.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -83504.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -70456.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -48101.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -45914.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -38693.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -12269.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -11745.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -8324.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -12674.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -9892.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -9592.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -9932.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -10472.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -11152.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -13812.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -16731.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -16248.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -15543.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -22935.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -34797.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -44721.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -42543.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -45735.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -51214.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -55762.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -50513.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -56378.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -44546.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -34056.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -27619.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -26338.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -24623.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -29290.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -32529.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -35879.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -37416.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -36100.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -48968.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -56869.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -61896.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -83443.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -90093.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -83585.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -83958.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -90070.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -79525.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -74955.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -83963.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -76059.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -64808.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -44084.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -42102.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -35362.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -10398.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -9856.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -6496.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -10755.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -8015.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -7759.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -8089.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -8636.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -9282.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -11713.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -14673.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -14003.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -12892.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -19358.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -30129.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -39315.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -37075.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -39986.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -45194.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -49107.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -44871.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -50426.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -39239.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -29427.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -23641.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -22441.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -20789.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -24798.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -27730.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -30965.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -32430.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -31098.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -43394.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -51106.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -55027.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -69656.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -75921.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -69854.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -70686.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -78496.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -69991.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -67341.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -74144.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -69581.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -59291.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -40212.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -38440.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -32054.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP1) is solved successfully.
+Objective function value: -8677.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP2) is solved successfully.
+Objective function value: -8121.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP3) is solved successfully.
+Objective function value: -4920.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP4) is solved successfully.
+Objective function value: -8891.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP5) is solved successfully.
+Objective function value: -6214.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP6) is solved successfully.
+Objective function value: -6020.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP7) is solved successfully.
+Objective function value: -6291.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP8) is solved successfully.
+Objective function value: -6818.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP9) is solved successfully.
+Objective function value: -7481.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP10) is solved successfully.
+Objective function value: -9793.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP11) is solved successfully.
+Objective function value: -12630.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP12) is solved successfully.
+Objective function value: -11767.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP13) is solved successfully.
+Objective function value: -10394.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP14) is solved successfully.
+Objective function value: -16080.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP15) is solved successfully.
+Objective function value: -25704.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP16) is solved successfully.
+Objective function value: -34298.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP17) is solved successfully.
+Objective function value: -32001.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP18) is solved successfully.
+Objective function value: -34761.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP19) is solved successfully.
+Objective function value: -39545.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP20) is solved successfully.
+Objective function value: -43370.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP21) is solved successfully.
+Objective function value: -39406.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP22) is solved successfully.
+Objective function value: -44837.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP23) is solved successfully.
+Objective function value: -34178.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP24) is solved successfully.
+Objective function value: -25327.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP25) is solved successfully.
+Objective function value: -19894.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP26) is solved successfully.
+Objective function value: -18805.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP27) is solved successfully.
+Objective function value: -17259.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP28) is solved successfully.
+Objective function value: -20918.0
+Violations cost         : 0.0
+The case: FP_20200630_F (TP29) is solved successfully.
+Objective function value: -23510.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP30) is solved successfully.
+Objective function value: -26302.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP31) is solved successfully.
+Objective function value: -27645.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP32) is solved successfully.
+Objective function value: -26735.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP33) is solved successfully.
+Objective function value: -38002.8
+Violations cost         : 0.0
+The case: FP_20200630_F (TP34) is solved successfully.
+Objective function value: -45492.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP35) is solved successfully.
+Objective function value: -48918.6
+Violations cost         : 0.0
+The case: FP_20200630_F (TP36) is solved successfully.
+Objective function value: -58176.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP37) is solved successfully.
+Objective function value: -63085.1
+Violations cost         : 0.0
+The case: FP_20200630_F (TP38) is solved successfully.
+Objective function value: -58411.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP39) is solved successfully.
+Objective function value: -60425.3
+Violations cost         : 0.0
+The case: FP_20200630_F (TP40) is solved successfully.
+Objective function value: -69751.9
+Violations cost         : 0.0
+The case: FP_20200630_F (TP41) is solved successfully.
+Objective function value: -62371.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP42) is solved successfully.
+Objective function value: -60297.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP43) is solved successfully.
+Objective function value: -67201.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP44) is solved successfully.
+Objective function value: -63683.7
+Violations cost         : 0.0
+The case: FP_20200630_F (TP45) is solved successfully.
+Objective function value: -54350.5
+Violations cost         : 0.0
+The case: FP_20200630_F (TP46) is solved successfully.
+Objective function value: -36386.2
+Violations cost         : 0.0
+The case: FP_20200630_F (TP47) is solved successfully.
+Objective function value: -34836.4
+Violations cost         : 0.0
+The case: FP_20200630_F (TP48) is solved successfully.
+Objective function value: -28817.6
+Violations cost         : 0.0
+
+Total execute time:      3258.99(secs)

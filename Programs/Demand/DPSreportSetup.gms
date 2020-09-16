@@ -10,12 +10,20 @@
 $include vSPDsettings.inc
 
 * Defines the set of scenarios for the demand sensitivity analysis
-$include "%system.fp%Scenarios.gms"
+*$include "%system.fp%Scenarios.gms"
 
-Files DRSIslandResults   /"%OutputPath%%runName%\DemandPriceSensitivity.csv"/;
-DRSIslandResults.pc = 5;  DRSIslandResults.lw = 0;  DRSIslandResults.pw = 9999;
-put DRSIslandResults;
-put 'DateTime', 'Island';
-loop( drs, put drs.tl) ;
+
+Files DPSNodeResults   /"%OutputPath%%runName%\NodePriceSensitivity.csv"/;
+DPSNodeResults.pc = 5;  DPSNodeResults.lw = 0;  DPSNodeResults.pw = 9999;
+put DPSNodeResults;
+put 'DateTime', 'Scenario', 'Node', 'Price' ;
+
+
+Files DPSIslandResults   /"%OutputPath%%runName%\IslandSensitivity.csv"/;
+DPSIslandResults.pc = 5;  DPSIslandResults.lw = 0;  DPSIslandResults.pw = 9999;
+put DPSIslandResults;
+put 'DateTime', 'Scenario', 'Island', 'Load', 'Reference_price';
+
+
 
 
