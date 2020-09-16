@@ -23,7 +23,3 @@ Files DPSIslandResults   /"%OutputPath%%runName%\IslandSensitivity.csv"/;
 DPSIslandResults.pc = 5;  DPSIslandResults.lw = 0;  DPSIslandResults.pw = 9999;
 put DPSIslandResults;
 put 'DateTime', 'Scenario', 'Island', 'Load', 'Reference_price';
-
-
-
-

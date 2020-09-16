@@ -24,7 +24,3 @@
                                     * NodeDemand(currTP,n) ] <= 0 )
         = 0 ;
 * The code to set bus deficit generation end
-
-
-
-
