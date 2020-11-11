@@ -1,0 +1,19 @@
+Run: 'Test_replace_invalid_SOS1_Prices'
+
+runvSPD started at: 11/12/20 10:55:21
+vSPDsetup started at: 11/12/20 10:55:21
+vSPDreportSetup started at: 11/12/20 10:55:22
+
+Case "RTD_20201028_0105_301" started at: 11/12/20 10:55:23
+Vectorisation is switched ON
+The case: RTD_20201028_0105_301 (28-OCT-2020 01:05) is solved successfully.
+Objective function value: -11934.1
+Violations cost         : 0.0
+The case: RTD_20201028_0105_301 requires a vSPD_BranchFlowMIP resolve for period 28-OCT-2020 01:05. Switching Vectorisation OFF.
+The case: RTD_20201028_0105_301 (28-OCT-2020 01:05) is solved successfully for branch integer.
+Objective function value: -11934.4
+Violations cost         : 0.0
+Case: RTD_20201028_0105_301 is complete in         6.16(secs)
+Case: RTD_20201028_0105_301 is finished in         6.40(secs)
+
+Total execute time:         8.33(secs)
