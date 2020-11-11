@@ -1,5 +1,0 @@
-"DateTime","Island","ReserveClass","Risk Setter","RiskClass","Max Risk","Reserve Cleared","Reserve Shared","Violation","Reserve Price","Virtual Reserve MW"
-"28-OCT-2020 01:05","NI","FIR","HLY2201 HLY5","genRisk",303.63452,230.12968,73.50484,0.00000,15.00000,0.00000
-"28-OCT-2020 01:05","NI","SIR","HLY2201 HLY5","genRisk",356.00000,244.53482,111.46518,0.00000,4.06000,0.00000
-"28-OCT-2020 01:05","SI","FIR","Manual","manual",86.72060,86.00200,0.71860,0.00000,11.59082,0.00000
-"28-OCT-2020 01:05","SI","SIR","Manual","manual",136.00000,114.60200,21.39800,0.00000,3.92156,0.00000
