@@ -3,14 +3,13 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       DPS_20200630
-
+$setglobal runName                       Test_replace_invalid_SOS1_Prices
 $setglobal programPath                   '%system.fp%'
 $setglobal inputPath                     '%system.fp%..\Input\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 
-$setglobal vSPDinputOvrdData             ''        ! Name of override file
+$setglobal vSPDinputOvrdData             ''  ! Name of override file
 
 
 *+++ Model +++
@@ -50,4 +49,5 @@ $setglobal licenseMode                     1
 
 *+++ Various switches +++
 $setglobal varResv                         -1
-$setglobal opMode                          DPS      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+$setglobal opMode                          AUD    ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+
