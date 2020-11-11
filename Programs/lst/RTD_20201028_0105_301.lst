@@ -1,4 +1,4 @@
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 3
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 51
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -56,6 +56,11 @@ C o m p i l a t i o n
         i_riskParameter = riskPar                 i_offerParam = offerPar
         i_dczone = z,z1,rrz,rrz1                  i_riskGroup = rg,rg1)
 2648   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 52
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2649   
 2650  * Include paths, settings and case name files
 INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDsettings.inc
@@ -109,6 +114,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 2715  putclose runlog / 'Case "RTD_20201028_0105_301" started at: '
 2716                    system.date " " system.time /;
 2717  if(sequentialSolve,
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 53
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2718    putclose runlog 'Vectorisation is switched OFF' /;
 2719  else
 2720    putclose runlog 'Vectorisation is switched ON' /;
@@ -162,6 +172,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 2771    i_energyOfferComponent      / i_generationMWoffer, i_generationMWofferPrice /
 2772    i_PLSRofferComponent        / i_PLSRofferPercentage, i_PLSRofferMax, i_PLSRofferPrice /
 2773    i_TWDRofferComponent        / i_TWDRofferMax, i_TWDRofferPrice /
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 54
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2774    i_ILRofferComponent         / i_ILRofferMax, i_ILRofferPrice /
 2775    i_energyBidComponent        / i_bidMW, i_bidPrice /
 2776    i_ILRbidComponent           / i_ILRbidMax, i_ILRbidPrice /
@@ -215,6 +230,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 2824  * Main iteration counter
 2825    iterationCount                                      'Iteration counter for the solve'
 2826  * MIP logic
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 55
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2827    circularBranchFlowExist(tp,br)                      'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
 2828  * Introduce flag to detect circular branch flows on each HVDC pole
 2829    poleCircularBranchFlowExist(tp,pole)                'Flag to indicate if circulating branch flows exist on each an HVDC pole: 1 = Yes'
@@ -268,6 +288,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 2877  * Dispatch results reporting
 2878    o_fromDateTime(dt)                                  'Start period for summary reports'
 2879    o_dateTime(dt)                                      'Date and time for reporting'
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 56
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2880    o_bus(dt,b)                                         'Set of buses for output report'
 2881    o_offer(dt,o)                                       'Set of offers for output report'
 2882    o_bid(dt,bd)                                        'Set of bids for output report'
@@ -321,6 +346,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 2930    o_branchCapacity_TP(dt,br)                          'Output MW branch capacity for branch reporting'
 2931    o_ACbranchTotalRentals(dt)                          'Total AC rental by trading period for reporting'
 2932    o_ACbranchLossMW(dt,br,los)                         'MW element of the loss segment curve in MW'
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 57
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2933    o_ACbranchLossFactor(dt,br,los)                     'Loss factor element of the loss segment curve'
 2934    o_offerEnergy_TP(dt,o)                              'Output MW cleared for each energy offer for each trade period'
 2935    o_offerFIR_TP(dt,o)                                 'Output MW cleared for FIR for each trade period'
@@ -374,6 +404,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 2983    o_surpRampRate_TP(dt)                               'Surplus ramp rate violation for summary report'
 2984    o_surpBranchGroupConst_TP(dt)                       'Surplus branch group constraint violation for summary report'
 2985    o_defBranchGroupConst_TP(dt)                        'Deficit branch group constraint violation for summary report'
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 58
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 2986    o_defMnodeConst_TP(dt)                              'Deficit market node constraint violation for summary report'
 2987    o_surpMnodeConst_TP(dt)                             'Surplus market node constraint violation for summary report'
 2988    o_defACnodeConst_TP(dt)                             'Deficit AC node constraint violation for summary report'
@@ -427,6 +462,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 3036    o_avgPriorGWAP_TP(dt,ild)
 3037    o_islandGWAPbefore_TP(dt,ild)
 3038    o_islandGWAPafter_TP(dt,ild)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 59
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3039    o_scarcityGWAPbefore_TP(dt,ild)
 3040    o_scarcityGWAPafter_TP(dt,ild)
 3041    o_scarcityScalingFactor_TP(dt,ild)
@@ -480,6 +520,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDcase.inc
 3089    scarcityExists                'Flag to indicate that a scarcity situation exists for at least 1 trading period in the solve'
 3090    exitLoop                      'Flag to exit solve loop'                                                                               / 0 /
 3091    ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 60
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3092   
 3093   
 3094   
@@ -533,6 +578,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 --- LOAD  i_year = 4:i_year
 --- LOAD  i_tradingPeriodLength = 10:i_tradingPeriodLength
 --- LOAD  i_AClineUnit = 9:i_AClineUnit
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 61
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 --- MERGE i_branchReceivingEndLossProportion = 11:i_branchReceivingEndLossProportion
 --- LOAD  i_StudyTradePeriod = 8:i_studyTradePeriod
 --- LOAD  i_CVPvalues = 13:i_CVPvalues
@@ -586,6 +636,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3134   
 3135  * New risk group sets
 GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 62
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 --- LOAD  i_riskGroup = 146:i_riskGroup
 --- LOAD  riskGroupOffer = 144:i_tradePeriodRiskGroup
 3141   
@@ -639,6 +694,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3189   
 3190  * Manual ECE risk parameters in use from 20 Sep 2012
 3191  if(inputGDXGDate >= jdate(2012,9,20),
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 63
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3192      execute_load i_tradePeriodManualRisk_ECE ;
 3193  else
 3194      i_tradePeriodManualRisk_ECE(tp,ild,resC) = 0 ;
@@ -692,6 +752,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3242   
 3243  * Primary secondary risk model in use from 24 Feb 2013
 3244  usePrimSecGenRiskModel = 1 $ { inputGDXGDate >= jdate(2013,2,24) } ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 64
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3245   
 3246  * Dispatchable Demand effective date 20 May 2014
 3247  if(inputGDXGDate >= jdate(2014,5,20),
@@ -745,6 +810,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3295   
 3296  UseShareReserve = 1 $ sum[ (tp,resC), reserveShareEnabled(tp,resC)] ;
 3297   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 65
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3298  *=====================================================================================
 3299  * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
 3300  *=====================================================================================
@@ -798,6 +868,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3351  surplusMnodeCstrPenalty                           = sum(i_CVP$(ord(i_CVP) = 16), i_CVPvalues(i_CVP)) ;
 3352  deficitT1MixCstrPenalty                           = sum(i_CVP$(ord(i_CVP) = 17), i_CVPvalues(i_CVP)) ;
 3353  surplusT1MixCstrPenalty                           = sum(i_CVP$(ord(i_CVP) = 18), i_CVPvalues(i_CVP)) ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 66
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3354  * Different CVPs defined for CE and ECE
 3355  deficitReservePenalty_CE(resC) $ (ord(resC) = 1)  = sum(i_CVP$(ord(i_CVP) = 3), i_CVPvalues(i_CVP)) ;
 3356  deficitReservePenalty_CE(resC) $ (ord(resC) = 2)  = sum(i_CVP$(ord(i_CVP) = 4), i_CVPvalues(i_CVP)) ;
@@ -851,6 +926,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3404   
 3405  * Bid initialisation - bid must be mapped to a node that is mapped to a bus
 3406  * bus that is not in electrical island = 0 if i_useBusNetworkModel flag is 1
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 67
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3407  bid(tp,bd) $ sum[ (n,b) $ { i_tradePeriodBidNode(tp,bd,n) and
 3408                              nodeBus(tp,n,b) and
 3409                              ( (not i_useBusNetworkModel(tp)) or
@@ -904,6 +984,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3457                      , i_tradePeriodOfferParameter(offer,offerPar) ] ;
 3458  FKband(offer)
 3459      = sum[ offerPar $ ( ord(offerPar) = 6 )
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 68
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3460                      , i_tradePeriodOfferParameter(offer,offerPar) ] ;
 3461   
 3462  priceResponsive(offer)
@@ -957,6 +1042,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3510      + i_tradePeriodSustainedTWDRoffer(offer,trdBlk,TWDofrCmpnt)$(ord(resC)=2) ];
 3511   
 3512  reserveOfferMaximum(offer,trdBlk,resC,ILReserveType)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 69
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3513      = sum[ ILofrCmpnt $ ( ord(ILofrCmpnt) = 1 )
 3514      , i_tradePeriodFastILRoffer(offer,trdBlk,ILofrCmpnt)     $(ord(resC)=1)
 3515      + i_tradePeriodSustainedILRoffer(offer,trdBlk,ILofrCmpnt)$(ord(resC)=2) ];
@@ -1010,6 +1100,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3563   
 3564   
 3565  * Initialise demand/bid data for the current trade period start
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 70
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3566  nodeDemand(node) = i_tradePeriodNodeDemand(node) ;
 3567   
 3568  * If a bid is valid --> ignore the demand at the node connected to the bid
@@ -1063,6 +1158,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3616  HVDClinkBus(HVDClink,b) $ HVDClinkReceivingBus(HVDClink,b) = yes ;
 3617   
 3618  * Determine the HVDC inter-island pole in the northward and southward direction
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 71
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3619   
 3620  HVDCpoleDirection(tp,br,fd) $ { (ord(fd) = 1) and HVDClink(tp,br) }
 3621      = yes $ sum[ (ild,NodeBus(tp,n,b)) $ { (ord(ild) = 2)
@@ -1116,6 +1216,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3669  branchFixedLoss(HVDClink)
 3670      = sum[ i_branchParameter $ (ord(i_branchParameter) = 3)
 3671           , i_tradePeriodBranchParameter(HVDClink,i_branchParameter) ] ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 72
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3672   
 3673  * Set resistance and fixed loss to zero if do not want to use the loss model
 3674  branchResistance(ACbranch) $ (not useAClossModel) = 0 ;
@@ -1169,6 +1274,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3722   
 3723      LossSegmentFactor(branch,los) $ (ord(los) = 3)
 3724          = 0.01 * (2 - (0.75*lossCoeff_A))
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 73
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3725          * branchResistance(branch) * branchCapacity(branch) ;
 3726  );
 3727   
@@ -1222,6 +1332,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3775          = 0.01 * (2 - (0.75*lossCoeff_C))
 3776          * branchResistance(branch) * branchCapacity(branch) ;
 3777  ) ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 74
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3778   
 3779  * Valid loss segment for a branch is defined as a loss segment that
 3780  * has a non-zero LossSegmentMW or a non-zero LossSegmentFactor.
@@ -1275,6 +1390,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3828          + HVDCBreakPointMWLoss(branch,bp-1) ;
 3829  ) ;
 3830   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 75
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3831  * Initialise branch constraint data for the current trading period
 3832  branchConstraint(tp,brCstr)
 3833      $ sum[ branch(tp,br)
@@ -1328,6 +1448,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3883                              sharedNFRFactor(tp)*sharedNFRLoad(tp,ild) } ;
 3884   
 3885  * Calculate HVDC constraint sets and HVDC Max Flow - NMIR (4.1.8 - NMIR06)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 76
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3886  * TN on 22 May 2017: Usually a branch group constraint that limits the HVDC flow only involves
 3887  * the HVDC branch(s) in the same direction. However, during TP6 to TP9 of 18 May 2017, the
 3888  * constraint HAY_BEN_High_Frequency_limit involved all four branches in the form:
@@ -1381,6 +1506,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3936  HVDCMax(tp,ild)
 3937      = Min( biPoleCapacity(tp,ild), Sum[ br, monoPoleCapacity(tp,ild,br) ] ) ;
 3938   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 77
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3939  * Calculate HVDC HVDC Loss segment applied for NMIR
 3940   
       * Note: When NMIR started on 20/10/2016, the SOdecided to incorrectly calculate the HVDC loss
@@ -1434,6 +1564,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 3991                and i_tradePeriodBusIsland(tp,b,ild)
 3992                and i_tradePeriodBranchDefn(tp,br,b,b1)
 3993                and i_tradePeriodBranchCapacity(tp,br)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 78
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 3994                and (ord(i_branchParameter) = 1)
 3995                  }, i_tradePeriodBranchParameter(tp,br,i_branchParameter)
 3996                ] / HVDCResistance(tp,ild) ;
@@ -1487,6 +1622,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4044      = 0.01 * (2 - (0.75*lossCoeff_C))
 4045      * HVDCResistance(tp,ild) * HVDCCapacity(tp,ild) ;
 4046   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 79
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4047  * Parameter for energy lambda loss model
 4048  HVDCSentBreakPointMWFlow(tp,ild,bp) $ (ord(bp) = 1) = 0 ;
 4049  HVDCSentBreakPointMWLoss(tp,ild,bp) $ (ord(bp) = 1) = 0 ;
@@ -1540,6 +1680,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4097   
 4098  * Initialze parameters for NMIR project end ----------------------------------
 4099   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 80
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4100   
 4101  * Initialise risk/reserve data for the current trade period start
 4102   
@@ -1593,6 +1738,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4150  HVDCsecRiskSubtractor(tp,ild)   = i_tradePeriodHVDCsecRiskSubtractor(tp,ild) ;
 4151   
 4152  * Min risks for the HVDC secondary risk are the same as the island min risk
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 81
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4153  HVDCsecIslandMinimumRisk(tp,ild,resC,riskC) $ (ord(riskC) = 7)
 4154      = i_tradePeriodManualRisk(tp,ild,resC) ;
 4155   
@@ -1646,6 +1796,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4203                 i_tradePeriodMnodeILReserveBidConstraintFactors(tp,MnodeCstr,bd,resC)
 4204               }, 1
 4205             ]
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 82
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4206        } = yes ;
 4207   
 4208  MnodeEnergyOfferConstraintFactors(MnodeConstraint,o)
@@ -1699,6 +1854,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4256           , i_tradePeriodType2MixedConstraintRHSParameters(tp,t2MixCstr,CstrRHS) ] ;
 4257   
 4258  Type1MixedConstraintCondition(tp,t1MixCstr)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 83
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4259      $ sum[ br $ { HVDChalfPoles(tp,br) and
 4260                    i_type1MixedConstraintBranchCondition(t1MixCstr,br)
 4261                  }, 1
@@ -1752,6 +1912,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4309                                     ) / rampRateUp(offer)
 4310           ] ;
 4311   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 84
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4312  * Calculation 5.3.1.3. - For primary-secondary offers, only primary offer
 4313  * initial MW and ramp rate is used - Reference: Transpower Market Services
 4314  generationEndUp(offer) $ (not hasPrimaryOffer(offer))
@@ -1805,6 +1970,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4364      option clear = GENERATIONBLOCK ;
 4365  *   Purchase variables
 4366      option clear = PURCHASE ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 85
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4367      option clear = PURCHASEBLOCK ;
 4368      option clear = PURCHASEILR ;
 4369      option clear = PURCHASEILRBLOCK ;
@@ -1858,6 +2028,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4417      option clear = DEFICITRESERVE ;
 4418      option clear = DEFICITRESERVE_CE ;
 4419      option clear = DEFICITRESERVE_ECE ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 86
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4420      option clear = DEFICITBRANCHSECURITYCONSTRAINT ;
 4421      option clear = SURPLUSBRANCHSECURITYCONSTRAINT ;
 4422      option clear = DEFICITRAMPRATE ;
@@ -1911,6 +2086,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4470                                         ) / rampRateUp(offer)
 4471               ] ;
 4472   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 87
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4473  *   Calculation 5.3.1.3. - For primary-secondary offers, only primary offer
 4474  *   initial MW and ramp rate is used - Reference: Transpower Market Services
 4475      generationEndUp(offer(currTP(tp),o)) $ (not hasPrimaryOffer(offer))
@@ -1964,6 +2144,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4525      PURCHASEBLOCK.up(validPurchaseBidBlock(currTP,bd,trdBlk))
 4526          $ (not UseDSBFDemandBidModel)
 4527          = purchaseBidMW(validPurchaseBidBlock) ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 88
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4528   
 4529      PURCHASEBLOCK.lo(validPurchaseBidBlock(currTP,bd,trdBlk))
 4530          $ (not UseDSBFDemandBidModel)
@@ -2017,6 +2202,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4578   
 4579  *   Ensure directed block flow and loss block variables are zero for
 4580  *   non-AC branches and invalid loss segments on AC branches
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 89
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4581     ACBRANCHFLOWBLOCKDIRECTED.fx(currTP,br,los,fd)
 4582         $ { not(ACbranch(currTP,br) and validLossSegment(currTP,br,los)) } = 0 ;
 4583   
@@ -2070,6 +2260,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4631      DEFICITRESERVE.fx(currTP,ild,resC) $ diffCeECeCVP = 0 ;
 4632      DEFICITRESERVE_CE.fx(currTP,ild,resC) $ (not diffCeECeCVP) = 0 ;
 4633      DEFICITRESERVE_ECE.fx(currTP,ild,resC) $ (not diffCeECeCVP) = 0 ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 90
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4634   
 4635  *   Virtual reserve
 4636      VIRTUALRESERVE.up(currTP,ild,resC) = virtualReserveMax(currTP,ild,resC) ;
@@ -2123,6 +2318,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4686  * To be reviewed NMIR
 4687      LAMBDAHVDCRESERVE.fx(currTP,ild,resC,rd,rsbp)
 4688          $ { (HVDCCapacity(currTP,ild) = 0)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 91
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4689          and (ord(rsbp) = 7) and (ord(rd) = 1) } = 1 ;
 4690   
 4691      LAMBDAHVDCRESERVE.fx(currTP,ild1,resC,rd,rsbp)
@@ -2176,6 +2376,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4739                              'is solved successfully.'/
 4740                              'Objective function value: '
 4741                              NETBENEFIT.l:<12:1 /
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 92
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4742                              'Violation Cost          : '
 4743                              TOTALPENALTYCOST.l:<12:1 /
 4744          elseif((ModelSolved = 0) and (sequentialSolve = 0)),
@@ -2229,6 +2434,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4792          MIXEDCONSTRAINTLIMIT2SELECT.fx(Type1MixedConstraint(currTP,t1MixCstr))
 4793              $ (not Type1MixedConstraintCondition(Type1MixedConstraint)) = 0 ;
 4794   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 93
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4795          option bratio = 1 ;
 4796          vSPD_MIP.Optfile = 1 ;
 4797          vSPD_MIP.optcr = MIPOptimality ;
@@ -2282,6 +2492,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4845  *       and for invalid loss segments on HVDC links
 4846          LAMBDAINTEGER.fx(branch(currTP,br),bp)
 4847              $ {ACbranch(branch) or (not  validLossSegment(branch,bp)) } = 0 ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 94
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4848   
 4849  *       Fix the lambda integer variable to zero for invalid branches
 4850          LAMBDAINTEGER.fx(currTP,br,bp) $ (not branch(currTP,br)) = 0 ;
@@ -2335,6 +2550,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4898  *       Use the advanced basis here
 4899          option bratio = 0.25 ;
 4900          vSPD_MixedConstraintMIP.Optfile = 1 ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 95
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4901  *       Set the optimality criteria for the MIP
 4902          vSPD_MixedConstraintMIP.optcr = MIPOptimality ;
 4903          vSPD_MixedConstraintMIP.reslim = MIPTimeLimit ;
@@ -2388,6 +2608,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 4951                              and ( vSPD_NMIR.solvestat = 1 ) } ;
 4952          else
 4953              option bratio = 1 ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 96
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 4954              vSPD.reslim = LPTimeLimit ;
 4955              vSPD.iterlim = LPIterationLimit ;
 4956              solve vSPD using lp maximizing NETBENEFIT ;
@@ -2441,6 +2666,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5004                        - abs(ACBRANCHFLOW.l(ACbranch))
 5005                        ) > circularBranchFlowTolerance
 5006                      ]
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 97
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5007                    } = 1 ;
 5008   
 5009  *           Determine the circular branch flow flag on each HVDC pole
@@ -2494,6 +2724,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5057                         - [LossSegmentMW(HVDClink,los-1) $ (ord(los) > 1)]
 5058                         )
 5059                       ] ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 98
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5060   
 5061              ManualLossCalculation(LossBranch(HVDClink(currTP,br)))
 5062                  = sum[ los, LossSegmentFactor(HVDClink,los)
@@ -2547,6 +2782,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5110                        - Type1MixedConstraintLimit2(Type1MixedConstraintCondition)
 5111                        ] $ (Type1MixedConstraintSense(Type1MixedConstraintCondition) = -1)
 5112                      + [ Type1MixedConstraintLimit2(Type1MixedConstraintCondition)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                          11/12/20 11:54:24 Page 99
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5113                        - Type1MixedConstraintGE.l(Type1MixedConstraintCondition)
 5114                        ] $ (Type1MixedConstraintSense(Type1MixedConstraintCondition) = 1)
 5115                      + abs[ Type1MixedConstraintEQ.l(Type1MixedConstraintCondition)
@@ -2600,6 +2840,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5163                                      'vSPD_MixedConstraintMIP resolve for period '
 5164                                      currTP.tl '. Switching Vectorisation OFF.' /
 5165                  elseif VSPDModel(currTP) = 2,
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 100
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5166                      VSPDModel(currTP) = 1;
 5167                      putclose runlog 'The case: RTD_20201028_0105_301 requires a '
 5168                                      'VSPD_MIP resolve for period ' currTP.tl
@@ -2653,6 +2898,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5218   
 5219      busLoad(bus(currTP,b))
 5220          = sum[ NodeBus(currTP,n,b)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 101
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5221               , NodeBusAllocationFactor(currTP,n,b) * NodeDemand(currTP,n)
 5222               ] ;
 5223   
@@ -2706,6 +2956,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5271          busPrice(bus)$busDisconnected(bus) = 0 ;
 5272      ) ;
 5273   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 102
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5274  * End Check for disconnected nodes and adjust prices accordingly
 5275   
 5276  * TN - Replacing invalid prices after SOS1
@@ -2759,6 +3014,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5324                           and sum[ br $ { branch(tp,br)
 5325                                          and BranchBusConnect(tp,br,b)
 5326                                          and BranchBusConnect(tp,br,b1)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 103
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5327                                            }, 1 ]
 5328                            }, 1
 5329                      ];
@@ -2812,6 +3072,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5379          o_offer(dt,o) $ offer(currTP,o) = yes ;
 5380   
 5381          o_offerEnergy_TP(dt,o) $ offer(currTP,o) = GENERATION.l(currTP,o) ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 104
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5382   
 5383          o_offerFIR_TP(dt,o) $ offer(currTP,o)
 5384              = sum[ (resC,resT)$(ord(resC) = 1)
@@ -2865,6 +3130,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5434          If Sum[b $ unmappedDeficitBus(dt,b), 1] then
 5435   
 5436              temp_busDeficit_TP(dt,b) = o_busDeficit_TP(dt,b);
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 105
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5437   
 5438              Loop b $ unmappedDeficitBus(dt,b) do
 5439                  o_busDeficit_TP(dt,b1)
@@ -2918,6 +3188,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5487          o_branchDynamicLoss_TP(dt,br) $ HVDClink(currTP,br)
 5488              = HVDCLINKLOSSES.l(currTP,br) ;
 5489   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 106
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5490          o_branchFixedLoss_TP(dt,br) $ branch(currTP,br)
 5491              = branchFixedLoss(currTP,br) ;
 5492   
@@ -2971,6 +3246,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5540          o_bidTotalMW_TP(dt,bd) $ bid(currTP,bd)
 5541              = sum[ trdBlk, purchaseBidMW(currTP,bd,trdBlk) ] ;
 5542   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 107
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5543  *       Violation reporting based on the CE and ECE
 5544          o_ResViolation_TP(dt,ild,resC)
 5545              = DEFICITRESERVE.l(currTP,ild,resC)     $ (not diffCeECeCVP)
@@ -3024,6 +3304,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5593                $ (MnodeConstraintSense(currTP,MnodeCstr) = 1)  ]
 5594              + [ MnodeSecurityConstraintEQ.l(currTP,MnodeCstr)
 5595                $ (MnodeConstraintSense(currTP,MnodeCstr) = 0)  ] ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 108
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5596   
 5597          o_MnodeConstraintRHS_TP(dt,MnodeCstr)
 5598              $ MnodeConstraint(currTP,MnodeCstr)
@@ -3077,6 +3362,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5646              = sum[ (br,frB,toB)
 5647                   $ { HVDCpoles(currTP,br) and busIsland(currTP,frB,ild)
 5648                   and branchBusDefn(currTP,br,frB,toB)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 109
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5649                     }, o_branchFlow_TP(dt,br) ] ;
 5650   
 5651          o_HVDChalfPoleLoss_TP(dt,ild)
@@ -3130,6 +3420,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5699   
 5700          Endif;
 5701   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 110
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5702          If Sum[ resC $ (ord(resC) = 2), reserveShareEnabled(currTP,resC)] then
 5703   
 5704              o_SirSent_TP(dt,ild)
@@ -3183,6 +3478,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5752                                         = LossSegmentFactor(currTP,br,los) ;
 5753   
 5754          o_busIsland_TP(dt,b,ild) $ busIsland(currTP,b,ild) = yes ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 111
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5755   
 5756          o_PLRO_FIR_TP(dt,o) $ offer(currTP,o)
 5757              = sum[(resC,PLSRReserveType) $ (ord(resC)=1)
@@ -3236,6 +3536,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5805   
 5806          o_HVDCriskPrice(dt,ild,resC,HVDCrisk)
 5807              = HVDCIslandRiskCalculation.m(currTP,ild,resC,HVDCrisk) ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 112
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5808   
 5809          o_manuRiskLevel(dt,ild,resC,ManualRisk)
 5810              = ISLANDRISK.l(currTP,ild,resC,ManualRisk)
@@ -3289,6 +3594,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5858   
 5859          o_systemCost_TP(dt) = SYSTEMCOST.l(currTP) ;
 5860   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 113
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5861          o_systemBenefit_TP(dt) = SYSTEMBENEFIT.l(currTP) ;
 5862   
 5863          o_penaltyCost_TP(dt) = SYSTEMPENALTYCOST.l(currTP) ;
@@ -3342,6 +3652,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5911   
 5912          o_surpT1MixedConst_TP(dt)
 5913              = sum[ t1MixCstr $ Type1MixedConstraint(currTP,t1MixCstr)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 114
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5914                   , SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr) ] ;
 5915   
 5916          o_defGenericConst_TP(dt)
@@ -3395,6 +3710,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 5967   
 5968      o_systemLoad = sum[ (dt,ild), o_islandLoad_TP(dt,ild)
 5969                                  - o_islandClrBid_TP(dt,ild) ] ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 115
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 5970   
 5971      o_systemLoss = sum[ (dt,ild), o_islandBranchLoss_TP(dt,ild)
 5972                                  + o_HVDCloss_TP(dt,ild) ] ;
@@ -3448,6 +3768,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 6024   
 6025  *   node output update
 6026      o_nodeRevenue_TP(dt,n) $ node(tp,n) = (i_tradingPeriodLength / 60)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 116
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6027                                          * o_nodeGeneration_TP(dt,n)
 6028                                          * o_nodePrice_TP(dt,n) ;
 6029   
@@ -3501,6 +3826,11 @@ GDXIN   A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 6078  ) ;
 6079   
 6080  * System level
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 117
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6081  o_systemEnergyRevenue  = sum[ (dt,ild), o_islandEnergyRevenue_TP(dt,ild) ] ;
 6082   
 6083  o_systemReserveRevenue = sum[ (dt,ild), o_islandReserveRevenue_TP(dt,ild) ];
@@ -3554,6 +3884,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDreport.gms
 6133  * System surplus needs to be calculated outside the main loop
 6134  o_systemSurplus = o_systemLoadCost-o_systemLoadRevenue-o_systemEnergyRevenue ;
 6135   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 118
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6136  * Trader level - Currently this does not include revenue from wind generators
 6137  * since wind generation in FP is represented as negative load
 6138  o_trader(trdr) = yes ;
@@ -3607,6 +3942,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDreport.gms
 6186          o_traderGen(trdr), o_traderFIR(trdr), o_traderSIR(trdr) / ;
 6187  ) ;
 6188   
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 119
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6189   
 6190  * Trading period level report
 6192   
@@ -3660,6 +4000,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDreport.gms
 6241  BusResults_TP.lw = 0 ;
 6242  BusResults_TP.pw = 9999 ;
 6243  BusResults_TP.ap = 1 ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 120
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6244  BusResults_TP.nd = 3
 6245  put BusResults_TP ;
 6246  loop( o_bus(dt,b),
@@ -3713,6 +4058,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDreport.gms
 6294  put ReserveResults_TP ;
 6295  loop( (dt,ild) $ o_island(dt,ild),
 6296      put dt.tl, ild.tl, o_FIRReqd_TP(dt,ild), o_SIRReqd_TP(dt,ild)
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 121
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6297          o_FIRPrice_TP(dt,ild), o_SIRPrice_TP(dt,ild)
 6298          o_FIRViolation_TP(dt,ild), o_SIRViolation_TP(dt,ild)
 6299          o_FIRvrMW_TP(dt,ild), o_SIRvrMW_TP(dt,ild) / ;
@@ -3766,6 +4116,11 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDreport.gms
 6347          o_MnodeConstraintRHS_TP(dt,MnodeCstr)
 6348          o_MnodeConstraintPrice_TP(dt,MnodeCstr) / ;
 6349  ) ;
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 122
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
 6350   
 6352  *===============================================================================
 6353   
@@ -3789,7 +4144,7 @@ INCLUDE    A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\vSPDreport.gms
 6373  * Go to the next input file
 6375   
 6376  * Post a progress message for use by EMI.
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 4
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 123
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -3809,8 +4164,8 @@ Include File Summary
     11     6377 IF EXIST       1    3692  A:\Tuong Nguyen\vSPD\GitHub\vSPD\Input\RTD_20201028_0105_301.gdx
 
 
-COMPILATION TIME     =        0.172 SECONDS      4 MB  32.1.0 r75a5b5d WEX-WEI
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 5
+COMPILATION TIME     =        0.125 SECONDS      4 MB  25.1.3 r4e34d435fbd WEX-WEI
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 124
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE vSPD_NMIR Using MIP From line 4722
 
@@ -3826,11 +4181,14 @@ BLOCKS OF VARIABLES          51     SINGLE VARIABLES       42,159
 NON ZERO ELEMENTS        91,524     DISCRETE VARIABLES         12
 
 
-GENERATION TIME      =        0.625 SECONDS     22 MB  32.1.0 r75a5b5d WEX-WEI
+GENERATION TIME      =        0.328 SECONDS     22 MB  25.1.3 r4e34d435fbd WEX-WEI
+
+
+EXECUTION TIME       =        1.156 SECONDS     22 MB  25.1.3 r4e34d435fbd WEX-WEI
                L O O P S          FOR/WHILE 1
                                          tp 28-OCT-2020 01:05
 
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 6
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 125
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE vSPD_NMIR Using MIP From line 4722
 
@@ -3845,12 +4203,12 @@ Solution Report     SOLVE vSPD_NMIR Using MIP From line 4722
 **** MODEL STATUS      1 Optimal                   
 **** OBJECTIVE VALUE           -11934.0588
 
- RESOURCE USAGE, LIMIT          1.204      3600.000
- ITERATION COUNT, LIMIT      8843    2000000000
+ RESOURCE USAGE, LIMIT          1.562      3600.000
+ ITERATION COUNT, LIMIT      9372    2000000000
 
-IBM ILOG CPLEX   32.1.0 r75a5b5d Released Jul 31, 2020 WEI x86 64bit/MS Window
+IBM ILOG CPLEX   25.1.3 r4e34d435fbd Released Oct 30, 2018 WEI x86 64bit/MS Wi
 --- GAMS/Cplex licensed for continuous and discrete problems.
-Cplex 12.10.0.0
+Cplex 12.8.0.0
 
 Reading parameter(s) from "A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\cplex.opt"
 >>  epint = 1e-9
@@ -3858,14 +4216,14 @@ Finished reading from "A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\cplex.opt"
 Space for names approximately 5.11 Mb
 Use option 'names no' to turn use of names off
 MIP status(101): integer optimal solution
-Cplex Time: 0.77sec (det. 554.07 ticks)
+Cplex Time: 0.95sec (det. 615.35 ticks)
 Fixing integer variables, and solving final LP...
 Fixed MIP status(1): optimal
-Cplex Time: 0.25sec (det. 254.34 ticks)
+Cplex Time: 0.42sec (det. 281.65 ticks)
 Proven optimal solution.
 
-MIP Solution:       -11934.058809    (5478 iterations, 8 nodes)
-Final Solve:        -11934.058809    (3365 iterations)
+MIP Solution:       -11934.058809    (5685 iterations, 7 nodes)
+Final Solve:        -11934.058809    (3687 iterations)
 
 Best possible:      -11934.058809
 Absolute gap:            0.000000
@@ -3876,7 +4234,7 @@ Relative gap:            0.000000
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 7
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 126
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 4857
 
@@ -3892,11 +4250,14 @@ BLOCKS OF VARIABLES          55     SINGLE VARIABLES       43,719
 NON ZERO ELEMENTS        97,740     DISCRETE VARIABLES         12
 
 
-GENERATION TIME      =        0.594 SECONDS     26 MB  32.1.0 r75a5b5d WEX-WEI
+GENERATION TIME      =        0.375 SECONDS     25 MB  25.1.3 r4e34d435fbd WEX-WEI
+
+
+EXECUTION TIME       =        0.547 SECONDS     25 MB  25.1.3 r4e34d435fbd WEX-WEI
                L O O P S          FOR/WHILE 2
                                          tp 28-OCT-2020 01:05
 
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 8
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 127
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 4857
 
@@ -3911,12 +4272,12 @@ Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 4857
 **** MODEL STATUS      1 Optimal                   
 **** OBJECTIVE VALUE           -11934.4366
 
- RESOURCE USAGE, LIMIT          1.765      3600.000
- ITERATION COUNT, LIMIT      8229    2000000000
+ RESOURCE USAGE, LIMIT          2.265      3600.000
+ ITERATION COUNT, LIMIT      7900    2000000000
 
-IBM ILOG CPLEX   32.1.0 r75a5b5d Released Jul 31, 2020 WEI x86 64bit/MS Window
+IBM ILOG CPLEX   25.1.3 r4e34d435fbd Released Oct 30, 2018 WEI x86 64bit/MS Wi
 --- GAMS/Cplex licensed for continuous and discrete problems.
-Cplex 12.10.0.0
+Cplex 12.8.0.0
 
 Reading parameter(s) from "A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\cplex.opt"
 >>  epint = 1e-9
@@ -3924,14 +4285,14 @@ Finished reading from "A:\Tuong Nguyen\vSPD\GitHub\vSPD\Programs\cplex.opt"
 Space for names approximately 5.42 Mb
 Use option 'names no' to turn use of names off
 MIP status(101): integer optimal solution
-Cplex Time: 1.41sec (det. 1423.13 ticks)
+Cplex Time: 1.86sec (det. 1287.76 ticks)
 Fixing integer variables, and solving final LP...
 Fixed MIP status(1): optimal
-Cplex Time: 0.19sec (det. 127.83 ticks)
+Cplex Time: 0.20sec (det. 120.36 ticks)
 Proven optimal solution.
 
-MIP Solution:       -11934.436619    (6464 iterations, 36 nodes)
-Final Solve:        -11934.436619    (1765 iterations)
+MIP Solution:       -11934.436619    (6072 iterations, 36 nodes)
+Final Solve:        -11934.436619    (1828 iterations)
 
 Best possible:      -11934.436619
 Absolute gap:            0.000000
@@ -3942,7 +4303,7 @@ Relative gap:            0.000000
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 32.1.0  r75a5b5d Released Jul 31, 2020 WEX-WEI x86 64bit/MS Windows - 11/12/20 10:55:23 Page 9
+GAMS 25.1.3  r4e34d435fbd Released Oct 30, 2018 WEX-WEI x86 64bit/MS Windows                                                                                                                                                         11/12/20 11:54:24 Page 128
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -3965,10 +4326,10 @@ BrCstrResults_TP A:\Tuong Nguyen\vSPD\GitHub\vSPD\Output\Test_replace_invalid_SO
 MnodeCstrResults_TP A:\Tuong Nguyen\vSPD\GitHub\vSPD\Output\Test_replace_invalid_SOS1_Prices\Test_replace_invalid_SOS1_Prices_MnodeConstraintResults_TP.csv
 
 
-EXECUTION TIME       =        6.390 SECONDS     29 MB  32.1.0 r75a5b5d WEX-WEI
+EXECUTION TIME       =        0.812 SECONDS     22 MB  25.1.3 r4e34d435fbd WEX-WEI
 
 
-USER: Small MUD - 5 User License                     G191031/0001CP-WIN
+USER: Small MUD - 5 User License                     R181102:1319CO-WIN
       Electricity Authority - Te Mana Hiko,                      DC5643
 
 
