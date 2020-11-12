@@ -2630,7 +2630,7 @@ $offtext
          busSOSinvalid(tp,b)
            = 1 $ { [ ( busPrice(tp,b) = 0 )
                     or ( busPrice(tp,b) > 0.9 * deficitBusGenerationPenalty )
-                    or ( busPrice(tp,b) > 0.9 * surplusBusGenerationPenalty )
+                    or ( busPrice(tp,b) < -0.9 * surplusBusGenerationPenalty )
                      ]
                  and bus(tp,b)
                  and [ not busDisconnected(tp,b) ]
@@ -2681,7 +2681,7 @@ $offtext
               busSOSinvalid(tp,b)
                 = 1 $ { [ ( busPrice(tp,b) = 0 )
                          or ( busPrice(tp,b) > 0.9 * deficitBusGenerationPenalty )
-                         or ( busPrice(tp,b) > 0.9 * surplusBusGenerationPenalty )
+                         or ( busPrice(tp,b) < -0.9 * surplusBusGenerationPenalty )
                           ]
                       and bus(tp,b)
                       and [ not busDisconnected(tp,b) ]
