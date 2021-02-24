@@ -6,8 +6,10 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     30 June 2020
-* Feature added:        Branch Reverse Rating
+* Modified on:          1 Oct 2019	
+*                       New feature added: New wind offer arrangements
+* Last modified on:     11 Dec 2020
+* Feature added:        Branch Reverse Rating (officially applied from 03 Feb 2021)
 *=====================================================================================
 
 $ontext
@@ -392,7 +394,6 @@ Parameters
   HVDCBreakPointMWLoss(tp,br,bp,fd)                                 'Value of variable losses on the HVDC at the break point'
   NodeBusAllocationFactor(tp,n,b)                                   'Allocation factor of market node to bus for the current trade period'
   BusElectricalIsland(tp,b)                                         'Bus electrical island status for the current trade period (0 = Dead)'
-
 * Flag to allow roundpower on the HVDC link
   AllowHVDCRoundpower(tp)                                           'Flag to allow roundpower on the HVDC (1 = Yes)'
 * Risk/Reserve
