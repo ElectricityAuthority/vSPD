@@ -6,10 +6,14 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Modified on:          1 Oct 2019	
+* Modified on:          1 Oct 2019
 *                       New feature added: New wind offer arrangements
-* Last modified on:     11 Dec 2020
-* Feature added:        Branch Reverse Rating (officially applied from 03 Feb 2021)
+* Modified on:          11 Dec 2020
+*                       Branch Reverse Rating (this feature is suspended until further notice)
+* Last modified on:     24 Feb 2021
+*                       Correcting the excess reserve sharing penalty
+*                       by adding RESERVESHAREEFFECTIVE_CE and ECE variables
+*
 *=====================================================================================
 
 $ontext
@@ -583,6 +587,9 @@ Positive variables
   RESERVESHARERECEIVED(tp,ild,resC,rd)             'Directed shared reserve received at island after adjusted for losses'
   RESERVESHARESENT(tp,ild,resC,rd)                 'Directed shared reserve sent from and island'
   RESERVESHAREPENALTY(tp)                          'Penalty cost for excessive reserve sharing'
+* Tuong Nguyen added on 24 Feb 2021 to correct the calculation of RESERVESHAREPENALTY
+  RESERVESHAREEFFECTIVE_CE(tp,ild,resC)            'Max effective shared reserve for CE risk received at island after adjusted for losses and effectiveness factor'
+  RESERVESHAREEFFECTIVE_ECE(tp,ild,resC)           'Max effective shared reserve for ECE risk received at island after adjusted for losses and effectiveness factor'
 * NMIR positive variables end
 * Network
   HVDCLINKFLOW(tp,br)                              'MW flow at the sending end scheduled for the HVDC link'
@@ -727,6 +734,10 @@ Equations
   HVDCSentReserveLossesDefinition(tp,ild,resC,rd)                               'Lambda definition of Reserse + Energy loss on HVDC sent from an island (3.4.2.27) - SPD version 11.0'
 * Reserve share penalty
   ExcessReserveSharePenalty(tp)                                                 'Constraint to avoid excessive reserve share (3.4.2.28) - SPD version 11.0'
+* Tuong Nguyen added on 24 Feb 2021 to correct the calculation of RESERVESHAREPENALTY
+  ReserveShareEffective_CE_Calculation(tp,ild,resC,riskC)                       'Calculate max effective shared reserve for CE risk received at island (3.4.2.28)'
+  ReserveShareEffective_ECE_Calculation(tp,ild,resC,riskC)                      'Calculate max effective shared reserve for ECE risk received at island (3.4.2.28)'
+
 * Matching of reserve requirement and availability
   SupplyDemandReserveRequirement(tp,ild,resC,riskC)      'Matching of reserve supply and demand (3.4.3.1)'
   IslandReserveCalculation(tp,ild,resC)                  'Calculate total island cleared reserve (3.4.3.2)'
@@ -1314,6 +1325,21 @@ EffectiveReserveShareCalculation(currTP,ild,resC,riskC)
   Sum[ rd , RESERVESHARERECEIVED(currTP,ild,resC,rd)
           * effectiveFactor(currTP,ild,resC,riskC) ]
   ;
+* Tuong Nguyen added on 24 Feb 2021 to correct the calculation of RESERVESHAREPENALTY
+ReserveShareEffective_CE_Calculation(currTP,ild,resC,riskC)
+  $ { reserveShareEnabled(currTP,resC) and ContingentEvents(riskC)
+  and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+  RESERVESHAREEFFECTIVE_CE(currTP,ild,resC)
+=g=
+  RESERVESHAREEFFECTIVE(currTP,ild,resC,riskC)
+  ;
+ReserveShareEffective_ECE_Calculation(currTP,ild,resC,riskC)
+  $ { reserveShareEnabled(currTP,resC) and ExtendedContingentEvent(riskC)
+  and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+  RESERVESHAREEFFECTIVE_ECE(currTP,ild,resC)
+=g=
+  RESERVESHAREEFFECTIVE(currTP,ild,resC,riskC)
+  ;
 
 * Shared offered reserve is limited by cleared reserved - (3.4.2.2) - SPD version 11.0
 SharedReserveLimitByClearedReserve(currTP,ild,resC)
@@ -1562,7 +1588,10 @@ ExcessReserveSharePenalty(currTP) $ reserveShareEnabledOverall(currTP)..
 =e=
   sum[ ild, 1e-5 * SHAREDNFR(currTP,ild) ]
 + sum[ (ild,resC), 2e-5 * SHAREDRESERVE(currTP,ild,resC) ]
-+ sum[ (ild,resC,riskC), 3e-5 * RESERVESHAREEFFECTIVE(currTP,ild,resC,riskC)]
+* Tuong Nguyen added on 24 Feb 2021 to correct the calculation of RESERVESHAREPENALTY
+*+ sum[ (ild,resC,riskC), 3e-5 * RESERVESHAREEFFECTIVE(currTP,ild,resC,riskC)]
++ sum[ (ild,resC), 3e-5 * RESERVESHAREEFFECTIVE_CE(currTP,ild,resC)]
++ sum[ (ild,resC), 3e-5 * RESERVESHAREEFFECTIVE_ECE(currTP,ild,resC)]
 ;
 
 *======= NMIR - RESERVE SHARING EQUATIONS END ==================================
@@ -2341,6 +2370,8 @@ Model vSPD_NMIR /
   OnlyOneSendingIslandExists
   HVDCSentCalculation
   ExcessReserveSharePenalty
+  ReserveShareEffective_CE_Calculation
+  ReserveShareEffective_ECE_Calculation
 * Lamda loss model NMIR
   HVDCFlowAccountedForForwardReserve
   ForwardReserveReceivedAtHVDCReceivingIsland
@@ -2418,6 +2449,8 @@ Model vSPD_MIP /
   OnlyOneSendingIslandExists
   HVDCSentCalculation
   ExcessReserveSharePenalty
+  ReserveShareEffective_CE_Calculation
+  ReserveShareEffective_ECE_Calculation
 * Lamda loss model NMIR
   HVDCFlowAccountedForForwardReserve
   ForwardReserveReceivedAtHVDCReceivingIsland
@@ -2495,6 +2528,8 @@ Model vSPD_BranchFlowMIP /
   OnlyOneSendingIslandExists
   HVDCSentCalculation
   ExcessReserveSharePenalty
+  ReserveShareEffective_CE_Calculation
+  ReserveShareEffective_ECE_Calculation
 * Lamda loss model NMIR
   HVDCFlowAccountedForForwardReserve
   ForwardReserveReceivedAtHVDCReceivingIsland
@@ -2567,6 +2602,8 @@ Model vSPD_MixedConstraintMIP /
   OnlyOneSendingIslandExists
   HVDCSentCalculation
   ExcessReserveSharePenalty
+  ReserveShareEffective_CE_Calculation
+  ReserveShareEffective_ECE_Calculation
 * Lamda loss model NMIR
   HVDCFlowAccountedForForwardReserve
   ForwardReserveReceivedAtHVDCReceivingIsland
