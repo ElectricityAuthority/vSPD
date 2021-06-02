@@ -948,8 +948,11 @@ nodeDemand(node(tp,n))
 
 * Branch is defined if there is a defined terminal bus, it has a non-zero
 * capacity and is closed for that trade period
+* Update the pre-processing code that removes branches which have a limit of zero
+* so that it removes a branch if either direction has a limit of zero.
 branch(tp,br) $ { (not i_tradePeriodBranchOpenStatus(tp,br)) and
-                  sum[ fd, i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
+                  sum[ fd $ (ord(fd)=1), i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
+                  sum[ fd $ (ord(fd)=2), i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
                   sum[ (b,b1) $ { bus(tp,b) and bus(tp,b1) and
                                   i_tradePeriodBranchDefn(tp,br,b,b1) }, 1 ]
                 } = yes ;
