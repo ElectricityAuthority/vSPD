@@ -7,13 +7,15 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     23 Sept 2016
+* Last modified on:     03 June 2021
 *=====================================================================================
 
 
 *=====================================================================================
 * 1. Calculate branch and constraint participation loading
 *=====================================================================================
+Scalar FTRsequentialSolve                   / 0 / ;
+
 * FTR rental - extra sets and parameters declaration ---------------------------
 Set
   FTRpattern                  'FTR flow direction'
@@ -26,10 +28,14 @@ Table
 $include FTRinjection.inc
   ;
 Parameters
-  FTRnodeInjection(n,ftr)     'Nodal generation applied for FTR Model'
-
   FTRbranchFlow(ftr,dt,br)    'FTR directed MW flow on each branch for the different time periods'
   FTRbrCstrLHS(ftr,dt,brCstr) 'FTR directed branch constraint value'
+
+* parameters for sequential solve
+  injectionFTR(n)         'Nodal generation applied for FTR Model'
+  branchFlowFTR(dt,br)    'FTR directed MW flow on each branch for the different time periods'
+  brCstrLHSFTR(dt,brCstr) 'FTR directed branch constraint value'
+
   ;
 
 
@@ -37,17 +43,27 @@ Parameters
 Variables
   FTRACBRANCHFLOW(tp,br,ftr)         'MW flow on AC branch for each ftr pattern'
   FTRACNODEANGLE(tp,b,ftr)           'Bus voltage angle for each ftr pattern'
+* variables for sequential solve
+  ACBRANCHFLOWFTR(tp,br)             'MW flow on AC branch for each ftr pattern'
+  ACNODEANGLEFTR(tp,b)               'Bus voltage angle for each ftr pattern'
 ;
 
 Positive variables
   FTRDEFICITBUSGENERATION(tp,b,ftr)  'Deficit generation at a bus in MW'
   FTRSURPLUSBUSGENERATION(tp,b,ftr)  'Surplus generation at a bus in MW'
+* variables for sequential solve
+  DEFICITBUSGENERATIONFTR(tp,b)  'Deficit generation at a bus in MW'
+  SURPLUSBUSGENERATIONFTR(tp,b)  'Surplus generation at a bus in MW'
 ;
 
 Equations
   FTRObjectiveFunction            'Objective function of the FTR flow pattern model'
   FTRLinearLoadFlow(tp,br,ftr)    'Equation that describes Kirchhoff"s circuit laws'
   FTRbusEnergyBalance(tp,b,ftr)   'Energy balance at bus level'
+* equation for sequential solve
+  ObjectiveFunctionFTR            'Objective function of the FTR flow pattern model'
+  linearLoadFlowFTR(tp,br)        'Equation that describes Kirchhoff"s circuit laws'
+  busEnergyBalanceFTR(tp,b)       'Energy balance at bus level'
 ;
 
 FTRObjectiveFunction..
@@ -57,6 +73,13 @@ FTRObjectiveFunction..
 - sum[ (bus,ftr), surplusBusGenerationPenalty * FTRSURPLUSBUSGENERATION(bus,ftr) ]
   ;
 
+ObjectiveFunctionFTR..
+  NETBENEFIT
+=e=
+- sum[ bus, deficitBusGenerationPenalty * DEFICITBUSGENERATIONFTR(bus) ]
+- sum[ bus, surplusBusGenerationPenalty * SURPLUSBUSGENERATIONFTR(bus) ]
+  ;
+
 * Kirchoff's law
 FTRLinearLoadFlow(branch(tp,br),ftr)..
   FTRACBRANCHFLOW(branch,ftr)
@@ -64,6 +87,15 @@ FTRLinearLoadFlow(branch(tp,br),ftr)..
  sum[ BranchBusDefn(branch,frB,toB)
     , branchSusceptance(branch)
     * (FTRACNODEANGLE(tp,frB,ftr) - FTRACNODEANGLE(tp,toB,ftr))
+    ]
+  ;
+
+linearLoadFlowFTR(branch(tp,br))..
+  ACBRANCHFLOWFTR(branch)
+=e=
+ sum[ BranchBusDefn(branch,frB,toB)
+    , branchSusceptance(branch)
+    * (ACNODEANGLEFTR(tp,frB) - ACNODEANGLEFTR(tp,toB))
     ]
   ;
 
@@ -78,11 +110,28 @@ FTRbusEnergyBalance(bus(tp,b),ftr)..
 + FTRDEFICITBUSGENERATION(tp,b,ftr) - FTRSURPLUSBUSGENERATION(tp,b,ftr)
   ;
 
+busEnergyBalanceFTR(bus(tp,b))..
+  sum[ branchBusDefn(branch(tp,br),b,toB), ACBRANCHFLOWFTR(branch) ]
+- sum[ branchBusDefn(branch(tp,br),frB,b), ACBRANCHFLOWFTR(branch) ]
+=e=
+  sum[ NodeBus(tp,n,b)
+     , NodeBusAllocationFactor(tp,n,b) * injectionFTR(n)
+     ]
++ DEFICITBUSGENERATIONFTR(tp,b) - SURPLUSBUSGENERATIONFTR(tp,b)
+  ;
+
 Model FTR_Model
   /
   FTRObjectiveFunction
   FTRLinearLoadFlow
   FTRbusEnergyBalance
+  / ;
+
+Model FTR_Model_sequential
+  /
+  ObjectiveFunctionFTR
+  linearLoadFlowFTR
+  busEnergyBalanceFTR
   / ;
 
 
@@ -152,34 +201,78 @@ branchConstraintLimit(branchConstraint)
          ] ;
 
 
-option clear = NETBENEFIT ;
-option clear = FTRACNODEANGLE ;
-option clear = FTRACBRANCHFLOW ;
-option clear = FTRDEFICITBUSGENERATION ;
-option clear = FTRSURPLUSBUSGENERATION ;
+if(sequentialSolve,
+  putclose runlog 'Vectorisation is switched OFF for FTR' /;
 
-option bratio = 1;
-FTR_Model.reslim = LPTimeLimit;
-FTR_Model.iterlim = LPIterationLimit;
-solve FTR_Model using lp maximizing NETBENEFIT;
+  loop(ftr,
+    option clear = NETBENEFIT ;
+    option clear = ACNODEANGLEFTR ;
+    option clear = ACBRANCHFLOWFTR ;
+    option clear = DEFICITBUSGENERATIONFTR ;
+    option clear = SURPLUSBUSGENERATIONFTR ;
 
-ModelSolved = 1 $ ((FTR_Model.modelstat = 1) and (FTR_Model.solvestat = 1));
-*Post a progress message to report for use by GUI and to the console.
-if( (ModelSolved <> 1),
-    putclose runlog 'FRT flow calculation for injection pattern failed' /
+    injectionFTR(n)  = FTRinjection(ftr,n) ;
+
+    option bratio = 1;
+    FTR_Model_sequential.reslim = LPTimeLimit;
+    FTR_Model_sequential.iterlim = LPIterationLimit;
+    solve FTR_Model_sequential using lp maximizing NETBENEFIT;
+
+    ModelSolved = 1 $ ((FTR_Model_sequential.modelstat = 1) and (FTR_Model_sequential.solvestat = 1));
+*   Post a progress message to report for use by GUI and to the console.
+    if( (ModelSolved <> 1),
+        putclose runlog 'FRT flow calculation for injection pattern failed' /
+    ) ;
+
+    loop( i_dateTimeTradePeriodMap(dt,tp),
+        FTRbranchFlow(ftr,dt,br) = Round(ACBRANCHFLOWFTR.l(tp,br), 6) ;
+
+        FTRbrCstrLHS(ftr,dt,brCstr)
+            $ (BranchConstraintSense(tp,brCstr) = -1)
+            = sum[ br $ ACbranch(tp,br)
+                 , BranchConstraintFactors(tp,brCstr,br)
+                 * ACBRANCHFLOWFTR.l(tp,br)
+                 ] ;
+
+    ) ;
+  );
+
+
+else
+  putclose runlog 'Vectorisation is switched ON for FTR' /;
+
+  option clear = NETBENEFIT ;
+  option clear = FTRACNODEANGLE ;
+  option clear = FTRACBRANCHFLOW ;
+  option clear = FTRDEFICITBUSGENERATION ;
+  option clear = FTRSURPLUSBUSGENERATION ;
+
+  option bratio = 1;
+  FTR_Model.reslim = LPTimeLimit;
+  FTR_Model.iterlim = LPIterationLimit;
+  solve FTR_Model using lp maximizing NETBENEFIT;
+
+  ModelSolved = 1 $ ((FTR_Model.modelstat = 1) and (FTR_Model.solvestat = 1));
+* Post a progress message to report for use by GUI and to the console.
+  if( (ModelSolved <> 1),
+      putclose runlog 'FRT flow calculation for injection pattern failed' /
+  ) ;
+
+  loop( i_dateTimeTradePeriodMap(dt,tp),
+      FTRbranchFlow(ftr,dt,br) = Round(FTRACBRANCHFLOW.l(tp,br,ftr), 6) ;
+
+      FTRbrCstrLHS(ftr,dt,brCstr)
+          $ (BranchConstraintSense(tp,brCstr) = -1)
+          = sum[ br $ ACbranch(tp,br)
+               , BranchConstraintFactors(tp,brCstr,br)
+               * FTRACBRANCHFLOW.l(tp,br,ftr)
+               ] ;
+
+  ) ;
 ) ;
 
-loop( i_dateTimeTradePeriodMap(dt,tp),
-    FTRbranchFlow(ftr,dt,br) = Round(FTRACBRANCHFLOW.l(tp,br,ftr), 6) ;
 
-    FTRbrCstrLHS(ftr,dt,brCstr)
-        $ (BranchConstraintSense(tp,brCstr) = -1)
-        = sum[ br $ ACbranch(tp,br)
-             , BranchConstraintFactors(tp,brCstr,br)
-             * FTRACBRANCHFLOW.l(tp,br,ftr)
-             ] ;
 
-) ;
 
 
 

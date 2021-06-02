@@ -6,7 +6,7 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     23 Sept 2016
+* Last modified on:     03 June 2021
 *=====================================================================================
 
 *   Store results for FTR reporting at a trade period level
@@ -61,9 +61,10 @@
 
 *       AC branch loss segment
         o_ACbranchLossMW(dt,br,los) $ ACbranch(currTP,br)
-            = ACBranchLossMW(currTP,br,los);
+            = ACBranchLossMW(currTP,br,los,'forward') $ (o_branchFlow_TP(dt,br) >= 0)
+            + ACBranchLossMW(currTP,br,los,'backward') $ (o_branchFlow_TP(dt,br) < 0);
 
         o_ACbranchLossFactor(dt,br,los) $ ACbranch(currTP,br)
-            = ACBranchLossFactor(currTP,br,los);
-
+            = ACBranchLossFactor(currTP,br,los,'forward') $ (o_branchFlow_TP(dt,br) >= 0)
+            + ACBranchLossFactor(currTP,br,los,'backward') $ (o_branchFlow_TP(dt,br) < 0);
     ) ;
