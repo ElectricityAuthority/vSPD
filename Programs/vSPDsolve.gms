@@ -7,14 +7,14 @@
 *                       http://www.emi.ea.govt.nz/Tools/vSPD
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Modified on:          1 Oct 2019	
-*                       New feature added: new wind offer arrangements	
-* Modified on:          11 Nov 2020	
-*                       Replacing invalid bus prices after SOS1 (6.1.3)	
+* Modified on:          1 Oct 2019
+*                       New feature added: new wind offer arrangements
+* Modified on:          11 Nov 2020
+*                       Replacing invalid bus prices after SOS1 (6.1.3)
 * Last modified on:     11 Dec 2020
 *                       From 11 Dec 2020, GDX input file have i_tradePeriodBranchCapacityDirected
-*                       and i_tradePeriodReverseRatingsApplied symbols	   
-*                       Applying branch reverse rating	s only when i_tradePeriodReverseRatingsApplied = 1
+*                       and i_tradePeriodReverseRatingsApplied symbols
+*                       Applying branch reverse rating  s only when i_tradePeriodReverseRatingsApplied = 1
 *
 *=====================================================================================
 
@@ -169,8 +169,8 @@ Sets
 * Unmmaped bus defificit temporary sets
   unmappedDeficitBus(dt,b)                            'List of buses that have deficit generation (price) and are not mapped to any pnode'
   changedDeficitBus(dt,b)                             'List of buses that have deficit generation added from unmapped deficit bus'
-* TN - Replacing invalid prices after SOS1	
-  vSPD_SOS1_Solve(tp)                                 'Flag period that is resolved using SOS1'  
+* TN - Replacing invalid prices after SOS1
+  vSPD_SOS1_Solve(tp)                                 'Flag period that is resolved using SOS1'
   ;
 
 Parameters
@@ -223,11 +223,11 @@ Parameters
   scaledscarcityAreaGWAP(tp,sarea)
 * Unmmaped bus defificit temporary parameters
   temp_busDeficit_TP(dt,b) 'Bus deficit violation for each trade period'
-* TN - Replacing invalid prices after SOS1	
-  busSOSinvalid(tp,b)                                 'Buses with invalid bus prices after SOS1 solve'	
+* TN - Replacing invalid prices after SOS1
+  busSOSinvalid(tp,b)                                 'Buses with invalid bus prices after SOS1 solve'
   numberofbusSOSinvalid(tp)                           'Number of buses with invalid bus prices after SOS1 solve --> used to check if invalid prices can be improved (numberofbusSOSinvalid reduces after each iteration) '
 * TN - Flag to apply branch reverse ratings
-  reverseRatingsApplied(tp)  
+  reverseRatingsApplied(tp)
   ;
 
 Sets
@@ -657,10 +657,10 @@ UseShareReserve = 1 $ sum[ (tp,resC), reserveShareEnabled(tp,resC)] ;
 if (inputGDXGDate >= jdate(2020,12,11),
     execute_load i_tradePeriodBranchCapacityDirected;
     execute_load reverseRatingsApplied = i_tradePeriodReverseRatingsApplied;
-    
+
     i_tradePeriodBranchCapacityDirected(tp,br,'backward') $ (reverseRatingsApplied(tp)=0)
         = i_tradePeriodBranchCapacityDirected(tp,br,'forward');
-            
+
 else
     i_tradePeriodBranchCapacityDirected(tp,br,fd)
         = i_tradePeriodBranchCapacity(tp,br) ;
@@ -951,12 +951,19 @@ nodeDemand(node(tp,n))
 * Update the pre-processing code that removes branches which have a limit of zero
 * so that it removes a branch if either direction has a limit of zero.
 branch(tp,br) $ { (not i_tradePeriodBranchOpenStatus(tp,br)) and
+                  (not i_tradePeriodHVDCBranch(tp,br)) and
                   sum[ fd $ (ord(fd)=1), i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
                   sum[ fd $ (ord(fd)=2), i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
                   sum[ (b,b1) $ { bus(tp,b) and bus(tp,b1) and
                                   i_tradePeriodBranchDefn(tp,br,b,b1) }, 1 ]
                 } = yes ;
 
+branch(tp,br) $ { (not i_tradePeriodBranchOpenStatus(tp,br)) and
+                  (i_tradePeriodHVDCBranch(tp,br)) and
+                  sum[ fd, i_tradePeriodBranchCapacityDirected(tp,br,fd)] and
+                  sum[ (b,b1) $ { bus(tp,b) and bus(tp,b1) and
+                                  i_tradePeriodBranchDefn(tp,br,b,b1) }, 1 ]
+                } = yes ;
 
 
 branchBusDefn(branch,b,b1) $ i_tradePeriodBranchDefn(branch,b,b1)    = yes ;
@@ -2265,9 +2272,9 @@ $offtext
 
 *       Post a progress message for use by EMI.
         if(ModelSolved = 1,
-		
-*           TN - Replacing invalid prices after SOS1 - Flag to show the period that required SOS1 solve	
-            vSPD_SOS1_Solve(currTP)  = yes;	
+
+*           TN - Replacing invalid prices after SOS1 - Flag to show the period that required SOS1 solve
+            vSPD_SOS1_Solve(currTP)  = yes;
 
             loop(currTP,
                 putclose runlog 'The case: %vSPDinputData% (' currTP.tl ') '
@@ -2675,83 +2682,83 @@ $offtext
 
 * End Check for disconnected nodes and adjust prices accordingly
 
-* TN - Replacing invalid prices after SOS1	
-*   6f0. Replacing invalid prices after SOS1 (6.1.3)----------------------------	
-    if ( vSPD_SOS1_Solve(tp),	
-         busSOSinvalid(tp,b)	
-           = 1 $ { [ ( busPrice(tp,b) = 0 )	
-                    or ( busPrice(tp,b) > 0.9 * deficitBusGenerationPenalty )	
-                    or ( busPrice(tp,b) < -0.9 * surplusBusGenerationPenalty )	
-                     ]	
-                 and bus(tp,b)	
-                 and [ not busDisconnected(tp,b) ]	
-*                 and [ busLoad(tp,b) = 0 ]	
+* TN - Replacing invalid prices after SOS1
+*   6f0. Replacing invalid prices after SOS1 (6.1.3)----------------------------
+    if ( vSPD_SOS1_Solve(tp),
+         busSOSinvalid(tp,b)
+           = 1 $ { [ ( busPrice(tp,b) = 0 )
+                    or ( busPrice(tp,b) > 0.9 * deficitBusGenerationPenalty )
+                    or ( busPrice(tp,b) < -0.9 * surplusBusGenerationPenalty )
+                     ]
+                 and bus(tp,b)
+                 and [ not busDisconnected(tp,b) ]
+*                 and [ busLoad(tp,b) = 0 ]
 *                 and [ busGeneration(tp,b) = 0 ]
-                 and [ busLoad(tp,b) = busGeneration(tp,b) ]	
-                 and [ sum[(br,fd)	
-                          $ { BranchBusConnect(tp,br,b) and branch(tp,br) }	
-                          , ACBRANCHFLOWDIRECTED.l(tp,br,fd)	
-                          ] = 0	
-                     ]	
-                 and [ sum[ br	
-                          $ { BranchBusConnect(tp,br,b) and branch(tp,br) }	
-                          , 1	
-                          ] > 0	
-                     ]	
-                   };	
-        numberofbusSOSinvalid(tp) = 2*sum[b, busSOSinvalid(tp,b)];	
+                 and [ busLoad(tp,b) = busGeneration(tp,b) ]
+                 and [ sum[(br,fd)
+                          $ { BranchBusConnect(tp,br,b) and branch(tp,br) }
+                          , ACBRANCHFLOWDIRECTED.l(tp,br,fd)
+                          ] = 0
+                     ]
+                 and [ sum[ br
+                          $ { BranchBusConnect(tp,br,b) and branch(tp,br) }
+                          , 1
+                          ] > 0
+                     ]
+                   };
+        numberofbusSOSinvalid(tp) = 2*sum[b, busSOSinvalid(tp,b)];
         While ( sum[b, busSOSinvalid(tp,b)] < numberofbusSOSinvalid(tp) ,
-            numberofbusSOSinvalid(tp) = sum[b, busSOSinvalid(tp,b)];	
-            busPrice(tp,b)	
-              $ { busSOSinvalid(tp,b)	
-              and ( sum[ b1 $ { [ not busSOSinvalid(tp,b1) ]	
-                            and sum[ br $ { branch(tp,br)	
-                                        and BranchBusConnect(tp,br,b)	
-                                        and BranchBusConnect(tp,br,b1)	
-                                          }, 1	
-                                   ]	
-                             }, 1	
-                       ] > 0	
-                  )	
-                }	
-              = sum[ b1 $ { [ not busSOSinvalid(tp,b1) ]	
-                        and sum[ br $ { branch(tp,br)	
-                                    and BranchBusConnect(tp,br,b)	
-                                    and BranchBusConnect(tp,br,b1)	
-                                      }, 1 ]	
-                          }, busPrice(tp,b1)	
-                   ]	
-              / sum[ b1 $ { [ not busSOSinvalid(tp,b1) ]	
-                        and sum[ br $ { branch(tp,br)	
-                                    and BranchBusConnect(tp,br,b)	
-                                    and BranchBusConnect(tp,br,b1)	
-                                      }, 1 ]	
-                          }, 1	
+            numberofbusSOSinvalid(tp) = sum[b, busSOSinvalid(tp,b)];
+            busPrice(tp,b)
+              $ { busSOSinvalid(tp,b)
+              and ( sum[ b1 $ { [ not busSOSinvalid(tp,b1) ]
+                            and sum[ br $ { branch(tp,br)
+                                        and BranchBusConnect(tp,br,b)
+                                        and BranchBusConnect(tp,br,b1)
+                                          }, 1
+                                   ]
+                             }, 1
+                       ] > 0
+                  )
+                }
+              = sum[ b1 $ { [ not busSOSinvalid(tp,b1) ]
+                        and sum[ br $ { branch(tp,br)
+                                    and BranchBusConnect(tp,br,b)
+                                    and BranchBusConnect(tp,br,b1)
+                                      }, 1 ]
+                          }, busPrice(tp,b1)
+                   ]
+              / sum[ b1 $ { [ not busSOSinvalid(tp,b1) ]
+                        and sum[ br $ { branch(tp,br)
+                                    and BranchBusConnect(tp,br,b)
+                                    and BranchBusConnect(tp,br,b1)
+                                      }, 1 ]
+                          }, 1
                    ];
-                    
-            busSOSinvalid(tp,b)	
-              = 1 $ { [ ( busPrice(tp,b) = 0 )	
-                     or ( busPrice(tp,b) > 0.9 * deficitBusGenerationPenalty )	
-                     or ( busPrice(tp,b) < -0.9 * surplusBusGenerationPenalty )	
-                      ]	
-                  and bus(tp,b)	
-                  and [ not busDisconnected(tp,b) ]	
-*                  and [ busLoad(tp,b) = 0 ]	
+
+            busSOSinvalid(tp,b)
+              = 1 $ { [ ( busPrice(tp,b) = 0 )
+                     or ( busPrice(tp,b) > 0.9 * deficitBusGenerationPenalty )
+                     or ( busPrice(tp,b) < -0.9 * surplusBusGenerationPenalty )
+                      ]
+                  and bus(tp,b)
+                  and [ not busDisconnected(tp,b) ]
+*                  and [ busLoad(tp,b) = 0 ]
 *                  and [ busGeneration(tp,b) = 0 ]
-                  and [ busLoad(tp,b) = busGeneration(tp,b) ]	
-                  and [ sum[(br,fd)	
-                          $ { BranchBusConnect(tp,br,b) and branch(tp,br) }	
-                          , ACBRANCHFLOWDIRECTED.l(tp,br,fd)	
-                           ] = 0	
-                      ]	
-                  and [ sum[ br	
-                           $ { BranchBusConnect(tp,br,b) and branch(tp,br) }	
-                           , 1	
-                           ] > 0	
-                      ]	
-                    };	
-         );	
-    );	
+                  and [ busLoad(tp,b) = busGeneration(tp,b) ]
+                  and [ sum[(br,fd)
+                          $ { BranchBusConnect(tp,br,b) and branch(tp,br) }
+                          , ACBRANCHFLOWDIRECTED.l(tp,br,fd)
+                           ] = 0
+                      ]
+                  and [ sum[ br
+                           $ { BranchBusConnect(tp,br,b) and branch(tp,br) }
+                           , 1
+                           ] > 0
+                      ]
+                    };
+         );
+    );
 *   End Replacing invalid prices after SOS1 (6.1.3) ----------------------------
 
 
