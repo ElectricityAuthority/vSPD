@@ -15,8 +15,7 @@
 *                       From 11 Dec 2020, GDX input file have i_tradePeriodBranchCapacityDirected
 *                       and i_tradePeriodReverseRatingsApplied symbols
 *                       Applying branch reverse rating  s only when i_tradePeriodReverseRatingsApplied = 1
-* Last modified on:     27 June 2021
-*                       Fixing the bug that remove HVDC because of zero  reverse rating limits  
+*
 *=====================================================================================
 
 $ontext
