@@ -15,8 +15,7 @@
 *                       From 11 Dec 2020, GDX input file have i_tradePeriodBranchCapacityDirected
 *                       and i_tradePeriodReverseRatingsApplied symbols
 *                       Applying branch reverse rating  s only when i_tradePeriodReverseRatingsApplied = 1
-* Last modified on:     27 June 2021
-*                       Fixing the bug that remove HVDC because of zero  reverse rating limits  
+*
 *=====================================================================================
 
 $ontext
@@ -2130,7 +2129,6 @@ $offtext
                             and ( vSPD_NMIR.solvestat = 1 ) } ;
         else
             option bratio = 1 ;
-            vSPD.Optfile = 1 ;
             vSPD.reslim = LPTimeLimit ;
             vSPD.iterlim = LPIterationLimit ;
             solve vSPD using lp maximizing NETBENEFIT ;
@@ -2360,7 +2358,6 @@ $offtext
                             and ( vSPD_NMIR.solvestat = 1 ) } ;
         else
             option bratio = 1 ;
-            vSPD.Optfile = 1 ;
             vSPD.reslim = LPTimeLimit ;
             vSPD.iterlim = LPIterationLimit ;
             solve vSPD using lp maximizing NETBENEFIT ;
