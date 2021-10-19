@@ -10,12 +10,12 @@
 *                       section in vSPDSolve to load data to GDX.
 *=====================================================================================
 
-* This code started inside a loop created in vSPDSolvePivot_1.gms 
+* This code started inside a loop created in vSPDSolvePivot_1.gms
 * End of the process that loop through each pivot scenario and produce pivot data
 ];
 
 
-File IslandResults  /"%OutputPath%%runName%\PivotIslandResults.csv"/ ;
+File IslandResults  /"%OutputPath%%runName%\%runName%_PivotIslandResults.csv"/ ;
   IslandResults.pc = 5;  IslandResults.lw = 0;  IslandResults.pw = 9999;
   IslandResults.ap = 1;  IslandResults.nd = 3;
   put IslandResults;
@@ -26,13 +26,13 @@ File IslandResults  /"%OutputPath%%runName%\PivotIslandResults.csv"/ ;
         o_pivotFirPr(dt,pvt,ild), o_pivotSirPr(dt,pvt,ild) /;
   ) ;
 
-File NodePrice      /"%OutputPath%%runName%\PivotNodePrice.csv"/ ;
+File NodePrice      /"%OutputPath%%runName%\%runName%_PivotNodePrice.csv"/ ;
   NodePrice.pc = 5;  NodePrice.lw = 0;  NodePrice.pw = 9999;
   NodePrice.ap = 1;  NodePrice.nd = 2;
   put NodePrice;
   loop( (dt,pvt,n), put dt.tl, pvt.tl, n.tl, o_pivotNodePrice(dt,pvt,n)/ ) ;
 
-File OfferGen       /"%OutputPath%%runName%\PivotOfferGen.csv"/;
+File OfferGen       /"%OutputPath%%runName%\%runName%_PivotOfferGen.csv"/;
   OfferGen.pc = 5;  OfferGen.lw = 0;  OfferGen.pw = 9999;
   OfferGen.ap = 1;  OfferGen.nd = 3;
   put OfferGen;
@@ -41,7 +41,7 @@ File OfferGen       /"%OutputPath%%runName%\PivotOfferGen.csv"/;
   ) ;
 
 $stop
-execute_unload '%OutputPath%%runName%\PivotOutput_TP.gdx'
+execute_unload '%OutputPath%%runName%\%runName%_PivotOutput_TP.gdx'
   i_dateTime
   i_island
   o_node

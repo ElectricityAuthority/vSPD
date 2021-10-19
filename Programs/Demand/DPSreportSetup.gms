@@ -13,13 +13,13 @@ $include vSPDsettings.inc
 *$include "%system.fp%Scenarios.gms"
 
 
-Files DPSNodeResults   /"%OutputPath%%runName%\NodePriceSensitivity.csv"/;
+Files DPSNodeResults   /"%OutputPath%%runName%\%runName%_NodePriceSensitivity.csv"/;
 DPSNodeResults.pc = 5;  DPSNodeResults.lw = 0;  DPSNodeResults.pw = 9999;
 put DPSNodeResults;
 put 'DateTime', 'Scenario', 'Node', 'Price' ;
 
 
-Files DPSIslandResults   /"%OutputPath%%runName%\IslandSensitivity.csv"/;
+Files DPSIslandResults   /"%OutputPath%%runName%\%runName%_IslandSensitivity.csv"/;
 DPSIslandResults.pc = 5;  DPSIslandResults.lw = 0;  DPSIslandResults.pw = 9999;
 put DPSIslandResults;
 put 'DateTime', 'Scenario', 'Island', 'Load', 'Reference_price';

@@ -9,18 +9,18 @@
 *=====================================================================================
 $include vSPDsettings.inc
 
-File IslandResults  /"%OutputPath%%runName%\PivotIslandResults.csv"/ ;
+File IslandResults  /"%OutputPath%%runName%\%runName%_PivotIslandResults.csv"/ ;
   IslandResults.pc = 5;  IslandResults.lw = 0;  IslandResults.pw = 9999;
   put IslandResults;
   put 'DateTime', 'Scenario', 'Island', 'TraderGenMW', 'TraderMinMW'
       'TraderPivotMW', 'TraderFirMW', 'TraderSirMW', 'FirPrice', 'SirPrice';
 
-File NodePrice      /"%OutputPath%%runName%\PivotNodePrice.csv"/ ;
+File NodePrice      /"%OutputPath%%runName%\%runName%_PivotNodePrice.csv"/ ;
  NodePrice.pc = 5;  NodePrice.lw = 0;  NodePrice.pw = 9999;
  put NodePrice;
  put 'DateTime', 'Scenario', 'Node', 'Price';
 
-File OfferGen       /"%OutputPath%%runName%\PivotOfferGen.csv"/ ;
+File OfferGen       /"%OutputPath%%runName%\%runName%_PivotOfferGen.csv"/ ;
   OfferGen.pc = 5;  OfferGen.lw = 0;  OfferGen.pw = 9999;
   put OfferGen;
   put 'DateTime', 'Scenario', 'Offer', 'ClearedMW';
