@@ -16,7 +16,7 @@
 *                       and i_tradePeriodReverseRatingsApplied symbols
 *                       Applying branch reverse rating  s only when i_tradePeriodReverseRatingsApplied = 1
 * Last modified on:     27 June 2021
-*                       Fixing the bug that remove HVDC because of zero  reverse rating limits  
+*                       Fixing the bug that remove HVDC because of zero  reverse rating limits
 *=====================================================================================
 
 $ontext
@@ -2608,9 +2608,8 @@ $ontext
         a. Null/zero load: Marked as disconnected with $0 price.
         b. Positive load: Price = CVP for deficit generation
         c. Negative load: Price = -CVP for surplus generation
-    Scenario E: Price for bus in live electrical island with zero load and
-                zero cleared generation needs to be adjusted since actually
-                is disconnected.
+    Scenario E: Price for bus in live electrical island with zero load needs to
+                be adjusted since actually is disconnected.
 
     The Post-MSP implementation imply a mapping of a bus to an electrical island
     and an indication of whether this electrical island is live of dead.
@@ -2658,10 +2657,6 @@ $offtext
             $ { ( sum[ b1 $ { busElectricalIsland(currTP,b1)
                             = busElectricalIsland(bus) }
                      , busLoad(currTP,b1) ] = 0
-                ) and
-                ( sum[ b1 $ { busElectricalIsland(currTP,b1)
-                            = busElectricalIsland(bus) }
-                     , busGeneration(currTP,b1) ] = 0
                 ) and
                 ( busElectricalIsland(bus) > 0 ) and
                 ( i_useBusNetworkModel(currTP) = 1 )
