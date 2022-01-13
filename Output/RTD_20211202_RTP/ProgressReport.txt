@@ -1,0 +1,15 @@
+Run: 'RTD_20211202_RTP'
+
+runvSPD started at: 01/13/22 18:06:25
+vSPDsetup started at: 01/13/22 18:06:25
+vSPDreportSetup started at: 01/13/22 18:06:25
+
+Case "RTD_20211202_RTP" started at: 01/13/22 18:06:25
+Vectorisation is switched ON
+The case: RTD_20211202_RTP (02-DEC-2021 13:25) is solved successfully.
+Objective function value: -8240.6
+Violations cost         : 0.0
+Case: RTD_20211202_RTP is complete in         2.00(secs)
+Case: RTD_20211202_RTP is finished in         2.04(secs)
+
+Total execute time:         2.41(secs)

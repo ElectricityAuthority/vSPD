@@ -17,6 +17,7 @@
 *                       Applying branch reverse rating  s only when i_tradePeriodReverseRatingsApplied = 1
 * Last modified on:     27 June 2021
 *                       Fixing the bug that remove HVDC because of zero  reverse rating limits
+
 *=====================================================================================
 
 $ontext
@@ -478,7 +479,7 @@ $load i_tradePeriodGenericConstraint
 * Parameters
 $load i_day i_month i_year i_tradingPeriodLength i_AClineUnit i_branchReceivingEndLossProportion
 $load i_studyTradePeriod i_CVPvalues i_tradePeriodOfferParameter i_tradePeriodEnergyOffer i_tradePeriodSustainedPLSRoffer i_tradePeriodFastPLSRoffer
-$load i_tradePeriodSustainedTWDRoffer i_tradePeriodFastTWDRoffer i_tradePeriodSustainedILRoffer i_tradePeriodFastILRoffer i_tradePeriodNodeDemand
+$load i_tradePeriodSustainedTWDRoffer i_tradePeriodFastTWDRoffer i_tradePeriodSustainedILRoffer i_tradePeriodFastILRoffer
 $load i_tradePeriodEnergyBid i_tradePeriodSustainedILRbid i_tradePeriodFastILRbid i_tradePeriodHVDCnode i_tradePeriodReferenceNode i_tradePeriodHVDCBranch
 $load i_tradePeriodBranchParameter i_tradePeriodBranchCapacity i_tradePeriodBranchOpenStatus i_noLossBranch i_AClossBranch i_HVDClossBranch
 $load i_tradePeriodNodeBusAllocationFactor i_tradePeriodBusElectricalIsland i_tradePeriodRiskParameter i_tradePeriodManualRisk i_tradePeriodBranchConstraintFactors
@@ -665,6 +666,64 @@ if (inputGDXGDate >= jdate(2020,12,11),
 else
     i_tradePeriodBranchCapacityDirected(tp,br,fd)
         = i_tradePeriodBranchCapacity(tp,br) ;
+) ;
+
+
+* Real Time Pricing phase 2 planned to go live on 22 March 2022
+* From 1 March 2022, GDX file will have following symbols
+inputGDXGDate =  jdate(2022,4,1);
+if (inputGDXGDate >= jdate(2022,3,1),
+    execute_load
+    studyMode                   = i_studyMode
+    useGenInitialMW             = i_useGenInitialMW
+    runEnrgShortfallTransfer    = i_runEnrgShortfallTransfer
+    runPriceTransfer            = i_runPriceTransfer
+    InputInitialLoad            = i_tradePeriodInputInitialLoad
+    LoadIsOverride              = i_tradePeriodLoadIsOverride
+    LoadIsBad                   = i_tradePeriodLoadIsBad
+    LoadIsNCL                   = i_tradePeriodLoadIsNCL
+    ConformingFactor            = i_tradePeriodConformingFactor
+    NonConformingLoad           = i_tradePeriodNonConformingLoad
+    MaxLoad                     = i_tradePeriodMaxLoad
+
+    useActualLoad               = i_useActualLoad
+    dontScaleNegativeLoad       = i_dontScaleNegativeLoad
+
+    islandMWIPS                 = i_tradePeriodIslandMWIPS
+    islandPDS                   = i_tradePeriodIslandPDS
+    islandLosses                = i_tradePeriodIslandLosses
+
+    energyScarcityEnabled       = i_energyScarcityEnabled
+    reserveScarcityEnabled      = i_reserveScarcityEnabled
+    scarcityEnrgNationalFactor  = i_tradePeriodScarcityEnrgNationalFactor
+    scarcityEnrgNationalPrice   = i_tradePeriodScarcityEnrgNationalPrice
+    scarcityEnrgNodeFactor      = i_tradePeriodScarcityEnrgNodeFactor
+    scarcityEnrgNodeFactorPrice = i_tradePeriodScarcityEnrgNodeFactorPrice
+    scarcityEnrgNodeLimit       = i_tradePeriodScarcityEnrgNodeLimit
+    scarcityEnrgNodeLimitPrice  = i_tradePeriodScarcityEnrgNodeLimitPrice
+    scarcityResrvIslandLimit    = i_tradePeriodScarcityResrvIslandLimit
+    scarcityResrvIslandPrice    = i_tradePeriodScarcityResrvIslandPrice
+    ;
+
+    i_tradePeriodNodeDemand(tp,n) = InputInitialLoad(tp,n);
+    i_tradePeriodNodeDemand(tp,n) $ LoadIsBad(tp,n) = ConformingFactor(tp,n);
+else
+    studyMode                                  = 111 ;
+
+    islandMWIPS(tp,ild)                          = 0 ;
+    islandPDS(tp,ild)                            = 0 ;
+    islandLosses(tp,ild)                         = 0 ;
+    dontScaleNegativeLoad(tp)                    = 0 ;
+    energyScarcityEnabled(tp)                    = 0 ;
+    reserveScarcityEnabled(tp)                   = 0 ;
+    scarcityEnrgNationalFactor(tp,trdBlk)        = 0 ;
+    scarcityEnrgNationalPrice(tp,trdBlk)         = 0 ;
+    scarcityEnrgNodeFactor(tp,n,trdBlk)          = 0 ;
+    scarcityEnrgNodeFactorPrice(tp,n,trdBlk)     = 0 ;
+    scarcityEnrgNodeLimit(tp,n,trdBlk)           = 0 ;
+    scarcityEnrgNodeLimitPrice(tp,n,trdBlk)      = 0 ;
+    scarcityResrvIslandLimit(tp,ild,resC,trdBlk) = 0 ;
+    scarcityResrvIslandPrice(tp,ild,resC,trdBlk) = 0 ;
 ) ;
 
 

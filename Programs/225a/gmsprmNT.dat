@@ -1,0 +1,4 @@
+Input=runvSPD.gms
+ScrDir=225a
+SysDir=C:\GAMS\36
+ScriptNext=225a\gamsnext.cmd

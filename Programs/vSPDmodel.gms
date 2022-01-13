@@ -215,15 +215,45 @@ Parameters
   i_type1MixedConstraintPurWeight(t1MixCstr,bd)                     'Type 1 mixed constraint demand bid weights'
   i_tradePeriodReserveClassGenerationMaximum(tp,o,resC)             'MW used to determine factor to adjust maximum reserve of a reserve class'
 * Virtual reserve
- i_tradePeriodVROfferMax(tp,ild,resC)                               'Maximum MW of the virtual reserve offer'
- i_tradePeriodVROfferPrice(tp,ild,resC)                             'Price of the virtual reserve offer'
+  i_tradePeriodVROfferMax(tp,ild,resC)                              'Maximum MW of the virtual reserve offer'
+  i_tradePeriodVROfferPrice(tp,ild,resC)                            'Price of the virtual reserve offer'
 * Scarcity pricing
- i_tradePeriodScarcitySituationExists(tp,sarea)                     'Flag to indicate that a scarcity situation exists (1 = Yes)'
- i_tradePeriodGWAPFloor(tp,sarea)                                   'Floor price for the scarcity situation in scarcity area'
- i_tradePeriodGWAPCeiling(tp,sarea)                                 'Ceiling price for the scarcity situation in scarcity area'
- i_tradePeriodGWAPPastDaysAvg(tp,ild)                               'Average GWAP over past days - number of periods in GWAP count'
- i_tradePeriodGWAPCountForAvg(tp,ild)                               'Number of periods used for the i_gwapPastDaysAvg'
- i_tradePeriodGWAPThreshold(tp,ild)                                 'Threshold on previous 336 trading period GWAP - cumulative price threshold'
+  i_tradePeriodScarcitySituationExists(tp,sarea)                    'Flag to indicate that a scarcity situation exists (1 = Yes)'
+  i_tradePeriodGWAPFloor(tp,sarea)                                  'Floor price for the scarcity situation in scarcity area'
+  i_tradePeriodGWAPCeiling(tp,sarea)                                'Ceiling price for the scarcity situation in scarcity area'
+  i_tradePeriodGWAPPastDaysAvg(tp,ild)                              'Average GWAP over past days - number of periods in GWAP count'
+  i_tradePeriodGWAPCountForAvg(tp,ild)                              'Number of periods used for the i_gwapPastDaysAvg'
+  i_tradePeriodGWAPThreshold(tp,ild)                                'Threshold on previous 336 trading period GWAP - cumulative price threshold'
+
+* Real Time Pricing
+  studyMode                                                         'FP~111, RTD~101, RTP~110, PRSS~130, NRSS~132, PRSL~131, NRSL~133,WDS~120' /111/
+  useGenInitialMW                                                   'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in batch mode' /0/
+  runEnrgShortfallTransfer                                          'Flag that if set to 1 will enable shortfall transfer. Until shortfall transfer is activated this flag will be set to 0' /0/
+  runPriceTransfer                                                  'Flag that if set to 1 will enable price transfer. Until price transfer is activated this flag will be set to 0' /0/
+  InputInitialLoad(tp,n)                                            'This value represents actual load MW for RTD schedule input'
+  LoadIsOverride(tp,n)                                              'Flag if set to 1 --> InputInitialLoad will be fixed as node demand'
+  LoadIsBad(tp,n)                                                   'Flag if set to 1 --> InitialLoad will be replaced by Estimated Initial Load'
+  LoadIsNCL(tp,n)                                                   'Flag if set to 1 --> non-conforming load --> will be fixed in RTD load calculation'
+  ConformingFactor(tp,n)                                            'Initial estimated load for conforming load'
+  NonConformingLoad(tp,n)                                           'Initial estimated load for non-conforming load'
+  MaxLoad(tp,n)                                                     'Pnode maximum load'
+  useActualLoad(tp)                                                 'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
+  dontScaleNegativeLoad(tp)                                         'Flag that if set to 1 --> negative load will be fixed in RTD load calculation'
+
+  islandMWIPS(tp,ild)                                               'Island total generation at the start of RTD run'
+  islandPDS(tp,ild)                                                 'Island pre-solve deviation - used to adjust RTD node demand'
+  islandLosses(tp,ild)                                              'Island estimated losss - used to adjust RTD mode demand'
+
+  energyScarcityEnabled(tp)                                         'Flag to apply energy scarcity (this is different from FP scarcity situation)'
+  reserveScarcityEnabled(tp)                                        'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
+  scarcityEnrgNationalFactor(tp,trdBlk)                             'National energy scarcity factors'
+  scarcityEnrgNationalPrice(tp,trdBlk)                              'National energy scarcity prices'
+  scarcityEnrgNodeFactor(tp,n,trdBlk)                               'Nodal energy scarcity factors'
+  scarcityEnrgNodeFactorPrice(tp,n,trdBlk)                          'Nodal energy scarcity prices vs factors'
+  scarcityEnrgNodeLimit(tp,n,trdBlk)                                'Nodal energy scarcity limits'
+  scarcityEnrgNodeLimitPrice(tp,n,trdBlk)                           'Nodal energy scarcity prices vs limits'
+  scarcityResrvIslandLimit(tp,ild,resC,trdBlk)                      'Reserve scarcity limits'
+  scarcityResrvIslandPrice(tp,ild,resC,trdBlk)                      'Reserve scarcity prices'
 
  ;
 

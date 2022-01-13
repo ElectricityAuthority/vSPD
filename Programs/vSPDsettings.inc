@@ -3,9 +3,10 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       Test_replace_invalid_SOS1_Prices
+$setglobal runName                       RTD_20211202_RTP
 $setglobal programPath                   '%system.fp%'
 $setglobal inputPath                     '%system.fp%..\Input\'
+*$setglobal inputPath                     'A:\Tuong Nguyen\vSPD_Inputs\FP\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 
@@ -49,5 +50,5 @@ $setglobal licenseMode                     1
 
 *+++ Various switches +++
 $setglobal varResv                         -1
-$setglobal opMode                          SPD    ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+$setglobal opMode                          AUD    ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
 
