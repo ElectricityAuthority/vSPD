@@ -225,7 +225,7 @@ Parameters
   i_tradePeriodGWAPCountForAvg(tp,ild)                              'Number of periods used for the i_gwapPastDaysAvg'
   i_tradePeriodGWAPThreshold(tp,ild)                                'Threshold on previous 336 trading period GWAP - cumulative price threshold'
 
-* Real Time Pricing
+* Real Time Pricing - Inputs
   studyMode                                                         'FP~111, RTD~101, RTP~110, PRSS~130, NRSS~132, PRSL~131, NRSL~133,WDS~120' /111/
   useGenInitialMW                                                   'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in batch mode' /0/
   runEnrgShortfallTransfer                                          'Flag that if set to 1 will enable shortfall transfer. Until shortfall transfer is activated this flag will be set to 0' /0/
@@ -520,6 +520,19 @@ Parameters
 * Virtual reserve
   virtualReserveMax(tp,ild,resC)                   'Maximum MW of virtual reserve offer in each island for each reserve class'
   virtualReservePrice(tp,ild,resC)                 'Price of virtual reserve offer in each island for each reserve class'
+
+* Real Time Pricing - Calculated parameters
+  InitialLoad(tp,n)                                'Value that represents the Pnode load MW at the start of the solution interval. Depending on the inputs this value will be either actual load, an operator applied override or an estimated initial load'
+  LoadIsScalable(tp,n)                             'Binary value. If True then the Pnode InitialLoad will be scaled in order to calculate nodedemand, if False then Pnode InitialLoad will be directly assigned to nodedemand'
+  LoadScalingFactor(tp,ild)                        'Island-level scaling factor applied to InitialLoad in order to calculate nodedemand'
+  TargetTotalLoad(tp,ild)                          'Island-level MW load forecast'
+  LoadCalcLosses(tp,ild)                           'Island-level MW losses used to calculate the Island-level load forecast from the InputIPS and the IslandPSD. 1st loop --> InitialLosses, 2nd solve loop --> SystemLosses as calculated in section 6.3'
+  EstimatedInitialLoad(tp,n)                       'Calculated estimate of initial MW load, available to be used as an alternative to InputInitialLoad'
+  EstScalingFactor(tp,ild)                         'Scaling applied to ConformingFactor load MW in order to calculate EstimatedInitialLoad'
+  EstLoadIsScalable(tp,n)                          'Binary value. If True then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad'
+  EstNonScalableLoad(tp,n)                         'For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero'
+  EstScalableLoad(tp,n)                            'For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero'
+
   ;
 
 Scalars

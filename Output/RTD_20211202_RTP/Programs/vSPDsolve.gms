@@ -708,12 +708,25 @@ if (inputGDXGDate >= jdate(2022,3,1),
     i_tradePeriodNodeDemand(tp,n) = InputInitialLoad(tp,n);
     i_tradePeriodNodeDemand(tp,n) $ LoadIsBad(tp,n) = ConformingFactor(tp,n);
 else
-    studyMode                                  = 111 ;
+    studyMode                                    = 111 ;
+    useGenInitialMW                              = 0;
+    runEnrgShortfallTransfer                     = 0;
+    runPriceTransfer                             = 0;
+    InputInitialLoad(tp,n)                       = 0;
+    LoadIsOverride(tp,n)                         = 0;
+    LoadIsBad(tp,n)                              = 0;
+    LoadIsNCL(tp,n)                              = 0;
+    ConformingFactor(tp,n)                       = 0;
+    NonConformingLoad(tp,n)                      = 0;
+    MaxLoad(tp,n)                                = 10000;
+
+    useActualLoad(tp)                            = 1;
+    dontScaleNegativeLoad(tp)                    = 1;
 
     islandMWIPS(tp,ild)                          = 0 ;
     islandPDS(tp,ild)                            = 0 ;
     islandLosses(tp,ild)                         = 0 ;
-    dontScaleNegativeLoad(tp)                    = 0 ;
+
     energyScarcityEnabled(tp)                    = 0 ;
     reserveScarcityEnabled(tp)                   = 0 ;
     scarcityEnrgNationalFactor(tp,trdBlk)        = 0 ;
@@ -1005,6 +1018,96 @@ nodeDemand(node(tp,n))
         Sum[ bd $ { bidNode(tp,bd,n) and i_tradePeriodDispatchableBid(tp,bd) }
            , 1 ]
       } = 0;
+
+* Real Time Pricing - First RTD load calculation
+$onend
+if studyMode = 101 then
+
+*   Calculate first target total load [3.8.5.5]
+*   Island-level MW load forecast. For the fist loop:
+*   replace LoadCalcLosses(tp,ild) = islandLosses(tp,ild);
+    TargetTotalLoad(tp,ild) = islandMWIPS(tp,ild) + islandPDS(tp,ild) - islandLosses(tp,ild);
+
+*   Flag if estimate load is scalable [3.8.5.7]
+*   Binary value. If True then ConformingFactor load MW will be scaled in order to
+*   calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be
+*   assigned directly to EstimatedInitialLoad
+    EstLoadIsScalable(tp,n) =  1 $ { (LoadIsNCL(tp,n) = 0)
+                                 and (ConformingFactor(tp,n) > 0) } ;
+
+*   Calculate estimate non-scalable load [3.8.5.8]
+*   For a non-conforming Pnode this will be the NonConformingLoad MW input, for a
+*   conforming Pnode this will be the ConformingFactor MW input if that value is
+*   negative, otherwise it will be zero
+    EstNonScalableLoad(tp,n) $ ( LoadIsNCL(tp,n) = 1 ) = NonConformingLoad(tp,n);
+    EstNonScalableLoad(tp,n) $ ( LoadIsNCL(tp,n) = 0 ) = ConformingFactor(tp,n);
+    EstNonScalableLoad(tp,n) $ ( EstLoadIsScalable(tp,n) = 1 ) = 0;
+
+*   Calculate estimate scalable load [3.8.5.10]
+*   For a non-conforming Pnode this value will be zero. For a conforming Pnode
+*   this value will be the ConformingFactor if it is non-negative, otherwise this
+*   value will be zero'
+    EstScalableLoad(tp,n) $ ( EstLoadIsScalable(tp,n) = 1 ) = ConformingFactor(tp,n);
+
+
+*   Calculate Scaling applied to ConformingFactor load MW [3.8.5.9]
+*   in order to calculate EstimatedInitialLoad
+    EstScalingFactor(tp,ild)
+        = (islandMWIPS(tp,ild) - islandLosses(tp,ild)
+          - Sum[ n $ nodeIsland(tp,n,ild), EstNonScalableLoad(tp,n) ]
+          ) / Sum[ n $ nodeIsland(tp,n,ild), EstScalableLoad(tp,n) ]
+
+        ;
+
+*   Calculate estimate initial load [3.8.5.6]
+*   Calculated estimate of initial MW load, available to be used as an
+*   alternative to InputInitialLoad
+    EstimatedInitialLoad(tp,n) $ ( EstLoadIsScalable(tp,n) = 1 )
+        = ConformingFactor(tp,n) * Sum[ ild $ nodeisland(tp,n,ild)
+                                      , EstScalingFactor(tp,ild)] ;
+    EstimatedInitialLoad(tp,n) $ ( EstLoadIsScalable(tp,n) = 0 )
+        = NonConformingLoad(tp,n);
+
+*   Calculate initial load [3.8.5.2]
+*   Value that represents the Pnode load MW at the start of the solution
+*   interval. Depending on the inputs this value will be either actual load,
+*   an operator applied override or an estimated initial load
+    InitialLoad(tp,n) = InputInitialLoad(tp,n);
+    InitialLoad(tp,n) $ { (LoadIsOverride(tp,n) = 0)
+                      and ( (useActualLoad(tp) = 0) or (LoadIsBad(tp,n) = 1) )
+                        } = EstimatedInitialLoad(tp,n) ;
+
+*   Flag if load is scalable [3.8.5.4]
+*   Binary value. If True then the Pnode InitialLoad will be scaled in order to
+*   calculate nodedemand, if False then Pnode InitialLoad will be directly
+*   assigned to nodedemand
+    LoadIsScalable(tp,n) = 1 $ { (LoadIsNCL(tp,n) = 0)
+                             and (LoadIsOverride(tp,n) = 0)
+                             and (InitialLoad(tp,n) >= 0) } ;
+
+*   Calculate Island-level scaling factor [3.8.5.3]
+*   --> applied to InitialLoad in order to calculate nodedemand
+    LoadScalingFactor(tp,ild)
+        = ( TargetTotalLoad(tp,ild)
+          - Sum[ n $ { nodeIsland(tp,n,ild)
+                   and (LoadIsScalable(tp,n) = 0) }, InitialLoad(tp,n) ]
+          ) / Sum[ n $ { nodeIsland(tp,n,ild)
+                     and (LoadIsScalable(tp,n) = 1) }, InitialLoad(tp,n) ]
+        ;
+
+*   Calculate nodedemand [3.8.5.1]
+    nodedemand(tp,n) $ LoadIsScalable(tp,n)
+        = InitialLoad(tp,n) * sum[ ild $ nodeisland(tp,n,ild)
+                                 , LoadScalingFactor(tp,ild) ];
+
+    nodedemand(tp,n) $ (LoadIsScalable(tp,n) = 0) = InitialLoad(tp,n);
+
+Endif;
+$offend
+
+
+
+
 
 * Branch is defined if there is a defined terminal bus, it has a non-zero
 * capacity and is closed for that trade period
@@ -2172,6 +2275,8 @@ $offtext
 
 
 *   7d. Solve Models
+
+$include "vSPDsolve_RTP.gms"
 
 *   Solve the LP model ---------------------------------------------------------
     if( (Sum[currTP, VSPDModel(currTP)] = 0),
