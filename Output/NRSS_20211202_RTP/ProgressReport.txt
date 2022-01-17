@@ -1,0 +1,36 @@
+Run: 'NRSS_20211202_RTP'
+
+runvSPD started at: 01/17/22 15:35:41
+vSPDsetup started at: 01/17/22 15:35:41
+vSPDreportSetup started at: 01/17/22 15:35:42
+
+Case "NRSS_20211202_RTP" started at: 01/17/22 15:35:42
+Vectorisation is switched ON
+The case: NRSS_20211202_RTP (02-DEC-2021 13:00) is solved successfully.
+Objective function value: -22017.1
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 13:30) is solved successfully.
+Objective function value: -19740.2
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 14:00) is solved successfully.
+Objective function value: -20664.1
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 14:30) is solved successfully.
+Objective function value: -19402.2
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 15:00) is solved successfully.
+Objective function value: -25064.0
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 15:30) is solved successfully.
+Objective function value: -30252.7
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 16:00) is solved successfully.
+Objective function value: -35875.4
+Violations cost         : 0.0
+The case: NRSS_20211202_RTP (02-DEC-2021 16:30) is solved successfully.
+Objective function value: -34055.3
+Violations cost         : 0.0
+Case: NRSS_20211202_RTP is complete in        14.56(secs)
+Case: NRSS_20211202_RTP is finished in        14.63(secs)
+
+Total execute time:        15.36(secs)

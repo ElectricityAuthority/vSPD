@@ -1,0 +1,176 @@
+Run: 'FP_20211129_RTP'
+
+runvSPD started at: 01/17/22 13:39:16
+vSPDsetup started at: 01/17/22 13:39:16
+vSPDreportSetup started at: 01/17/22 13:39:17
+
+Case "FP_20211129_RTP" started at: 01/17/22 13:39:17
+Vectorisation is switched ON
+The case: FP_20211129_RTP (TP1) is solved successfully.
+Objective function value: -355.1
+Violations cost         : 0.0
+The case: FP_20211129_RTP requires a vSPD_BranchFlowMIP resolve for period TP1. Switching Vectorisation OFF.
+The case: FP_20211129_RTP (TP1) is solved successfully for branch integer.
+Objective function value: -355.1
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP10) is solved successfully.
+Objective function value: -291.0
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP11) is solved successfully.
+Objective function value: -1536.9
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP12) is solved successfully.
+Objective function value: -144.1
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP13) is solved successfully.
+Objective function value: -1372.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP14) is solved successfully.
+Objective function value: -19378.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP15) is solved successfully.
+Objective function value: -28550.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP16) is solved successfully.
+Objective function value: -29932.5
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP17) is solved successfully.
+Objective function value: -33323.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP18) is solved successfully.
+Objective function value: -33913.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP19) is solved successfully.
+Objective function value: -41166.8
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP2) is solved successfully.
+Objective function value: -1576.4
+Violations cost         : 0.0
+The case: FP_20211129_RTP requires a vSPD_BranchFlowMIP resolve for period TP2. Switching Vectorisation OFF.
+The case: FP_20211129_RTP (TP2) is solved successfully for branch integer.
+Objective function value: -1576.4
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP20) is solved successfully.
+Objective function value: -30264.2
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP21) is solved successfully.
+Objective function value: -34832.2
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP22) is solved successfully.
+Objective function value: -30307.1
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP23) is solved successfully.
+Objective function value: -26378.8
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP24) is solved successfully.
+Objective function value: -20145.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP25) is solved successfully.
+Objective function value: -11357.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP26) is solved successfully.
+Objective function value: -25398.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP27) is solved successfully.
+Objective function value: -25844.9
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP28) is solved successfully.
+Objective function value: -27104.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP29) is solved successfully.
+Objective function value: -29241.0
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP3) is solved successfully.
+Objective function value: -1536.1
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP30) is solved successfully.
+Objective function value: -28288.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP31) is solved successfully.
+Objective function value: -27338.4
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP32) is solved successfully.
+Objective function value: -20887.1
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP33) is solved successfully.
+Objective function value: -11275.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP34) is solved successfully.
+Objective function value: -29103.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP35) is solved successfully.
+Objective function value: -35545.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP36) is solved successfully.
+Objective function value: -42536.5
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP37) is solved successfully.
+Objective function value: -39672.9
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP38) is solved successfully.
+Objective function value: -37649.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP39) is solved successfully.
+Objective function value: -32111.4
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP4) is solved successfully.
+Objective function value: -294.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP40) is solved successfully.
+Objective function value: -45163.0
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP41) is solved successfully.
+Objective function value: -41648.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP42) is solved successfully.
+Objective function value: -41939.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP43) is solved successfully.
+Objective function value: -38956.2
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP44) is solved successfully.
+Objective function value: -34351.8
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP45) is solved successfully.
+Objective function value: -35811.8
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP46) is solved successfully.
+Objective function value: -30965.0
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP47) is solved successfully.
+Objective function value: -29793.3
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP48) is solved successfully.
+Objective function value: -19664.0
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP5) is solved successfully.
+Objective function value: -496.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP requires a vSPD_BranchFlowMIP resolve for period TP5. Switching Vectorisation OFF.
+The case: FP_20211129_RTP (TP5) is solved successfully for branch integer.
+Objective function value: -496.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP6) is solved successfully.
+Objective function value: -431.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP7) is solved successfully.
+Objective function value: -486.7
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP8) is solved successfully.
+Objective function value: -484.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP requires a vSPD_BranchFlowMIP resolve for period TP8. Switching Vectorisation OFF.
+The case: FP_20211129_RTP (TP8) is solved successfully for branch integer.
+Objective function value: -484.6
+Violations cost         : 0.0
+The case: FP_20211129_RTP (TP9) is solved successfully.
+Objective function value: -393.8
+Violations cost         : 0.0
+The case: FP_20211129_RTP requires a vSPD_BranchFlowMIP resolve for period TP9. Switching Vectorisation OFF.
+The case: FP_20211129_RTP (TP9) is solved successfully for branch integer.
+Objective function value: -393.8
+Violations cost         : 0.0
+Case: FP_20211129_RTP is complete in       114.27(secs)
+Case: FP_20211129_RTP is finished in       114.38(secs)
+
+Total execute time:       115.14(secs)

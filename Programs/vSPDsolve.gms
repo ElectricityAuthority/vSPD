@@ -479,7 +479,7 @@ $load i_tradePeriodGenericConstraint
 * Parameters
 $load i_day i_month i_year i_tradingPeriodLength i_AClineUnit i_branchReceivingEndLossProportion
 $load i_studyTradePeriod i_CVPvalues i_tradePeriodOfferParameter i_tradePeriodEnergyOffer i_tradePeriodSustainedPLSRoffer i_tradePeriodFastPLSRoffer
-$load i_tradePeriodSustainedTWDRoffer i_tradePeriodFastTWDRoffer i_tradePeriodSustainedILRoffer i_tradePeriodFastILRoffer
+$load i_tradePeriodSustainedTWDRoffer i_tradePeriodFastTWDRoffer i_tradePeriodSustainedILRoffer i_tradePeriodFastILRoffer i_tradePeriodNodeDemand
 $load i_tradePeriodEnergyBid i_tradePeriodSustainedILRbid i_tradePeriodFastILRbid i_tradePeriodHVDCnode i_tradePeriodReferenceNode i_tradePeriodHVDCBranch
 $load i_tradePeriodBranchParameter i_tradePeriodBranchCapacity i_tradePeriodBranchOpenStatus i_noLossBranch i_AClossBranch i_HVDClossBranch
 $load i_tradePeriodNodeBusAllocationFactor i_tradePeriodBusElectricalIsland i_tradePeriodRiskParameter i_tradePeriodManualRisk i_tradePeriodBranchConstraintFactors
@@ -705,8 +705,6 @@ if (inputGDXGDate >= jdate(2022,3,1),
     scarcityResrvIslandPrice    = i_tradePeriodScarcityResrvIslandPrice
     ;
 
-    i_tradePeriodNodeDemand(tp,n) = InputInitialLoad(tp,n);
-    i_tradePeriodNodeDemand(tp,n) $ LoadIsBad(tp,n) = ConformingFactor(tp,n);
 else
     studyMode                                    = 111 ;
     useGenInitialMW                              = 0;
