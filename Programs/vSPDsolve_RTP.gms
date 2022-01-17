@@ -414,6 +414,30 @@ if (studyMode = 101,
 
     nodedemand(currTP,n) $ (LoadIsScalable(currTP,n) = 0) = InitialLoad(currTP,n);
 
+
+*   Update Free Reserve and SharedNFRmax
+*   Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (5.2.1.2)
+    sharedNFRLoad(currTP,ild)
+        = sum[ nodeIsland(currTP,n,ild), nodeDemand(currTP,n)]
+        + sum[ (bd,trdBlk) $ bidIsland(currTP,bd,ild), purchaseBidMW(currTP,bd,trdBlk) ]
+        - sharedNFRLoadOffset(currTP,ild) ;
+
+    sharedNFRMax(currTP,ild) = Min{ RMTReserveLimitTo(currTP,ild,'FIR'),
+                                    sharedNFRFactor(currTP)*sharedNFRLoad(currTP,ild) } ;
+
+*   Risk parameters
+    FreeReserve(currTP,ild,resC,riskC)
+        = sum[ riskPar $ (ord(riskPar) = 1)
+                       , i_tradePeriodRiskParameter(currTP,ild,resC,riskC,riskPar) ]
+*   NMIR - Subtract shareNFRMax from current NFR -(5.2.1.4) - SPD version 11
+        - sum[ ild1 $ (not sameas(ild,ild1)),sharedNFRMax(currTP,ild1)
+             ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) )
+               and (inputGDXGDate >= jdate(2016,10,20)) }
+    ;
+
+*   (3.4.2.3) - SPD version 11.0
+    SHAREDNFR.up(currTP,ild) = Max[0,sharedNFRMax(currTP,ild)] ;
+
 );
 
 

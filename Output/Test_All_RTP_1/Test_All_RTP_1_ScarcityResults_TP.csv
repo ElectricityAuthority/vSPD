@@ -1,0 +1,1 @@
+"DateTime","Island","Scarcity exists (0=none, 1=island, 2=national)","CPT passed","AvgPriorGWAP ($/MWh)","IslandGWAP_before ($/MWh)","IslandGWAP_after ($/MWh)","ScarcityAreaGWAP_before ($/MWh)","ScarcityAreaGWAP_after ($/MWh)","ScarcityScalingFactor","CPT_GWAPthreshold ($/MWh)","GWAPfloor ($/MWh)","GWAPceiling ($/MWh)"

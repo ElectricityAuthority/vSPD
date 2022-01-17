@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       Test_All_RTP
+$setglobal runName                       RTD_20211202_RTP
 $setglobal programPath                   '%system.fp%'
 $setglobal inputPath                     '%system.fp%..\Input\'
 *$setglobal inputPath                     'A:\Tuong Nguyen\vSPD_Inputs\FP\'
