@@ -1,2 +1,0 @@
-"Date","NumTradePeriodsStudied","ObjectiveFunctionValue","SystemGen (MW(half)h)","SystemLoad (MW(half)h)","SystemLoss (MW(half)h)","SystemViolation (MW(half)h)","SystemFIR (MW(half)h)","SystemSIR (MW(half)h)","SystemGenerationRevenue ($)","SystemLoadCost ($)","SystemNegativeLoadRevenue ($)","SystemSurplus ($)"
-"02-DEC-2021 13:00",8.00,-207070.84,41063.17,39506.05,1557.12,0.00,2337.16,3234.13,2275092.23,2356660.26,5382.77,76185.26

@@ -886,6 +886,11 @@ generationStart(offer(tp,o))
                     + sum[ o1 $ primarySecondaryOffer(tp,o,o1)
                               ,i_tradePeriodOfferParameter(tp,o1,offerPar) ]
          ];
+$onend
+If useGenInitialMW = 1 then
+    generationStart(tp,o) $ (ord(tp) > 1) = 0;
+Endif;
+$offend
 
 rampRateUp(offer)
     = sum[ offerPar $ ( ord(offerPar) = 2 )

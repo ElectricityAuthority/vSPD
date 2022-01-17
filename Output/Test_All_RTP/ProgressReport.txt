@@ -1,10 +1,10 @@
 Run: 'Test_All_RTP'
 
-runvSPD started at: 01/17/22 15:39:33
-vSPDsetup started at: 01/17/22 15:39:33
-vSPDreportSetup started at: 01/17/22 15:39:33
+runvSPD started at: 01/18/22 10:33:50
+vSPDsetup started at: 01/18/22 10:33:50
+vSPDreportSetup started at: 01/18/22 10:33:51
 
-Case "FP_20211129_RTP" started at: 01/17/22 15:39:34
+Case "FP_20211129_RTP" started at: 01/18/22 10:33:51
 Vectorisation is switched ON
 The case: FP_20211129_RTP (TP1) is solved successfully.
 Objective function value: -355.1
@@ -170,10 +170,10 @@ The case: FP_20211129_RTP requires a vSPD_BranchFlowMIP resolve for period TP9. 
 The case: FP_20211129_RTP (TP9) is solved successfully for branch integer.
 Objective function value: -393.8
 Violations cost         : 0.0
-Case: FP_20211129_RTP is complete in       108.59(secs)
-Case: FP_20211129_RTP is finished in       108.69(secs)
+Case: FP_20211129_RTP is complete in       118.70(secs)
+Case: FP_20211129_RTP is finished in       118.80(secs)
 
-Case "NRSS_20211202_RTP" started at: 01/17/22 15:41:23
+Case "NRSS_20211202_RTP" started at: 01/18/22 10:35:50
 Vectorisation is switched ON
 The case: NRSS_20211202_RTP (02-DEC-2021 13:00) is solved successfully.
 Objective function value: -22017.1
@@ -199,10 +199,10 @@ Violations cost         : 0.0
 The case: NRSS_20211202_RTP (02-DEC-2021 16:30) is solved successfully.
 Objective function value: -34055.3
 Violations cost         : 0.0
-Case: NRSS_20211202_RTP is complete in        14.64(secs)
-Case: NRSS_20211202_RTP is finished in        14.68(secs)
+Case: NRSS_20211202_RTP is complete in        15.91(secs)
+Case: NRSS_20211202_RTP is finished in        15.97(secs)
 
-Case "RTD_20211202_RTP" started at: 01/17/22 15:41:38
+Case "RTD_20211202_RTP" started at: 01/18/22 10:36:06
 Vectorisation is switched ON
 The case: RTD_20211202_RTP (02-DEC-2021 13:25) is solved successfully.
 Objective function value: -26196.3
@@ -210,7 +210,7 @@ Violations cost         : 0.0
 The case: RTD_20211202_RTP (02-DEC-2021 13:25) is solved successfully.
 Objective function value: -25716.2
 Violations cost         : 0.0
-Case: RTD_20211202_RTP is complete in         3.20(secs)
-Case: RTD_20211202_RTP is finished in         3.28(secs)
+Case: RTD_20211202_RTP is complete in         3.75(secs)
+Case: RTD_20211202_RTP is finished in         3.78(secs)
 
-Total execute time:       127.72(secs)
+Total execute time:       139.45(secs)
