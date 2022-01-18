@@ -671,7 +671,7 @@ else
 
 * Real Time Pricing phase 2 planned to go live on 22 March 2022
 * From 1 March 2022, GDX file will have following symbols
-inputGDXGDate =  jdate(2022,4,1);
+*inputGDXGDate =  jdate(2022,4,1);
 if (inputGDXGDate >= jdate(2022,3,1),
     execute_load
     studyMode                   = i_studyMode
