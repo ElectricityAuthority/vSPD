@@ -671,8 +671,16 @@ else
 
 * Real Time Pricing phase 2 planned to go live on 22 March 2022
 * From 1 March 2022, GDX file will have following symbols
-*inputGDXGDate =  jdate(2022,4,1);
-if (inputGDXGDate >= jdate(2022,3,1),
+Set caseName;
+Set testCases /MSS_281112021111100404_0X
+               MSS_21012021120025869_0X
+               MSS_21322021120000859_0X/;
+
+$gdxin "%inputPath%\%vSPDinputData%.gdx"
+$load caseName
+$gdxin
+
+if (inputGDXGDate >= jdate(2022,3,1) or sum[sameas(caseName,testCases),1] ,
     execute_load
     studyMode                   = i_studyMode
     useGenInitialMW             = i_useGenInitialMW
@@ -1079,6 +1087,10 @@ if studyMode = 101 then
     InitialLoad(tp,n) $ { (LoadIsOverride(tp,n) = 0)
                       and ( (useActualLoad(tp) = 0) or (LoadIsBad(tp,n) = 1) )
                         } = EstimatedInitialLoad(tp,n) ;
+    InitialLoad(tp,n) $ { (LoadIsOverride(tp,n) = 1)
+                      and (useActualLoad(tp) = 1)
+                      and (InitialLoad(tp,n) > MaxLoad(tp,n))
+                        } = MaxLoad(tp,n) ;
 
 *   Flag if load is scalable [3.8.5.4]
 *   Binary value. If True then the Pnode InitialLoad will be scaled in order to

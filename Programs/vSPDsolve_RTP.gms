@@ -388,6 +388,10 @@ if (studyMode = 101,
                           and ( (useActualLoad(currTP) = 0)
                              or (LoadIsBad(currTP,n) = 1) )
                             } = EstimatedInitialLoad(currTP,n) ;
+    InitialLoad(currTP,n) $ { (LoadIsOverride(currTP,n) = 1)
+                          and (useActualLoad(currTP) = 1)
+                          and (InitialLoad(currTP,n) > MaxLoad(currTP,n))
+                            } = MaxLoad(currTP,n) ;
 
 *   Flag if load is scalable [3.8.5.4]
 *   Binary value. If True then the Pnode InitialLoad will be scaled in order to
