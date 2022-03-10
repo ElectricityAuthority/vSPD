@@ -670,17 +670,8 @@ else
 
 
 * Real Time Pricing phase 2 planned to go live on 22 March 2022
-* From 1 March 2022, GDX file will have following symbols
-Set caseName;
-Set testCases /MSS_281112021111100404_0X
-               MSS_21012021120025869_0X
-               MSS_21322021120000859_0X/;
-
-$gdxin "%inputPath%\%vSPDinputData%.gdx"
-$load caseName
-$gdxin
-
-if (inputGDXGDate >= jdate(2022,3,1) or sum[sameas(caseName,testCases),1] ,
+* From 24 March 2022, GDX file will have following symbols
+if (inputGDXGDate >= jdate(2022,3,22),
     execute_load
     studyMode                   = i_studyMode
     useGenInitialMW             = i_useGenInitialMW
@@ -1076,8 +1067,10 @@ if studyMode = 101 then
     EstimatedInitialLoad(tp,n) $ ( EstLoadIsScalable(tp,n) = 1 )
         = ConformingFactor(tp,n) * Sum[ ild $ nodeisland(tp,n,ild)
                                       , EstScalingFactor(tp,ild)] ;
+* TN- There is a bug in this equarion
     EstimatedInitialLoad(tp,n) $ ( EstLoadIsScalable(tp,n) = 0 )
-        = NonConformingLoad(tp,n);
+*        = NonConformingLoad(tp,n);
+        = EstNonScalableLoad(tp,n);
 
 *   Calculate initial load [3.8.5.2]
 *   Value that represents the Pnode load MW at the start of the solution
@@ -1087,10 +1080,6 @@ if studyMode = 101 then
     InitialLoad(tp,n) $ { (LoadIsOverride(tp,n) = 0)
                       and ( (useActualLoad(tp) = 0) or (LoadIsBad(tp,n) = 1) )
                         } = EstimatedInitialLoad(tp,n) ;
-    InitialLoad(tp,n) $ { (LoadIsOverride(tp,n) = 1)
-                      and (useActualLoad(tp) = 1)
-                      and (InitialLoad(tp,n) > MaxLoad(tp,n))
-                        } = MaxLoad(tp,n) ;
 
 *   Flag if load is scalable [3.8.5.4]
 *   Binary value. If True then the Pnode InitialLoad will be scaled in order to
@@ -1927,6 +1916,9 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_1.gms"
 *=====================================================================================
 * 7. The vSPD solve loop
 *=====================================================================================
+if (studyMode = 101,
+$include "vSPDsolve_RTP.gms"
+);
 
 unsolvedPeriod(tp) = yes;
 VSPDModel(tp) = 0 ;
@@ -2290,9 +2282,6 @@ $offtext
 
 
 *   7d. Solve Models
-
-$include "vSPDsolve_RTP.gms"
-
 *   Solve the LP model ---------------------------------------------------------
     if( (Sum[currTP, VSPDModel(currTP)] = 0),
 
