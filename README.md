@@ -1,4 +1,4 @@
-vSPD
+vSPD - Real Time Pricing Project - Phase 2
 ====
 
 vectorised Scheduling, Pricing and Dispatch - an audited, mathematical replica of SPD, the
@@ -13,3 +13,5 @@ from the Market Analytics team now maintain the vSPD model.
 vSPD was most recently audited in August 2019 - see the audited vSPD codes and the auditor's certification on the [EMI vSPD page](https://www.emi.ea.govt.nz/Wholesale/Tools/vSPD).
 
 Contact: emi@ea.govt.nz
+
+Internally tested and passed by Tuong Nguyen on 2022-01-18
