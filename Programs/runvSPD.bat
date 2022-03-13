@@ -1,4 +1,4 @@
-C:\GAMS\36\gams runvSPD.gms
+gams runvSPD.gms
 
 del "*.lst"
 del "*.lxi"
