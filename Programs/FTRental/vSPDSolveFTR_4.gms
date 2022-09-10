@@ -214,6 +214,7 @@ if(sequentialSolve,
     injectionFTR(n)  = FTRinjection(ftr,n) ;
 
     option bratio = 1;
+    FTR_Model_sequential.Optfile = 1;
     FTR_Model_sequential.reslim = LPTimeLimit;
     FTR_Model_sequential.iterlim = LPIterationLimit;
     solve FTR_Model_sequential using lp maximizing NETBENEFIT;
@@ -248,6 +249,7 @@ else
   option clear = FTRSURPLUSBUSGENERATION ;
 
   option bratio = 1;
+  FTR_Model.Optfile = 1;
   FTR_Model.reslim = LPTimeLimit;
   FTR_Model.iterlim = LPIterationLimit;
   solve FTR_Model using lp maximizing NETBENEFIT;

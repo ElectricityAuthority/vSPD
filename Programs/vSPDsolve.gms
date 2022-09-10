@@ -2298,6 +2298,7 @@ $offtext
                             and ( vSPD_NMIR.solvestat = 1 ) } ;
         else
             option bratio = 1 ;
+            vSPD.Optfile = 1 ;
             vSPD.reslim = LPTimeLimit ;
             vSPD.iterlim = LPIterationLimit ;
             solve vSPD using lp maximizing NETBENEFIT ;
@@ -2527,6 +2528,7 @@ $offtext
                             and ( vSPD_NMIR.solvestat = 1 ) } ;
         else
             option bratio = 1 ;
+            vSPD.Optfile = 1 ;
             vSPD.reslim = LPTimeLimit ;
             vSPD.iterlim = LPIterationLimit ;
             solve vSPD using lp maximizing NETBENEFIT ;
