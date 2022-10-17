@@ -12490,13 +12490,6 @@ Order=1
 Decim=7
 PlaneRownr=-1
 
-[OPENWINDOW_1]
-MAXIM=0
-TOP=182
-LEFT=182
-HEIGHT=718
-WIDTH=1578
-
 [GDXDISP: i_tradePeriodNodeDemand Par 2]
 PlaneDim=1
 RowDim=1
@@ -12506,11 +12499,6 @@ Order=2,1
 Decim=6
 PlaneRownr=139
 PlaneFilter1=TKR0331
-
-[RP:RUNVSPD]
-1=
-2=errmsg=1
-3=e
 
 [GDXDISP: i_tradePeriodOfferParameter Par 3]
 Sorted=YYY
@@ -12604,13 +12592,34 @@ PlaneRownr=-1
 [RP:VSPDMODEL]
 1=
 
+[SOLVERS]
+LP=CPLEX
+MIP=CPLEX
+MIQCP=CPLEX
+QCP=CPLEX
+RMIP=CPLEX
+RMIQCP=CPLEX
+
+[RP:RUNVSPD]
+1=
+2=errmsg=1
+3=e
+
 [MRUFILES]
-1=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Input\RTD_20190506_0825_372.gdx
-2=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\diffile.log
-3=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDmodel.gms
-4=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDsolve.gms
-5=C:\vSPD\vSPD_v3.0.4\Programs\Demand\Scenarios.gms
-6=C:\Users\nguyent\AppData\Local\Temp\7zO46191696\Scenarios.gms
-7=G:\vSPD_Inputs\FP\FP_20190710_2.gdx
-8=G:\vSPD_Inputs\FP\FP_20190507_Fx.gdx
-9=G:\vSPD_Inputs\FP\FP_20190502_F.gdx
+1=C:\a\vSPD\vSPD-master\Programs\runvSPD.lst
+2=C:\a\vSPD\vSPD-master\Programs\runvSPD.bat
+3=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Input\RTD_20190506_0825_372.gdx
+4=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\diffile.log
+5=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDmodel.gms
+6=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDsolve.gms
+7=C:\vSPD\vSPD_v3.0.4\Programs\Demand\Scenarios.gms
+8=C:\Users\nguyent\AppData\Local\Temp\7zO46191696\Scenarios.gms
+
+[OPENWINDOW_1]
+FILE0=C:\a\vSPD\vSPD-master\Programs\runvSPD.gms
+FILE1=C:\a\vSPD\vSPD-master\Programs\runvSPD.gms
+MAXIM=1
+TOP=182
+LEFT=182
+HEIGHT=718
+WIDTH=1578
