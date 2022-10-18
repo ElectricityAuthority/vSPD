@@ -13,19 +13,19 @@ $include vSPDsettings.inc
 
 File DWsummaryResults /"%outputPath%\%runName%\%runName%_DWSummaryResults.csv"/;
 DWsummaryResults.pc = 5 ; DWsummaryResults.lw = 0 ; DWsummaryResults.pw = 9999 ;
-put DWsummaryResults 'DateTime','TradingPeriod','GAMSsolveStatus',
-                     'vSPDTotalViolationMegawatts',
+put DWsummaryResults 'DateTime','RunTime','TradingPeriod','GAMSsolveStatus',
+                     'vSPDTotalViolationDollars',
                      'vSPDObjectiveFunctionValueDollars' ;
 
 File DWenergyResults   /"%outputPath%\%runName%\%runName%_DWEnergyResults.csv"/;
 DWenergyResults.pc = 5 ; DWenergyResults.lw = 0 ; DWenergyResults.pw = 9999 ;
-put DWenergyResults  'DateTime','TradingPeriod','Pnodename',
+put DWenergyResults  'DateTime','RunTime','TradingPeriod','Pnodename',
                      'vSPDDollarsPerMegawattHour','vSPDLoadMegawatts',
                      'vSPDGenerationMegawatts' ;
 
 File DWreserveResults /"%outputPath%\%runName%\%runName%_DWReserveResults.csv"/;
 DWreserveResults.pc = 5 ; DWreserveResults.lw = 0 ; DWreserveResults.pw = 9999 ;
-put DWreserveResults 'DateTime','TradingPeriod','Island',
+put DWreserveResults 'DateTime','RunTime','TradingPeriod','Island',
                      'vSPDFIRMegawatts','vSPDFIRDollarsPerMegawattHour',
                      'vSPDSIRMegawatts','vSPDSIRDollarsPerMegawattHour';
 

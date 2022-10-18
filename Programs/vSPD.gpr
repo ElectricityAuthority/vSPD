@@ -116,15 +116,6 @@ Order=1,2,3,4,5
 Decim=5
 PlaneRownr=-1
 
-[GDXDISP: i_TradePeriod Set 1]
-PlaneDim=0
-RowDim=1
-Squeeze=1
-Order=1
-Decim=5
-PlaneRownr=-1
-SqTrail0=0
-
 [GDXDISP: o_offer Set 2]
 PlaneDim=0
 RowDim=2
@@ -167,8 +158,8 @@ Decim=5
 PlaneRownr=-1
 
 [GDXDIFF]
-FILE1=G:\vSPD_Inputs\FP\FP_20190327_1.gdx
-FILE2=G:\vSPD_Inputs\FP\FP_20190327_I.gdx
+FILE1=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_20220320_0000\RTD_20220320_0000_191012022031100725_AllData.gdx
+FILE2=G:\Real-Time-Pricing-vSPD\Output\RTD_20220320_0000\RTD_20220320_0000_191012022031100725_AllData.gdx
 OUTFL=
 EPS=0.000001
 RELEPS=0.0
@@ -311,6 +302,7 @@ Order=1
 Decim=5
 PlaneRownr=-1
 SqTrail0=0
+Sorted=Y
 
 [GDXDISP: i_BranchReceivingEndLossProportion Par 0]
 PlaneDim=0
@@ -461,15 +453,6 @@ PlaneDim=1
 RowDim=1
 Squeeze=1
 Order=1,2,3
-Decim=5
-PlaneRownr=-1
-SqTrail0=0
-
-[GDXDISP: i_TradePeriodBus Set 2]
-PlaneDim=1
-RowDim=1
-Squeeze=1
-Order=1,2
 Decim=5
 PlaneRownr=-1
 SqTrail0=0
@@ -2680,15 +2663,6 @@ Decim=7
 PlaneRownr=-1
 SqTrail0=0
 
-[GDXDISP: i_TradePeriodRiskParameter Par 6]
-PlaneDim=1
-RowDim=4
-Squeeze=1
-Order=1,2,3,4,5,6
-Decim=7
-PlaneRownr=24
-PlaneFilter1=TP26
-
 [RP:VSPDSOLVE (3)]
 1=
 
@@ -3603,17 +3577,6 @@ SqTrail0=0
 [RP:RUNVSPD - COPY]
 1=
 
-[GDXDISP: i_TradePeriodFastPLSROffer Par 4]
-PlaneDim=2
-RowDim=1
-Squeeze=1
-Order=1,2,4,3
-Decim=7
-PlaneRownr=-1
-SqTrail0=0
-PlaneFilter1=26-AUG-2016 03:30
-PlaneFilter2=ROX2201 ROX0
-
 [GDXDISP: i_TradePeriodFastTWDROffer Par 4]
 PlaneDim=0
 RowDim=2
@@ -4156,12 +4119,6 @@ PlaneRownr=-1
 1=
 
 [RP:PIVOTREPORTSETUP]
-1=
-
-[RP:FTRREPORTSETUP]
-1=
-
-[RP:DWHREPORTSETUP]
 1=
 
 [GDXDISP: i_tradePeriodBranchDefn Set 4]
@@ -7236,11 +7193,11 @@ Decim=7
 PlaneRownr=-1
 
 [GDXDISP: ACBRANCHFLOWBLOCKDIRECTED Par 6]
-PlaneDim=0
+PlaneDim=1
 RowDim=5
 Squeeze=1
 SqTrail0=0
-Order=1,2,3,4,5,6
+Order=6,1,2,3,4,5
 Decim=7
 PlaneRownr=-1
 
@@ -8557,16 +8514,10 @@ Order=1
 Decim=7
 PlaneRownr=-1
 
-[RP:VSPDSOLVEFTR_4]
-1=
-
 [RP:VSPDSOLVEDPS_1]
 1=
 
 [RP:VSPDSOLVEDPS_3]
-1=
-
-[RP:VSPDSOLVEFTR_3A]
 1=
 
 [GDXDISP: ISLANDRISK Var 4]
@@ -9619,9 +9570,6 @@ SqTrail0=0
 Order=1,2
 Decim=7
 PlaneRownr=-1
-
-[RP:VSPDSOLVEDWH_4]
-1=
 
 [GDXDISP: HVDCSentReserveLambdaDefinition Equ 4]
 PlaneDim=0
@@ -12203,7 +12151,7 @@ PlaneRownr=-1
 
 [GDXDISP: i_tradePeriodSustainedILRoffer Par 4]
 PlaneDim=0
-RowDim=4
+RowDim=3
 Squeeze=1
 SqTrail0=0
 Order=1,2,3,4
@@ -12324,24 +12272,6 @@ PlaneRownr=-1
 [RP:EXCELOVERRIDES]
 1=
 
-[RP:VSPDSOLVEFTR_3]
-1=
-
-[RP:VSPDSOLVEDWH_3]
-1=
-
-[RP:VSPDPERIOD]
-1=
-
-[RP:VSPDREPORT]
-1=
-
-[RP:VSPDREPORTSETUP]
-1=
-
-[RP:VSPDOVERRIDES]
-1=
-
 [RP:VSPDSOLVEPIVOT_4]
 1=
 
@@ -12370,12 +12300,6 @@ Decim=7
 PlaneRownr=-1
 
 [RP:VSPDSOLVEDPS_4]
-1=
-
-[RP:VSPDSOLVE - COPY]
-1=
-
-[RP:VSPDMODEL - COPY]
 1=
 
 [GDXDISP: FilesCompared Set 1]
@@ -12440,17 +12364,6 @@ SqTrail0=0
 Order=1,2
 Decim=7
 PlaneRownr=-1
-
-[GDXDISP: i_tradePeriodNodeBusAllocationFactor Par 3]
-Sorted=YYY
-PlaneDim=1
-RowDim=2
-Squeeze=1
-SqTrail0=0
-Order=2,1,3
-Decim=7
-PlaneRownr=-1
-PlaneFilter1=KBT0662
 
 [GDXDISP: i_tradePeriodNodeBus Set 3]
 PlaneDim=1
@@ -12586,40 +12499,596 @@ PlaneRownr=-1
 [RP:SCENARIOS]
 1=
 
-[RP:VSPDSOLVE]
+[GDXDISP: dt Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: tp Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ild Alias 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: tp2 Alias 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ild Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ild1 Alias 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ild2 Alias 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: isl Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: islandLosses Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: islandMWIPS Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: islandPDS Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: resC Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: n Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: o Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: trdBlk Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: b Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: blk Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: resT Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: riskC Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[OPENWINDOW_1]
+MAXIM=0
+TOP=0
+LEFT=958
+HEIGHT=942
+WIDTH=958
+
+[GDXDISP: i_runDateTime Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: gdxDate Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriod Set 1]
+Sorted=Y
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodBus Set 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodBranchCapacityDirected Par 4]
+PlaneDim=1
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=4,1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ACnodeCstr Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: rundt Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: ACBranch Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodRiskGenerator Set 3]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodRiskParameter Par 6]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4,5,6
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodReferenceNode Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_useBusNetworkModel Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LAMBDA Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LAMBDAHVDCENERGY Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LAMBDAHVDCRESERVE Par 7]
+PlaneDim=0
+RowDim=7
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4,5,6,7
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LoadCalcLosses Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LoadIsNCL Par 3]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=2,1,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LoadIsScalable Par 3]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=2,1,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: LoadScalingFactor Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: lossBranch Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: lossSegmentFactor Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: lossSegmentMW Par 5]
+PlaneDim=0
+RowDim=5
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4,5
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: islandLosses Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: islandPDS Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: Node Set 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: NodeDemand Par 3]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=2,3,1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: SHAREDNFR Par 4]
+PlaneDim=0
+RowDim=4
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: sArea Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: t1MixCstr Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: t1MixCstrRHS Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: t2MixCstr Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: TargetTotalLoad Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodNodeBusAllocationFactor Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodBranchCapacityDirected Par 3]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodReverseRatingsApplied Par 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: testCases Set 1]
+PlaneDim=0
+RowDim=1
+Squeeze=1
+SqTrail0=0
+Order=1
+Decim=7
+PlaneRownr=-1
+
+[RP:VSPDOVERRIDES]
 1=
 
-[RP:VSPDMODEL]
+[GDXDISP: i_tradePeriodFastPLSRoffer Par 4]
+PlaneDim=0
+RowDim=3
+Squeeze=1
+SqTrail0=0
+Order=1,2,3,4
+Decim=7
+PlaneRownr=-1
+
+[GDXDISP: i_tradePeriodConformingFactor Par 2]
+PlaneDim=0
+RowDim=2
+Squeeze=1
+SqTrail0=0
+Order=1,2
+Decim=7
+PlaneRownr=-1
+
+[RP:VSPDSOLVE_RTP - COPY]
 1=
 
-[SOLVERS]
-LP=CPLEX
-MIP=CPLEX
-MIQCP=CPLEX
-QCP=CPLEX
-RMIP=CPLEX
-RMIQCP=CPLEX
+[RP:VSPDSOLVEFTR_3A]
+1=
+
+[RP:VSPDSOLVEFTR_4]
+1=
+
+[RP:VSPDSOLVEFTR_3]
+1=
+
+[RP:FTRREPORTSETUP]
+1=
+
+[RP:VSPDMODEL - COPY]
+1=
+
+[RP:VSPDSOLVE - COPY]
+1=
+
+[RP:VSPDPERIOD]
+1=
+
+[RP:VSPDSOLVE_RTP]
+1=
 
 [RP:RUNVSPD]
 1=
 2=errmsg=1
 3=e
 
-[MRUFILES]
-1=C:\a\vSPD\vSPD-master\Programs\runvSPD.lst
-2=C:\a\vSPD\vSPD-master\Programs\runvSPD.bat
-3=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Input\RTD_20190506_0825_372.gdx
-4=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\diffile.log
-5=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDmodel.gms
-6=A:\Tuong Nguyen\vSPD\vSPD_v3.0.5\Programs\vSPDsolve.gms
-7=C:\vSPD\vSPD_v3.0.4\Programs\Demand\Scenarios.gms
-8=C:\Users\nguyent\AppData\Local\Temp\7zO46191696\Scenarios.gms
+[RP:VSPDREPORTSETUP]
+1=
 
-[OPENWINDOW_1]
-FILE0=C:\a\vSPD\vSPD-master\Programs\runvSPD.gms
-FILE1=C:\a\vSPD\vSPD-master\Programs\runvSPD.gms
-MAXIM=1
-TOP=182
-LEFT=182
-HEIGHT=718
-WIDTH=1578
+[RP:DWHREPORTSETUP]
+1=
+
+[RP:VSPDSOLVEDWH_3]
+1=
+
+[RP:VSPDSOLVEDWH_4]
+1=
+
+[RP:NRSS_202210101230_91322022102330478_20221010123314]
+1=
+
+[RP:PRSS_202208021530_21302022080330347_20220802153312]
+1=
+
+[RP:VSPDSOLVE]
+1=
+
+[RP:VSPDMODEL]
+1=
+
+[RP:VSPDREPORT]
+1=
+
+[MRUFILES]
+1=C:\vSPD\Real-Time-Pricing-vSPD-Local\Programs\vSPDreport.gms
+2=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDmodel.gms
+3=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDreport.gms
+4=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDsolve.gms
+5=C:\vSPD\Real-Time-Pricing-vSPD\Programs\vSPDreport.gms
+6=C:\vSPD\Real-Time-Pricing-vSPD\Input\PRSS_202208021530_21302022080330347_20220802153312.gms
+7=C:\vSPD\Real-Time-Pricing-vSPD\Input\NRSS_202210101230_91322022102330478_20221010123314.gms
+8=C:\vSPD\Real-Time-Pricing-vSPD\Programs\vSPDmodel.lst
+9=C:\vSPD\Real-Time-Pricing-vSPD\Programs\DWmode\vSPDSolveDWH_4.gms

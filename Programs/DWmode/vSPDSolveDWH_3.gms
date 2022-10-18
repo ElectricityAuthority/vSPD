@@ -8,35 +8,66 @@
 *                       Email: emi@ea.govt.nz
 * Last modified on:     23 Sept 2016
 *=====================================================================================
+$onend
+    Loop t $ (not unsolvedDT(t)) do
 
-    loop(i_dateTimeTradePeriodMap(dt,currTP) $ (not unsolvedPeriod(currTP)),
+        totalBusAllocation(t,b) $ bus(t,b)
+            = sum[ n $ Node(t,n), NodeBusAllocationFactor(t,n,b)];
 
-        o_dateTime(dt) = yes ;
-
-        totalBusAllocation(dt,b) $ bus(currTP,b)
-                = sum[ n $ Node(currTP,n), NodeBusAllocationFactor(currTP,n,b)];
-
-        busNodeAllocationFactor(dt,b,n) $ (totalBusAllocation(dt,b) > 0)
-                = NodeBusAllocationFactor(currTP,n,b)
-                / totalBusAllocation(dt,b) ;
+        busNodeAllocationFactor(t,b,n) $ (totalBusAllocation(t,b) > 0)
+            = NodeBusAllocationFactor(t,n,b) / totalBusAllocation(t,b) ;
 
 *       Node level output
-        o_node(dt,n) $ {Node(currTP,n) and (not HVDCnode(currTP,n))} = yes ;
 
-        o_nodeGeneration_TP(dt,n) $ Node(currTP,n)
-            = sum[ o $ offerNode(currTP,o,n), GENERATION.l(currTP,o) ] ;
+        o_nodeGeneration_TP(t,n) $ Node(t,n)
+            = sum[ o $ offerNode(t,o,n), GENERATION.l(t,o) ] ;
 
-        o_nodeLoad_TP(dt,n) $ Node(currTP,n)
-           = NodeDemand(currTP,n)
-           + Sum[ bd $ bidNode(currTP,bd,n), PURCHASE.l(currTP,bd) ];
+        o_nodeLoad_TP(t,n) $ Node(t,n)
+           = RequiredLoad(t,n)
+           + Sum[ bd $ bidNode(t,bd,n), PURCHASE.l(t,bd) ];
 
-        o_nodePrice_TP(dt,n) $ Node(currTP,n)
-            = sum[ b $ NodeBus(currTP,n,b)
-                 , NodeBusAllocationFactor(currTP,n,b) * busPrice(currTP,b)
+        o_nodePrice_TP(t,n) $ Node(t,n)
+            = sum[ b $ NodeBus(t,n,b)
+                 , NodeBusAllocationFactor(t,n,b) * busPrice(t,b)
                   ] ;
 
+        if { runPriceTransfer(t)
+        and ( (studyMode = 101) or (studyMode = 201) or (studyMode = 130))
+           } then
+            o_nodeDead_TP(t,n)
+                = 1 $ ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b))
+                                }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
+
+            o_nodeDeadPriceFrom_TP(t,n,n1)
+                = 1 $ {o_nodeDead_TP(t,n) and node2node(t,n,n1)};
+
+            o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
+
+            While sum[ n $ o_nodeDead_TP(t,n), o_nodeDeadPrice_TP(t,n) ] do
+                o_nodePrice_TP(t,n)
+                    $ { o_nodeDead_TP(t,n) and o_nodeDeadPrice_TP(t,n) }
+                    = sum[n1 $ o_nodeDeadPriceFrom_TP(t,n,n1)
+                             , o_nodePrice_TP(t,n1) ] ;
+
+                o_nodeDeadPrice_TP(t,n)
+                    = 1 $ sum[n1 $ o_nodeDead_TP(t,n1)
+                                 , o_nodeDeadPriceFrom_TP(t,n,n1) ];
+
+                o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n)
+                    = 1 $ { sum[ n1 $ { node2node(t,n1,n2)
+                                    and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ]
+                          } ;
+
+                o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;
+
+            endwhile
+        endif;
+
+*       Offer output
+*        o_offerEnergy_TP(t,o) $ offer(t,o) = GENERATION.l(t,o) ;
+
 *       Bus level output
-        o_busDeficit_TP(dt,b) $ bus(currTP,b) = DEFICITBUSGENERATION.l(currTP,b);
+*        o_busDeficit_TP(dt,b) $ bus(currTP,b) = DEFICITBUSGENERATION.l(currTP,b);
 * TN - post processing unmapped generation deficit buses
 $ontext
 The following code is added post-process generation deficit bus that is not
@@ -50,13 +81,13 @@ on 25 Feb 2015.
 The code is modified again on 16 Feb 2016 to avoid infinite loop when there are
 many generation deficit buses.
 This code is used to post-process generation deficit bus that is not mapped to
-$offtext
+
         unmappedDeficitBus(dt,b) $ o_busDeficit_TP(dt,b)
             = yes $ (Sum[ n, busNodeAllocationFactor(dt,b,n)] = 0);
 
         changedDeficitBus(dt,b) = no;
 
-$onend
+*$onend
         If Sum[b $ unmappedDeficitBus(dt,b), 1] then
 
             temp_busDeficit_TP(dt,b) = o_busDeficit_TP(dt,b);
@@ -90,59 +121,30 @@ $onend
 
             o_busDeficit_TP(dt,b) = temp_busDeficit_TP(dt,b);
         Endif;
-$offend
+*$offend
 * TN - Post-process generation deficit bus end
+$offtext
 
-*       Island output
-        o_FIRprice_TP(dt,ild)
-            = sum[ i_reserveClass $ (ord(i_reserveClass) = 1)
-            , IslandReserveCalculation.m(currTP,ild,i_reserveClass) ];
+*       Island reserve output
+        o_FIRprice_TP(t,isl) = Sum[ resC $ (ord(resC) = 1)
+                                  , IslandReserveCalculation.m(t,isl,resC) ];
 
-        o_SIRprice_TP(dt,ild)
-            = sum[ i_reserveClass $ (ord(i_reserveClass) = 2)
-            , IslandReserveCalculation.m(currTP,ild,i_reserveClass) ];
+        o_SIRprice_TP(t,isl) = Sum[ resC $ (ord(resC) = 2)
+                                  , IslandReserveCalculation.m(t,isl,resC) ];
 
-        o_ResCleared_TP(dt,ild,resC) = ISLANDRESERVE.l(currTP,ild,resC);
+        o_FirCleared_TP(t,isl) = Sum[ resC $ (ord(resC) = 1)
+                                    , ISLANDRESERVE.l(t,isl,resC) ];
 
-        o_FirCleared_TP(dt,ild) = Sum[ resC $ (ord(resC) = 1)
-                                            , o_ResCleared_TP(dt,ild,resC) ];
-
-        o_SirCleared_TP(dt,ild) = Sum[ resC $ (ord(resC) = 2)
-                                            , o_ResCleared_TP(dt,ild,resC) ];
+        o_SirCleared_TP(t,isl) = Sum[ resC $ (ord(resC) = 2)
+                                    , ISLANDRESERVE.l(t,isl,resC) ];
 
 *       Summary reporting by trading period
-        o_solveOK_TP(dt) = ModelSolved ;
+        o_solveOK_TP(t) = ModelSolved ;
 
-        o_systemCost_TP(dt) = SYSTEMCOST.l(currTP) - SYSTEMBENEFIT.l(currTP) ;
+        o_systemCost_TP(t) = SYSTEMCOST.l(t) - SYSTEMBENEFIT.l(t) ;
 
-        o_totalViolation_TP(dt)
-            = sum[ b $ bus(currTP,b)
-                 , DEFICITBUSGENERATION.l(currTP,b)
-                 + SURPLUSBUSGENERATION.l(currTP,b)                     ]
-            + sum[ o $ offer(currTP,o)
-                 , DEFICITRAMPRATE.l(currTP,o)
-                 + SURPLUSRAMPRATE.l(currTP,o)                          ]
-            + sum[ brCstr $ branchConstraint(currTP,brCstr)
-                 , DEFICITBRANCHSECURITYCONSTRAINT.l(currTP,brCstr)
-                 + SURPLUSBRANCHSECURITYCONSTRAINT.l(currTP,brCstr)     ]
-            + sum[ MnodeCstr $ MnodeConstraint(currTP,MnodeCstr)
-                 , DEFICITMnodeCONSTRAINT.l(currTP,MnodeCstr)
-                 + SURPLUSMnodeCONSTRAINT.l(currTP,MnodeCstr)           ]
-            + sum[ ACnodeCstr $ ACnodeConstraint(currTP,ACnodeCstr)
-                 , DEFICITACnodeCONSTRAINT.l(currTP,ACnodeCstr)
-                 + SURPLUSACnodeCONSTRAINT.l(currTP,ACnodeCstr)         ]
-            + sum[ t1MixCstr $ Type1MixedConstraint(currTP,t1MixCstr)
-                 , DEFICITTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)
-                 + SURPLUSTYPE1MIXEDCONSTRAINT.l(currTP,t1MixCstr)      ]
-            + sum[ gnrcCstr $ GenericConstraint(currTP,gnrcCstr)
-                 , DEFICITGENERICCONSTRAINT.l(currTP,gnrcCstr)
-                 + SURPLUSGENERICCONSTRAINT.l(currTP,gnrcCstr)          ]
-            + sum[ br$branch(currTP,br), SURPLUSBRANCHFLOW.l(currTP,br) ]
-            + sum[ (ild,i_reserveClass)
-               , (DEFICITRESERVE.l(currTP,ild,i_reserveClass)$(not diffCeECeCVP))
-               + (DEFICITRESERVE_CE.l(currTP,ild,i_reserveClass)$diffCeECeCVP)
-               + (DEFICITRESERVE_ECE.l(currTP,ild,i_reserveClass)$diffCeECeCVP)
-                 ] ;
+        o_penaltyCost_TP(t) = SYSTEMPENALTYCOST.l(t);
 
 *   Reporting at trading period end
-    ) ;
+    endloop ;
+$offend
