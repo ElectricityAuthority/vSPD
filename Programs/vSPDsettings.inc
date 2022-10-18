@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTDP_202209021535
+$setglobal runName                       Run_All_Cases
 
 $setglobal programPath                   '%system.fp%'
 $setglobal inputPath                     '%system.fp%..\Input\'

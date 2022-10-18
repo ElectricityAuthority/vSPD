@@ -1,0 +1,114 @@
+Run: 'Run_All_Cases'
+
+runvSPD started at: 10/18/22 16:54:02
+vSPDsetup started at: 10/18/22 16:54:02
+vSPDreportSetup started at: 10/18/22 16:54:03
+
+Case "PRSS_202208021530_21302022080330347_20220802153312" started at: 10/18/22 16:54:03
+Vectorisation is switched OFF
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 15:30) is solved successfully.
+Objective function value: 574568452.1711
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 16:00) is solved successfully.
+Objective function value: 574602221.1055
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 16:30) is solved successfully.
+Objective function value: 574625724.6034
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 17:00) is solved successfully.
+Objective function value: 574656981.0894
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 17:30) is solved successfully.
+Objective function value: 574658835.7685
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 18:00) is solved successfully.
+Objective function value: 574657508.2480
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 18:30) is solved successfully.
+Objective function value: 574632892.1072
+Violations cost         : 0.0000
+The case: PRSS_202208021530_21302022080330347_20220802153312 (02-AUG-2022 19:00) is solved successfully.
+Objective function value: 574647985.5007
+Violations cost         : 0.0000
+Case: PRSS_202208021530_21302022080330347_20220802153312 is complete in        11.64(secs)
+Case: PRSS_202208021530_21302022080330347_20220802153312 is finished in        11.68(secs)
+
+Case "PRSS_202210101230_91302022102330479_20221010123314" started at: 10/18/22 16:54:15
+Vectorisation is switched OFF
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 12:30) is solved successfully.
+Objective function value: 650366654.7102
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 13:00) is solved successfully.
+Objective function value: 649637565.3654
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 13:30) is solved successfully.
+Objective function value: 648679232.3557
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 14:00) is solved successfully.
+Objective function value: 648381816.9335
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 14:30) is solved successfully.
+Objective function value: 648651474.9638
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 15:00) is solved successfully.
+Objective function value: 649392668.3262
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 15:30) is solved successfully.
+Objective function value: 649993832.5009
+Violations cost         : 0.0000
+The case: PRSS_202210101230_91302022102330479_20221010123314 (10-OCT-2022 16:00) is solved successfully.
+Objective function value: 650716133.1008
+Violations cost         : 0.0000
+Case: PRSS_202210101230_91302022102330479_20221010123314 is complete in        10.27(secs)
+Case: PRSS_202210101230_91302022102330479_20221010123314 is finished in        10.29(secs)
+
+Case "RTD_202209021535_21012022090335962_20220902153405" started at: 10/18/22 16:54:25
+Vectorisation is switched OFF
+The case: RTD_202209021535_21012022090335962_20220902153405 (02-SEP-2022 15:35) is 1st solved successfully.
+Objective function value: 84033342.7235
+Violations cost         : 9408924.8713
+The case: RTD_202209021535_21012022090335962_20220902153405 requires a vSPD_BranchFlowMIP resolve for period 02-SEP-2022 15:35. Switching Vectorisation OFF.
+The case: RTD_202209021535_21012022090335962_20220902153405 (02-SEP-2022 15:35) is 1st solved successfully for branch integer.
+Objective function value: 73914813.5860
+Violations cost         : 19553213.5427
+The case: RTD_202209021535_21012022090335962_20220902153405 (02-SEP-2022 15:35) is solved successfully.
+Objective function value: 83979969.8445
+Violations cost         : 9408924.8709
+The case: RTD_202209021535_21012022090335962_20220902153405 requires a vSPD_BranchFlowMIP resolve for period 02-SEP-2022 15:35. Switching Vectorisation OFF.
+The case: RTD_202209021535_21012022090335962_20220902153405 (02-SEP-2022 15:35) is solved successfully for branch integer.
+Objective function value: 73859762.9748
+Violations cost         : 19553213.5423
+Case: RTD_202209021535_21012022090335962_20220902153405 is complete in         5.61(secs)
+Case: RTD_202209021535_21012022090335962_20220902153405 is finished in         5.64(secs)
+
+Case "RTD_202210101250_91012022102350483_20221010124902" started at: 10/18/22 16:54:31
+Vectorisation is switched OFF
+The case: RTD_202210101250_91012022102350483_20221010124902 (10-OCT-2022 12:50) is 1st solved successfully.
+Objective function value: 93065245.4487
+Violations cost         : 0.1871
+The case: RTD_202210101250_91012022102350483_20221010124902 (10-OCT-2022 12:50) is solved successfully.
+Objective function value: 93105897.7142
+Violations cost         : 0.1881
+Case: RTD_202210101250_91012022102350483_20221010124902 is complete in         2.69(secs)
+Case: RTD_202210101250_91012022102350483_20221010124902 is finished in         2.71(secs)
+
+Case "RTDP_202209021535_22012022090335962_20220902153406" started at: 10/18/22 16:54:34
+Vectorisation is switched OFF
+The case: RTDP_202209021535_22012022090335962_20220902153406 (02-SEP-2022 15:35) is 1st solved successfully.
+Objective function value: 84346686.2850
+Violations cost         : 9408924.8797
+The case: RTDP_202209021535_22012022090335962_20220902153406 requires a vSPD_BranchFlowMIP resolve for period 02-SEP-2022 15:35. Switching Vectorisation OFF.
+The case: RTDP_202209021535_22012022090335962_20220902153406 (02-SEP-2022 15:35) is 1st solved successfully for branch integer.
+Objective function value: 74234329.3473
+Violations cost         : 19553213.5511
+The case: RTDP_202209021535_22012022090335962_20220902153406 (02-SEP-2022 15:35) is solved successfully.
+Objective function value: 84294627.5590
+Violations cost         : 9408924.8793
+The case: RTDP_202209021535_22012022090335962_20220902153406 requires a vSPD_BranchFlowMIP resolve for period 02-SEP-2022 15:35. Switching Vectorisation OFF.
+The case: RTDP_202209021535_22012022090335962_20220902153406 (02-SEP-2022 15:35) is solved successfully for branch integer.
+Objective function value: 74179289.8818
+Violations cost         : 19553213.5525
+Case: RTDP_202209021535_22012022090335962_20220902153406 is complete in         5.50(secs)
+Case: RTDP_202209021535_22012022090335962_20220902153406 is finished in         5.53(secs)
+
+Total execute time:        37.13(secs)

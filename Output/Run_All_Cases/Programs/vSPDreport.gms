@@ -430,7 +430,7 @@ loop( (dt,rundt),
 execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
 $endif.AuditReport
 *===============================================================================
-execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
+*execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
 
 
 
