@@ -1,0 +1,2 @@
+"DateTime","RunTime","SolveStatus (1=OK)","SystemOFV","SystemCost","SystemBenefit","ViolationCost","DeficitGenViol (MW)","SurplusGenViol (MW)","DeficitReserveViol (MW)","SurplusBranchFlowViol (MW)","DeficitRampRateViol (MW)","SurplusRampRateViol (MW)","DeficitBranchGroupConstraintViol (MW)","SurplusBranchGroupConstraintViol (MW)","DeficitMNodeConstraintViol (MW)","SurplusMNodeConstraintViol (MW)"
+"06-NOV-2022 17:25","06-NOV-2022 17:24:01",1.00000,-2177.94125,2177.77555,0.00000,0.16571,0.00000,0.00000,0.00000,0.00000,0.00000,0.00000,0.00000,0.00000,0.00000,0.00000

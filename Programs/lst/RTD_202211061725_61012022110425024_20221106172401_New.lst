@@ -1,0 +1,3590 @@
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+      *=====================================================================================
+      Name:                 vSPDsolve.gms
+      Function:             Establish base case and override data, prepare data, and
+                            solve the model
+      Developed by:         Electricity Authority, New Zealand
+      Source:               https://github.com/ElectricityAuthority/vSPD
+                            http://www.emi.ea.govt.nz/Tools/vSPD
+      Contact:              Forum: http://www.emi.ea.govt.nz/forum/
+                            Email: emi@ea.govt.nz
+      Created on:           1st November 2022 for Real Time Pricing
+       
+      *=====================================================================================
+       
+      Directory of code sections in vSPDsolve.gms:
+      1. Declare symbols and initialise some of them
+      2. Load data from GDX file f
+      3. Manage model and data compatability
+      4. Input data overrides - declare and apply (include vSPDoverrides.gms)
+      5. Initialise constraint violation penalties (CVPs)
+      6. The vSPD solve loop
+         a) Reset all sets, parameters and variables before proceeding with the next study trade period
+         b) Initialise current trade period and model data for the current trade period
+         c) Additional pre-processing on parameters and variables before model solve
+         d) Solve the model
+         e) Check if the LP results are valid
+         f) Resolve the model if required
+         g) Check for disconnected nodes and adjust prices accordingly
+         h) Collect and store results from the current model solve in the output (o_xxx) parameters
+         i) End of the solve vSPD loop
+      7. vSPD scarcity pricing post-processing
+      8. Write results to CSV report files and GDX files
+2103   
+2104  *=====================================================================================
+2105  * 0. Initial setup
+2106  *=====================================================================================
+2107   
+2108  * Include paths, settings and case name files
+INCLUDE    C:\vSPD\ElectricityAuthority\Programs\vSPDsettings.inc
+2110  *+++ vSPD settings +++
+2113   
+2114  *+++ Paths +++
+2116   
+2121   
+2123   
+2124   
+2125  *+++ Model +++
+2126  Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+2127  Scalar disconnectedNodePriceCorrection   / 1 / ;
+2128  Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
+2129   
+2130   
+2131  *+++ Network +++
+2132  Scalar useACLossModel                    / 1 /    ;
+2133  Scalar useHVDCLossModel                  / 1 /    ;
+2134  Scalar useACBranchLimits                 / 1 /    ;
+2135  Scalar useHVDCBranchLimits               / 1 /    ;
+2136  Scalar resolveCircularBranchFlows        / 1 /    ;
+2137  Scalar resolveHVDCNonPhysicalLosses      / 1 /    ;
+2138  Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for future code development
+2139  Scalar circularBranchFlowTolerance       / 1e-4 / ;
+2140  Scalar nonPhysicalLossTolerance          / 1e-6 / ;
+2141  Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
+2142   
+2143   
+2144  *+++ Constraints +++
+2145  Scalar useReserveModel                   / 1 /    ;
+2146  Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
+2147  Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
+2148   
+2149   
+2150  *+++ Solver +++
+2151  Scalar LPtimeLimit                       / 3600 / ;
+2152  Scalar LPiterationLimit                  / 2000000000 / ;
+2153  Scalar MIPtimeLimit                      / 3600 / ;
+2154  Scalar MIPiterationLimit                 / 2000000000 / ;
+2155  Scalar MIPoptimality                     / 0 / ;
+2158   
+2159   
+2160  *+++ Various switches +++
+INCLUDE    C:\vSPD\ElectricityAuthority\Programs\vSPDcase.inc
+2164   
+2165  * Update the ProgressReport.txt file
+2166  File rep "Write to a report" /"ProgressReport.txt"/;  rep.lw = 0;  rep.ap = 1;
+2167  putclose rep / 'Case "RTD_202211061725_61012022110425024_20221106172401_New" started at: ' system.date " " system.time /;
+2168   
+2169  * Set the solver for the LP and MIP
+2170  option lp = Cplex ;
+2171  option mip = Cplex ;
+2172   
+2173  * Set profile status
+2174  option profile = 0 ;
+2175   
+2176  * Set the solution print status in the lst file
+2177  option solprint = off;
+2178   
+2179  * Set the column (variable) and row (equation) listing in the lst file
+2180  option limcol = 0 ;
+2181  option limrow = 0 ;
+2182   
+2183  * Declare a temporary file
+2184  File temp ;
+2185   
+2186  * Allow empty data set declaration
+2188   
+2189  *=====================================================================================
+2190  * 1. Declare symbols and initialise some of them
+2191  *=====================================================================================
+2192   
+2193  Sets
+2194    unsolvedDT(dt)                                  'Set of datetime that are not solved yet'
+2195    SOS1_solve(dt)                                  'Flag period that is resolved using SOS1'
+2196   
+2197  * Unmmaped bus defificit temporary sets
+2198    unmappedDeficitBus(dt,b)                        'List of buses that have deficit generation (price) and are not mapped to any pnode - revisit'
+2199    changedDeficitBus(dt,b)                         'List of buses that have deficit generation added from unmapped deficit bus - revisit'
+2200    ;
+2201   
+2202  Parameters
+2203  * Flag to apply corresponding vSPD model
+2204    VSPDModel(dt)                                       '0=VSPD, 1=vSPD_BranchFlowMIP, 2=VSPD (last solve)'
+2205   
+2206  * MIP logic
+2207    circularBranchFlowExist(dt,br)                      'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
+2208    poleCircularBranchFlowExist(dt,pole)                'Flag to indicate if circulating branch flows exist on each an HVDC pole: 1 = Yes'
+2209   
+2210  * Calculated parameter used to check if non-physical loss occurs on HVDC
+2211    northHVDC(dt)                                       'HVDC MW sent from from SI to NI'
+2212    southHVDC(dt)                                       'HVDC MW sent from from NI to SI'
+2213    nonPhysicalLossExist(dt,br)                         'Flag to indicate if non-physical losses exist on branch (applied to HVDC only): 1 = Yes'
+2214    manualBranchSegmentMWFlow(dt,br,los,fd)             'Manual calculation of the branch loss segment MW flow --> used to manually calculate hvdc branch losses'
+2215    manualLossCalculation(dt,br)                        'MW losses calculated manually from the solution for each loss branch'
+2216   
+2217  * Calculated parameter used to check if circular branch flow exists on each HVDC pole
+2218    TotalHVDCpoleFlow(dt,pole)                          'Total flow on an HVDC pole'
+2219    MaxHVDCpoleFlow(dt,pole)                            'Maximum flow on an HVDC pole'
+2220   
+2221  * Disconnected bus post-processing
+2222    busGeneration(dt,b)                                 'MW generation at each bus for the study trade periods'
+2223    busLoad(dt,b)                                       'MW load at each bus for the study trade periods'
+2224    busPrice(dt,b)                                      '$/MW price at each bus for the study trade periods'
+2225    busDisconnected(dt,b)                               'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
+2226  * Unmmaped bus defificit temporary parameters
+2227    temp_busDeficit_TP(dt,b)                             'Bus deficit violation for each trade period'
+2228  * TN - Replacing invalid prices after SOS1
+2229    busSOSinvalid(dt,b)                                 'Buses with invalid bus prices after SOS1 solve'
+2230    numberofbusSOSinvalid(dt)                           'Number of buses with invalid bus prices after SOS1 solve --> used to check if invalid prices can be improved (numberofbusSOSinvalid reduces after each iteration)'
+2231  * System loss calculated by SPD for RTD run
+2232    SPDLoadCalcLosses(dt,isl)                           'Island losses calculated by SPD in the first solve to adjust demand'
+2233   ;
+2234   
+2235  * Extra sets and parameters used for energy shortfall check
+2236  Set nodeTonode(dt,n,n1)                      'Temporary set to transfer deficit MW' ;
+2237   
+2238  Parameters
+2239    EnergyShortFallCheck(dt,n)                 'Flag to indicate if energy shortfall at a node is checked (1 = Yes)'
+2240    EligibleShortfallRemoval(dt,n)             'Flag to indicate if energy shortfall at a node is eligible fro removal (1 = Yes)'
+2241    PotentialModellingInconsistency(dt,n)      'Flag to indicate if there is a potential for modelling inconsistency (1 = Yes)'
+2242    IsNodeDead(dt,n)                           'Flag to indicate if a node is dead (1 = Yes)'
+2243    DidShortfallTransfer(dt,n)                 'Flag to indicate if a node shortfall is transferred from to (1 = Yes)'
+2244    CheckedNodeCandidate(dt,n)                 'Flag to indicate if a target node has been checked for shortage transfer(1 = Yes)'
+2245    ShortfallTransferFromTo(dt,n,n1)           'Flag to indicate if shortfall from node n is transfered to node n1(1 = Yes)'
+2246    ShortfallDisabledScaling(dt,n)             'Flag to prevent the RTD Required Load calculation from scaling InitialLoad(1=Yes)'
+2247    NodeElectricalIsland(dt,n)                 'Calculated the ElectricalIsland of a node'
+2248   
+2249    EnergyShortfallMW(dt,n)                    'Quantity of energy shortfall at a node'
+2250    ShortfallAdjustmentMW(dt,n)                'Quantity of energy transfered from a node where energy shortfall occurs'
+2251    UntransferedShortfallMW(dt,n)              'Quantity of energy shortage not yet transfered to an eligible target node'
+2252    LoopCount(dt)                              'Applied to RTD to limit number of times that the Energy Shortfall Check will re-solve the model'
+2253    ;
+2254   
+2255   
+2256  Parameters
+2257  * Dispatch results for reporting - Trade period level - Island output
+2258    o_islandGen_TP(dt,isl)                              'Island MW generation for the different time periods'
+2259    o_islandLoad_TP(dt,isl)                             'Island MW fixed load for the different time periods'
+2260    o_islandClrBid_TP(dt,isl)                           'Island cleared MW bid for the different time periods'
+2261    o_islandBranchLoss_TP(dt,isl)                       'Intra-island branch losses for the different time periods (MW)'
+2262    o_islandRefPrice_TP(dt,isl)                         'Reference prices in each island ($/MWh)'
+2263   
+2264    o_HVDCflow_TP(dt,isl)                               'HVDC flow from each island (MW)'
+2265    o_HVDCloss_TP(dt,isl)                               'HVDC losses (MW)'
+2266    o_HVDCpoleFixedLoss_TP(dt,isl)                      'Fixed loss on inter-island HVDC (MW)'
+2267    o_HVDCreceived(dt,isl)                              'Energy Recevied from HVDC into an island'
+2268    o_HVDCRiskSubtractor(dt,isl,resC,riskC)             'OutPut HVDC risk subtractor'
+2269   
+2270    o_busGeneration_TP(dt,b)                            'Output MW generation at each bus for the different time periods'
+2271    o_busLoad_TP(dt,b)                                  'Output MW load at each bus for the different time periods'
+2272    o_busPrice_TP(dt,b)                                 'Output $/MW price at each bus for the different time periods'
+2273    o_busDeficit_TP(dt,b)                               'Bus deficit violation for each trade period'
+2274    o_busSurplus_TP(dt,b)                               'Bus surplus violation for each trade period'
+2275   
+2276    o_branchFromBusPrice_TP(dt,br)                      'Output from bus price ($/MW) for branch reporting'
+2277    o_branchToBusPrice_TP(dt,br)                        'Output to bus price ($/MW) for branch reporting'
+2278    o_branchMarginalPrice_TP(dt,br)                     'Output marginal branch constraint price ($/MW) for branch reporting'
+2279    o_branchFlow_TP(dt,br)                              'Output MW flow on each branch for the different time periods'
+2280    o_branchDynamicLoss_TP(dt,br)                       'Output MW dynamic loss on each branch for the different time periods'
+2281    o_branchTotalLoss_TP(dt,br)                         'Output MW total loss on each branch for the different time periods'
+2282    o_branchFixedLoss_TP(dt,br)                         'Output MW fixed loss on each branch for the different time periods'
+2283    o_branchTotalRentals_TP(dt,br)                      'Output $ rentals on transmission branches using total (dynamic + fixed) for the different time periods'
+2284    o_branchCapacity_TP(dt,br)                          'Output MW branch capacity for branch reporting'
+2285   
+2286    o_ACbranchTotalRentals(dt)                          'FTR rental - Total AC rental by trading period'
+2287    o_ACbranchLossMW(dt,br,los)                         'FTR rental - MW element of the loss segment curve in MW'
+2288    o_ACbranchLossFactor(dt,br,los)                     'FTR rental Loss factor element of the loss segment curve applied to'
+2289   
+2290    o_offerEnergy_TP(dt,o)                              'Output MW cleared for each energy offer for each trade period'
+2291    o_offerRes_TP(dt,o,resC)                            'Output MW cleared for each reserve offer for each trade period'
+2292    o_offerFIR_TP(dt,o)                                 'Output MW cleared for FIR for each trade period'
+2293    o_offerSIR_TP(dt,o)                                 'Output MW cleared for SIR for each trade period'
+2294   
+2295    o_groupEnergy_TP(dt,rg,riskC)                       'Output MW cleared for risk group for each trade period'
+2296    o_groupFKband_TP(dt,rg,riskC)                       'Output FK band MW applied for risk group for each trade period'
+2297    o_groupRes_TP(dt,rg,resC,riskC)                     'Output reserve MW cleared for risk group for each trade period'
+2298   
+2299    o_bidEnergy_TP(dt,bd)                               'Output MW cleared for each energy bid for each trade period'
+2300    o_bidTotalMW_TP(dt,bd)                              'Output total MW bidded for each energy bid for each trade period'
+2301   
+2302    o_ReserveReqd_TP(dt,isl,resC)                       'Output MW required for each reserve class in each trade period'
+2303    o_FIRreqd_TP(dt,isl)                                'Output MW required FIR for each trade period'
+2304    o_SIRreqd_TP(dt,isl)                                'Output MW required SIR for each trade period'
+2305    o_ResCleared_TP(dt,isl,resC)                        'Reserve cleared from an island for each trade period'
+2306    o_FIRcleared_TP(dt,isl)                             'Output - total FIR cleared by island'
+2307    o_SIRcleared_TP(dt,isl)                             'Output - total SIR cleared by island'
+2308    o_ResPrice_TP(dt,isl,resC)                          'Output $/MW price for each reserve classes for each trade period'
+2309    o_FIRprice_TP(dt,isl)                               'Output $/MW price for FIR reserve classes for each trade period'
+2310    o_SIRprice_TP(dt,isl)                               'Output $/MW price for SIR reserve classes for each trade period'
+2311   
+2312    o_GenRiskPrice_TP(dt,isl,o,resC,riskC)              'Output Gen risk marginal prices'
+2313    o_HVDCSecRiskPrice_TP(dt,isl,o,resC,riskC)          'Output HVDC risk marginal prices'
+2314    o_GenRiskGroupPrice_TP(dt,isl,rg,resC,riskC)        'Output risk group marginal prices'
+2315    o_HVDCRiskPrice_TP(dt,isl,resC,riskC)               'Output HVDC risk marginal prices'
+2316    o_ManualRiskPrice_TP(dt,isl,resC,riskC)             'Output Manual risk marginal prices'
+2317    o_HVDCSecManualRiskPrice_TP(dt,isl,resC,riskC)      'Output HVDC risk marginal prices'
+2318   
+2319    o_GenRiskShortfall_TP(dt,isl,o,resC,riskC)          'Output Gen risk shortfall'
+2320    o_HVDCSecRiskShortfall_TP(dt,isl,o,resC,riskC)      'Output HVDC risk shortfall'
+2321    o_GenRiskGroupShortfall_TP(dt,isl,rg,resC,riskC)    'Output risk group shortfall'
+2322    o_HVDCRiskShortfall_TP(dt,isl,resC,riskC)           'Output HVDC risk shortfall'
+2323    o_ManualRiskShortfall_TP(dt,isl,resC,riskC)         'Output Manual risk shortfall'
+2324    o_HVDCSecManualRiskShortfall_TP(dt,isl,resC,riskC)  'Output HVDC risk shortfall'
+2325   
+2326    o_ResViolation_TP(dt,isl,resC)                      'Violation MW for each reserve classes for each trade period'
+2327    o_FIRviolation_TP(dt,isl)                           'Violation MW for FIR reserve classes for each trade period'
+2328    o_SIRviolation_TP(dt,isl)                           'Violation MW for SIR reserve classes for each trade period'
+2329   
+2330    o_nodeGeneration_TP(dt,n)                           'Ouput MW generation at each node for the different time periods'
+2331    o_nodeLoad_TP(dt,n)                                 'Ouput MW load at each node for the different time periods'
+2332    o_nodePrice_TP(dt,n)                                'Output $/MW price at each node for the different time periods'
+2333    o_nodeDeficit_TP(dt,n)                              'Output node deficit violation for each trade period'
+2334    o_nodeSurplus_TP(dt,n)                              'Output node surplus violation for each trade period'
+2335    o_nodeDead_TP(dt,n)                                 'Define if a Node  (Pnode) is dead'
+2336    o_nodeDeadPrice_TP(dt,n)                            'Flag to check if a dead Node has valid price'
+2337    o_nodeDeadPriceFrom_TP(dt,n,n1)                     'Flag to show which price node the price of the dead node come from'
+2338  * Security constraint data
+2339    o_brConstraintSense_TP(dt,brCstr)                   'Branch constraint sense for each output report'
+2340    o_brConstraintLHS_TP(dt,brCstr)                     'Branch constraint LHS for each output report'
+2341    o_brConstraintRHS_TP(dt,brCstr)                     'Branch constraint RHS for each output report'
+2342    o_brConstraintPrice_TP(dt,brCstr)                   'Branch constraint price for each output report'
+2343  * Mnode constraint data
+2344    o_MnodeConstraintSense_TP(dt,MnodeCstr)             'Market node constraint sense for each output report'
+2345    o_MnodeConstraintLHS_TP(dt,MnodeCstr)               'Market node constraint LHS for each output report'
+2346    o_MnodeConstraintRHS_TP(dt,MnodeCstr)               'Market node constraint RHS for each output report'
+2347    o_MnodeConstraintPrice_TP(dt,MnodeCstr)             'Market node constraint price for each output report'
+2348  * TradePeriod summary report
+2349    o_solveOK_TP(dt)                                    'Solve status for summary report (1=OK)'
+2350    o_systemCost_TP(dt)                                 'System cost for summary report'
+2351    o_systemBenefit_TP(dt)                              'System benefit of cleared bids for summary report'
+2352    o_ofv_TP(dt)                                        'Objective function value for summary report'
+2353    o_penaltyCost_TP(dt)                                'Penalty cost for summary report'
+2354    o_defGenViolation_TP(dt)                            'Deficit generation violation for summary report'
+2355    o_surpGenViolation_TP(dt)                           'Surplus generaiton violation for summary report'
+2356    o_surpBranchFlow_TP(dt)                             'Surplus branch flow violation for summary report'
+2357    o_defRampRate_TP(dt)                                'Deficit ramp rate violation for summary report'
+2358    o_surpRampRate_TP(dt)                               'Surplus ramp rate violation for summary report'
+2359    o_surpBranchGroupConst_TP(dt)                       'Surplus branch group constraint violation for summary report'
+2360    o_defBranchGroupConst_TP(dt)                        'Deficit branch group constraint violation for summary report'
+2361    o_defMnodeConst_TP(dt)                              'Deficit market node constraint violation for summary report'
+2362    o_surpMnodeConst_TP(dt)                             'Surplus market node constraint violation for summary report'
+2363    o_defResv_TP(dt)                                    'Deficit reserve violation for summary report'
+2364   
+2365  * Factor to prorate the deficit and surplus at the nodal level
+2366    totalBusAllocation(dt,b)                            'Total allocation of nodes to bus'
+2367    busNodeAllocationFactor(dt,b,n)                     'Bus to node allocation factor'
+2368   
+2369  * Audit - extra output declaration
+2370    o_lossSegmentBreakPoint(dt,br,los)                            'Audit - loss segment MW'
+2371    o_lossSegmentFactor(dt,br,los)                                'Audit - loss factor of each loss segment'
+2372    o_ACbusAngle(dt,b)                                            'Audit - bus voltage angle'
+2373    o_nonPhysicalLoss(dt,br)                                      'Audit - non physical loss'
+2374   
+2375    o_ILRO_FIR_TP(dt,o)                                           'Audit - ILRO FIR offer cleared (MWh)'
+2376    o_ILRO_SIR_TP(dt,o)                                           'Audit - ILRO SIR offer cleared (MWh)'
+2377    o_ILbus_FIR_TP(dt,b)                                          'Audit - ILRO FIR cleared at bus (MWh)'
+2378    o_ILbus_SIR_TP(dt,b)                                          'Audit - ILRO SIR cleared at bus (MWh)'
+2379    o_PLRO_FIR_TP(dt,o)                                           'Audit - PLRO FIR offer cleared (MWh)'
+2380    o_PLRO_SIR_TP(dt,o)                                           'Audit - PLRO SIR offer cleared (MWh)'
+2381    o_TWRO_FIR_TP(dt,o)                                           'Audit - TWRO FIR offer cleared (MWh)'
+2382    o_TWRO_SIR_TP(dt,o)                                           'Audit - TWRO SIR offer cleared (MWh)'
+2383   
+2384    o_generationRiskLevel(dt,isl,o,resC,riskC)                    'Audit - generation risk'
+2385   
+2386    o_HVDCriskLevel(dt,isl,resC,riskC)                            'Audit - DCCE and DCECE risk'
+2387   
+2388    o_manuRiskLevel(dt,isl,resC,riskC)                            'Audit - manual risk'
+2389   
+2390    o_genHVDCriskLevel(dt,isl,o,resC,riskC)                       'Audit - generation + HVDC secondary risk'
+2391   
+2392    o_manuHVDCriskLevel(dt,isl,resC,riskC)                        'Audit - manual + HVDC secondary'
+2393   
+2394    o_generationRiskGroupLevel(dt,isl,rg,resC,riskC)              'Audit - generation group risk'
+2395   
+2396   
+2397  * TN - output parameters added for NMIR project --------------------------------
+2398    o_FirSent_TP(dt,isl)                        'FIR export from an island for each trade period'
+2399    o_SirSent_TP(dt,isl)                        'SIR export from an island for each trade period'
+2400    o_FirReceived_TP(dt,isl)                    'FIR received at an island for each trade period'
+2401    o_SirReceived_TP(dt,isl)                    'SIR received at an island for each trade period'
+2402    o_FirEffReport_TP(dt,isl)                   'Effective FIR share for reporting to an island for each trade period'
+2403    o_SirEffReport_TP(dt,isl)                   'Effective FIR share for reporting to an island for each trade period'
+2404    o_EffectiveRes_TP(dt,isl,resC,riskC)        'Effective reserve share to an island for each trade period'
+2405    o_FirEffectiveCE_TP(dt,isl)                 'Effective FIR share to an island for each trade period'
+2406    o_SirEffectiveCE_TP(dt,isl)                 'Effective FIR share to an island for each trade period'
+2407    o_FirEffectiveECE_TP(dt,isl)                'Effective FIR share to an island for each trade period'
+2408    o_SirEffectiveECE_TP(dt,isl)                'Effective FIR share to an island for each trade period'
+2409   
+2410    o_TotalIslandReserve(dt,isl,resC,riskC)     'Total Reserve cleared in a island including shared Reserve'
+2411  * TN - output parameters added for NMIR project end ----------------------------
+2412    ;
+2413   
+2414  Scalars
+2415    modelSolved                   'Flag to indicate if the model solved successfully (1 = Yes)'                                           / 0 /
+2416    LPmodelSolved                 'Flag to indicate if the final LP model (when MIP fails) is solved successfully (1 = Yes)'              / 0 /
+2417    exitLoop                      'Flag to exit solve loop'                                                                               / 0 /
+2418    ;
+2419   
+2420   
+2421   
+2422  *=====================================================================================
+2423  * 2. Load data from GDX file
+2424  *=====================================================================================
+2425   
+2426  * If input file does not exist then go to the next input file
+2428   
+2429  * Load trading period to be solved
+GDXIN   C:\vSPD\ElectricityAuthority\Programs\vSPDPeriod.gdx
+--- LOAD  tp = 1:i_TradePeriod
+--- LOAD  dt = 2:i_DateTime
+--- LOAD  dt2tp = 3:i_DateTimeTradePeriod
+2434   
+2435  * Call the GDX routine and load the input data:
+GDXIN   C:\vSPD\ElectricityAuthority\Input\RTD_202211061725_61012022110425024_20221106172401_New.gdx
+2437  * Sets
+--- LOAD  caseName = 1:caseName
+--- LOAD  rundt = 3:i_runDateTime
+--- LOAD  b = 10:i_bus
+--- LOAD  n = 9:i_node
+--- LOAD  o = 37:i_Offer
+--- LOAD  bd = 49:i_bid
+--- LOAD  trdr = 36:i_Trader
+--- LOAD  br = 19:i_branch
+--- LOAD  brCstr = 27:i_branchConstraint
+--- LOAD  MnodeCstr = 30:i_MnodeConstraint
+--- LOAD  node = 11:i_dateTimeNode
+--- LOAD  bus = 12:i_dateTimeBus
+--- LOAD  node2node = 18:i_dateTimeNodeToNode
+--- LOAD  offerTrader = 38:i_dateTimeOfferTrader
+--- LOAD  offerNode = 39:i_dateTimeOfferNode
+--- LOAD  bidTrader = 50:i_dateTimeBidTrader
+--- LOAD  bidNode = 51:i_dateTimeBidNode
+--- LOAD  nodeBus = 14:i_dateTimeNodeBus
+--- LOAD  busIsland = 16:i_dateTimeBusIsland
+--- LOAD  branchDefn = 20:i_dateTimeBranchDefn
+--- LOAD  riskGenerator = 55:i_dateTimeRiskGenerator
+--- LOAD  primarySecondaryOffer = 48:i_dateTimePrimarySecondaryOffer
+--- LOAD  dispatchableBid = 53:i_dateTimeDispatchableBid
+--- LOAD  rg = 74:i_riskGroup
+--- LOAD  riskGroupOffer = 75:i_dateTimeRiskGroup
+--- LOAD  nodeoutagebranch = 26:i_dateTimeNodeOutageBranch
+2456   
+2457  * Parameters
+--- LOAD  gdxDate = 2:gdxDate
+--- MERGE intervalDuration = 7:i_intervalLength
+--- LOAD  offerParameter = 40:i_dateTimeOfferParameter
+--- LOAD  energyOffer = 41:i_dateTimeEnergyOffer
+--- LOAD  fastPLSRoffer = 43:i_dateTimeFastPLSRoffer
+--- LOAD  sustainedPLSRoffer = 42:i_dateTimeSustainedPLSRoffer
+--- LOAD  fastTWDRoffer = 45:i_dateTimeFastTWDRoffer
+--- LOAD  sustainedTWDRoffer = 44:i_dateTimeSustainedTWDRoffer
+--- LOAD  fastILRoffer = 47:i_dateTimeFastILRoffer
+--- LOAD  sustainedILRoffer = 46:i_dateTimeSustainedILRoffer
+2467   
+--- LOAD  energyBid = 52:i_dateTimeEnergyBid
+--- LOAD  nodeDemand = 54:i_dateTimeNodeDemand
+2470   
+--- LOAD  refNode = 13:i_dateTimeReferenceNode
+--- LOAD  HVDCBranch = 21:i_dateTimeHVDCBranch
+--- LOAD  branchParameter = 22:i_dateTimeBranchParameter
+--- LOAD  branchCapacity = 23:i_dateTimeBranchCapacity
+--- LOAD  branchOpenStatus = 24:i_dateTimeBranchOpenStatus
+--- LOAD  nodeBusAllocationFactor = 15:i_dateTimeNodeBusAllocationFactor
+--- LOAD  busElectricalIsland = 17:i_dateTimeBusElectricalIsland
+2478   
+--- LOAD  riskParameter = 56:i_dateTimeRiskParameter
+--- LOAD  islandMinimumRisk = 57:i_dateTimeManualRisk
+--- LOAD  HVDCSecRiskEnabled = 58:i_dateTimeHVDCSecRiskEnabled
+--- LOAD  HVDCSecRiskSubtractor = 59:i_dateTimeHVDCSecRiskSubtractor
+--- LOAD  reserveMaximumFactor = 60:i_dateTimeReserveMaximumFactor
+2484   
+--- LOAD  branchCstrFactors = 28:i_dateTimeBranchConstraintFactors
+--- LOAD  branchCstrRHS = 29:i_dateTimeBranchConstraintRHS
+--- LOAD  mnCstrEnrgFactors = 31:i_dateTimeMNCnstrEnrgFactors
+--- LOAD  mnCnstrResrvFactors = 32:i_dateTimeMNCnstrResrvFactors
+--- LOAD  mnCnstrEnrgBidFactors = 33:i_dateTimeMNCnstrEnrgBidFactors
+--- LOAD  mnCnstrResrvBidFactors = 34:i_dateTimeMNCnstrResrvBidFactors
+--- LOAD  mnCnstrRHS = 35:i_dateTimeMNCnstrRHS
+2492   
+2493  * National market for IR effective date 20 Oct 2016
+--- LOAD  reserveRoundPower = 61:i_dateTimeReserveRoundPower
+--- LOAD  reserveShareEnabled = 62:i_dateTimeReserveSharing
+--- LOAD  modulationRiskClass = 63:i_dateTimeModulationRisk
+--- LOAD  roundPower2MonoLevel = 64:i_dateTimeRoundPower2Mono
+--- LOAD  bipole2MonoLevel = 65:i_dateTimeBipole2Mono
+--- LOAD  MonopoleMinimum = 66:i_dateTimeReserveSharingPoleMin
+--- LOAD  HVDCControlBand = 67:i_dateTimeHVDCcontrolBand
+--- LOAD  HVDClossScalingFactor = 68:i_dateTimeHVDClossScalingFactor
+--- LOAD  sharedNFRFactor = 69:i_dateTimeSharedNFRfactor
+--- LOAD  sharedNFRLoadOffset = 71:i_dateTimeSharedNFRLoadOffset
+--- LOAD  effectiveFactor = 70:i_dateTimeReserveEffectiveFactor
+--- LOAD  RMTReserveLimitTo = 72:i_dateTimeRMTreserveLimit
+--- LOAD  rampingConstraint = 73:i_dateTimeRampingConstraint
+2507   
+2508  *Real Time Pricing Project
+--- MERGE studyMode = 76:i_studyMode
+--- LOAD  useGenInitialMW = 77:i_dateTimeUseGenInitialMW
+--- LOAD  runEnrgShortfallTransfer = 78:i_dateTimeRunEnrgShortfallTransfer
+--- LOAD  runPriceTransfer = 79:i_dateTimeRunPriceTransfer
+--- LOAD  replaceSurplusPrice = 80:i_dateTimeReplaceSurplusPrice
+--- LOAD  rtdIgIncreaseLimit = 81:i_dateTimeRtdIgIncreaseLimit
+--- LOAD  useActualLoad = 84:i_dateTimeUseActualLoad
+--- LOAD  dontScaleNegativeLoad = 85:i_dateTimeDontScaleNegativeLoad
+--- LOAD  inputInitialLoad = 86:i_dateTimeInputInitialLoad
+--- LOAD  conformingFactor = 87:i_dateTimeConformingFactor
+--- LOAD  nonConformingLoad = 88:i_dateTimeNonConformingLoad
+--- LOAD  loadIsOverride = 89:i_dateTimeLoadIsOverride
+--- LOAD  loadIsBad = 90:i_dateTimeLoadIsBad
+--- LOAD  loadIsNCL = 91:i_dateTimeLoadIsNCL
+--- LOAD  maxLoad = 92:i_dateTimeMaxLoad
+--- LOAD  instructedLoadShed = 93:i_dateTimeInstructedLoadShed
+--- LOAD  instructedShedActive = 94:i_dateTimeInstructedShedActive
+--- LOAD  islandMWIPS = 95:i_dateTimeIslandMWIPS
+--- LOAD  islandPDS = 96:i_dateTimeIslandPDS
+--- LOAD  islandLosses = 97:i_dateTimeIslandLosses
+--- LOAD  enrgShortfallRemovalMargin = 82:i_dateTimeEnrgShortfallRemovalMargin
+--- LOAD  maxSolveLoops = 83:i_dateTimeMaxSolveLoops
+2531   
+--- LOAD  energyScarcityEnabled = 99:i_dateTimeEnergyScarcityEnabled
+--- LOAD  reserveScarcityEnabled = 100:i_dateTimeReserveScarcityEnabled
+--- LOAD  scarcityEnrgNationalFactor = 101:i_dateTimeScarcityEnrgNationalFactor
+--- LOAD  scarcityEnrgNationalPrice = 102:i_dateTimeScarcityEnrgNationalPrice
+--- LOAD  scarcityEnrgNodeFactor = 103:i_dateTimeScarcityEnrgNodeFactor
+--- LOAD  scarcityEnrgNodeFactorPrice = 104:i_dateTimeScarcityEnrgNodeFactorPrice
+--- LOAD  scarcityEnrgNodeLimit = 105:i_dateTimeScarcityEnrgNodeLimit
+--- LOAD  scarcityEnrgNodeLimitPrice = 106:i_dateTimeScarcityEnrgNodeLimitPrice
+--- LOAD  scarcityResrvIslandLimit = 107:i_dateTimeScarcityResrvIslandLimit
+--- LOAD  scarcityResrvIslandPrice = 108:i_dateTimeScarcityResrvIslandPrice
+2543   
+2544  *===============================================================================
+2545  * 3. Manage model and data compatability
+2546  *===============================================================================
+2547  * This section manages the changes to model flags to ensure backward
+2548  * compatibility given changes in the SPD model formulation over time:
+2549  * Ex: some data (sets) only starting to exist at certain time and we need to use
+2550  * GDX time to check if we can load that data (set) from gdx.
+2551   
+2552  * Gregorian date of when symbols have been included into the GDX files
+2553  Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
+2554  inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
+2555   
+2556  * The code below is for example and not currently used
+      put_utility temp 'gdxin' / '%inputPath%\%GDXname%.gdx' ;
+      if (inputGDXGDate >= jdate(2022,11,1) or sum[sameas(caseName,testCases),1] ,
+          execute_load
+          energyScarcityEnabled       = i_energyScarcityEnabled
+          ;
+      ) ;
+      $oftext
+       
+       
+      *=====================================================================================
+      * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
+      *=====================================================================================
+       
+      $ontext
+       - At this point, vSPDoverrides.gms is included into vSPDsolve.gms if an override
+         file defined by the $setglobal vSPDinputOvrdData in vSPDSetting.inc exists.
+       - All override data symbols have the characters 'Ovrd' appended to the original
+         symbol name. After declaring the override symbols, the override data is
+         installed and the original symbols are overwritten.
+       - Note that the Excel interface permits a limited number of input data symbols
+         to be overridden. The EMI interface will create a GDX file of override values
+         for all data inputs to be overridden. If operating in standalone mode,
+         overrides can be installed by any means the user prefers - GDX file, $include
+         file, hard-coding, etc. But it probably makes sense to mimic the GDX file as
+         used by EMI.
+2584   
+2586   
+2587   
+2588  *===============================================================================
+2589  * 5. Initialise model mapping and inputs
+2590  *===============================================================================
+2592   
+2593  * Check if NMIR is enabled
+2594  UseShareReserve = 1 $ sum[ (dt,resC), reserveShareEnabled(dt,resC)] ;
+2595   
+2596  * Initialise genrating offer parameters ----------------------------------------
+2597  GenerationStart(dt,o) = offerParameter(dt,o,'initialMW')
+2598                        + sum[ o1 $ primarySecondaryOffer(dt,o,o1)
+2599                                  , offerParameter(dt,o1,'initialMW') ] ;
+2600  * if useGenIntitialMW = 1 --> sequential solve like PRSS, NRSS
+2601  GenerationStart(dt,o) $ { (useGenInitialMW(dt) = 1) and (ord(dt) > 1) } = 0;
+2602   
+2603  RampRateUp(dt,o)               = offerParameter(dt,o,'rampUpRate')      ;
+2604  RampRateDn(dt,o)               = offerParameter(dt,o,'rampDnRate')      ;
+2605  ReserveGenerationMaximum(dt,o) = offerParameter(dt,o,'resrvGenMax')      ;
+2606  WindOffer(dt,o)                = offerParameter(dt,o,'isIG')            ;
+2607  FKband(dt,o)                   = offerParameter(dt,o,'FKbandMW')        ;
+2608  PriceResponsive(dt,o)          = offerParameter(dt,o,'isPriceResponse') ;
+2609  PotentialMW(dt,o)              = offerParameter(dt,o,'potentialMW')     ;
+2610   
+2611  * This is based on the 4.6.2.1 calculation
+      For generators in the PRICERESPONSIVEIG subset, if the PotentialMWg value is
+      less than ReserveGenerationMaximumg,c  then pre-processing sets the
+      ReserveGenerationMaximumg,c parameter to the PotentialMWg value, otherwise if
+      the PotentialMWg value is greater than or equal to the
+      ReserveGenerationMaximumg,c  then the ReserveGenerationMaximumg,c
+      value is unchanged
+      Tuong note: this does not seems to make saense and be used.
+2621  reserveMaximumFactor(dt,o,resC)
+2622      $ { windOffer(dt,o) and priceResponsive(dt,o) and( potentialMW(dt,o) > 0)
+2623      and (potentialMW(dt,o) < ReserveGenerationMaximum(dt,o)) }
+2624      = ReserveGenerationMaximum(dt,o) / potentialMW(dt,o) ;
+2625  *-------------------------------------------------------------------------------
+2626   
+2627   
+2628  * Initialise offer limits and prices -------------------------------------------
+2629   
+2630  * Initialise energy offer data for the current trade period start
+2631  EnrgOfrMW(dt,o,blk) = energyOffer(dt,o,blk,'limitMW') ;
+2632  EnrgOfrPrice(dt,o,blk) = energyOffer(dt,o,blk,'price') ;
+2633   
+2634  * Initialise reserve offer data for the current trade period start
+2635  PLRO(resT) $ (ord(resT) = 1) = yes ;
+2636  TWRO(resT) $ (ord(resT) = 2) = yes ;
+2637  ILRO(resT) $ (ord(resT) = 3) = yes ;
+2638   
+2639  ResOfrPct(dt,o,blk,resC)
+2640      = (fastPLSRoffer(dt,o,blk,'plsrPct')      / 100) $ ( ord(resC) = 1 )
+2641      + (sustainedPLSRoffer(dt,o,blk,'plsrPct') / 100) $ ( ord(resC) = 2 );
+2642   
+2643  ResOfrMW(dt,o,blk,resC,PLRO)
+2644      = fastPLSRoffer(dt,o,blk,'limitMW')     $(ord(resC)=1)
+2645      + sustainedPLSRoffer(dt,o,blk,'limitMW')$(ord(resC)=2) ;
+2646   
+2647  ResOfrMW(dt,o,blk,resC,TWRO)
+2648      = fastTWDRoffer(dt,o,blk,'limitMW')     $(ord(resC)=1)
+2649      + sustainedTWDRoffer(dt,o,blk,'limitMW')$(ord(resC)=2) ;
+2650   
+2651  ResOfrMW(dt,o,blk,resC,ILRO)
+2652      = fastILRoffer(dt,o,blk,'limitMW')     $(ord(resC)=1)
+2653      + sustainedILRoffer(dt,o,blk,'limitMW')$(ord(resC)=2) ;
+2654   
+2655  ResOfrPrice(dt,o,blk,resC,PLRO)
+2656      = fastPLSRoffer(dt,o,blk,'price')     $(ord(resC)=1)
+2657      + sustainedPLSRoffer(dt,o,blk,'price')$(ord(resC)=2) ;
+2658   
+2659  ResOfrPrice(dt,o,blk,resC,TWRO)
+2660      = fastTWDRoffer(dt,o,blk,'price')     $(ord(resC)=1)
+2661      + sustainedTWDRoffer(dt,o,blk,'price')$(ord(resC)=2) ;
+2662   
+2663  ResOfrPrice(dt,o,blk,resC,ILRO)
+2664      = fastILRoffer(dt,o,blk,'price')     $(ord(resC)=1)
+2665      + sustainedILRoffer(dt,o,blk,'price')$(ord(resC)=2)  ;
+2666  *-------------------------------------------------------------------------------
+2667   
+2668   
+2669  * Define valid offers and valid offer block ------------------------------------
+2670   
+2671  * Valid offer must be mapped to a bus with electrical island <> 0
+2672  offer(dt,o) $ sum[ (n,b) $ { offerNode(dt,o,n) and nodeBus(dt,n,b)
+2673                             }, busElectricalIsland(dt,b) ] = yes ;
+2674   
+2675  * IL offer with non zero total limit is always valid
+2676  offer(dt,o) $ sum[ (blk,resC,ILRO), ResOfrMW(dt,o,blk,resC,ILRO)] = yes ;
+2677   
+2678  * Valid energy offer blocks are defined as those with a positive block limit
+2679  genOfrBlk(dt,o,blk) $ ( EnrgOfrMW(dt,o,blk) > 0 ) = yes ;
+2680   
+2681  * Define set of positive (valid) energy offers
+2682  posEnrgOfr(dt,o) $ sum[ blk $ genOfrBlk(dt,o,blk), 1 ] = yes ;
+2683   
+2684  * Only reserve offer block with a positive block limit is valid
+2685  resOfrBlk(dt,o,blk,resC,resT) $ (ResOfrMW(dt,o,blk,resC,resT) > 0) = yes ;
+2686  *-------------------------------------------------------------------------------
+2687   
+2688   
+2689  * Initialise bid limits and prices ---------------------------------------------
+2690   
+2691  * Valid bid must be mapped to a bus with electrical island <> 0
+2692  bid(dt,bd) $ sum[ (n,b) $ { bidNode(dt,bd,n) and nodeBus(dt,n,b)
+2693                            }, busElectricalIsland(dt,b) ] = yes ;
+2694  * Bid energy data
+2695  DemBidMW(bid,blk)    $ dispatchableBid(bid) = energyBid(bid,blk,'limitMW') ;
+2696  DemBidPrice(bid,blk) $ dispatchableBid(bid) = energyBid(bid,blk,'price')   ;
+2697  * Valid Demand Bid Block
+2698  DemBidBlk(bid,blk)   $ ( DemBidMW(bid,blk) <> 0 ) = yes ;
+2699  *-------------------------------------------------------------------------------
+2700   
+2701   
+2702  * Initialise mappings to use in later stage ------------------------------------
+2703   
+2704  nodeIsland(dt,n,isl) $ sum[ b $ { bus(dt,b) and node(dt,n)
+2705                                and nodeBus(dt,n,b) and busIsland(dt,b,isl) }, 1
+2706                            ] = yes ;
+2707  offerIsland(offer(dt,o),isl)
+2708      $ sum[ n $ { offerNode(dt,o,n) and nodeIsland(dt,n,isl) }, 1 ] = yes ;
+2709   
+2710  bidIsland(bid(dt,bd),isl)
+2711      $ sum[ n $ { bidNode(dt,bd,n) and nodeIsland(dt,n,isl) }, 1 ] = yes ;
+2712   
+2713  islandRiskGenerator(dt,isl,o)
+2714      $ { offerIsland(dt,o,isl) and riskGenerator(dt,o) } = yes ;
+2715   
+2716   
+2717  * Identification of primary and secondary units
+2718  PrimaryOffer(dt,o) = 1 ;
+2719  SecondaryOffer(dt,o) = 1 $ sum[ o1 $ primarySecondaryOffer(dt,o1,o), 1 ] ;
+2720  PrimaryOffer(dt,o) $ SecondaryOffer(dt,o) = 0 ;
+2721  *-------------------------------------------------------------------------------
+2722   
+2723   
+2724  * Initialise demand/bid data ---------------------------------------------------
+2725  RequiredLoad(node) = nodeDemand(node) ;
+2726   
+2727  * 4.9.2 Dispatchable Pnodes
+      If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then
+      PnodeRequiredLoadpn is set to zero. The Pnode load will be determined by
+      clearing the Pnode's Dispatchable Demand Bid when the LP Model is solved.
+2733  RequiredLoad(node(dt,n))
+2734      $ { Sum[ (bd,blk) $ bidNode(dt,bd,n), DemBidMW(dt,bd,blk) ] > 0 } = 0;
+2735   
+2736   
+2737   
+2738  * 4.10 Real Time Pricing - First RTD load calculation
+2739  if studyMode = 101 or studyMode = 201 then
+2740   
+2741  *   Calculate first target total load [4.10.6.5]
+2742  *   Island-level MW load forecast. For the fist loop, uses islandLosses(dt,isl)
+2743      TargetTotalLoad(dt,isl) = islandMWIPS(dt,isl) + islandPDS(dt,isl) - islandLosses(dt,isl);
+2744   
+2745  *   Flag if estimate load is scalable [4.10.6.7]
+2746  *   If True [1] then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad
+2747      EstLoadIsScalable(dt,n) =  1 $ { (LoadIsNCL(dt,n) = 0) and (ConformingFactor(dt,n) > 0) } ;
+2748   
+2749  *   Calculate estimate non-scalable load [4.10.6.8]
+2750  *   For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero
+2751      EstNonScalableLoad(dt,n) $ ( LoadIsNCL(dt,n) = 1 ) = NonConformingLoad(dt,n);
+2752      EstNonScalableLoad(dt,n) $ ( LoadIsNCL(dt,n) = 0 ) = ConformingFactor(dt,n);
+2753      EstNonScalableLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 1 ) = 0;
+2754   
+2755  *   Calculate estimate scalable load [4.10.6.10]
+2756  *   For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero
+2757      EstScalableLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 1 ) = ConformingFactor(dt,n);
+2758   
+2759  *   Calculate Scaling applied to ConformingFactor load MW [4.10.6.9] in order to calculate EstimatedInitialLoad
+2760      EstScalingFactor(dt,isl) = (islandMWIPS(dt,isl) - islandLosses(dt,isl) - Sum[ n $ nodeIsland(dt,n,isl), EstNonScalableLoad(dt,n) ]) / Sum[ n $ nodeIsland(dt,n,isl), EstScalableLoad(dt,n) ];
+2761   
+2762  *   Calculate estimate initial load [4.10.6.6]
+2763  *   Calculated estimate of initial MW load, available to be used as an alternative to InputInitialLoad
+2764      EstimatedInitialLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 1 ) = ConformingFactor(dt,n) * Sum[ isl $ nodeisland(dt,n,isl), EstScalingFactor(dt,isl)] ;
+2765      EstimatedInitialLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 0 ) = EstNonScalableLoad(dt,n);
+2766   
+2767  *   Calculate initial load [4.10.6.2]
+2768  *   Value that represents the Pnode load MW at the start of the solution interval. Depending on the inputs this value will be either actual load, an operator applied override or an estimated initial load
+2769      InitialLoad(dt,n) = InputInitialLoad(dt,n);
+2770      InitialLoad(dt,n) $ { (LoadIsOverride(dt,n) = 0) and ( (useActualLoad(dt) = 0) or (LoadIsBad(dt,n) = 1) ) } = EstimatedInitialLoad(dt,n) ;
+2771      InitialLoad(dt,n) $ { (LoadIsOverride(dt,n) = 1) and (useActualLoad(dt) = 1) and (InitialLoad(dt,n) > MaxLoad(dt,n)) } = MaxLoad(dt,n) ;
+2772   
+2773  *   Flag if load is scalable [4.10.6.4]
+2774  *   If True [1] then the Pnode InitialLoad will be scaled in order to calculate RequiredLoad, if False then Pnode InitialLoad will be directly assigned to RequiredLoad
+2775      LoadIsScalable(dt,n) = 1 $ { (LoadIsNCL(dt,n) = 0) and (LoadIsOverride(dt,n) = 0) and (InitialLoad(dt,n) >= 0) } ;
+2776   
+2777  *   Calculate Island-level scaling factor [4.10.6.3] --> applied to InitialLoad in order to calculate RequiredLoad
+2778      LoadScalingFactor(dt,isl) = ( TargetTotalLoad(dt,isl) - Sum[n $ {nodeIsland(dt,n,isl) and (LoadIsScalable(dt,n) = 0)}, InitialLoad(dt,n)] ) / Sum[n $ {nodeIsland(dt,n,isl) and (LoadIsScalable(dt,n) = 1)}, InitialLoad(dt,n)];
+2779   
+2780  *   Calculate RequiredLoad [4.10.6.1]
+2781      RequiredLoad(dt,n) $ LoadIsScalable(dt,n) = InitialLoad(dt,n) * sum[ isl $ nodeisland(dt,n,isl), LoadScalingFactor(dt,isl) ];
+2782      RequiredLoad(dt,n) $ (LoadIsScalable(dt,n) = 0) = InitialLoad(dt,n);
+2783      RequiredLoad(dt,n) = RequiredLoad(dt,n) + [InstructedLoadShed(dt,n) $ InstructedShedActive(dt,n)];
+2784   
+2785  Endif;
+2786  *-------------------------------------------------------------------------------
+2787   
+2788   
+2789  * Initialize energy scarcity limits and prices ---------------------------------
+2790  ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and (RequiredLoad(dt,n) > 0) }                                      = scarcityEnrgNationalFactor(dt,blk) * RequiredLoad(dt,n);
+2791  ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and (ScarcityEnrgLimit(dt,n,blk) > 0 ) }                            = scarcityEnrgNationalPrice(dt,blk) ;
+2792   
+2793  ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeFactor(dt,n,blk) and (RequiredLoad(dt,n) > 0) } = scarcityEnrgNodeFactor(dt,n,blk) * RequiredLoad(dt,n);
+2794  ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeFactorPrice(dt,n,blk) }                         = scarcityEnrgNodeFactorPrice(dt,n,blk) ;
+2795   
+2796  ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeLimit(dt,n,blk) }                               = scarcityEnrgNodeLimit(dt,n,blk);
+2797  ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeLimitPrice(dt,n,blk) }                          = scarcityEnrgNodeLimitPrice(dt,n,blk) ;
+2798  *-------------------------------------------------------------------------------
+2799   
+2800   
+2801  * Initialize AC and DC branches ------------------------------------------------
+2802   
+2803  * Branch is defined if there is a defined terminal bus, it has a non-zero
+2804  * capacity and is closed for that trade period
+2805  * Update the pre-processing code that removes branches which have a limit of zero
+2806  * so that it removes a branch if either direction has a limit of zero.
+2807  branch(dt,br) $ { (not branchOpenStatus(dt,br)) and
+2808                    (not HVDCBranch(dt,br)) and
+2809                    sum[ fd $ (ord(fd)=1), branchCapacity(dt,br,fd)] and
+2810                    sum[ fd $ (ord(fd)=2), branchCapacity(dt,br,fd)] and
+2811                    sum[ (b,b1) $ { bus(dt,b) and bus(dt,b1) and
+2812                                    branchDefn(dt,br,b,b1) }, 1 ]
+2813                  } = yes ;
+2814   
+2815  branch(dt,br) $ { (not branchOpenStatus(dt,br)) and
+2816                    (HVDCBranch(dt,br)) and
+2817                    sum[ fd, branchCapacity(dt,br,fd)] and
+2818                    sum[ (b,b1) $ { bus(dt,b) and bus(dt,b1) and
+2819                                    branchDefn(dt,br,b,b1) }, 1 ]
+2820                  } = yes ;
+2821   
+2822   
+2823  branchBusDefn(branch,b,b1) $ branchDefn(branch,b,b1)    = yes ;
+2824  branchFrBus(branch,frB) $ sum[ toB $ branchBusDefn(branch,frB,toB), 1 ] = yes ;
+2825  branchToBus(branch,toB) $ sum[ frB $ branchBusDefn(branch,frB,toB), 1 ] = yes ;
+2826  branchBusConnect(branch,b) $ branchFrBus(branch,b) = yes ;
+2827  branchBusConnect(branch,b) $ branchToBus(branch,b) = yes ;
+2828   
+2829   
+2830  * HVDC link and AC branch definition
+2831  HVDClink(branch) = yes $ HVDCBranch(branch) ;
+2832  ACbranch(branch) = yes $ [not HVDCBranch(branch)];
+2833   
+2834   
+2835  * Determine sending and receiving bus for each branch flow direction
+2836  loop (frB,toB) do
+2837      ACbranchSendingBus(ACbranch,frB,fd)
+2838          $ { branchBusDefn(ACbranch,frB,toB) and (ord(fd) = 1) } = yes ;
+2839   
+2840      ACbranchReceivingBus(ACbranch,toB,fd)
+2841          $ { branchBusDefn(ACbranch,frB,toB) and (ord(fd) = 1) } = yes ;
+2842   
+2843      ACbranchSendingBus(ACbranch,toB,fd)
+2844          $ { branchBusDefn(ACbranch,frB,toB) and (ord(fd) = 2) } = yes ;
+2845   
+2846      ACbranchReceivingBus(ACbranch,frB,fd)
+2847          $ { branchBusDefn(ACbranch,frB,toB) and (ord(fd) = 2) } = yes ;
+2848  endloop;
+2849   
+2850  HVDClinkSendingBus(HVDClink,frB)
+2851      $ sum[ branchBusDefn(HVDClink,frB,toB), 1 ] = yes ;
+2852   
+2853  HVDClinkReceivingBus(HVDClink,toB)
+2854      $ sum[ branchBusDefn(HVDClink,frB,toB), 1 ] = yes ;
+2855   
+2856  HVDClinkBus(HVDClink,b) $ HVDClinkSendingBus(HVDClink,b)   = yes ;
+2857  HVDClinkBus(HVDClink,b) $ HVDClinkReceivingBus(HVDClink,b) = yes ;
+2858   
+2859  * Determine the HVDC inter-island pole in the northward and southward direction
+2860   
+2861  HVDCpoleDirection(dt,br,fd) $ { (ord(fd) = 1) and HVDClink(dt,br) }
+2862      = yes $ sum[ (isl,NodeBus(dt,n,b)) $ { (ord(isl) = 2)
+2863                                         and nodeIsland(dt,n,isl)
+2864                                         and HVDClinkSendingBus(dt,br,b) }, 1 ] ;
+2865   
+2866  HVDCpoleDirection(dt,br,fd) $ { (ord(fd) = 2) and HVDClink(dt,br) }
+2867      = yes $ sum[ (isl,NodeBus(dt,n,b)) $ { (ord(isl) = 1)
+2868                                         and nodeIsland(dt,n,isl)
+2869                                         and HVDClinkSendingBus(dt,br,b) }, 1 ] ;
+2870   
+2871  * Mapping HVDC branch to pole to account for name changes to Pole 3
+2872  HVDCpoleBranchMap('Pole1',br) $ sum[ sameas(br,'BEN_HAY1.1'), 1] = yes ;
+2873  HVDCpoleBranchMap('Pole1',br) $ sum[ sameas(br,'HAY_BEN1.1'), 1] = yes ;
+2874  HVDCpoleBranchMap('Pole1',br) $ sum[ sameas(br,'BEN_HAY3.1'), 1] = yes ;
+2875  HVDCpoleBranchMap('Pole1',br) $ sum[ sameas(br,'HAY_BEN3.1'), 1] = yes ;
+2876  HVDCpoleBranchMap('Pole2',br) $ sum[ sameas(br,'BEN_HAY2.1'), 1] = yes ;
+2877  HVDCpoleBranchMap('Pole2',br) $ sum[ sameas(br,'HAY_BEN2.1'), 1] = yes ;
+2878   
+2879  * Initialise network data for the current trade period start
+2880  branchResistance(branch)    = branchParameter(branch,'resistance') ;
+2881  branchSusceptance(ACbranch) = -100 * branchParameter(ACbranch,'susceptance');
+2882  branchLossBlocks(branch)    = branchParameter(branch,'numLossTranches') ;
+2883   
+2884  * Ensure fixed losses for no loss AC branches are not included
+2885  branchFixedLoss(ACbranch) = branchParameter(ACbranch,'fixedLosses')
+2886                            $ (branchLossBlocks(ACbranch) > 1) ;
+2887   
+2888  branchFixedLoss(HVDClink) = branchParameter(HVDClink,'fixedLosses') ;
+2889   
+2890  * Set resistance and fixed loss to zero if do not want to use the loss model
+2891  branchResistance(ACbranch) $ (not useAClossModel) = 0 ;
+2892  branchFixedLoss(ACbranch)  $ (not useAClossModel) = 0 ;
+2893  branchResistance(HVDClink) $ (not useHVDClossModel) = 0 ;
+2894  branchFixedLoss(HVDClink)  $ (not useHVDClossModel) = 0 ;
+2895   
+2896  * Initialise loss tranches data for the current trade period start
+2897  * The loss factor coefficients assume that the branch capacity is in MW
+2898  * and the resistance is in p.u.
+2899   
+2900  * Loss branches with 0 loss blocks
+2901  lossSegmentMW(branch,los,fd)
+2902      $ { (branchLossBlocks(branch) = 0) and (ord(los) = 1) }
+2903      = branchCapacity(branch,fd) ;
+2904   
+2905  LossSegmentFactor(branch,los,fd)
+2906      $ { (branchLossBlocks(branch) = 0) and (ord(los) = 1) }
+2907      = 0 ;
+2908   
+2909  * Loss branches with 1 loss blocks
+2910  LossSegmentMW(branch,los,fd)
+2911      $ { (branchLossBlocks(branch) = 1) and (ord(los) = 1) }
+2912      = maxFlowSegment ;
+2913   
+2914  LossSegmentFactor(branch,los,fd)
+2915      $ { (branchLossBlocks(branch) = 1) and (ord(los) = 1) }
+2916      = 0.01 * branchResistance(branch) * branchCapacity(branch,fd) ;
+2917   
+2918  * Loss branches with 3 loss blocks
+2919  loop branch $ (branchLossBlocks(branch) = 3) do
+2920  *   Segment 1
+2921      LossSegmentMW(branch,los,fd) $ (ord(los) = 1)
+2922          = lossCoeff_A * branchCapacity(branch,fd) ;
+2923   
+2924      LossSegmentFactor(branch,los,fd) $ (ord(los) = 1)
+2925          = 0.01 * 0.75 * lossCoeff_A
+2926          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2927   
+2928  *   Segment 2
+2929      LossSegmentMW(branch,los,fd) $ (ord(los) = 2)
+2930          = (1-lossCoeff_A) * branchCapacity(branch,fd) ;
+2931   
+2932      LossSegmentFactor(branch,los,fd) $ (ord(los) = 2)
+2933          = 0.01 * branchResistance(branch) * branchCapacity(branch,fd) ;
+2934   
+2935  *   Segment 3
+2936      LossSegmentMW(branch,los,fd) $ (ord(los) = 3)
+2937          = maxFlowSegment ;
+2938   
+2939      LossSegmentFactor(branch,los,fd) $ (ord(los) = 3)
+2940          = 0.01 * (2 - (0.75*lossCoeff_A))
+2941          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2942  endloop;
+2943   
+2944  * Loss branches with 6 loss blocks
+2945  loop branch $ (branchLossBlocks(branch) = 6) do
+2946  *   Segment 1
+2947      LossSegmentMW(branch,los,fd) $ (ord(los) = 1)
+2948          = lossCoeff_C  * branchCapacity(branch,fd) ;
+2949   
+2950      LossSegmentFactor(branch,los,fd) $ (ord(los) = 1)
+2951          = 0.01 * 0.75 * lossCoeff_C
+2952          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2953   
+2954  *   Segment 2
+2955      LossSegmentMW(branch,los,fd) $ (ord(los) = 2)
+2956          = lossCoeff_D * branchCapacity(branch,fd) ;
+2957   
+2958      LossSegmentFactor(branch,los,fd) $ (ord(los) = 2)
+2959          = 0.01 * lossCoeff_E
+2960          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2961   
+2962  *   Segment 3
+2963      LossSegmentMW(branch,los,fd) $ (ord(los) = 3)
+2964          = 0.5 * branchCapacity(branch,fd) ;
+2965   
+2966      LossSegmentFactor(branch,los,fd) $ (ord(los) = 3)
+2967          = 0.01 * lossCoeff_F
+2968          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2969   
+2970  *   Segment 4
+2971      LossSegmentMW(branch,los,fd) $ (ord(los) = 4)
+2972          = (1 - lossCoeff_D) * branchCapacity(branch,fd) ;
+2973   
+2974      LossSegmentFactor(branch,los,fd) $ (ord(los) = 4)
+2975          = 0.01 * (2 - lossCoeff_F)
+2976          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2977   
+2978  *   Segment 5
+2979      LossSegmentMW(branch,los,fd) $ (ord(los) = 5)
+2980          = (1 - lossCoeff_C) * branchCapacity(branch,fd) ;
+2981   
+2982      LossSegmentFactor(branch,los,fd) $ (ord(los) = 5)
+2983          = 0.01 * (2 - lossCoeff_E)
+2984          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2985   
+2986  *   Segment 6
+2987      LossSegmentMW(branch,los,fd) $ (ord(los) = 6)
+2988          = maxFlowSegment ;
+2989   
+2990      LossSegmentFactor(branch,los,fd) $ (ord(los) = 6)
+2991          = 0.01 * (2 - (0.75*lossCoeff_C))
+2992          * branchResistance(branch) * branchCapacity(branch,fd) ;
+2993  endloop ;
+2994   
+2995  * HVDC does not have backward flow --> No loss segment for backward flow
+2996  LossSegmentMW(HVDClink,los,fd) $ (ord(fd) = 2) = 0;
+2997  LossSegmentFactor(HVDClink,los,fd) $ (ord(fd) = 2) = 0;
+2998   
+2999   
+3000  * Valid loss segment for a branch is defined as a loss segment that
+3001  * has a non-zero LossSegmentMW or a non-zero LossSegmentFactor.
+3002  validLossSegment(branch,los,fd) = yes $ { (ord(los) = 1) or
+3003                                            LossSegmentMW(branch,los,fd) or
+3004                                            LossSegmentFactor(branch,los,fd) } ;
+3005   
+3006  * HVDC loss model requires at least two loss segments and
+3007  * an additional loss block due to cumulative loss formulation
+3008  validLossSegment(HVDClink,los,fd)
+3009      $ { (branchLossBlocks(HVDClink) <= 1) and (ord(los) = 2) } = yes ;
+3010   
+3011  validLossSegment(HVDClink,los,fd)
+3012      $ { (branchLossBlocks(HVDClink) > 1) and
+3013          (ord(los) = (branchLossBlocks(HVDClink) + 1)) and
+3014          (sum[ los1, LossSegmentMW(HVDClink,los1,fd)
+3015                    + LossSegmentFactor(HVDClink,los1,fd) ] > 0)
+3016        } = yes ;
+3017   
+3018  * branches that have non-zero loss factors
+3019  LossBranch(branch) $ sum[ (los,fd), LossSegmentFactor(branch,los,fd) ] = yes ;
+3020   
+3021  * Create AC branch loss segments
+3022  ACbranchLossMW(ACbranch,los,fd)
+3023      $ { validLossSegment(ACbranch,los,fd) and (ord(los) = 1) }
+3024      = LossSegmentMW(ACbranch,los,fd) ;
+3025   
+3026  ACbranchLossMW(ACbranch,los,fd)
+3027      $ { validLossSegment(ACbranch,los,fd) and (ord(los) > 1) }
+3028      = LossSegmentMW(ACbranch,los,fd) - LossSegmentMW(ACbranch,los-1,fd) ;
+3029   
+3030  ACbranchLossFactor(ACbranch,los,fd)
+3031      $ validLossSegment(ACbranch,los,fd) = LossSegmentFactor(ACbranch,los,fd) ;
+3032   
+3033  * Create HVDC loss break points
+3034  HVDCBreakPointMWFlow(HVDClink,bp,fd) $ (ord(bp) = 1) = 0 ;
+3035  HVDCBreakPointMWLoss(HVDClink,bp,fd) $ (ord(bp) = 1) = 0 ;
+3036   
+3037  HVDCBreakPointMWFlow(HVDClink,bp,fd)
+3038      $ { validLossSegment(HVDClink,bp,fd) and (ord(bp) > 1) }
+3039      = LossSegmentMW(HVDClink,bp-1,fd) ;
+3040   
+3041  HVDCBreakPointMWLoss(HVDClink,bp,fd)
+3042      $ { validLossSegment(HVDClink,bp,fd) and (ord(bp) = 2) }
+3043      =  LossSegmentMW(HVDClink,bp-1,fd) * LossSegmentFactor(HVDClink,bp-1,fd) ;
+3044   
+3045  loop (HVDClink(branch),bp) $ (ord(bp) > 2) do
+3046      HVDCBreakPointMWLoss(branch,bp,fd) $ validLossSegment(branch,bp,fd)
+3047          = LossSegmentFactor(branch,bp-1,fd)
+3048          * [ LossSegmentMW(branch,bp-1,fd) - LossSegmentMW(branch,bp-2,fd) ]
+3049          + HVDCBreakPointMWLoss(branch,bp-1,fd) ;
+3050  endloop ;
+3051  *-------------------------------------------------------------------------------
+3052   
+3053   
+3054  * Initialise branch constraint data --------------------------------------------
+3055  branchConstraint(dt,brCstr)
+3056      $ sum[ branch(dt,br) $ branchCstrFactors(dt,brCstr,br), 1 ] = yes ;
+3057   
+3058  branchConstraintSense(branchConstraint)
+3059      = branchCstrRHS(branchConstraint,'cnstrSense') ;
+3060   
+3061  branchConstraintLimit(branchConstraint)
+3062      = branchCstrRHS(branchConstraint,'cnstrLimit') ;
+3063  *-------------------------------------------------------------------------------
+3064   
+3065   
+3066  * Calculate parameters for NMIR project ----------------------------------------
+3067  islandRiskGroup(dt,isl,rg,riskC)
+3068      = yes $ sum[ o $ { offerIsland(dt,o,isl)
+3069                     and riskGroupOffer(dt,rg,o,riskC) }, 1 ] ;
+3070   
+3071  modulationRisk(dt) = smax[ riskC, modulationRiskClass(dt,RiskC) ];
+3072   
+3073  reserveShareEnabledOverall(dt) = smax[ resC, reserveShareEnabled(dt,resC) ];
+3074   
+3075  roPwrZoneExit(dt,resC)
+3076      = [ roundPower2MonoLevel(dt) - modulationRisk(dt) ]$(ord(resC)=1)
+3077      + bipole2MonoLevel(dt)$(ord(resC)=2) ;
+3078   
+3079  * National market refinement - effective date 28 Mar 2019 12:00
+         SPD pre-processing is changed so that the roundpower settings for FIR are
+         now the same as for SIR. Specifically:
+         -  The RoundPowerZoneExit for FIR will be set at BipoleToMonopoleTransition
+            by SPD pre-processing (same as for SIR). A change from the existing where
+            the RoundPowerZoneExit for FIR is set at RoundPowerToMonopoleTransition
+            by SPD pre-processing.
+         -  Provided that roundpower is not disabled by the MDB, the InNoReverseZone
+            for FIR will be removed by SPD pre-processing (same as for SIR). A change
+            from the existing where the InNoReverseZone for FIR is never removed by
+            SPD pre-processing.
+3092   
+3093  if inputGDXGDate >= jdate(2019,03,28) then
+3094      roPwrZoneExit(dt,resC) = bipole2MonoLevel(dt) ;
+3095  endif ;
+3096   
+3097  * National market refinement end
+3098   
+3099   
+3100  * Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.2.1)
+3101  sharedNFRLoad(dt,isl)
+3102      = sum[ nodeIsland(dt,n,isl), RequiredLoad(dt,n)]
+3103      + sum[ (bd,blk) $ bidIsland(dt,bd,isl), DemBidMW(dt,bd,blk) ]
+3104      - sharedNFRLoadOffset(dt,isl) ;
+3105   
+3106  sharedNFRMax(dt,isl) = Min{ RMTReserveLimitTo(dt,isl,'FIR'),
+3107                              sharedNFRFactor(dt)*sharedNFRLoad(dt,isl) } ;
+3108   
+3109  * Calculate HVDC constraint sets and HVDC Max Flow - NMIR (4.1.8 - NMIR06)
+       TN on 22 May 2017:
+      Usually a branch group constraint that limits the HVDC flow only involves the
+      HVDC branch(s) in the same direction. However, during TP6 to TP9 of 18 May 2017,
+      the constraint HAY_BEN_High_Frequency_limit involved all four branches in the
+      form: HAY_BEN1.1 + HAY_BEN2.1 - BEN_HAY1.1 - BEN_HAY2.1 <= 530 MW
+      This method of formulating the constraint prevented the previous formulation of
+      monopoleConstraint and bipoleConstraintfrom working properly. Those constraints
+      have been reformulated (see below) in order to cope with the formulation
+      observed on 18 May 2017.
+3121  monopoleConstraint(dt,isl,brCstr,br)
+3122      $ { HVDClink(dt,br)
+3123      and ( not rampingConstraint(dt,brCstr) )
+3124      and ( branchConstraintSense(dt,brCstr) = -1 )
+3125      and (Sum[ (br1,b) $ {HVDClinkSendingBus(dt,br1,b) and busIsland(dt,b,isl)}
+3126                        , branchCstrFactors(dt,brCstr,br1)    ] = 1)
+3127      and (Sum[ b $ {HVDClinkSendingBus(dt,br,b) and busIsland(dt,b,isl)}
+3128                   , branchCstrFactors(dt,brCstr,br)      ] = 1)
+3129         } = yes ;
+3130   
+3131  bipoleConstraint(dt,isl,brCstr)
+3132      $ { ( not rampingConstraint(dt,brCstr) )
+3133      and ( branchConstraintSense(dt,brCstr) = -1 )
+3134      and (Sum[ (br,b) $ { HVDClink(dt,br)
+3135                       and HVDClinkSendingBus(dt,br,b)
+3136                       and busIsland(dt,b,isl) }
+3137                      , branchCstrFactors(dt,brCstr,br)  ] = 2)
+3138                         } = yes ;
+3139   
+3140  monoPoleCapacity(dt,isl,br)
+3141      = Sum[ (b,fd) $ { BusIsland(dt,b,isl)
+3142                    and HVDClink(dt,br)
+3143                    and HVDClinkSendingBus(dt,br,b)
+3144                    and ( ord(fd) = 1 )
+3145                      }, branchCapacity(dt,br,fd) ] ;
+3146   
+3147  monoPoleCapacity(dt,isl,br)
+3148      $ Sum[ brCstr $ monopoleConstraint(dt,isl,brCstr,br), 1]
+3149      = Smin[ brCstr $ monopoleConstraint(dt,isl,brCstr,br)
+3150            , branchConstraintLimit(dt,brCstr) ];
+3151   
+3152  monoPoleCapacity(dt,isl,br)
+3153      = Min( monoPoleCapacity(dt,isl,br),
+3154             sum[ fd $ ( ord(fd) = 1 ), branchCapacity(dt,br,fd) ] );
+3155   
+3156  biPoleCapacity(dt,isl)
+3157      $ Sum[ brCstr $ bipoleConstraint(dt,isl,brCstr), 1]
+3158      = Smin[ brCstr $ bipoleConstraint(dt,isl,brCstr)
+3159            , branchConstraintLimit(dt,brCstr) ];
+3160   
+3161  biPoleCapacity(dt,isl)
+3162      $ { Sum[ brCstr $ bipoleConstraint(dt,isl,brCstr), 1] = 0 }
+3163      = Sum[ (b,br,fd) $ { BusIsland(dt,b,isl) and HVDClink(dt,br)
+3164                       and HVDClinkSendingBus(dt,br,b)
+3165                       and ( ord(fd) = 1 )
+3166                         }, branchCapacity(dt,br,fd) ] ;
+3167   
+3168  HVDCMax(dt,isl)
+3169      = Min( biPoleCapacity(dt,isl), Sum[ br, monoPoleCapacity(dt,isl,br) ] ) ;
+3170   
+3171   
+3172  * Calculate HVDC HVDC Loss segment applied for NMIR ----------------------------
+      * Note: When NMIR started on 20/10/2016, the SOdecided to incorrectly calculate the HVDC loss
+      * curve for reserve sharing based on the HVDC capacity only (i.e. not based on in-service HVDC poles)
+      * Tuong Nguyen @ EA discovered this bug and the SO has fixed it as of 22/11/2016.
+3178  if inputGDXGDate >= jdate(2016,11,22) then
+3179        HVDCCapacity(dt,isl)
+3180            = Sum[ (b,br,fd) $ { BusIsland(dt,b,isl) and HVDClink(dt,br)
+3181                             and HVDClinkSendingBus(dt,br,b)
+3182                             and ( ord(fd) = 1 )
+3183                               }, branchCapacity(dt,br,fd) ] ;
+3184   
+3185        numberOfPoles(dt,isl)
+3186            = Sum[ (b,br) $ { BusIsland(dt,b,isl) and HVDClink(dt,br)
+3187                          and HVDClinkSendingBus(dt,br,b) }, 1 ] ;
+3188   
+3189        HVDCResistance(dt,isl) $ (numberOfPoles(dt,isl) = 2)
+3190            = Prod[ (b,br) $ { BusIsland(dt,b,isl) and HVDClink(dt,br)
+3191                           and HVDClinkSendingBus(dt,br,b)
+3192                             }, branchResistance(dt,br) ]
+3193            / Sum[ (b,br) $ { BusIsland(dt,b,isl) and HVDClink(dt,br)
+3194                          and HVDClinkSendingBus(dt,br,b)
+3195                            }, branchResistance(dt,br) ] ;
+3196   
+3197        HVDCResistance(dt,isl) $ (numberOfPoles(dt,isl) = 1)
+3198            = Sum[ br $ monoPoleCapacity(dt,isl,br), branchResistance(dt,br) ] ;
+3199  else
+3200      HVDCCapacity(dt,isl)
+3201          = Sum[ (br,b,b1,fd) $ { (HVDCBranch(dt,br) = 1)
+3202                              and busIsland(dt,b,isl)
+3203                              and branchDefn(dt,br,b,b1)
+3204                              and ( ord(fd) = 1 )
+3205                                }, branchCapacity(dt,br,fd) ] ;
+3206   
+3207      numberOfPoles(dt,isl)
+3208          =Sum[ (br,b,b1) $ { (HVDCBranch(dt,br) = 1)
+3209                        and busIsland(dt,b,isl)
+3210                        and branchDefn(dt,br,b,b1)
+3211                        and sum[ fd $ ( ord(fd) = 1 )
+3212                               , branchCapacity(dt,br,fd) ]
+3213                          }, 1 ] ;
+3214   
+3215      HVDCResistance(dt,isl)
+3216          =  Sum[ (br,b,b1,brPar)
+3217                $ { (HVDCBranch(dt,br) = 1)
+3218                and busIsland(dt,b,isl)
+3219                and branchDefn(dt,br,b,b1)
+3220                and (ord(brPar) = 1)
+3221                  }, branchParameter(dt,br,brPar) ] ;
+3222   
+3223      HVDCResistance(dt,isl) $ (numberOfPoles(dt,isl) = 2)
+3224          = Prod[ (br,b,b1,brPar)
+3225                $ { (HVDCBranch(dt,br) = 1)
+3226                and busIsland(dt,b,isl)
+3227                and branchDefn(dt,br,b,b1)
+3228                and sum[ fd $ ( ord(fd) = 1 )
+3229                               , branchCapacity(dt,br,fd) ]
+3230                and (ord(brPar) = 1)
+3231                  }, branchParameter(dt,br,brPar)
+3232                ] / HVDCResistance(dt,isl) ;
+3233  endif ;
+3234   
+3235  * Segment 1
+3236  HVDCLossSegmentMW(dt,isl,los) $ (ord(los) = 1)
+3237      = HVDCCapacity(dt,isl) * lossCoeff_C ;
+3238   
+3239  HVDCLossSegmentFactor(dt,isl,los) $ (ord(los) = 1)
+3240      = 0.01 * 0.75 * lossCoeff_C
+3241      * HVDCResistance(dt,isl) * HVDCCapacity(dt,isl) ;
+3242   
+3243  * Segment 2
+3244  HVDCLossSegmentMW(dt,isl,los) $ (ord(los) = 2)
+3245      = HVDCCapacity(dt,isl) * lossCoeff_D ;
+3246   
+3247  HVDCLossSegmentFactor(dt,isl,los) $ (ord(los) = 2)
+3248      = 0.01 * lossCoeff_E
+3249      * HVDCResistance(dt,isl) * HVDCCapacity(dt,isl) ;
+3250   
+3251  * Segment 3
+3252  HVDCLossSegmentMW(dt,isl,los) $ (ord(los) = 3)
+3253      = HVDCCapacity(dt,isl) * 0.5 ;
+3254   
+3255  HVDCLossSegmentFactor(dt,isl,los) $ (ord(los) = 3)
+3256      = 0.01 * lossCoeff_F
+3257      * HVDCResistance(dt,isl) * HVDCCapacity(dt,isl) ;
+3258   
+3259  * Segment 4
+3260  HVDCLossSegmentMW(dt,isl,los) $ (ord(los) = 4)
+3261      = HVDCCapacity(dt,isl) * (1 - lossCoeff_D) ;
+3262   
+3263  HVDCLossSegmentFactor(dt,isl,los) $ (ord(los) = 4)
+3264      = 0.01 * (2 - lossCoeff_F)
+3265      * HVDCResistance(dt,isl) * HVDCCapacity(dt,isl) ;
+3266   
+3267  * Segment 5
+3268  HVDCLossSegmentMW(dt,isl,los) $ (ord(los) = 5)
+3269      = HVDCCapacity(dt,isl) * (1 - lossCoeff_C) ;
+3270   
+3271  HVDCLossSegmentFactor(dt,isl,los) $ (ord(los) = 5)
+3272      = 0.01 * (2 - lossCoeff_E)
+3273      * HVDCResistance(dt,isl) * HVDCCapacity(dt,isl) ;
+3274   
+3275  * Segment 6
+3276  HVDCLossSegmentMW(dt,isl,los) $ (ord(los) = 6)
+3277      = HVDCCapacity(dt,isl) ;
+3278   
+3279  HVDCLossSegmentFactor(dt,isl,los) $ (ord(los) = 6)
+3280      = 0.01 * (2 - (0.75*lossCoeff_C))
+3281      * HVDCResistance(dt,isl) * HVDCCapacity(dt,isl) ;
+3282   
+3283  * Parameter for energy lambda loss model
+3284  HVDCSentBreakPointMWFlow(dt,isl,bp) $ (ord(bp) = 1) = 0 ;
+3285  HVDCSentBreakPointMWLoss(dt,isl,bp) $ (ord(bp) = 1) = 0 ;
+3286   
+3287  HVDCSentBreakPointMWFlow(dt,isl,bp) $ (ord(bp) > 1)
+3288      = HVDCLossSegmentMW(dt,isl,bp-1) ;
+3289   
+3290  loop (dt,isl,bp) $ {(ord(bp) > 1) and (ord(bp) <= 7)} do
+3291      HVDCSentBreakPointMWLoss(dt,isl,bp)
+3292          = HVDClossScalingFactor(dt)
+3293          * HVDCLossSegmentFactor(dt,isl,bp-1)
+3294          * [ HVDCLossSegmentMW(dt,isl,bp-1)
+3295            - HVDCSentBreakPointMWFlow(dt,isl,bp-1) ]
+3296          + HVDCSentBreakPointMWLoss(dt,isl,bp-1) ;
+3297  endloop ;
+3298   
+3299  * Parameter for energy+reserve lambda loss model
+3300   
+3301  * Ideally SO should use asymmetric loss curve
+3302  HVDCReserveBreakPointMWFlow(dt,isl,rsbp) $ (ord(rsbp) <= 7)
+3303      = Sum[ (isl1,rsbp1) $ { ( not sameas(isl1,isl) )
+3304                          and ( ord(rsbp) + ord(rsbp1) = 8)}
+3305           , -HVDCSentBreakPointMWFlow(dt,isl1,rsbp1) ];
+3306   
+3307  * SO decide to use symmetric loss curve instead
+3308  HVDCReserveBreakPointMWFlow(dt,isl,rsbp) $ (ord(rsbp) <= 7)
+3309      = Sum[ rsbp1 $ { ord(rsbp) + ord(rsbp1) = 8}
+3310           , -HVDCSentBreakPointMWFlow(dt,isl,rsbp1) ];
+3311   
+3312  HVDCReserveBreakPointMWFlow(dt,isl,rsbp)
+3313      $ { (ord(rsbp) > 7) and (ord(rsbp) <= 13) }
+3314      = HVDCSentBreakPointMWFlow(dt,isl,rsbp-6) ;
+3315   
+3316   
+3317  * Ideally SO should use asymmetric loss curve
+3318  HVDCReserveBreakPointMWLoss(dt,isl,rsbp) $ (ord(rsbp) <= 7)
+3319      = Sum[ (isl1,rsbp1) $ { ( not sameas(isl1,isl) )
+3320                          and ( ord(rsbp) + ord(rsbp1) = 8)}
+3321           , HVDCSentBreakPointMWLoss(dt,isl1,rsbp1) ];
+3322   
+3323  * SO decide to use symmetric loss curve instead
+3324  HVDCReserveBreakPointMWLoss(dt,isl,rsbp) $ (ord(rsbp) <= 7)
+3325      = Sum[ rsbp1 $ { ord(rsbp) + ord(rsbp1) = 8}
+3326           , HVDCSentBreakPointMWLoss(dt,isl,rsbp1) ];
+3327   
+3328  HVDCReserveBreakPointMWLoss(dt,isl,rsbp)
+3329      $ { (ord(rsbp) > 7) and (ord(rsbp) <= 13) }
+3330      = HVDCSentBreakPointMWLoss(dt,isl,rsbp-6);
+3331   
+3332  * Parameter for lambda loss model  end
+3333   
+3334  * Initialze parameters for NMIR project end ----------------------------------
+3335   
+3336   
+3337  * Initialise risk/reserve data for the current trade period start
+3338   
+3339  GenRisk(riskC)     $ (ord(riskC) = 1) = yes ;
+3340  HVDCrisk(riskC)    $ (ord(riskC) = 2) = yes ;
+3341  HVDCrisk(riskC)    $ (ord(riskC) = 3) = yes ;
+3342  ManualRisk(riskC)  $ (ord(riskC) = 4) = yes ;
+3343  GenRisk(riskC)     $ (ord(riskC) = 5) = yes ;
+3344  ManualRisk(riskC)  $ (ord(riskC) = 6) = yes ;
+3345  HVDCsecRisk(riskC) $ (ord(riskC) = 7) = yes ;
+3346  HVDCsecRisk(riskC) $ (ord(riskC) = 8) = yes ;
+3347   
+3348  * Define the CE and ECE risk class set to support the different CE and ECE CVP
+3349  ContingentEvents(riskC)        $ (ord(riskC) = 1) = yes ;
+3350  ContingentEvents(riskC)        $ (ord(riskC) = 2) = yes ;
+3351  ExtendedContingentEvent(riskC) $ (ord(riskC) = 3) = yes ;
+3352  ContingentEvents(riskC)        $ (ord(riskC) = 4) = yes ;
+3353  ExtendedContingentEvent(riskC) $ (ord(riskC) = 5) = yes ;
+3354  ExtendedContingentEvent(riskC) $ (ord(riskC) = 6) = yes ;
+3355  ContingentEvents(riskC)        $ (ord(riskC) = 7) = yes ;
+3356  ExtendedContingentEvent(riskC) $ (ord(riskC) = 8) = yes ;
+3357   
+3358  * Risk parameters
+3359  FreeReserve(dt,isl,resC,riskC)
+3360      = riskParameter(dt,isl,resC,riskC,'freeReserve')
+3361  * NMIR - Subtract shareNFRMax from current NFR -(5.2.1.4) - SPD version 11
+3362      - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(dt,isl1)
+3363           ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) )
+3364             and (inputGDXGDate >= jdate(2016,10,20)) }
+3365      ;
+3366   
+3367  IslandRiskAdjustmentFactor(dt,isl,resC,riskC) $ useReserveModel
+3368      = riskParameter(dt,isl,resC,riskC,'adjustFactor') ;
+3369   
+3370  * HVDC rampup max - (6.5.1.2) - SPD version 12
+3371  HVDCpoleRampUp(dt,isl,resC,riskC)
+3372      = riskParameter(dt,isl,resC,riskC,'HVDCRampUp') ;
+3373   
+3374  * Initialise market node constraint data for the current trading period
+3375  MnodeConstraint(dt,MnodeCstr)
+3376      $ { sum[ (offer(dt,o),resT,resC)
+3377             $ { mnCstrEnrgFactors(dt,MnodeCstr,o) or
+3378                 mnCnstrResrvFactors(dt,MnodeCstr,o,resC,resT)
+3379               }, 1
+3380             ]
+3381        or
+3382          sum[ (bid(dt,bd),resC)
+3383             $ { mnCnstrEnrgBidFactors(dt,MnodeCstr,bd) or
+3384                 mnCnstrResrvBidFactors(dt,MnodeCstr,bd,resC)
+3385               }, 1
+3386             ]
+3387        } = yes ;
+3388   
+3389  MnodeConstraintSense(MnodeConstraint)
+3390      = mnCnstrRHS(MnodeConstraint,'cnstrSense') ;
+3391   
+3392  MnodeConstraintLimit(MnodeConstraint)
+3393      = mnCnstrRHS(MnodeConstraint,'cnstrLimit') ;
+3394   
+3395   
+3396  * Generation Ramp Pre_processing -----------------------------------------------
+3397  * For PRICERESPONSIVEIG generators, The RTD RampRateUp is capped: (4.7.2.2)
+3398  if studyMode = 101 or studyMode = 201 then
+3399      RampRateUp(offer(dt,o)) $ { windOffer(offer) and priceResponsive(offer) }
+3400          = Min[ RampRateUp(offer), rtdIgIncreaseLimit(dt)*60/intervalDuration ];
+3401  endif;
+3402   
+3403   
+3404  totalBusAllocation(dt,b) $ bus(dt,b) = sum[ n $ Node(dt,n), NodeBusAllocationFactor(dt,n,b)];
+3405  busNodeAllocationFactor(dt,b,n) $ (totalBusAllocation(dt,b) > 0) = NodeBusAllocationFactor(dt,n,b) / totalBusAllocation(dt,b) ;
+3406   
+3407  * Need to initiate value for this parameters before it is used
+3408  o_offerEnergy_TP(dt,o) = 0;
+3409   
+3410   
+3411  * TN - Pivot or demand analysis begin
+3414  * TN - Pivot or demand analysis begin end
+3415   
+3417  *=====================================================================================
+3418  * 7. The vSPD solve loop
+3419  *=====================================================================================
+3420  if (studyMode = 101 or studyMode = 201,
+INCLUDE    C:\vSPD\ElectricityAuthority\Programs\vSPDsolve_RTP.gms
+3422  *=====================================================================================
+3423  * Name:                 vSPDsolve_RTP.gms
+3424  * Function:             First RTD solve to update island loss in order to
+3425  *                       adjust node demand
+3426  *                       A new development for Rea
+3427  * Developed by:         Electricity Authority, New Zealand
+3428  * Source:               https://github.com/ElectricityAuthority/vSPD
+3429  *                       http://www.emi.ea.govt.nz/Tools/vSPD
+3430  * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
+3431  *                       Email: emi@ea.govt.nz
+3432  * Created on:           14 Jan 2022
+3433   
+3434  *=====================================================================================
+3435   
+3436  *   7d. Solve Models First Time For Real Time Pricing
+3437  *=====================================================================================
+3438  * 7. The vSPD solve loop
+3439  *=====================================================================================
+3440  DidShortfallTransfer(dt,n) = 0;
+3441  ShortfallDisabledScaling(dt,n) = 0;
+3442  CheckedNodeCandidate(dt,n) = 0;
+      * Check Potential for Modelling Inconsistency (7.2.3.i&j)
+      The potential for a modelling inconsistency exists because while planned outages
+      are incorporated in the Network Model they are not necessarily reflected in the
+      forecast load. The Shortfall Check detects a modelling inconsistency if the
+      shortfall node has an associated ACLine in SHORTFALLACLINES and this ACLine is
+      removed from the model.
+3451  PotentialModellingInconsistency(dt,n)= 1 $ { sum[ branch(dt,br) $ nodeoutagebranch(dt,n,br), 1] < sum[ br $ nodeoutagebranch(dt,n,br), 1] } ;
+3452   
+3453  put_utility temp 'gdxin' / 'C:\vSPD\ElectricityAuthority\Programs\..\Input\\RTD_202211061725_61012022110425024_20221106172401_New.gdx' ;
+3454  execute_load SPDLoadCalcLosses = i_dateTimeSPDLoadCalcLosses  ;
+3455  put_utility temp 'gdxin' ;
+3456   
+3457  unsolvedDT(dt) = yes;
+3458  VSPDModel(dt) = 0 ;
+3459  LoopCount(dt) = 1;
+3460   
+3461  *While ( Sum[ dt $ unsolvedDT(dt), 1],
+3462   
+3463  While ( Sum[ dt $ { unsolvedDT(dt) and (LoopCount(dt) < maxSolveLoops(dt)) }, 1],
+3464    loop[ dt $ { unsolvedDT(dt) and (LoopCount(dt) < maxSolveLoops(dt)) },
+3465  *  loop[ dt $ { unsolvedDT(dt) },
+3466   
+3467  *   7a. Reset all sets, parameters and variables -------------------------------
+3468      option clear = t ;
+3469  *   Generation variables
+3470      option clear = GENERATION ;
+3471      option clear = GENERATIONBLOCK ;
+3472      option clear = GENERATIONUPDELTA ;
+3473      option clear = GENERATIONDNDELTA ;
+3474  *   Purchase variables
+3475      option clear = PURCHASE ;
+3476      option clear = PURCHASEBLOCK ;
+3477  *   Network variables
+3478      option clear = ACNODENETINJECTION ;
+3479      option clear = ACNODEANGLE ;
+3480      option clear = ACBRANCHFLOW ;
+3481      option clear = ACBRANCHFLOWDIRECTED ;
+3482      option clear = ACBRANCHLOSSESDIRECTED ;
+3483      option clear = ACBRANCHFLOWBLOCKDIRECTED ;
+3484      option clear = ACBRANCHLOSSESBLOCKDIRECTED ;
+3485      option clear = ACBRANCHFLOWDIRECTED_INTEGER ;
+3486      option clear = HVDCLINKFLOW ;
+3487      option clear = HVDCLINKLOSSES ;
+3488      option clear = LAMBDA ;
+3489      option clear = LAMBDAINTEGER ;
+3490      option clear = HVDCLINKFLOWDIRECTED_INTEGER ;
+3491      option clear = HVDCPOLEFLOW_INTEGER ;
+3492  *   Risk/Reserve variables
+3493      option clear = RISKOFFSET ;
+3494      option clear = HVDCREC ;
+3495      option clear = ISLANDRISK ;
+3496      option clear = RESERVEBLOCK ;
+3497      option clear = RESERVE ;
+3498      option clear = ISLANDRESERVE;
+3499  *   NMIR variables
+3500      option clear = SHAREDNFR ;
+3501      option clear = SHAREDRESERVE ;
+3502      option clear = HVDCSENT ;
+3503      option clear = RESERVESHAREEFFECTIVE ;
+3504      option clear = RESERVESHARERECEIVED ;
+3505      option clear = RESERVESHARESENT ;
+3506      option clear = HVDCSENDING ;
+3507      option clear = INZONE ;
+3508      option clear = HVDCSENTINSEGMENT ;
+3509      option clear = HVDCRESERVESENT ;
+3510      option clear = HVDCSENTLOSS ;
+3511      option clear = HVDCRESERVELOSS ;
+3512      option clear = LAMBDAHVDCENERGY ;
+3513      option clear = LAMBDAHVDCRESERVE ;
+3514      option clear = RESERVESHAREPENALTY ;
+3515  *   Objective
+3516      option clear = NETBENEFIT ;
+3517  *   Violation variables
+3518      option clear = TOTALPENALTYCOST ;
+3519      option clear = DEFICITBUSGENERATION ;
+3520      option clear = SURPLUSBUSGENERATION ;
+3521      option clear = DEFICITRESERVE_CE ;
+3522      option clear = DEFICITRESERVE_ECE ;
+3523      option clear = DEFICITBRANCHSECURITYCONSTRAINT ;
+3524      option clear = SURPLUSBRANCHSECURITYCONSTRAINT ;
+3525      option clear = DEFICITRAMPRATE ;
+3526      option clear = SURPLUSRAMPRATE ;
+3527      option clear = DEFICITBRANCHFLOW ;
+3528      option clear = SURPLUSBRANCHFLOW ;
+3529      option clear = DEFICITMNODECONSTRAINT ;
+3530      option clear = SURPLUSMNODECONSTRAINT ;
+3531   
+3532      option clear = SCARCITYCOST;
+3533      option clear = ENERGYSCARCITYBLK ;
+3534      option clear = ENERGYSCARCITYNODE;
+3535   
+3536  *   Clear the pole circular branch flow flag
+3537      option clear = circularBranchFlowExist ;
+3538      option clear = poleCircularBranchFlowExist ;
+3539      option clear = northHVDC ;
+3540      option clear = southHVDC ;
+3541      option clear = manualBranchSegmentMWFlow ;
+3542      option clear = manualLossCalculation ;
+3543      option clear = nonPhysicalLossExist ;
+3544      option clear = modelSolved ;
+3545      option clear = LPmodelSolved ;
+3546  *   End reset
+3547   
+3548   
+3549  *   7b. Initialise current trade period and model data -------------------------
+3550      t(dt)  = yes;
+3551   
+3552  *   Update initial MW if run NRSS, PRSS, NRSL, PRSL
+3553      generationStart(offer(t(dt),o)) $ { sum[ o1, generationStart(dt,o1)] = 0 } = sum[ dt1 $ (ord(dt1) = ord(dt)-1), o_offerEnergy_TP(dt1,o) ] ;
+3554   
+3555   
+3556  *   7c. Updating the variable bounds before model solve ------------------------
+3557   
+3558  *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS ========================
+3559  *   Constraint 6.1.1.1 - Offer blocks
+3560      GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = EnrgOfrMW(genOfrBlk) ;
+3561      GENERATIONBLOCK.fx(t,o,blk) $ (not genOfrBlk(t,o,blk)) = 0 ;
+3562  *   Constraint 6.1.1.2 - Fix the invalid generation to Zero
+3563      GENERATION.fx(offer(t,o)) $ (not posEnrgOfr(offer)) = 0 ;
+3564  *   Constraint 6.1.1.3 - Set Upper Bound for intermittent generation
+3565      GENERATION.up(offer(t,o)) $ { windOffer(offer) and priceResponsive(offer) } = min[ potentialMW(offer), ReserveGenerationMaximum(offer) ] ;
+3566   
+3567  *   Constraint 6.1.1.4 & Constraint 6.1.1.5 - Set Upper/Lower Bound for Positive/Negative Demand Bid
+3568      PURCHASEBLOCK.up(demBidBlk(t,bd,blk)) = DemBidMW(t,bd,blk) $ [DemBidMW(t,bd,blk) > 0];
+3569      PURCHASEBLOCK.lo(demBidBlk(t,bd,blk)) = DemBidMW(t,bd,blk) $ [DemBidMW(t,bd,blk) < 0];
+3570      PURCHASEBLOCK.fx(t,bd,blk) $ (not demBidBlk(t,bd,blk))= 0 ;
+3571      PURCHASE.fx(t,bd) $ (sum[blk $ demBidBlk(t,bd,blk), 1] = 0) = 0 ;
+3572   
+3573  *   Constraint 6.1.1.7 - Set Upper Bound for Energy Scaricty Block
+3574      ENERGYSCARCITYBLK.up(t,n,blk) = ScarcityEnrgLimit(t,n,blk) ;
+3575      ENERGYSCARCITYBLK.fx(t,n,blk) $ (not EnergyScarcityEnabled(t)) = 0;
+3576      ENERGYSCARCITYNODE.fx(t,n) $ (not EnergyScarcityEnabled(t)) = 0;
+3577  *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS END ====================
+3578   
+3579  *======= HVDC TRANSMISSION EQUATIONS ===========================================
+3580  *   Ensure that variables used to specify flow and losses on HVDC link are zero for AC branches and for open HVDC links.
+3581      HVDCLINKFLOW.fx(t,br)   $ (not HVDClink(t,br)) = 0 ;
+3582      HVDCLINKLOSSES.fx(t,br) $ (not HVDClink(t,br)) = 0 ;
+3583  *   Apply an upper bound on the weighting parameter based on its definition
+3584      LAMBDA.up(branch,bp) = 1 ;
+3585  *   Ensure that the weighting factor value is zero for AC branches and for invalid loss segments on HVDC links
+3586      LAMBDA.fx(HVDClink,bp) $ ( sum[fd $ validLossSegment(HVDClink,bp,fd),1] = 0 ) = 0 ;
+3587      LAMBDA.fx(t,br,bp) $ (not HVDClink(t,br)) = 0 ;
+3588  *======= HVDC TRANSMISSION EQUATIONS END =======================================
+3589   
+3590  *======= AC TRANSMISSION EQUATIONS =============================================
+3591  *   Ensure that variables used to specify flow and losses on AC branches are zero for HVDC links branches and for open AC branches.
+3592      ACBRANCHFLOW.fx(t,br)              $ (not ACbranch(t,br)) = 0 ;
+3593      ACBRANCHFLOWDIRECTED.fx(t,br,fd)   $ (not ACbranch(t,br)) = 0 ;
+3594      ACBRANCHLOSSESDIRECTED.fx(t,br,fd) $ (not ACbranch(t,br)) = 0 ;
+3595  *   Ensure directed block flow and loss block variables are zero for non-AC branches and invalid loss segments on AC branches.
+3596      ACBRANCHFLOWBLOCKDIRECTED.fx(t,br,los,fd)   $ { not(ACbranch(t,br) and validLossSegment(t,br,los,fd)) } = 0 ;
+3597      ACBRANCHLOSSESBLOCKDIRECTED.fx(t,br,los,fd) $ { not(ACbranch(t,br) and validLossSegment(t,br,los,fd)) } = 0 ;
+3598  *   Constraint 6.4.1.10 - Ensure that the bus voltage angle for the buses corresponding to the reference nodes and the HVDC nodes are set to zero.
+3599      ACNODEANGLE.fx(t,b) $ sum[ n $ { NodeBus(t,n,b) and refNode(t,n) }, 1 ] = 0 ;
+3600  *======= AC TRANSMISSION EQUATIONS END =========================================
+3601   
+3602  *======= RISK & RESERVE EQUATIONS ==============================================
+3603  *   Ensure that all the invalid reserve blocks are set to zero for offers and purchasers.
+3604      RESERVEBLOCK.fx(offer(t,o),blk,resC,resT) $ (not resOfrBlk(offer,blk,resC,resT)) = 0 ;
+3605  *   Constraint 6.5.3.2 - Reserve block maximum for offers and purchasers.
+3606      RESERVEBLOCK.up(resOfrBlk(t,o,blk,resC,resT)) = ResOfrMW(resOfrBlk) ;
+3607  *   Fix the reserve variable for invalid reserve offers. These are offers that are either not connected to the grid or have no reserve quantity offered.
+3608      RESERVE.fx(t,o,resC,resT) $ (not sum[ blk $ resOfrBlk(t,o,blk,resC,resT), 1 ] ) = 0 ;
+3609  *   NMIR project variables
+3610      HVDCSENT.fx(t,isl)     $ (HVDCCapacity(t,isl) = 0) = 0 ;
+3611      HVDCSENTLOSS.fx(t,isl) $ (HVDCCapacity(t,isl) = 0) = 0 ;
+3612  *   Constraint 6.5.3.2.3 - SPD version 12.0
+3613      SHAREDNFR.up(t,isl) = Max[0,sharedNFRMax(t,isl)] ;
+3614  *   No forward reserve sharing if HVDC capacity is zero
+3615      RESERVESHARESENT.fx(t,isl,resC,rd) $ { (HVDCCapacity(t,isl) = 0) and (ord(rd) = 1) } = 0 ;
+3616  *   No forward reserve sharing if reserve sharing is disabled
+3617      RESERVESHARESENT.fx(t,isl,resC,rd) $ (reserveShareEnabled(t,resC) = 0) = 0;
+3618  *   No reserve sharing to cover HVDC risk
+3619      RESERVESHAREEFFECTIVE.fx(t,isl,resC,HVDCrisk) = 0;
+3620      RESERVESHAREEFFECTIVE.fx(t,isl,resC,HVDCsecRisk) = 0;
+3621  *   Constraint 6.5.2.16 - no RP zone if reserve round power disabled
+3622      INZONE.fx(t,isl,resC,z) $ {(ord(z) = 1) and (not reserveRoundPower(t,resC))} = 0;
+3623  *   Constraint 6.5.2.17 - no no-reserve zone for SIR zone if reserve RP enabled
+3624      INZONE.fx(t,isl,resC,z) $ {(ord(resC)=2) and (ord(z)=2) and reserveRoundPower(t,resC)} = 0;
+3625  *   Fixing Lambda integer variable for energy sent
+3626      LAMBDAHVDCENERGY.fx(t,isl,bp) $ { (HVDCCapacity(t,isl) = 0) and (ord(bp) = 1) } = 1 ;
+3627      LAMBDAHVDCENERGY.fx(t,isl,bp) $ (ord(bp) > 7) = 0 ;
+3628  * To be reviewed NMIR ???
+3629      LAMBDAHVDCRESERVE.fx(t,isl,resC,rd,rsbp) $ { (HVDCCapacity(t,isl) = 0) and (ord(rsbp) = 7) and (ord(rd) = 1) } = 1 ;
+3630      LAMBDAHVDCRESERVE.fx(t,isl,resC,rd,rsbp) $ { (sum[isl1 $ (not sameas(isl1,isl)), HVDCCapacity(t,isl1)] = 0) and (ord(rsbp) < 7) and (ord(rd) = 2) } = 0 ;
+3631  *   Contraint 6.5.4.1 - Set Upper Bound for reserve shortfall
+3632      RESERVESHORTFALLBLK.up(t,isl,resC,riskC,blk)         = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
+3633      RESERVESHORTFALLBLK.fx(t,isl,resC,riskC,blk)         $ (not reserveScarcityEnabled(t)) = 0;
+3634      RESERVESHORTFALL.fx(t,isl,resC,riskC)                $ (not reserveScarcityEnabled(t)) = 0;
+3635      RESERVESHORTFALLUNITBLK.up(t,isl,o,resC,riskC,blk)   = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
+3636      RESERVESHORTFALLUNITBLK.fx(t,isl,o,resC,riskC,blk)   $ (not reserveScarcityEnabled(t)) = 0;
+3637      RESERVESHORTFALLUNIT.fx(t,isl,o,resC,riskC)          $ (not reserveScarcityEnabled(t)) = 0;
+3638      RESERVESHORTFALLGROUPBLK.up(t,isl,rg,resC,riskC,blk) = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
+3639      RESERVESHORTFALLGROUPBLK.fx(t,isl,rg,resC,riskC,blk) $ (not reserveScarcityEnabled(t)) = 0;
+3640      RESERVESHORTFALLGROUP.fx(t,isl,rg,resC,riskC)        $ (not reserveScarcityEnabled(t)) = 0;
+3641  ;
+3642  *======= RISK & RESERVE EQUATIONS END ==========================================
+3643   
+3644  *   Updating the variable bounds before model solve end
+3645   
+3646  *   7d. Solve Models
+3647   
+3648  *   Solve the NMIR model ---------------------------------------------------------
+3649      if( (Sum[t, VSPDModel(t)] = 0),
+3650   
+3651          option bratio = 1 ;
+3652          vSPD_NMIR.Optfile = 1 ;
+3653          vSPD_NMIR.optcr = MIPOptimality ;
+3654          vSPD_NMIR.reslim = MIPTimeLimit ;
+3655          vSPD_NMIR.iterlim = MIPIterationLimit ;
+3656          solve vSPD_NMIR using mip maximizing NETBENEFIT ;
+3657  *       Set the model solve status
+3658          ModelSolved = 1 $ { ( (vSPD_NMIR.modelstat = 1) or (vSPD_NMIR.modelstat = 8) ) and ( vSPD_NMIR.solvestat = 1 ) } ;
+3659   
+3660  *       Post a progress message to the console and for use by EMI.
+3661          if((ModelSolved = 1),
+3662              loop(t,
+3663                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved successfully.'/
+3664                               'Objective function value: ' NETBENEFIT.l:<15:4 /
+3665                               'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
+3666              ) ;
+3667          elseif((ModelSolved = 0) and (sequentialSolve = 1)),
+3668              loop(t,
+3669                  unsolvedDT(t) = no;
+3670                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved unsuccessfully.'/
+3671              ) ;
+3672   
+3673          ) ;
+3674  *   Solve the NMIR model end -----------------------------------------------------
+3675   
+3676  *   Solve the vSPD_BranchFlowMIP -----------------------------------------------
+3677      elseif (Sum[t, VSPDModel(t)] = 1),
+3678          useBranchFlowMIP(t) = 1 ;
+3679  *       Fix the values of these integer variables that are not needed
+3680          ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(t,br),fd) $ { (not ACbranch(t,br)) or (not LossBranch(branch)) } = 0 ;
+3681  *       Fix the integer AC branch flow variable to zero for invalid branches
+3682          ACBRANCHFLOWDIRECTED_INTEGER.fx(t,br,fd) $ (not branch(t,br)) = 0 ;
+3683  *       Apply an upper bound on the integer weighting parameter
+3684          LAMBDAINTEGER.up(branch(t,br),bp) = 1 ;
+3685  *       Ensure that the weighting factor value is zero for AC branches and for invalid loss segments on HVDC links
+3686          LAMBDAINTEGER.fx(branch(t,br),bp) $ { ACbranch(branch) or ( sum[fd $ validLossSegment(branch,bp,fd),1 ] = 0 ) } = 0 ;
+3687  *       Fix the lambda integer variable to zero for invalid branches
+3688          LAMBDAINTEGER.fx(t,br,bp) $ (not branch(t,br)) = 0 ;
+3689   
+3690          option bratio = 1 ;
+3691          vSPD_BranchFlowMIP.Optfile = 1 ;
+3692          vSPD_BranchFlowMIP.optcr = MIPOptimality ;
+3693          vSPD_BranchFlowMIP.reslim = MIPTimeLimit ;
+3694          vSPD_BranchFlowMIP.iterlim = MIPIterationLimit ;
+3695          solve vSPD_BranchFlowMIP using mip maximizing NETBENEFIT ;
+3696  *       Set the model solve status
+3697          ModelSolved = 1 $ { [ ( vSPD_BranchFlowMIP.modelstat = 1) or (vSPD_BranchFlowMIP.modelstat = 8) ] and [ vSPD_BranchFlowMIP.solvestat = 1 ] } ;
+3698   
+3699  *       Post a progress message for use by EMI.
+3700          if(ModelSolved = 1,
+3701  *           Flag to show the period that required SOS1 solve
+3702              SOS1_solve(t)  = yes;
+3703              loop(t,
+3704                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved successfully for branch integer.'/
+3705                               'Objective function value: ' NETBENEFIT.l:<15:4 /
+3706                               'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
+3707              ) ;
+3708          else
+3709              loop(t,
+3710                  unsolvedDT(t) = yes;
+3711                  VSPDModel(t) = 2;
+3712                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved unsuccessfully for branch integer.'/
+3713              ) ;
+3714          ) ;
+3715  *   Solve the vSPD_BranchFlowMIP model end -------------------------------------
+3716   
+3717  *   ReSolve the NMIR model and stop --------------------------------------------
+3718      elseif (Sum[t, VSPDModel(t)] = 2),
+3719   
+3720          option bratio = 1 ;
+3721          vSPD_NMIR.Optfile = 1 ;
+3722          vSPD_NMIR.optcr = MIPOptimality ;
+3723          vSPD_NMIR.reslim = MIPTimeLimit ;
+3724          vSPD_NMIR.iterlim = MIPIterationLimit ;
+3725          solve vSPD_NMIR using mip maximizing NETBENEFIT ;
+3726  *       Set the model solve status
+3727          ModelSolved = 1 $ { ( (vSPD_NMIR.modelstat = 1) or (vSPD_NMIR.modelstat = 8) ) and ( vSPD_NMIR.solvestat = 1 ) } ;
+3728   
+3729  *       Post a progress message for use by EMI.
+3730          if( ModelSolved = 1,
+3731              loop(t,
+3732                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') branch flow integer resolve was unsuccessful.' /
+3733                                  'Reverting back to base model (NMIR) and solve successfully. ' /
+3734                                  'Objective function value: ' NETBENEFIT.l:<15:4 /
+3735                                  'Violations cost         : '  TOTALPENALTYCOST.l:<15:4 /
+3736                                  'Solution may have circulating flows and/or non-physical losses.' /
+3737              ) ;
+3738          else
+3739              loop(t,
+3740                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl') integer solve was unsuccessful. Reverting back to base model (NMIR) and solve unsuccessfully.' /
+3741              ) ;
+3742          ) ;
+3743   
+3744          unsolvedDT(t) = no;
+3745   
+3746  *   ReSolve the NMIR model and stop end ----------------------------------------
+3747   
+3748      ) ;
+3749  *   Solve the models end
+3750   
+3751   
+3752  *   Post-Solve Checks
+3753  *   6e. Circulating Flow and Non-Physical Loss (HVDC only) Check ---------------
+3754      if((ModelSolved = 1),
+3755          useBranchFlowMIP(t) = 0 ;
+3756  *       Check if there is no branch circular flow and non-physical losses
+3757          Loop( t $ (VSPDModel(t)=0) ,
+3758   
+3759  *           Check if there are circulating branch flows on loss AC branches
+3760              circularBranchFlowExist(LossBranch(ACbranch(t,br))) $ { sum[fd, ACBRANCHFLOWDIRECTED.l(ACbranch,fd)] - abs(ACBRANCHFLOW.l(ACbranch)) > circularBranchFlowTolerance } = 1 ;
+3761   
+3762  *           Determine the circular branch flow flag on each HVDC pole
+3763              TotalHVDCpoleFlow(t,pole) = sum[ br $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW.l(t,br) ] ;
+3764              MaxHVDCpoleFlow(t,pole) = smax[ br $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW.l(t,br) ] ;
+3765              poleCircularBranchFlowExist(t,pole) $ { TotalHVDCpoleFlow(t,pole) - MaxHVDCpoleFlow(t,pole) > circularBranchFlowTolerance } = 1 ;
+3766   
+3767  *           Check if there are circulating branch flows on HVDC
+3768              NorthHVDC(t) = sum[ (isl,b,br) $ { (ord(isl) = 2) and busIsland(t,b,isl) and HVDClinkSendingBus(t,br,b) and HVDClink(t,br) }, HVDCLINKFLOW.l(t,br) ] ;
+3769              SouthHVDC(t) = sum[ (isl,b,br) $ { (ord(isl) = 1) and busIsland(t,b,isl) and HVDClinkSendingBus(t,br,b) and HVDClink(t,br) }, HVDCLINKFLOW.l(t,br) ] ;
+3770              circularBranchFlowExist(t,br) $ { HVDClink(t,br) and LossBranch(t,br) and (NorthHVDC(t) > circularBranchFlowTolerance) and (SouthHVDC(t) > circularBranchFlowTolerance) } = 1 ;
+3771   
+3772  *           Check if there are non-physical losses on HVDC links
+3773              ManualBranchSegmentMWFlow(LossBranch(HVDClink(t,br)),los,fd) $ { ( ord(los) <= branchLossBlocks(HVDClink) ) and validLossSegment(t,br,los,fd) }
+3774                  = Min[ Max( 0, [ abs(HVDCLINKFLOW.l(HVDClink)) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ] ), ( LossSegmentMW(HVDClink,los,fd) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ) ] ;
+3775   
+3776              ManualLossCalculation(LossBranch(HVDClink(t,br))) = sum[ (los,fd) $ validLossSegment(t,br,los,fd), LossSegmentFactor(HVDClink,los,fd) * ManualBranchSegmentMWFlow(HVDClink,los,fd) ] ;
+3777              NonPhysicalLossExist(LossBranch(HVDClink(t,br))) $ { abs( HVDCLINKLOSSES.l(HVDClink) - ManualLossCalculation(HVDClink) ) > NonPhysicalLossTolerance } = 1 ;
+3778   
+3779  *           Set UseBranchFlowMIP = 1 if the number of circular branch flow or non-physical loss branches exceeds the specified tolerance
+3780              useBranchFlowMIP(t) $ { ( sum[ br $ { ACbranch(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
+3781                                      + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
+3782                                      + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveHVDCnonPhysicalLosses * NonPhysicalLossExist(t,br) ]
+3783                                      + sum[ pole, resolveCircularBranchFlows * poleCircularBranchFlowExist(t,pole)]
+3784                                      ) > UseBranchFlowMIPTolerance
+3785                                    } = 1 ;
+3786          );
+3787  *       Check if there is no branch circular flow and non-physical losses end
+3788   
+3789  *       A period is unsolved if MILP model is required
+3790          unsolvedDT(t) = yes $ UseBranchFlowMIP(t) ;
+3791   
+3792  *       Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
+3793          loop( unsolvedDT(t),
+3794              if( UseBranchFlowMIP(t) >= 1,
+3795                  VSPDModel(t) = 1;
+3796                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New requires a vSPD_BranchFlowMIP resolve for period ' t.tl '.'/
+3797              ) ;
+3798   
+3799          );
+3800   
+3801      ) ;
+3802  *   Check if the NMIR results are valid end
+3803   
+3804   
+3805  *   Energy Shortfall Check (7.2)
+3806     if( (runEnrgShortfallTransfer(dt) = 1),
+3807   
+3808  *       Check for disconnected buses and dead nodes
+3809          busLoad(bus(t,b)) = sum[ NodeBus(t,n,b), RequiredLoad(t,n) * NodeBusAllocationFactor(t,n,b) ] ;
+3810          busDisconnected(bus(t,b)) $ { ( [busElectricalIsland(bus) = 0] and [busLoad(bus) = 0] )
+3811                                      or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busLoad(t,b1) ] = 0 )
+3812                                       } = 1 ;
+3813          IsNodeDead(t,n) = 1 $ ( sum[b $ { NodeBus(t,n,b) and (busDisconnected(t,b)=0) }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
+3814          IsNodeDead(t,n) $ ( sum[b $ NodeBus(t,n,b), busElectricalIsland(t,b) ] = 0 ) = 1 ;
+3815          NodeElectricalIsland(t,n) = smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] ;
+3816   
+3817  *       Check if a pnode has energy shortfall
+3818          EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
+3819          OPTION EnergyShortfallMW:5:1:1;
+3820          Display EnergyShortfallMW;
+3821  *       a.Checkable Energy Shortfall:
+3822  *       If a node has an EnergyShortfallMW greater than zero and the node has LoadIsOverride set to False and the Pnode has InstructedShedActivepn set to False, then EnergyShortfall is checked.
+3823          EnergyShortFallCheck(t,n) $ { (EnergyShortfallMW(t,n) > 0) and (LoadIsOverride(t,n) = 0) and (instructedShedActive(t,n) = 0) } = 1 ;
+3824   
+3825  *       c. Eligible for Removal:
+3826  *       An EnergyShortfall is eligible for removal if there is evidence that it is due to a modelling inconsistency (as described below),
+3827  *       or if the RTD Required Load calculation used an estimated initial load rather than an actual initial load, or if the node is dead node.
+3828          EligibleShortfallRemoval(t,n) $ EnergyShortFallCheck(t,n) = 1 $ { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) } ;
+3829   
+3830  *       d. Shortfall Removal:
+3831  *       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the RequiredLoad in order to remove the shortfall.
+3832  *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
+3833  *       If the adjustment would make RequiredLoad negative then RequiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
+3834  *       the RTD Required Load calculation does not recalculate its RequiredLoad at this node
+3835          display IsNodeDead;
+3836          ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [enrgShortfallRemovalMargin(t) $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
+3837          OPTION ShortfallAdjustmentMW:5:1:1;
+3838          Display ShortfallAdjustmentMW;
+3839          RequiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = RequiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
+3840          RequiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (RequiredLoad(t,n) < 0) } = 0 ;
+3841          DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
+3842   
+3843   
+3844   
+      e. Shortfall Transfer:
+      If the previous step adjusts RequiredLoad then the processing will search for a transfer target Pnode to receive the Shortfall Adjustment quantity (the search process is described below).
+      If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node and the DidShortfallTransfer of the transfer target Pnode flag is set to True.
+      k. Shortfall Transfer Target:
+      In the Shortfall Transfer step, the search for a transfer target node proceeds as follows.
+      The first choice candidate for price transfer source is the PnodeTransferPnode of the target Pnode. If the candidate is ineligible then the new candidate will be the PnodeTransferPnode of the candidate,
+      if any, but only if this new candidate has not already been visited in this search. The process of locating and checking candidates will continue until an eligible transfer Pnode is located or until no
+      more candidates are found. A candidate node isn't eligible as a target if it has a non-zero EnergyShortfall in the solution being checked or had one in the solution of a previous solve loop, or if the
+      candidate node has LoadIsOverridepn set to True, or if the candidate node has InstructedShedActivepn set to True, or if the node with the shortfall is not in Electrical Island 0 and the ElectricalIsland
+      of the candidate node is not the same as the ElectricalIslandpn of the node with the shortfall, or if the candidate node is in the set of DEADPNODESpn.
+3857          unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
+3858   
+3859          nodeTonode(t,n,n1) = node2node(t,n,n1)
+3860          While ( sum[n, ShortfallAdjustmentMW(dt,n)],
+3861   
+3862  *           Check if shortfall from node n is eligibly transfered to node n1
+3863              ShortfallTransferFromTo(nodeTonode(t,n,n1))
+3864                  $ { (ShortfallAdjustmentMW(t,n) > 0) and (ShortfallAdjustmentMW(t,n1) = 0) and (CheckedNodeCandidate(t,n1) = 0)
+3865                  and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0) and (IsNodeDead(t,n1) = 0)
+3866                  and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
+3867                    } = 1;
+3868   
+3869  *           If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node
+3870              RequiredLoad(t,n1) = RequiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+3871  *           and the DidShortfallTransfer of the transfer target node is set to 1
+3872              DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
+3873   
+3874  *           If a candidate for target node is not eligible, remap the node n to the node after node n1
+3875              nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) and (ShortfallTransferFromTo(t,n,n1) = 0) }, 1] = yes ;
+3876              nodeTonode(t,n,n1) $ (ShortfallTransferFromTo(t,n,n1) = 0) = no ;
+3877   
+3878  *           Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
+3879              ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
+3880   
+3881          ) ;
+3882   
+3883  *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
+3884  *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
+3885          ShortfallDisabledScaling(t,n) = 1 $ { (EnergyShortFallCheck(t,n)=1) and (EligibleShortfallRemoval(t,n)=0) };
+3886   
+3887      ) ;
+3888  *   Energy Shortfall Check End
+3889   
+3890      LoopCount(t) = LoopCount(t) + 1 ;
+3891      LoopCount(t) $ { sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] = 0 } = maxSolveLoops(t);
+3892   
+3893  * End of the solve vSPD loop
+3894    ] ;
+3895  * End of the While loop
+3896  );
+3897   
+3898  * Real Time Pricing - Second RTD load calculation
+3899      putclose rep 'Recalculate RTD load calculation for second solve'/;
+3900   
+3901  *   Calculate Island-level MW losses used to calculate the Island-level load
+3902  *   forecast from the InputIPS and the IslandPSD.
+3903  *   2nd solve loop --> SystemLosses as calculated in section 8.1'
+3904      LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
+3905                           + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
+3906                           + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
+3907   
+3908  *   Check if vSPD LoadCalcLosses = SPD LoadCalcLosses. If not, let's just use SPD LoadCalcLosses. This is extra feature of vSPD in case the RTD load calculation does not match SPD for some reason.
+3909      loop ( (t,isl),
+3910          if ( ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > 0.001 ),
+3911              putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<7:4 ') and SPD (' SPDLoadCalcLosses(t,isl):<7:4 '). We use SPD number instead' / ;
+3912              LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl) ;
+3913          );
+3914      );
+3915   
+3916   
+3917  *   Calculate first target total load [4.10.6.5]
+3918  *   Island-level MW load forecast. For the second loop, uses LoadCalcLosses(t,isl)
+3919      TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) ;
+3920   
+3921  *   Flag if estimate load is scalable [4.10.6.7]
+3922  *   If True [1] then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad
+3923      EstLoadIsScalable(t,n) =  1 $ { (LoadIsNCL(t,n) = 0) and (ConformingFactor(t,n) > 0) } ;
+3924   
+3925  *   Calculate estimate non-scalable load 4.10.6.8]
+3926  *   For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero
+3927      EstNonScalableLoad(t,n) $ ( LoadIsNCL(t,n) = 1 ) = NonConformingLoad(t,n);
+3928      EstNonScalableLoad(t,n) $ ( LoadIsNCL(t,n) = 0 ) = ConformingFactor(t,n);
+3929      EstNonScalableLoad(t,n) $ ( EstLoadIsScalable(t,n) = 1 ) = 0;
+3930   
+3931  *   Calculate estimate scalable load [4.10.6.10]
+3932  *   For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero
+3933      EstScalableLoad(t,n) $ ( EstLoadIsScalable(t,n) = 1 ) = ConformingFactor(t,n);
+3934   
+3935  *   Calculate Scaling applied to ConformingFactor load MW [4.10.6.9] in order to calculate EstimatedInitialLoad
+3936      EstScalingFactor(t,isl) = (islandMWIPS(t,isl) - LoadCalcLosses(t,isl) - Sum[ n $ nodeIsland(t,n,isl), EstNonScalableLoad(t,n) ]) / Sum[ n $ nodeIsland(t,n,isl), EstScalableLoad(t,n) ] ;
+3937   
+3938  *   Calculate estimate initial load [4.10.6.6]
+3939  *   Calculated estimate of initial MW load, available to be used as an alternative to InputInitialLoad
+3940      EstimatedInitialLoad(t,n) $ ( EstLoadIsScalable(t,n) = 1 ) = ConformingFactor(t,n) * Sum[ isl $ nodeisland(t,n,isl), EstScalingFactor(t,isl)] ;
+3941      EstimatedInitialLoad(t,n) $ ( EstLoadIsScalable(t,n) = 0 ) = EstNonScalableLoad(t,n);
+3942   
+3943  *   Calculate initial load [4.10.6.2]
+3944  *   Value that represents the Pnode load MW at the start of the solution interval. Depending on the inputs this value will be either actual load, an operator applied override or an estimated initial load
+3945      InitialLoad(t,n) = InputInitialLoad(t,n);
+3946      InitialLoad(t,n) $ { (LoadIsOverride(t,n) = 0) and ( (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) ) } = EstimatedInitialLoad(t,n) ;
+3947      InitialLoad(t,n) $ DidShortfallTransfer(t,n) = RequiredLoad(t,n);
+3948   
+3949  *   Flag if load is scalable [4.10.6.4]
+3950  *   If True [1] then the Pnode InitialLoad will be scaled in order to alculate RequiredLoad, if False then Pnode InitialLoad will be directly assigned to RequiredLoad
+3951      LoadIsScalable(t,n) = 1 $ { (LoadIsNCL(t,n) = 0) and (LoadIsOverride(t,n) = 0) and (InitialLoad(t,n) >= 0) and (ShortfallDisabledScaling(t,n) = 0) and (DidShortfallTransfer(t,n) = 0) } ;
+3952   
+3953  *   Calculate Island-level scaling factor [4.10.6.3] --> applied to InitialLoad in order to calculate RequiredLoad
+3954      LoadScalingFactor(t,isl) = ( TargetTotalLoad(t,isl) - Sum[n $ {nodeIsland(t,n,isl) and (LoadIsScalable(t,n) = 0)}, InitialLoad(t,n)] ) / Sum[n $ {nodeIsland(t,n,isl) and (LoadIsScalable(t,n) = 1)}, InitialLoad(t,n)] ;
+3955   
+3956  *   Calculate RequiredLoad [4.10.6.1]
+3957      RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n)=1) } = InitialLoad(t,n) * sum[ isl $ nodeisland(t,n,isl), LoadScalingFactor(t,isl) ];
+3958      RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n)=0) }= InitialLoad(t,n);
+3959      RequiredLoad(t,n) $ {  DidShortfallTransfer(t,n)=0 } = RequiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)] ;
+3960   
+3961   
+3962  *   Recalculate energy scarcity limits -------------------------------------------
+3963      ScarcityEnrgLimit(t,n,blk) = 0 ;
+3964      ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) }                                     = scarcityEnrgNationalFactor(t,blk) * RequiredLoad(t,n);
+3965      ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (ScarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityEnrgNationalPrice(t,blk) ;
+3966   
+3967      ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) and scarcityEnrgNodeFactor(t,n,blk) } = scarcityEnrgNodeFactor(t,n,blk) * RequiredLoad(t,n);
+3968      ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeFactorPrice(t,n,blk) }                        = scarcityEnrgNodeFactorPrice(t,n,blk) ;
+3969   
+3970      ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityEnrgNodeLimit(t,n,blk)  } = scarcityEnrgNodeLimit(t,n,blk);
+3971      ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeLimitPrice(t,n,blk) }                         = scarcityEnrgNodeLimitPrice(t,n,blk) ;
+3972  *-------------------------------------------------------------------------------
+3973   
+3974   
+3975  *   Update Free Reserve and SharedNFRmax
+3976  *   Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
+3977      sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), RequiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
+3978      sharedNFRMax(t,isl) = Min{ RMTReserveLimitTo(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
+3979   
+3980  *   Risk parameters
+3981      FreeReserve(t,isl,resC,riskC)
+3982          = riskParameter(t,isl,resC,riskC,'freeReserve')
+3983  *   NMIR - Subtract shareNFRMax from current NFR -(5.2.1.4) - SPD version 11
+3984          - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) and (inputGDXGDate >= jdate(2016,10,20)) }
+3985      ;
+3986   
+3987  *   6.5.2.3 Total shared NFR is capped by shared NFR max
+3988      SHAREDNFR.up(t,isl) = Max[0,sharedNFRMax(t,isl)] ;
+3989   
+3990  *);
+3991   
+3992   
+3993   
+3994  ) ;
+3995   
+3996   
+3997  unsolvedDT(dt) = yes;
+3998  VSPDModel(dt) = 0 ;
+3999  option clear = useBranchFlowMIP ;
+4000   
+4001  While ( Sum[ dt $ unsolvedDT(dt), 1 ],
+4002    exitLoop = 0;
+4003    loop[ dt $ {unsolvedDT(dt) and (exitLoop = 0)},
+4004   
+4005  *   7a. Reset all sets, parameters and variables -------------------------------
+4006      option clear = t ;
+4007  *   Generation variables
+4008      option clear = GENERATION ;
+4009      option clear = GENERATIONBLOCK ;
+4010      option clear = GENERATIONUPDELTA ;
+4011      option clear = GENERATIONDNDELTA ;
+4012  *   Purchase variables
+4013      option clear = PURCHASE ;
+4014      option clear = PURCHASEBLOCK ;
+4015  *   Network variables
+4016      option clear = ACNODENETINJECTION ;
+4017      option clear = ACNODEANGLE ;
+4018      option clear = ACBRANCHFLOW ;
+4019      option clear = ACBRANCHFLOWDIRECTED ;
+4020      option clear = ACBRANCHLOSSESDIRECTED ;
+4021      option clear = ACBRANCHFLOWBLOCKDIRECTED ;
+4022      option clear = ACBRANCHLOSSESBLOCKDIRECTED ;
+4023      option clear = ACBRANCHFLOWDIRECTED_INTEGER ;
+4024      option clear = HVDCLINKFLOW ;
+4025      option clear = HVDCLINKLOSSES ;
+4026      option clear = LAMBDA ;
+4027      option clear = LAMBDAINTEGER ;
+4028      option clear = HVDCLINKFLOWDIRECTED_INTEGER ;
+4029      option clear = HVDCPOLEFLOW_INTEGER ;
+4030  *   Risk/Reserve variables
+4031      option clear = RISKOFFSET ;
+4032      option clear = HVDCREC ;
+4033      option clear = ISLANDRISK ;
+4034      option clear = RESERVEBLOCK ;
+4035      option clear = RESERVE ;
+4036      option clear = ISLANDRESERVE;
+4037  *   NMIR variables
+4038      option clear = SHAREDNFR ;
+4039      option clear = SHAREDRESERVE ;
+4040      option clear = HVDCSENT ;
+4041      option clear = RESERVESHAREEFFECTIVE ;
+4042      option clear = RESERVESHARERECEIVED ;
+4043      option clear = RESERVESHARESENT ;
+4044      option clear = HVDCSENDING ;
+4045      option clear = INZONE ;
+4046      option clear = HVDCSENTINSEGMENT ;
+4047      option clear = HVDCRESERVESENT ;
+4048      option clear = HVDCSENTLOSS ;
+4049      option clear = HVDCRESERVELOSS ;
+4050      option clear = LAMBDAHVDCENERGY ;
+4051      option clear = LAMBDAHVDCRESERVE ;
+4052      option clear = RESERVESHAREPENALTY ;
+4053  *   Objective
+4054      option clear = NETBENEFIT ;
+4055  *   Violation variables
+4056      option clear = TOTALPENALTYCOST ;
+4057      option clear = DEFICITBUSGENERATION ;
+4058      option clear = SURPLUSBUSGENERATION ;
+4059      option clear = DEFICITRESERVE_CE ;
+4060      option clear = DEFICITRESERVE_ECE ;
+4061      option clear = DEFICITBRANCHSECURITYCONSTRAINT ;
+4062      option clear = SURPLUSBRANCHSECURITYCONSTRAINT ;
+4063      option clear = DEFICITRAMPRATE ;
+4064      option clear = SURPLUSRAMPRATE ;
+4065      option clear = DEFICITBRANCHFLOW ;
+4066      option clear = SURPLUSBRANCHFLOW ;
+4067      option clear = DEFICITMNODECONSTRAINT ;
+4068      option clear = SURPLUSMNODECONSTRAINT ;
+4069   
+4070      option clear = SCARCITYCOST;
+4071      option clear = ENERGYSCARCITYBLK ;
+4072      option clear = ENERGYSCARCITYNODE;
+4073   
+4074      option clear = RESERVESHORTFALLBLK;
+4075      option clear = RESERVESHORTFALL;
+4076      option clear = RESERVESHORTFALLUNITBLK;
+4077      option clear = RESERVESHORTFALLUNIT;
+4078      option clear = RESERVESHORTFALLGROUPBLK;
+4079      option clear = RESERVESHORTFALLGROUP;
+4080   
+4081  *   Clear the pole circular branch flow flag
+4082      option clear = circularBranchFlowExist ;
+4083      option clear = poleCircularBranchFlowExist ;
+4084      option clear = northHVDC ;
+4085      option clear = southHVDC ;
+4086      option clear = manualBranchSegmentMWFlow ;
+4087      option clear = manualLossCalculation ;
+4088      option clear = nonPhysicalLossExist ;
+4089      option clear = modelSolved ;
+4090      option clear = LPmodelSolved ;
+4091  *   Disconnected bus post-processing
+4092      option clear = busGeneration ;
+4093      option clear = busLoad ;
+4094      option clear = busPrice ;
+4095   
+4096   
+4097  *   End reset
+4098   
+4099   
+4100  *   7b. Initialise current trade period and model data -------------------------
+4101      t(dt)  = yes;
+4102   
+4103  *   Update initial MW if run NRSS, PRSS, NRSL, PRSL
+4104      generationStart(offer(t(dt),o)) $ { sum[ o1, generationStart(dt,o1)] = 0 } = sum[ dt1 $ (ord(dt1) = ord(dt)-1), o_offerEnergy_TP(dt1,o) ] ;
+4105   
+4106   
+4107  *   7c. Updating the variable bounds before model solve ------------------------
+4108   
+4109  * TN - Pivot or Demand Analysis - revise input data
+4112  * TN - Pivot or Demand Analysis - revise input data end
+4113   
+4114  *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS ========================
+4115  *   Constraint 6.1.1.1 - Offer blocks
+4116      GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = EnrgOfrMW(genOfrBlk) ;
+4117      GENERATIONBLOCK.fx(t,o,blk) $ (not genOfrBlk(t,o,blk)) = 0 ;
+4118  *   Constraint 6.1.1.2 - Fix the invalid generation to Zero
+4119      GENERATION.fx(offer(t,o)) $ (not posEnrgOfr(offer)) = 0 ;
+4120  *   Constraint 6.1.1.3 - Set Upper Bound for intermittent generation
+4121      GENERATION.up(offer(t,o)) $ { windOffer(offer) and priceResponsive(offer) } = min[ potentialMW(offer), ReserveGenerationMaximum(offer) ] ;
+4122   
+4123  *   Constraint 6.1.1.4 & Constraint 6.1.1.5 - Set Upper/Lower Bound for Positive/Negative Demand Bid
+4124      PURCHASEBLOCK.up(demBidBlk(t,bd,blk)) = DemBidMW(t,bd,blk) $ [DemBidMW(t,bd,blk) > 0];
+4125      PURCHASEBLOCK.lo(demBidBlk(t,bd,blk)) = DemBidMW(t,bd,blk) $ [DemBidMW(t,bd,blk) < 0];
+4126      PURCHASEBLOCK.fx(t,bd,blk) $ (not demBidBlk(t,bd,blk))= 0 ;
+4127      PURCHASE.fx(t,bd) $ (sum[blk $ demBidBlk(t,bd,blk), 1] = 0) = 0 ;
+4128   
+4129  *   Constraint 6.1.1.7 - Set Upper Bound for Energy Scaricty Block
+4130      ENERGYSCARCITYBLK.up(t,n,blk) = ScarcityEnrgLimit(t,n,blk) ;
+4131      ENERGYSCARCITYBLK.fx(t,n,blk) $ (not EnergyScarcityEnabled(t)) = 0;
+4132      ENERGYSCARCITYNODE.fx(t,n) $ (not EnergyScarcityEnabled(t)) = 0;
+4133  *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS END ====================
+4134   
+4135  *======= HVDC TRANSMISSION EQUATIONS ===========================================
+4136  *   Ensure that variables used to specify flow and losses on HVDC link are zero for AC branches and for open HVDC links.
+4137      HVDCLINKFLOW.fx(t,br)   $ (not HVDClink(t,br)) = 0 ;
+4138      HVDCLINKLOSSES.fx(t,br) $ (not HVDClink(t,br)) = 0 ;
+4139  *   Apply an upper bound on the weighting parameter based on its definition
+4140      LAMBDA.up(branch,bp) = 1 ;
+4141  *   Ensure that the weighting factor value is zero for AC branches and for invalid loss segments on HVDC links
+4142      LAMBDA.fx(HVDClink,bp) $ ( sum[fd $ validLossSegment(HVDClink,bp,fd),1] = 0 ) = 0 ;
+4143      LAMBDA.fx(t,br,bp) $ (not HVDClink(t,br)) = 0 ;
+4144  *======= HVDC TRANSMISSION EQUATIONS END =======================================
+4145   
+4146  *======= AC TRANSMISSION EQUATIONS =============================================
+4147  *   Ensure that variables used to specify flow and losses on AC branches are zero for HVDC links branches and for open AC branches.
+4148      ACBRANCHFLOW.fx(t,br)              $ (not ACbranch(t,br)) = 0 ;
+4149      ACBRANCHFLOWDIRECTED.fx(t,br,fd)   $ (not ACbranch(t,br)) = 0 ;
+4150      ACBRANCHLOSSESDIRECTED.fx(t,br,fd) $ (not ACbranch(t,br)) = 0 ;
+4151  *   Ensure directed block flow and loss block variables are zero for non-AC branches and invalid loss segments on AC branches.
+4152      ACBRANCHFLOWBLOCKDIRECTED.fx(t,br,los,fd)   $ { not(ACbranch(t,br) and validLossSegment(t,br,los,fd)) } = 0 ;
+4153      ACBRANCHLOSSESBLOCKDIRECTED.fx(t,br,los,fd) $ { not(ACbranch(t,br) and validLossSegment(t,br,los,fd)) } = 0 ;
+4154  *   Constraint 6.4.1.10 - Ensure that the bus voltage angle for the buses corresponding to the reference nodes and the HVDC nodes are set to zero.
+4155      ACNODEANGLE.fx(t,b) $ sum[ n $ { NodeBus(t,n,b) and refNode(t,n) }, 1 ] = 0 ;
+4156  *======= AC TRANSMISSION EQUATIONS END =========================================
+4157   
+4158  *======= RISK & RESERVE EQUATIONS ==============================================
+4159  *   Ensure that all the invalid reserve blocks are set to zero for offers and purchasers.
+4160      RESERVEBLOCK.fx(offer(t,o),blk,resC,resT) $ (not resOfrBlk(offer,blk,resC,resT)) = 0 ;
+4161  *   Constraint 6.5.3.2 - Reserve block maximum for offers and purchasers.
+4162      RESERVEBLOCK.up(resOfrBlk(t,o,blk,resC,resT)) = ResOfrMW(resOfrBlk) ;
+4163  *   Fix the reserve variable for invalid reserve offers. These are offers that are either not connected to the grid or have no reserve quantity offered.
+4164      RESERVE.fx(t,o,resC,resT) $ (not sum[ blk $ resOfrBlk(t,o,blk,resC,resT), 1 ] ) = 0 ;
+4165  *   NMIR project variables
+4166      HVDCSENT.fx(t,isl)     $ (HVDCCapacity(t,isl) = 0) = 0 ;
+4167      HVDCSENTLOSS.fx(t,isl) $ (HVDCCapacity(t,isl) = 0) = 0 ;
+4168  *   Constraint 6.5.3.2.3 - SPD version 12.0
+4169      SHAREDNFR.up(t,isl) = Max[0,sharedNFRMax(t,isl)] ;
+4170  *   No forward reserve sharing if HVDC capacity is zero
+4171      RESERVESHARESENT.fx(t,isl,resC,rd) $ { (HVDCCapacity(t,isl) = 0) and (ord(rd) = 1) } = 0 ;
+4172  *   No forward reserve sharing if reserve sharing is disabled
+4173      RESERVESHARESENT.fx(t,isl,resC,rd) $ (reserveShareEnabled(t,resC) = 0) = 0;
+4174  *   No reserve sharing to cover HVDC risk
+4175      RESERVESHAREEFFECTIVE.fx(t,isl,resC,HVDCrisk) = 0;
+4176      RESERVESHAREEFFECTIVE.fx(t,isl,resC,HVDCsecRisk) = 0;
+4177  *   Constraint 6.5.2.16 - no RP zone if reserve round power disabled
+4178      INZONE.fx(t,isl,resC,z) $ {(ord(z) = 1) and (not reserveRoundPower(t,resC))} = 0;
+4179  *   Constraint 6.5.2.17 - no no-reserve zone for SIR zone if reserve RP enabled
+4180      INZONE.fx(t,isl,resC,z) $ {(ord(resC)=2) and (ord(z)=2) and reserveRoundPower(t,resC)} = 0;
+4181  *   Fixing Lambda integer variable for energy sent
+4182      LAMBDAHVDCENERGY.fx(t,isl,bp) $ { (HVDCCapacity(t,isl) = 0) and (ord(bp) = 1) } = 1 ;
+4183      LAMBDAHVDCENERGY.fx(t,isl,bp) $ (ord(bp) > 7) = 0 ;
+4184  * To be reviewed NMIR ???
+4185      LAMBDAHVDCRESERVE.fx(t,isl,resC,rd,rsbp) $ { (HVDCCapacity(t,isl) = 0) and (ord(rsbp) = 7) and (ord(rd) = 1) } = 1 ;
+4186      LAMBDAHVDCRESERVE.fx(t,isl,resC,rd,rsbp) $ { (sum[isl1 $ (not sameas(isl1,isl)), HVDCCapacity(t,isl1)] = 0) and (ord(rsbp) < 7) and (ord(rd) = 2) } = 0 ;
+4187  *   Contraint 6.5.4.1 - Set Upper Bound for reserve shortfall
+4188      RESERVESHORTFALLBLK.up(t,isl,resC,riskC,blk)         = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
+4189      RESERVESHORTFALLBLK.fx(t,isl,resC,riskC,blk)         $ (not reserveScarcityEnabled(t)) = 0;
+4190      RESERVESHORTFALL.fx(t,isl,resC,riskC)                $ (not reserveScarcityEnabled(t)) = 0;
+4191      RESERVESHORTFALLUNITBLK.up(t,isl,o,resC,riskC,blk)   = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
+4192      RESERVESHORTFALLUNITBLK.fx(t,isl,o,resC,riskC,blk)   $ (not reserveScarcityEnabled(t)) = 0;
+4193      RESERVESHORTFALLUNIT.fx(t,isl,o,resC,riskC)          $ (not reserveScarcityEnabled(t)) = 0;
+4194      RESERVESHORTFALLGROUPBLK.up(t,isl,rg,resC,riskC,blk) = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
+4195      RESERVESHORTFALLGROUPBLK.fx(t,isl,rg,resC,riskC,blk) $ (not reserveScarcityEnabled(t)) = 0;
+4196      RESERVESHORTFALLGROUP.fx(t,isl,rg,resC,riskC)        $ (not reserveScarcityEnabled(t)) = 0;
+4197  ;
+4198  *======= RISK & RESERVE EQUATIONS END ==========================================
+4199   
+4200  *   Updating the variable bounds before model solve end
+4201   
+4202   
+4203  *   7d. Solve Models
+4204   
+4205  *   Solve the NMIR model ---------------------------------------------------------
+4206      if( (Sum[t, VSPDModel(t)] = 0),
+4207   
+4208          option bratio = 1 ;
+4209          vSPD_NMIR.Optfile = 1 ;
+4210          vSPD_NMIR.optcr = MIPOptimality ;
+4211          vSPD_NMIR.reslim = MIPTimeLimit ;
+4212          vSPD_NMIR.iterlim = MIPIterationLimit ;
+4213          solve vSPD_NMIR using mip maximizing NETBENEFIT ;
+4214  *       Set the model solve status
+4215          ModelSolved = 1 $ { ( (vSPD_NMIR.modelstat = 1) or (vSPD_NMIR.modelstat = 8) ) and ( vSPD_NMIR.solvestat = 1 ) } ;
+4216   
+4217  *       Post a progress message to the console and for use by EMI.
+4218          if((ModelSolved = 1),
+4219              loop(t,
+4220                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved successfully.'/
+4221                               'Objective function value: ' NETBENEFIT.l:<15:4 /
+4222                               'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
+4223              ) ;
+4224          elseif((ModelSolved = 0) and (sequentialSolve = 1)),
+4225              loop(t,
+4226                  unsolvedDT(t) = no;
+4227                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved unsuccessfully.'/
+4228              ) ;
+4229   
+4230          ) ;
+4231  *   Solve the NMIR model end -----------------------------------------------------
+4232   
+4233  *   Solve the vSPD_BranchFlowMIP -----------------------------------------------
+4234      elseif (Sum[t, VSPDModel(t)] = 1),
+4235  *       Fix the values of these integer variables that are not needed
+4236          ACBRANCHFLOWDIRECTED_INTEGER.fx(branch(t,br),fd) $ { (not ACbranch(t,br)) or (not LossBranch(branch)) } = 0 ;
+4237  *       Fix the integer AC branch flow variable to zero for invalid branches
+4238          ACBRANCHFLOWDIRECTED_INTEGER.fx(t,br,fd) $ (not branch(t,br)) = 0 ;
+4239  *       Apply an upper bound on the integer weighting parameter
+4240          LAMBDAINTEGER.up(branch(t,br),bp) = 1 ;
+4241  *       Ensure that the weighting factor value is zero for AC branches and for invalid loss segments on HVDC links
+4242          LAMBDAINTEGER.fx(branch(t,br),bp) $ { ACbranch(branch) or ( sum[fd $ validLossSegment(branch,bp,fd),1 ] = 0 ) } = 0 ;
+4243  *       Fix the lambda integer variable to zero for invalid branches
+4244          LAMBDAINTEGER.fx(t,br,bp) $ (not branch(t,br)) = 0 ;
+4245   
+4246          option bratio = 1 ;
+4247          vSPD_BranchFlowMIP.Optfile = 1 ;
+4248          vSPD_BranchFlowMIP.optcr = MIPOptimality ;
+4249          vSPD_BranchFlowMIP.reslim = MIPTimeLimit ;
+4250          vSPD_BranchFlowMIP.iterlim = MIPIterationLimit ;
+4251          solve vSPD_BranchFlowMIP using mip maximizing NETBENEFIT ;
+4252  *       Set the model solve status
+4253          ModelSolved = 1 $ { [ ( vSPD_BranchFlowMIP.modelstat = 1) or (vSPD_BranchFlowMIP.modelstat = 8) ] and [ vSPD_BranchFlowMIP.solvestat = 1 ] } ;
+4254   
+4255  *       Post a progress message for use by EMI.
+4256          if(ModelSolved = 1,
+4257  *           Flag to show the period that required SOS1 solve
+4258              SOS1_solve(t)  = yes;
+4259              loop(t,
+4260                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved successfully for branch integer.'/
+4261                               'Objective function value: ' NETBENEFIT.l:<15:4 /
+4262                               'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
+4263              ) ;
+4264          else
+4265              loop(t,
+4266                  unsolvedDT(t) = yes;
+4267                  VSPDModel(t) = 2;
+4268                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') is 1st solved unsuccessfully for branch integer.'/
+4269              ) ;
+4270          ) ;
+4271  *   Solve the vSPD_BranchFlowMIP model end -------------------------------------
+4272   
+4273  *   ReSolve the NMIR model and stop --------------------------------------------
+4274      elseif (Sum[t, VSPDModel(t)] = 2),
+4275   
+4276          option bratio = 1 ;
+4277          vSPD_NMIR.Optfile = 1 ;
+4278          vSPD_NMIR.optcr = MIPOptimality ;
+4279          vSPD_NMIR.reslim = MIPTimeLimit ;
+4280          vSPD_NMIR.iterlim = MIPIterationLimit ;
+4281          solve vSPD_NMIR using mip maximizing NETBENEFIT ;
+4282  *       Set the model solve status
+4283          ModelSolved = 1 $ { ( (vSPD_NMIR.modelstat = 1) or (vSPD_NMIR.modelstat = 8) ) and ( vSPD_NMIR.solvestat = 1 ) } ;
+4284   
+4285  *       Post a progress message for use by EMI.
+4286          if( ModelSolved = 1,
+4287              loop(t,
+4288                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl ') branch flow integer resolve was unsuccessful.' /
+4289                                  'Reverting back to base model (NMIR) and solve successfully. ' /
+4290                                  'Objective function value: ' NETBENEFIT.l:<15:4 /
+4291                                  'Violations cost         : '  TOTALPENALTYCOST.l:<15:4 /
+4292                                  'Solution may have circulating flows and/or non-physical losses.' /
+4293              ) ;
+4294          else
+4295              loop(t,
+4296                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New (' t.tl') integer solve was unsuccessful. Reverting back to base model (NMIR) and solve unsuccessfully.' /
+4297              ) ;
+4298          ) ;
+4299   
+4300          unsolvedDT(t) = no;
+4301   
+4302  *   ReSolve the NMIR model and stop end ----------------------------------------
+4303   
+4304      ) ;
+4305  *   Solve the models end
+4306   
+4307   
+4308  *   Post-Solve Checks
+4309  *   6e. Check if the NMIR results are valid ------------------------------------
+4310      if((ModelSolved = 1),
+4311          useBranchFlowMIP(t) = 0 ;
+4312  *       Check if there is no branch circular flow and non-physical losses
+4313          Loop( t $ (VSPDModel(t)=0) ,
+4314   
+4315  *           Check if there are circulating branch flows on loss AC branches
+4316              circularBranchFlowExist(LossBranch(ACbranch(t,br))) $ { sum[fd, ACBRANCHFLOWDIRECTED.l(ACbranch,fd)] - abs(ACBRANCHFLOW.l(ACbranch)) > circularBranchFlowTolerance } = 1 ;
+4317   
+4318  *           Determine the circular branch flow flag on each HVDC pole
+4319              TotalHVDCpoleFlow(t,pole) = sum[ br $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW.l(t,br) ] ;
+4320              MaxHVDCpoleFlow(t,pole) = smax[ br $ HVDCpoleBranchMap(pole,br), HVDCLINKFLOW.l(t,br) ] ;
+4321              poleCircularBranchFlowExist(t,pole) $ { TotalHVDCpoleFlow(t,pole) - MaxHVDCpoleFlow(t,pole) > circularBranchFlowTolerance } = 1 ;
+4322   
+4323  *           Check if there are circulating branch flows on HVDC
+4324              NorthHVDC(t) = sum[ (isl,b,br) $ { (ord(isl) = 2) and busIsland(t,b,isl) and HVDClinkSendingBus(t,br,b) and HVDClink(t,br) }, HVDCLINKFLOW.l(t,br) ] ;
+4325              SouthHVDC(t) = sum[ (isl,b,br) $ { (ord(isl) = 1) and busIsland(t,b,isl) and HVDClinkSendingBus(t,br,b) and HVDClink(t,br) }, HVDCLINKFLOW.l(t,br) ] ;
+4326              circularBranchFlowExist(t,br) $ { HVDClink(t,br) and LossBranch(t,br) and (NorthHVDC(t) > circularBranchFlowTolerance) and (SouthHVDC(t) > circularBranchFlowTolerance) } = 1 ;
+4327   
+4328  *           Check if there are non-physical losses on HVDC links
+4329              ManualBranchSegmentMWFlow(LossBranch(HVDClink(t,br)),los,fd) $ { ( ord(los) <= branchLossBlocks(HVDClink) ) and validLossSegment(t,br,los,fd) }
+4330                  = Min[ Max( 0, [ abs(HVDCLINKFLOW.l(HVDClink)) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ] ), ( LossSegmentMW(HVDClink,los,fd) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ) ] ;
+4331   
+4332              ManualLossCalculation(LossBranch(HVDClink(t,br))) = sum[ (los,fd) $ validLossSegment(t,br,los,fd), LossSegmentFactor(HVDClink,los,fd) * ManualBranchSegmentMWFlow(HVDClink,los,fd) ] ;
+4333              NonPhysicalLossExist(LossBranch(HVDClink(t,br))) $ { abs( HVDCLINKLOSSES.l(HVDClink) - ManualLossCalculation(HVDClink) ) > NonPhysicalLossTolerance } = 1 ;
+4334   
+4335  *           Set UseBranchFlowMIP = 1 if the number of circular branch flow or non-physical loss branches exceeds the specified tolerance
+4336              useBranchFlowMIP(t) $ { ( sum[ br $ { ACbranch(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
+4337                                      + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
+4338                                      + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveHVDCnonPhysicalLosses * NonPhysicalLossExist(t,br) ]
+4339                                      + sum[ pole, resolveCircularBranchFlows * poleCircularBranchFlowExist(t,pole)]
+4340                                      ) > UseBranchFlowMIPTolerance
+4341                                    } = 1 ;
+4342          );
+4343  *       Check if there is no branch circular flow and non-physical losses end
+4344   
+4345  *       A period is unsolved if MILP model is required
+4346          unsolvedDT(t) = yes $ UseBranchFlowMIP(t) ;
+4347   
+4348  *       Post a progress message for use by EMI. Reverting to the sequential mode for integer resolves.
+4349          loop( unsolvedDT(t),
+4350              if( UseBranchFlowMIP(t) >= 1,
+4351                  VSPDModel(t) = 1;
+4352                  putclose rep 'The case: RTD_202211061725_61012022110425024_20221106172401_New requires a vSPD_BranchFlowMIP resolve for period ' t.tl '.'/
+4353              ) ;
+4354          ) ;
+4355   
+4356          sequentialSolve $ Sum[ unsolvedDT(t), 1 ] = 1 ;
+4357          exitLoop = 1 $ Sum[ unsolvedDT(t), 1 ];
+4358   
+4359      ) ;
+4360  *   Check if the NMIR results are valid end
+4361   
+4362   
+4363  *   6f. Check for disconnected nodes and adjust prices accordingly -------------
+4364   
+4365  *   See Rule Change Proposal August 2008 - Disconnected nodes available at
+4366  *   www.systemoperator.co.nz/reports-papers
+          Disconnected nodes are defined as follows:
+          Pre-MSP: Have no generation or load, are disconnected from the network
+                   and has a price = CVP.
+          Post-MSP: Indication to SPD whether a bus is dead or not.
+                    Dead buses are not processed by the SPD solved
+          Disconnected nodes' prices set by the post-process with the following rules:
+          Scenario A/B/D: Price for buses in live electrical island determined
+                          by the solved
+          Scenario C/F/G/H/I: Buses in the dead electrical island with:
+              a. Null/zero load: Marked as disconnected with $0 price.
+              b. Positive load: Price = CVP for deficit generation
+              c. Negative load: Price = -CVP for surplus generation
+          Scenario E: Price for bus in live electrical island with zero load needs to
+                      be adjusted since actually is disconnected.
+       
+          The Post-MSP implementation imply a mapping of a bus to an electrical island
+          and an indication of whether this electrical island is live of dead.
+          The correction of the prices is performed by SPD.
+4387   
+4388      busGeneration(bus(t,b))
+4389          = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) }
+4390               , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o)
+4391               ] ;
+4392   
+4393      busLoad(bus(t,b))
+4394          = sum[ NodeBus(t,n,b)
+4395               , NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n)
+4396               ] ;
+4397   
+4398      busPrice(bus(t,b)) = ACnodeNetInjectionDefinition2.m(t,b) ;
+4399   
+4400      if((disconnectedNodePriceCorrection = 1),
+4401  *       Post-MSP cases
+4402  *       Scenario C/F/G/H/I:
+4403          busDisconnected(bus(t,b)) $ { (busLoad(bus) = 0)
+4404                                        and (busElectricalIsland(bus) = 0)
+4405                                      } = 1 ;
+4406  *       Scenario E:
+4407          busDisconnected(bus(t,b))
+4408              $ { ( sum[ b1 $ { busElectricalIsland(t,b1)
+4409                              = busElectricalIsland(bus) }
+4410                       , busLoad(t,b1) ] = 0
+4411                  ) and
+4412                  ( busElectricalIsland(bus) > 0 )
+4413                } = 1 ;
+4414  *       Set prices at dead buses with non-zero load
+4415          busPrice(bus(t,b)) $ { (busLoad(bus) > 0) and
+4416                                 (busElectricalIsland(bus)= 0)
+4417                               } = DeficitBusGenerationPenalty ;
+4418   
+4419          busPrice(bus(t,b)) $ { (busLoad(bus) < 0) and
+4420                                 (busElectricalIsland(bus)= 0)
+4421                               } = -SurplusBusGenerationPenalty ;
+4422   
+4423  *       Set price at identified disconnected buses to 0
+4424          busPrice(bus)$busDisconnected(bus) = 0 ;
+4425      ) ;
+4426   
+4427  * End Check for disconnected nodes and adjust prices accordingly
+4428   
+4429  * TN - Replacing invalid prices after SOS1
+4430  *   6f0. Replacing invalid prices after SOS1 (7.1.3)----------------------------
+4431      if ( SOS1_solve(dt),
+4432           busSOSinvalid(dt,b)
+4433             = 1 $ { [ ( busPrice(dt,b) = 0 )
+4434                      or ( busPrice(dt,b) > 0.9 * deficitBusGenerationPenalty )
+4435                      or ( busPrice(dt,b) < -0.9 * surplusBusGenerationPenalty )
+4436                       ]
+4437                   and bus(dt,b)
+4438                   and [ not busDisconnected(dt,b) ]
+4439                   and [ busLoad(dt,b) = busGeneration(dt,b) ]
+4440                   and [ sum[(br,fd)
+4441                            $ { BranchBusConnect(dt,br,b) and branch(dt,br) }
+4442                            , ACBRANCHFLOWDIRECTED.l(dt,br,fd)
+4443                            ] = 0
+4444                       ]
+4445                   and [ sum[ br
+4446                            $ { BranchBusConnect(dt,br,b) and branch(dt,br) }
+4447                            , 1
+4448                            ] > 0
+4449                       ]
+4450                     };
+4451          numberofbusSOSinvalid(dt) = 2*sum[b, busSOSinvalid(dt,b)];
+4452          While ( sum[b, busSOSinvalid(dt,b)] < numberofbusSOSinvalid(dt) ,
+4453              numberofbusSOSinvalid(dt) = sum[b, busSOSinvalid(dt,b)];
+4454              busPrice(dt,b)
+4455                $ { busSOSinvalid(dt,b)
+4456                and ( sum[ b1 $ { [ not busSOSinvalid(dt,b1) ]
+4457                              and sum[ br $ { branch(dt,br)
+4458                                          and BranchBusConnect(dt,br,b)
+4459                                          and BranchBusConnect(dt,br,b1)
+4460                                            }, 1
+4461                                     ]
+4462                               }, 1
+4463                         ] > 0
+4464                    )
+4465                  }
+4466                = sum[ b1 $ { [ not busSOSinvalid(dt,b1) ]
+4467                          and sum[ br $ { branch(dt,br)
+4468                                      and BranchBusConnect(dt,br,b)
+4469                                      and BranchBusConnect(dt,br,b1)
+4470                                        }, 1 ]
+4471                            }, busPrice(dt,b1)
+4472                     ]
+4473                / sum[ b1 $ { [ not busSOSinvalid(dt,b1) ]
+4474                          and sum[ br $ { branch(dt,br)
+4475                                      and BranchBusConnect(dt,br,b)
+4476                                      and BranchBusConnect(dt,br,b1)
+4477                                        }, 1 ]
+4478                            }, 1
+4479                     ];
+4480   
+4481              busSOSinvalid(dt,b)
+4482                = 1 $ { [ ( busPrice(dt,b) = 0 )
+4483                       or ( busPrice(dt,b) > 0.9 * deficitBusGenerationPenalty )
+4484                       or ( busPrice(dt,b) < -0.9 * surplusBusGenerationPenalty )
+4485                        ]
+4486                    and bus(dt,b)
+4487                    and [ not busDisconnected(dt,b) ]
+4488                    and [ busLoad(dt,b) = busGeneration(dt,b) ]
+4489                    and [ sum[(br,fd)
+4490                            $ { BranchBusConnect(dt,br,b) and branch(dt,br) }
+4491                            , ACBRANCHFLOWDIRECTED.l(dt,br,fd)
+4492                             ] = 0
+4493                        ]
+4494                    and [ sum[ br
+4495                             $ { BranchBusConnect(dt,br,b) and branch(dt,br) }
+4496                             , 1
+4497                             ] > 0
+4498                        ]
+4499                      };
+4500           );
+4501      );
+4502  *   End Replacing invalid prices after SOS1 (7.1.3) ----------------------------
+4503   
+4504   
+4505  *   6g. Collect and store results of solved periods into output parameters -----
+4506  * Note: all the price relating outputs such as costs and revenues are calculated in section 7.b
+4507   
+4510  *   Normal vSPD run - write results out for for reporting
+4511      Loop t $ (not unsolvedDT(t)) do
+4512  *   Reporting at trading period start
+4513  *       Node level output
+4514          o_nodeGeneration_TP(t,n) $ Node(t,n)
+4515              = sum[ o $ offerNode(t,o,n), GENERATION.l(t,o) ] ;
+4516   
+4517          o_nodeLoad_TP(t,n) $ Node(t,n)
+4518             = RequiredLoad(t,n)
+4519             + Sum[ bd $ bidNode(t,bd,n), PURCHASE.l(t,bd) ];
+4520   
+4521          o_nodePrice_TP(t,n) $ Node(t,n)
+4522              = sum[ b $ NodeBus(t,n,b)
+4523                   , NodeBusAllocationFactor(t,n,b) * busPrice(t,b)
+4524                    ] ;
+4525   
+4526  *       8.3.5 Dead Price Replacement
+      Dead Price Replacement is applied to the Schedule Types that produce settlement
+      prices, i.e., RTD, RTDP, PRS
+       
+      The first choice candidate for price transfer source is the PnodeTransferPnode
+      of the target Pnode. If the candidate is ineligible then the new candidate will
+      be the PnodeTransferPnodepn of the candidate, if any, but only if this new
+      candidate has not already been visited in this search. The process of locating
+      and checking candidates will continue until an eligible transfer Pnode is
+      located or until no more candidates are found.
+       
+      A candidate Pnode is not eligible as a price source if it is in the set of
+      DEADPNODESpn, or if the source candidate Pnode is not in the same Electrical
+      Island as the target Pnode unless the target Pnode is in Island 0, i.e., if the
+      target of the price transfer is in Electrical Island 0 then it does not matter
+      which Electrical Island the price source is in, provided the price source is not
+      a dead Pnode.
+       
+      Note that a candidate Pnode with a shortfall is eligible.
+       
+      If an eligible price transfer source is found then the energy price of the dead
+      Pnode and its associated ACNode are assigned the energy price of the transfer
+      Pnode. If no eligible price is found then the dead Pnode and its associated
+      ACNode are assigned a price of zero.
+4552   
+4553          if { runPriceTransfer(t)
+4554          and ( (studyMode = 101) or (studyMode = 201)
+4555             or (studyMode = 130) or (studyMode = 131))
+4556             } then
+4557   
+4558              o_nodeDead_TP(t,n)
+4559                  = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b))
+4560                                  }, NodeBusAllocationFactor(t,n,b) ] = 0
+4561                          )
+4562                        } ;
+4563   
+4564              o_nodeDeadPriceFrom_TP(t,n,n1)
+4565                  = 1 $ { o_nodeDead_TP(t,n) and node2node(t,n,n1)
+4566                      and ( o_nodeDead_TP(t,n1) = 0)
+4567                      and ( ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)]
+4568                            = Smin[b1 $ NodeBus(t,n1,b1), busElectricalIsland(t,b1)]
+4569                            )
+4570                            or
+4571                            ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)]
+4572                            = 0
+4573                            )
+4574                          )
+4575                        };
+4576   
+4577              o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
+4578   
+4579              While sum[ n $ o_nodeDead_TP(t,n), o_nodeDeadPrice_TP(t,n) ] do
+4580                  o_nodePrice_TP(t,n)
+4581                      $ { o_nodeDead_TP(t,n) and o_nodeDeadPrice_TP(t,n) }
+4582                      = sum[n1 $ o_nodeDeadPriceFrom_TP(t,n,n1)
+4583                               , o_nodePrice_TP(t,n1) ] ;
+4584   
+4585                  o_nodeDeadPrice_TP(t,n)
+4586                      = 1 $ sum[n1 $ o_nodeDead_TP(t,n1)
+4587                                   , o_nodeDeadPriceFrom_TP(t,n,n1) ];
+4588   
+4589                  o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n)
+4590                      = 1 $ { sum[ n1 $ { node2node(t,n1,n2)
+4591                                      and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ]
+4592                            } ;
+4593   
+4594                  o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;
+4595   
+4596              endwhile
+4597          endif;
+4598   
+4599  *       Offer output
+4600          o_offerEnergy_TP(t,o) $ offer(t,o) = GENERATION.l(t,o) ;
+4601   
+4602          o_offerRes_TP(t,o,resC) $ offer(t,o)
+4603              = sum[ resT, RESERVE.l(t,o,resC,resT) ] ;
+4604   
+4605          o_offerFIR_TP(t,o) $ offer(t,o)
+4606              = sum[ resC $ (ord(resC) = 1),o_offerRes_TP(t,o,resC) ] ;
+4607   
+4608          o_offerSIR_TP(t,o) $ offer(t,o)
+4609              = sum[ resC $ (ord(resC) = 2),o_offerRes_TP(t,o,resC) ] ;
+4610   
+4611  *       Risk group output
+4612          o_groupEnergy_TP(t,rg,GenRisk)
+4613              = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerEnergy_TP(t,o) ];
+4614   
+4615          o_groupFKband_TP(t,rg,GenRisk)
+4616              = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), FKBand(t,o) ];
+4617   
+4618          o_groupRes_TP(t,rg,resC,GenRisk)
+4619              = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerRes_TP(t,o,resC)];
+4620   
+4621  *       Bus level output
+4622          o_busGeneration_TP(t,b) $ bus(t,b) = busGeneration(t,b) ;
+4623   
+4624          o_busLoad_TP(t,b) $ bus(t,b)
+4625              = busLoad(t,b)
+4626              + Sum[ (bd,n) $ { bidNode(t,bd,n) and NodeBus(t,n,b) }
+4627                   , PURCHASE.l(t,bd) ];
+4628   
+4629          o_busPrice_TP(t,b) $ bus(t,b) = busPrice(t,b) ;
+4630   
+4631          o_busDeficit_TP(t,b) $ bus(t,b)
+4632              = DEFICITBUSGENERATION.l(t,b)
+4633              + sum[n, NodeBusAllocationFactor(t,n,b)*ENERGYSCARCITYNODE.l(t,n)];
+4634   
+4635          o_busSurplus_TP(t,b)$bus(t,b) = SURPLUSBUSGENERATION.l(t,b) ;
+4636   
+4637  *       Node level output
+4638   
+4639          totalBusAllocation(t,b) $ bus(t,b)
+4640              = sum[ n $ Node(t,n), NodeBusAllocationFactor(t,n,b)];
+4641   
+4642          busNodeAllocationFactor(t,b,n) $ (totalBusAllocation(t,b) > 0)
+4643              = NodeBusAllocationFactor(t,n,b) / totalBusAllocation(t,b) ;
+4644   
+4645  * TN - post processing unmapped generation deficit buses start
+      The following code is added post-process generation deficit bus that is not
+      mapped to a pnode (BusNodeAllocationFactor  = 0). In post-processing, when a
+      deficit is detected at a bus that does not map directly to a pnode, SPD creates
+      a ZBR mapping by following zero impendence branches (ZBRs) until it reaches a
+      pnode. The price at the deficit bus is assigned directly to the pnode,
+      overwriting any weighted price that post-processing originally calculated for
+      the pnode. This is based on email from Nic Deller <Nic.Deller@transpower.co.nz>
+      on 25 Feb 2015.
+      The code is modified again on 16 Feb 2016 to avoid infinite loop when there are
+      many generation deficit buses.
+      This code is used to post-process generation deficit bus that is not mapped to
+4659          unmappedDeficitBus(t,b) $ o_busDeficit_TP(t,b)
+4660              = yes $ (Sum[ n, busNodeAllocationFactor(t,b,n)] = 0);
+4661   
+4662          changedDeficitBus(t,b) = no;
+4663   
+4664          If Sum[b $ unmappedDeficitBus(t,b), 1] then
+4665   
+4666              temp_busDeficit_TP(t,b) = o_busDeficit_TP(t,b);
+4667   
+4668              Loop b $ unmappedDeficitBus(t,b) do
+4669                  o_busDeficit_TP(t,b1)
+4670                    $ { Sum[ br $ { ( branchLossBlocks(t,br)=0 )
+4671                                and ( branchBusDefn(t,br,b1,b)
+4672                                   or branchBusDefn(t,br,b,b1) )
+4673                                  }, 1 ]
+4674                      } = o_busDeficit_TP(t,b1) + o_busDeficit_TP(t,b) ;
+4675   
+4676                  changedDeficitBus(t,b1)
+4677                    $ Sum[ br $ { ( branchLossBlocks(t,br)=0 )
+4678                              and ( branchBusDefn(t,br,b1,b)
+4679                                 or branchBusDefn(t,br,b,b1) )
+4680                                }, 1 ] = yes;
+4681   
+4682                  unmappedDeficitBus(t,b) = no;
+4683                  changedDeficitBus(t,b) = no;
+4684                  o_busDeficit_TP(t,b) = 0;
+4685              EndLoop;
+4686   
+4687              Loop n $ sum[ b $ changedDeficitBus(t,b)
+4688                          , busNodeAllocationFactor(t,b,n)] do
+4689                  o_nodePrice_TP(t,n) = deficitBusGenerationPenalty ;
+4690                  o_nodeDeficit_TP(t,n) = sum[ b $ busNodeAllocationFactor(t,b,n),
+4691                                                    busNodeAllocationFactor(t,b,n)
+4692                                                  * o_busDeficit_TP(t,b) ] ;
+4693              EndLoop;
+4694   
+4695              o_busDeficit_TP(t,b) = temp_busDeficit_TP(t,b);
+4696          Endif;
+4697  * TN - post processing unmapped generation deficit buses end
+4698   
+4699          o_nodeDeficit_TP(t,n) $ Node(t,n)
+4700              = ENERGYSCARCITYNODE.l(t,n)
+4701              + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n)
+4702                                       * DEFICITBUSGENERATION.l(t,b) ] ;
+4703   
+4704          o_nodeSurplus_TP(t,n) $ Node(t,n)
+4705              = sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n)
+4706                                            * SURPLUSBUSGENERATION.l(t,b) ] ;
+4707   
+4708  *       branch output
+4709          o_branchFlow_TP(t,br) $ ACbranch(t,br) = ACBRANCHFLOW.l(t,br);
+4710   
+4711          o_branchFlow_TP(t,br) $ HVDClink(t,br) = HVDCLINKFLOW.l(t,br);
+4712   
+4713          o_branchDynamicLoss_TP(t,br) $  ACbranch(t,br)
+4714              = sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] ;
+4715   
+4716          o_branchDynamicLoss_TP(t,br) $ HVDClink(t,br)
+4717              = HVDCLINKLOSSES.l(t,br) ;
+4718   
+4719          o_branchFixedLoss_TP(t,br) $ branch(t,br)
+4720              = branchFixedLoss(t,br) ;
+4721   
+4722          o_branchTotalLoss_TP(t,br) $ branch(t,br)
+4723              = o_branchDynamicLoss_TP(t,br) + o_branchFixedLoss_TP(t,br) ;
+4724   
+4725          o_branchMarginalPrice_TP(t,br) $ ACbranch(t,br)
+4726              = sum[ fd, ACbranchMaximumFlow.m(t,br,fd) ] ;
+4727   
+4728          o_branchMarginalPrice_TP(t,br) $ HVDClink(t,br)
+4729              = HVDClinkMaximumFlow.m(t,br) ;
+4730   
+4731          o_branchCapacity_TP(t,br) $ branch(t,br)
+4732              = sum[ fd $ ( ord(fd) = 1 )
+4733                        , branchCapacity(t,br,fd)
+4734                   ] $  { o_branchFlow_TP(t,br) >= 0 }
+4735              + sum[ fd $ ( ord(fd) = 2 )
+4736                        , branchCapacity(t,br,fd)
+4737                   ] $  { o_branchFlow_TP(t,br) < 0 } ;
+4738   
+4739  *       bid output
+4740          o_bidEnergy_TP(t,bd) $ bid(t,bd) = PURCHASE.l(t,bd) ;
+4741   
+4742          o_bidTotalMW_TP(t,bd) $ bid(t,bd)
+4743              = sum[ blk, DemBidMW(t,bd,blk) ] ;
+4744   
+4745  *       Violation reporting based on the CE and ECE
+4746          o_ResViolation_TP(t,isl,resC)
+4747              = DEFICITRESERVE_CE.l(t,isl,resC)
+4748              + DEFICITRESERVE_ECE.l(t,isl,resC)  ;
+4749   
+4750          o_FIRviolation_TP(t,isl)
+4751              = sum[ resC $ (ord(resC) = 1), o_ResViolation_TP(t,isl,resC) ] ;
+4752   
+4753          o_SIRviolation_TP(t,isl)
+4754              = sum[ resC $ (ord(resC) = 2), o_ResViolation_TP(t,isl,resC) ] ;
+4755   
+4756  *       Risk marginal prices and shortfall outputs
+4757          o_GenRiskPrice_TP(t,isl,o,resC,GenRisk)
+4758              = -GenIslandRiskCalculation_1.m(t,isl,o,resC,GenRisk) ;
+4759   
+4760          o_GenRiskShortfall_TP(t,isl,o,resC,GenRisk)
+4761              = RESERVESHORTFALLUNIT.l(t,isl,o,resC,GenRisk) ;
+4762   
+4763          o_HVDCSecRiskPrice_TP(t,isl,o,resC,HVDCSecRisk)
+4764              = -HVDCIslandSecRiskCalculation_GEN_1.m(t,isl,o,resC,HVDCSecRisk) ;
+4765   
+4766          o_HVDCSecRiskShortfall_TP(t,isl,o,resC,HVDCSecRisk)
+4767              = RESERVESHORTFALLUNIT.l(t,isl,o,resC,HVDCSecRisk) ;
+4768   
+4769          o_GenRiskGroupPrice_TP(t,isl,rg,resC,GenRisk)
+4770              = -GenIslandRiskGroupCalculation_1.m(t,isl,rg,resC,GenRisk) ;
+4771   
+4772          o_GenRiskGroupShortfall_TP(t,isl,rg,resC,GenRisk)
+4773              = RESERVESHORTFALLGROUP.l(t,isl,rg,resC,GenRisk) ;
+4774   
+4775          o_HVDCRiskPrice_TP(t,isl,resC,HVDCrisk)
+4776              = -HVDCIslandRiskCalculation.m(t,isl,resC,HVDCrisk);
+4777   
+4778          o_HVDCRiskShortfall_TP(t,isl,resC,HVDCrisk)
+4779              = RESERVESHORTFALL.l(t,isl,resC,HVDCrisk);
+4780   
+4781   
+4782          o_ManualRiskPrice_TP(t,isl,resC,ManualRisk)
+4783              = -ManualIslandRiskCalculation.m(t,isl,resC,ManualRisk) ;
+4784   
+4785          o_ManualRiskShortfall_TP(t,isl,resC,ManualRisk)
+4786              = RESERVESHORTFALL.l(t,isl,resC,ManualRisk) ;
+4787   
+4788          o_HVDCSecManualRiskPrice_TP(t,isl,resC,HVDCSecRisk)
+4789              = -HVDCIslandSecRiskCalculation_Manu_1.m(t,isl,resC,HVDCSecRisk);
+4790   
+4791          o_HVDCSecManualRiskShortfall_TP(t,isl,resC,HVDCSecRisk)
+4792              = RESERVESHORTFALL.l(t,isl,resC,HVDCSecRisk) ;
+4793   
+4794  *       Security constraint data
+4795   
+4796          o_brConstraintSense_TP(t,brCstr) $ branchConstraint(t,brCstr)
+4797              = branchConstraintSense(t,brCstr) ;
+4798   
+4799          o_brConstraintLHS_TP(t,brCstr) $ branchConstraint(t,brCstr)
+4800              = [ branchSecurityConstraintLE.l(t,brCstr)
+4801                $ (branchConstraintSense(t,brCstr) = -1) ] ;
+4802   
+4803          o_brConstraintRHS_TP(t,brCstr) $ branchConstraint(t,brCstr)
+4804              = branchConstraintLimit(t,brCstr) ;
+4805   
+4806          o_brConstraintPrice_TP(t,brCstr) $ branchConstraint(t,brCstr)
+4807              = [ branchSecurityConstraintLE.m(t,brCstr)
+4808                $ (branchConstraintSense(t,brCstr) = -1) ] ;
+4809   
+4810  *       Mnode constraint data
+4811          o_MnodeConstraintSense_TP(t,MnodeCstr)
+4812              $ MnodeConstraint(t,MnodeCstr)
+4813              = MnodeConstraintSense(t,MnodeCstr) ;
+4814   
+4815          o_MnodeConstraintLHS_TP(t,MnodeCstr)
+4816              $ MnodeConstraint(t,MnodeCstr)
+4817              = [ MnodeSecurityConstraintLE.l(t,MnodeCstr)
+4818                $ (MnodeConstraintSense(t,MnodeCstr) = -1) ]
+4819              + [ MnodeSecurityConstraintGE.l(t,MnodeCstr)
+4820                $ (MnodeConstraintSense(t,MnodeCstr) = 1)  ]
+4821              + [ MnodeSecurityConstraintEQ.l(t,MnodeCstr)
+4822                $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
+4823   
+4824          o_MnodeConstraintRHS_TP(t,MnodeCstr)
+4825              $ MnodeConstraint(t,MnodeCstr)
+4826              = MnodeConstraintLimit(t,MnodeCstr) ;
+4827   
+4828          o_MnodeConstraintPrice_TP(t,MnodeCstr)
+4829              $ MnodeConstraint(t,MnodeCstr)
+4830              = [ MnodeSecurityConstraintLE.m(t,MnodeCstr)
+4831                $ (MnodeConstraintSense(t,MnodeCstr) = -1) ]
+4832              + [ MnodeSecurityConstraintGE.m(t,MnodeCstr)
+4833                $ (MnodeConstraintSense(t,MnodeCstr) = 1)  ]
+4834              + [ MnodeSecurityConstraintEQ.m(t,MnodeCstr)
+4835                $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
+4836   
+4837  *       Island output
+4838          o_ResPrice_TP(t,isl,resC)= IslandReserveCalculation.m(t,isl,resC);
+4839   
+4840          o_FIRprice_TP(t,isl) = sum[ resC $ (ord(resC) = 1)
+4841                                            , o_ResPrice_TP(t,isl,resC) ];
+4842   
+4843          o_SIRprice_TP(t,isl) = sum[ resC $ (ord(resC) = 2)
+4844                                            , o_ResPrice_TP(t,isl,resC) ];
+4845   
+4846          o_islandGen_TP(t,isl)
+4847              = sum[ b $ busIsland(t,b,isl), busGeneration(t,b) ] ;
+4848   
+4849          o_islandClrBid_TP(t,isl)
+4850              = sum[ bd $ bidIsland(t,bd,isl), PURCHASE.l(t,bd) ] ;
+4851   
+4852          o_islandLoad_TP(t,isl)
+4853              = sum[ b $ busIsland(t,b,isl), busLoad(t,b) ]
+4854              + o_islandClrBid_TP(t,isl) ;
+4855   
+4856          o_ResCleared_TP(t,isl,resC) = ISLANDRESERVE.l(t,isl,resC);
+4857   
+4858          o_FirCleared_TP(t,isl) = Sum[ resC $ (ord(resC) = 1)
+4859                                              , o_ResCleared_TP(t,isl,resC) ];
+4860   
+4861          o_SirCleared_TP(t,isl) = Sum[ resC $ (ord(resC) = 2)
+4862                                              , o_ResCleared_TP(t,isl,resC) ];
+4863   
+4864          o_islandBranchLoss_TP(t,isl)
+4865              = sum[ (br,frB,toB)
+4866                   $ { ACbranch(t,br) and busIsland(t,toB,isl)
+4867                   and branchBusDefn(t,br,frB,toB)
+4868                     }, o_branchTotalLoss_TP(t,br) ] ;
+4869   
+4870          o_HVDCflow_TP(t,isl)
+4871              = sum[ (br,frB,toB)
+4872                   $ { HVDClink(t,br) and busIsland(t,frB,isl)
+4873                   and branchBusDefn(t,br,frB,toB)
+4874                     }, o_branchFlow_TP(t,br) ] ;
+4875   
+4876   
+4877          o_HVDCpoleFixedLoss_TP(t,isl)
+4878              = sum[ (br,frB,toB) $ { HVDClink(t,br) and
+4879                                      branchBusDefn(t,br,frB,toB) and
+4880                                      ( busIsland(t,toB,isl) or
+4881                                        busIsland(t,frB,isl)
+4882                                      )
+4883                                    }, 0.5 * o_branchFixedLoss_TP(t,br)
+4884                   ] ;
+4885   
+4886          o_HVDCloss_TP(t,isl)
+4887              = o_HVDCpoleFixedLoss_TP(t,isl)
+4888              + sum[ (br,frB,toB) $ { HVDClink(t,br) and
+4889                                      branchBusDefn(t,br,frB,toB) and
+4890                                      busIsland(t,toB,isl) and
+4891                                      (not (busIsland(t,frB,isl)))
+4892                                    }, o_branchDynamicLoss_TP(t,br)
+4893                   ] ;
+4894   
+4895          o_HVDCreceived(t,isl) = HVDCREC.l(t,isl);
+4896   
+4897          o_HVDCRiskSubtractor(t,isl,resC,HVDCrisk)
+4898              = RISKOFFSET.l(t,isl,resC,HVDCrisk) ;
+4899   
+4900  * TN - The code below is added for NMIR project ================================
+4901          o_EffectiveRes_TP(t,isl,resC,riskC) $ reserveShareEnabled(t,resC)
+4902              = RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ;
+4903   
+4904          If Sum[ resC $ (ord(resC) = 1), reserveShareEnabled(t,resC)] then
+4905   
+4906              o_FirSent_TP(t,isl)
+4907                  = Sum[ (rd,resC) $ (ord(resC) = 1)
+4908                       , RESERVESHARESENT.l(t,isl,resC,rd)];
+4909   
+4910              o_FirReceived_TP(t,isl)
+4911                  = Sum[ (rd,resC) $ (ord(resC) = 1)
+4912                       , RESERVESHARERECEIVED.l(t,isl,resC,rd) ];
+4913   
+4914              o_FirEffectiveCE_TP(t,isl)
+4915                  = Smax[ (resC,riskC)
+4916                        $ { (ord(resC) = 1) and ContingentEvents(riskC) }
+4917                        , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4918   
+4919              o_FirEffectiveECE_TP(t,isl)
+4920                  = Smax[ (resC,riskC)
+4921                        $ { (ord(resC) = 1) and ExtendedContingentEvent(riskC) }
+4922                        , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4923   
+4924              o_FirEffReport_TP(t,isl)
+4925                  = Smax[ (resC,riskC) $ (ord(resC)=1)
+4926                       , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4927   
+4928          Endif;
+4929   
+4930          If Sum[ resC $ (ord(resC) = 2), reserveShareEnabled(t,resC)] then
+4931   
+4932              o_SirSent_TP(t,isl)
+4933                  = Sum[ (rd,resC) $ (ord(resC) = 2),
+4934                         RESERVESHARESENT.l(t,isl,resC,rd) ];
+4935   
+4936              o_SirReceived_TP(t,isl)
+4937                  = Sum[ (fd,resC) $ (ord(resC) = 2),
+4938                         RESERVESHARERECEIVED.l(t,isl,resC,fd) ];
+4939   
+4940              o_SirEffectiveCE_TP(t,isl)
+4941                  = Smax[ (resC,riskC)
+4942                        $ { (ord(resC) = 2) and ContingentEvents(riskC) }
+4943                        , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4944   
+4945              o_SirEffectiveECE_TP(t,isl)
+4946                  = Smax[ (resC,riskC)
+4947                        $ { (ord(resC) = 2) and ExtendedContingentEvent(riskC) }
+4948                        , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4949   
+4950              o_SirEffReport_TP(t,isl)
+4951                  = Smax[ (resC,riskC) $ (ord(resC)=2)
+4952                       , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4953          Endif;
+4954   
+4955          o_TotalIslandReserve(t,isl,resC,riskC)
+4956              = o_ResCleared_TP(t,isl,resC) + o_EffectiveRes_TP(t,isl,resC,riskC);
+4957   
+4958   
+4959  * TN - The code for NMIR project end ===========================================
+4960   
+4961  *       Additional output for audit reporting
+4962          o_ACbusAngle(t,b) = ACNODEANGLE.l(t,b) ;
+4963   
+4964  *       Check if there are non-physical losses on AC branches
+4965          ManualBranchSegmentMWFlow(LossBranch(ACbranch(t,br)),los,fd)
+4966                  $ { ( ord(los) <= branchLossBlocks(ACbranch) )
+4967                  and validLossSegment(ACbranch,los,fd)
+4968                  and ( ACBRANCHFLOWDIRECTED.l(ACbranch,fd) > 0 )
+4969                    }
+4970                  = Min[ Max( 0,
+4971                              [ abs(o_branchFlow_TP(t,br))
+4972                              - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)]
+4973                              ]
+4974                            ),
+4975                         ( LossSegmentMW(ACbranch,los,fd)
+4976                         - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)]
+4977                         )
+4978                       ] ;
+4979   
+4980          ManualBranchSegmentMWFlow(LossBranch(HVDClink(t,br)),los,fd)
+4981                  $ { ( ord(los) <= branchLossBlocks(HVDClink) )
+4982                  and validLossSegment(HVDClink,los,fd) and ( ord(fd) = 1 )
+4983                    }
+4984                  = Min[ Max( 0,
+4985                              [ abs(o_branchFlow_TP(t,br))
+4986                              - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)]
+4987                              ]
+4988                            ),
+4989                         ( LossSegmentMW(HVDClink,los,fd)
+4990                         - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)]
+4991                         )
+4992                       ] ;
+4993   
+4994          ManualLossCalculation(LossBranch(branch(t,br)))
+4995              = sum[ (los,fd), LossSegmentFactor(branch,los,fd)
+4996                             * ManualBranchSegmentMWFlow(branch,los,fd) ] ;
+4997   
+4998          o_nonPhysicalLoss(t,br) = o_branchDynamicLoss_TP(t,br)
+4999                                   - ManualLossCalculation(t,br) ;
+5000   
+5001          o_lossSegmentBreakPoint(t,br,los)
+5002              = sum [ fd $ { validLossSegment(t,br,los,fd)
+5003                         and (ord(fd) = 1)
+5004                           }, LossSegmentMW(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) >= 0 }
+5005              + sum [ fd $ { validLossSegment(t,br,los,fd)
+5006                         and (ord(fd) = 2)
+5007                           }, LossSegmentMW(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) < 0 }
+5008          ;
+5009   
+5010          o_lossSegmentFactor(t,br,los)
+5011              = sum [ fd $ { validLossSegment(t,br,los,fd)
+5012                         and (ord(fd) = 1)
+5013                           }, LossSegmentFactor(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) >= 0 }
+5014              + sum [ fd $ { validLossSegment(t,br,los,fd)
+5015                         and (ord(fd) = 2)
+5016                           }, LossSegmentFactor(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) < 0 }
+5017          ;
+5018   
+5019          o_PLRO_FIR_TP(t,o) $ offer(t,o)
+5020              = sum[(resC,PLRO) $ (ord(resC)=1)
+5021                   , RESERVE.l(t,o,resC,PLRO) ] ;
+5022   
+5023          o_PLRO_SIR_TP(t,o) $ offer(t,o)
+5024              = sum[(resC,PLRO) $ (ord(resC)=2)
+5025                   , RESERVE.l(t,o,resC,PLRO)] ;
+5026   
+5027          o_TWRO_FIR_TP(t,o) $ offer(t,o)
+5028              = sum[(resC,TWRO) $ (ord(resC)=1)
+5029                   , RESERVE.l(t,o,resC,TWRO)] ;
+5030   
+5031          o_TWRO_SIR_TP(t,o) $ offer(t,o)
+5032              = sum[(resC,TWRO) $ (ord(resC)=2)
+5033                   , RESERVE.l(t,o,resC,TWRO)] ;
+5034   
+5035          o_ILRO_FIR_TP(t,o) $ offer(t,o)
+5036              = sum[ (resC,ILRO) $ (ord(resC)=1)
+5037                   , RESERVE.l(t,o,resC,ILRO)] ;
+5038   
+5039          o_ILRO_SIR_TP(t,o) $ offer(t,o)
+5040              = sum[ (resC,ILRO) $ (ord(resC)=2)
+5041                   , RESERVE.l(t,o,resC,ILRO)] ;
+5042   
+5043          o_ILbus_FIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and
+5044                                                offerNode(t,o,n)
+5045                                              }, o_ILRO_FIR_TP(t,o) ] ;
+5046   
+5047          o_ILbus_SIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and
+5048                                                offerNode(t,o,n)
+5049                                              }, o_ILRO_SIR_TP(t,o) ] ;
+5050   
+5051          o_generationRiskLevel(t,isl,o,resC,GenRisk)
+5052              = GENISLANDRISK.l(t,isl,o,resC,GenRisk)
+5053              + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk)
+5054              ;
+5055   
+5056          o_HVDCriskLevel(t,isl,resC,HVDCrisk)
+5057              = ISLANDRISK.l(t,isl,resC,HVDCrisk) ;
+5058   
+5059          o_manuRiskLevel(t,isl,resC,ManualRisk)
+5060              = ISLANDRISK.l(t,isl,resC,ManualRisk)
+5061              + RESERVESHAREEFFECTIVE.l(t,isl,resC,ManualRisk)
+5062              ;
+5063   
+5064          o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk)
+5065              = HVDCGENISLANDRISK.l(t,isl,o,resC,HVDCsecRisk) ;
+5066   
+5067          o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)
+5068              = HVDCMANISLANDRISK.l(t,isl,resC,HVDCsecRisk);
+5069   
+5070          o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk)
+5071              $ islandRiskGroup(t,isl,rg,GenRisk)
+5072              = GENISLANDRISKGROUP.l(t,isl,rg,resC,GenRisk)
+5073              + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk)
+5074              ;
+5075   
+5076  *       FIR and SIR required based on calculations of the island risk to
+5077  *       overcome reporting issues of the risk setter under degenerate
+5078  *       conditions when reserve price = 0 - See below
+5079   
+5080          o_ReserveReqd_TP(t,isl,resC)
+5081              = Max[ 0,
+5082                     smax[(o,GenRisk)     , o_generationRiskLevel(t,isl,o,resC,GenRisk)],
+5083                     smax[ HVDCrisk       , o_HVDCriskLevel(t,isl,resC,HVDCrisk) ] ,
+5084                     smax[ ManualRisk     , o_manuRiskLevel(t,isl,resC,ManualRisk) ] ,
+5085                     smax[ (o,HVDCsecRisk), o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk) ] ,
+5086                     smax[ HVDCsecRisk    , o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)  ] ,
+5087                     smax[ (rg,GenRisk)   , o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk)  ]
+5088                   ] ;
+5089   
+5090          o_FIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=1), o_ReserveReqd_TP(t,isl,resC) ] ;
+5091          o_SIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=2), o_ReserveReqd_TP(t,isl,resC) ] ;
+5092   
+5093  *       Summary reporting by trading period
+5094          o_solveOK_TP(t) = ModelSolved ;
+5095   
+5096          o_systemCost_TP(t) = SYSTEMCOST.l(t) ;
+5097   
+5098          o_systemBenefit_TP(t) = SYSTEMBENEFIT.l(t) ;
+5099   
+5100          o_penaltyCost_TP(t) = SYSTEMPENALTYCOST.l(t) ;
+5101   
+5102          o_ofv_TP(t) = o_systemBenefit_TP(t)
+5103                       - o_systemCost_TP(t)
+5104                       - o_penaltyCost_TP(t);
+5105   
+5106   
+5107  *       Separete violation reporting at trade period level
+5108          o_defGenViolation_TP(t) = sum[ b, o_busDeficit_TP(t,b) ] ;
+5109   
+5110          o_surpGenViolation_TP(t) = sum[ b, o_busSurplus_TP(t,b) ] ;
+5111   
+5112          o_surpBranchFlow_TP(t)
+5113              = sum[ br$branch(t,br), SURPLUSBRANCHFLOW.l(t,br) ] ;
+5114   
+5115          o_defRampRate_TP(t)
+5116              = sum[ o $ offer(t,o), DEFICITRAMPRATE.l(t,o) ] ;
+5117   
+5118          o_surpRampRate_TP(t)
+5119              = sum[ o $ offer(t,o), SURPLUSRAMPRATE.l(t,o) ] ;
+5120   
+5121          o_surpBranchGroupConst_TP(t)
+5122              = sum[ brCstr $ branchConstraint(t,brCstr)
+5123                   , SURPLUSBRANCHSECURITYCONSTRAINT.l(t,brCstr) ] ;
+5124   
+5125          o_defBranchGroupConst_TP(t)
+5126              = sum[ brCstr $ branchConstraint(t,brCstr)
+5127                   , DEFICITBRANCHSECURITYCONSTRAINT.l(t,brCstr) ] ;
+5128   
+5129          o_defMnodeConst_TP(t)
+5130              = sum[ MnodeCstr $ MnodeConstraint(t,MnodeCstr)
+5131                   , DEFICITMnodeCONSTRAINT.l(t,MnodeCstr) ] ;
+5132   
+5133          o_surpMnodeConst_TP(t)
+5134              = sum[ MnodeCstr $ MnodeConstraint(t,MnodeCstr)
+5135                   , SURPLUSMnodeCONSTRAINT.l(t,MnodeCstr) ] ;
+5136   
+5137          o_defResv_TP(t)
+5138              = sum[ (isl,resC) , o_ResViolation_TP(t,isl,resC) ] ;
+5139   
+5140  *   Reporting at trading period end
+5141      EndLoop;
+5143   
+5145   
+5146  * End of the solve vSPD loop
+5147    ] ;
+5148  * End of the While loop
+5149  );
+5150   
+5151   
+5152  *   Summary reports - only applied for normal and audit vSPD run.
+5154   
+5155  *   System level
+5156   
+5157   
+5158  *   Offer level - This does not include revenue from wind generators for
+5159  *   final pricing because the wind generation is netted off against load
+5160  *   at the particular bus for the final pricing solves
+5161   
+5163   
+5164   
+5165  * 8b. Calculating price-relating outputs --------------------------------------
+5166   
+5168  loop (dt,
+5169   
+5170  *   branch output update
+5171      o_branchFromBusPrice_TP(dt,br) $ branch(dt,br)
+5172          = sum[ b $ branchFrBus(dt,br,b), o_busPrice_TP(dt,b) ] ;
+5173   
+5174      o_branchToBusPrice_TP(dt,br) $ branch(dt,br)
+5175          = sum[ b $ branchToBus(dt,br,b), o_busPrice_TP(dt,b) ] ;
+5176   
+5177      o_branchTotalRentals_TP(dt,br)
+5178          $ { branch(dt,br) and (o_branchFlow_TP(dt,br) >= 0) }
+5179          = (intervalDuration/60)
+5180          * [ o_branchToBusPrice_TP(dt,br)   * o_branchFlow_TP(dt,br)
+5181            - o_branchToBusPrice_TP(dt,br)   * o_branchTotalLoss_TP(dt,br)
+5182            - o_branchFromBusPrice_TP(dt,br) * o_branchFlow_TP(dt,br)
+5183            ] ;
+5184   
+5185      o_branchTotalRentals_TP(dt,br)
+5186          $ { branch(dt,br) and (o_branchFlow_TP(dt,br) < 0) }
+5187          = (intervalDuration/60)
+5188          * [ o_branchToBusPrice_TP(dt,br)   * o_branchFlow_TP(dt,br)
+5189            - o_branchFromBusPrice_TP(dt,br) * o_branchFlow_TP(dt,br)
+5190            - o_branchFromBusPrice_TP(dt,br) * o_branchTotalLoss_TP(dt,br)
+5191            ] ;
+5192   
+5193  *   Island output
+5194      o_islandRefPrice_TP(dt,isl)
+5195          = sum[ n $ { refNode(dt,n)
+5196                   and nodeIsland(dt,n,isl) } , o_nodePrice_TP(dt,n) ] ;
+5197  ) ;
+5198   
+5200  *   Calculating price-relating outputs end -------------------------------------
+5201   
+5202  *=====================================================================================
+5203  * 9. Write results to CSV report files and GDX files
+5204  *=====================================================================================
+5205  * TN - Pivot analysis end
+INCLUDE    C:\vSPD\ElectricityAuthority\Programs\vSPDreport.gms
+5207  *=====================================================================================
+5208  * Name:                 vSPDreport.gms
+5209  * Function:             Creates the detailed reports for normal SPD mode
+5210  * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
+5211  * Source:               https://github.com/ElectricityAuthority/vSPD
+5212  *                       https://www.emi.ea.govt.nz/Tools/vSPD
+5213  * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
+5214  *                       Email: emi@ea.govt.nz
+5215  * Last modified on:     1 Oct 2019
+5216  *
+5217  *=====================================================================================
+5218   
+5219  * Normal vSPD run output
+5220  *=====================================================================================
+5221  * Writing data in to CSV result files
+5222  *=====================================================================================
+5223   
+5224  * Trading period level report
+5226   
+5227  * Trading period summary result
+5228  File
+5229  SummaryResults_TP / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_SummaryResults_TP.csv" / ;
+5230  SummaryResults_TP.pc = 5 ;    SummaryResults_TP.lw = 0 ;
+5231  SummaryResults_TP.pw = 9999 ; SummaryResults_TP.ap = 1 ;
+5232  SummaryResults_TP.nd = 5 ;    SummaryResults_TP.nw = 20 ;
+5233  put SummaryResults_TP ;
+5234  loop( (dt,rundt),
+5235      put dt.tl,rundt.tl, o_solveOK_TP(dt), o_ofv_TP(dt)
+5236          o_systemCost_TP(dt), o_systemBenefit_TP(dt)
+5237          o_penaltyCost_TP(dt), o_DefGenViolation_TP(dt)
+5238          o_SurpGenViolation_TP(dt),o_DefResv_TP(dt),o_SurpBranchFlow_TP(dt)
+5239          o_DefRampRate_TP(dt), o_SurpRampRate_TP(dt)
+5240          o_DefBranchGroupConst_TP(dt), o_SurpBranchGroupConst_TP(dt)
+5241          o_DefMnodeConst_TP(dt), o_SurpMnodeConst_TP(dt) / ;
+5242  ) ;
+5243   
+5244  * Trading period island result
+5245  File IslandResults_TP /"C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_IslandResults_TP.csv"/;
+5246  IslandResults_TP.pc = 5 ;     IslandResults_TP.lw = 0 ;
+5247  IslandResults_TP.pw = 9999 ;  IslandResults_TP.ap = 1 ;
+5248  IslandResults_TP.nd = 5 ;
+5249  put IslandResults_TP ;
+5250  loop( (dt,rundt,isl),
+5251      put dt.tl,rundt.tl, isl.tl, o_islandGen_TP(dt,isl), o_islandLoad_TP(dt,isl)
+5252          o_islandClrBid_TP(dt,isl), o_islandBranchLoss_TP(dt,isl)
+5253          o_HVDCFlow_TP(dt,isl), o_HVDCLoss_TP(dt,isl)
+5254          o_islandRefPrice_TP(dt,isl), o_FIRReqd_TP(dt,isl)
+5255          o_SIRReqd_TP(dt,isl), o_FIRPrice_TP(dt,isl)o_SIRPrice_TP(dt,isl)
+5256  * NIRM output
+5257      o_FirCleared_TP(dt,isl), o_SirCleared_TP(dt,isl)
+5258      o_FirSent_TP(dt,isl), o_SirSent_TP(dt,isl)
+5259      o_FirReceived_TP(dt,isl), o_SirReceived_TP(dt,isl)
+5260      o_FirEffectiveCE_TP(dt,isl), o_SirEffectiveCE_TP(dt,isl)
+5261      o_FirEffectiveECE_TP(dt,isl), o_SirEffectiveECE_TP(dt,isl)
+5262  *NIRM output end
+5263      / ;
+5264  ) ;
+5265   
+5266   
+5267  * Trading period bus result
+5268  File BusResults_TP   / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_BusResults_TP.csv" / ;
+5269  BusResults_TP.pc = 5 ;
+5270  BusResults_TP.lw = 0 ;
+5271  BusResults_TP.pw = 9999 ;
+5272  BusResults_TP.ap = 1 ;
+5273  BusResults_TP.nd = 3
+5274  put BusResults_TP ;
+5275  loop( (dt,rundt,b) $ bus(dt,b),
+5276      put dt.tl,rundt.tl, b.tl, o_busGeneration_TP(dt,b), o_busLoad_TP(dt,b)
+5277          o_busPrice_TP(dt,b), o_busDeficit_TP(dt,b), o_busSurplus_TP(dt,b) / ;
+5278  ) ;
+5279   
+5280  * Trading period node result
+5281  File NodeResults_TP  /"C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_NodeResults_TP.csv" / ;
+5282  NodeResults_TP.pc = 5 ;
+5283  NodeResults_TP.lw = 0 ;
+5284  NodeResults_TP.pw = 9999 ;
+5285  NodeResults_TP.ap = 1 ;
+5286  NodeResults_TP.nd = 4 ;
+5287  put NodeResults_TP ;
+5288  loop( (dt,rundt,n) $ node(dt,n),
+5289      put dt.tl,rundt.tl, n.tl, o_nodeGeneration_TP(dt,n), o_nodeLoad_TP(dt,n)
+5290          o_nodePrice_TP(dt,n), o_nodeDeficit_TP(dt,n), o_nodeSurplus_TP(dt,n) / ;
+5291  ) ;
+5292   
+5293  * Trading period offer result
+5294  File OfferResults_TP  /"C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_OfferResults_TP.csv"/ ;
+5295  OfferResults_TP.pc = 5 ;      OfferResults_TP.lw = 0 ;
+5296  OfferResults_TP.pw = 9999 ;   OfferResults_TP.ap = 1 ;
+5297  OfferResults_TP.nd = 4 ;
+5298  put OfferResults_TP ;
+5299  loop( (dt,rundt,o,trdr) $ { offer(dt,o) and OfferTrader(dt,o,trdr) },
+5300      put dt.tl, rundt.tl, o.tl, trdr.tl
+5301          o_offerEnergy_TP(dt,o), o_offerFIR_TP(dt,o), o_offerSIR_TP(dt,o) / ;
+5302  ) ;
+5303   
+5304  * Trading period bid result
+5305  File BidResults_TP    / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_BidResults_TP.csv" / ;
+5306  BidResults_TP.pc = 5 ;     BidResults_TP.lw = 0 ;
+5307  BidResults_TP.pw = 9999 ;  BidResults_TP.ap = 1 ;
+5308  BidResults_TP.nd = 4 ;
+5309  put BidResults_TP ;
+5310  loop( (dt,rundt,bd,trdr) $ { bid(dt,bd) and BidTrader(dt,bd,trdr) },
+5311      put dt.tl,rundt.tl, bd.tl, trdr.tl
+5312          o_bidTotalMW_TP(dt,bd), o_bidEnergy_TP(dt,bd) / ;
+5313  ) ;
+5314   
+5315  * Trading period reserve result
+5316  File
+5317  ReserveResults_TP /"C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_ReserveResults_TP.csv" / ;
+5318  ReserveResults_TP.pc = 5 ;    ReserveResults_TP.lw = 0 ;
+5319  ReserveResults_TP.pw = 9999 ; ReserveResults_TP.ap = 1 ;
+5320  ReserveResults_TP.nd = 3 ;
+5321  put ReserveResults_TP ;
+5322  loop( (dt,rundt,isl),
+5323      put dt.tl,rundt.tl, isl.tl, o_FIRReqd_TP(dt,isl), o_SIRReqd_TP(dt,isl)
+5324          o_FIRPrice_TP(dt,isl), o_SIRPrice_TP(dt,isl)
+5325          o_FIRViolation_TP(dt,isl), o_SIRViolation_TP(dt,isl) / ;
+5326  ) ;
+5327   
+5328   
+5329  * Trading period risk result
+5330  File riskResults_TP / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_RiskResults_TP.csv" /;
+5331  riskResults_TP.pc = 5;        riskResults_TP.lw = 0;
+5332  riskResults_TP.pw = 9999;     riskResults_TP.ap = 1 ;
+5333  riskResults_TP.nd = 4 ;
+5334  put riskResults_TP ;
+5335  loop( (dt,rundt,isl,o,resC,GenRisk)
+5336      $ (o_GenRiskPrice_TP(dt,isl,o,resC,GenRisk) <> 0),
+5337      put dt.tl,rundt.tl, isl.tl, resC.tl ;
+5338      if (ContingentEvents(GenRisk),
+5339           put 'CE', 'GEN' ;
+5340      else
+5341           put 'ECE','GEN' ;
+5342      );
+5343   
+5344      put o.tl, o_offerEnergy_TP(dt,o), o_offerRes_TP(dt,o,resC), FKband(dt,o)
+5345          FreeReserve(dt,isl,resC,GenRisk)
+5346          o_TotalIslandReserve(dt,isl,resC,GenRisk)
+5347          o_GenRiskShortfall_TP(dt,isl,o,resC,GenRisk)
+5348          o_ResViolation_TP(dt,isl,resC), o_ResPrice_TP(dt,isl,resC)
+5349          o_GenRiskPrice_TP(dt,isl,o,resC,GenRisk)  / ;
+5350  );
+5351   
+5352  loop( (dt,rundt,isl,resC,HVDCRisk)
+5353      $ (o_HVDCRiskPrice_TP(dt,isl,resC,HVDCrisk)  <> 0),
+5354      put dt.tl,rundt.tl, isl.tl, resC.tl ;
+5355      if (ContingentEvents(HVDCRisk),
+5356           put 'CE', 'HVDC', 'HVDC';
+5357      else
+5358           put 'ECE','HVDC', 'HVDC';
+5359      );
+5360      put o_HVDCreceived(dt,isl), 0, modulationRiskClass(dt,HVDCrisk)
+5361          o_HVDCRiskSubtractor(dt,isl,resC,HVDCrisk)
+5362          o_TotalIslandReserve(dt,isl,resC,HVDCrisk)
+5363          o_HVDCRiskShortfall_TP(dt,isl,resC,HVDCrisk)
+5364          o_ResViolation_TP(dt,isl,resC), o_ResPrice_TP(dt,isl,resC)
+5365          o_HVDCRiskPrice_TP(dt,isl,resC,HVDCrisk)  / ;
+5366  );
+5367   
+5368  loop( (dt,rundt,isl,resC,ManualRisk)
+5369      $ (o_ManualRiskPrice_TP(dt,isl,resC,ManualRisk)  <> 0),
+5370      put dt.tl,rundt.tl, isl.tl, resC.tl ;
+5371      if (ContingentEvents(ManualRisk),
+5372           put 'CE', 'MANUAL', 'MANUAL';
+5373      else
+5374           put 'ECE','MANUAL', 'MANUAL';
+5375      );
+5376      put IslandMinimumRisk(dt,isl,resC,ManualRisk) , 0, 0
+5377          FreeReserve(dt,isl,resC,ManualRisk)
+5378          o_TotalIslandReserve(dt,isl,resC,ManualRisk)
+5379          o_ManualRiskShortfall_TP(dt,isl,resC,ManualRisk)
+5380          o_ResViolation_TP(dt,isl,resC), o_ResPrice_TP(dt,isl,resC)
+5381          o_ManualRiskPrice_TP(dt,isl,resC,ManualRisk)    / ;
+5382  );
+5383   
+5384  loop( (dt,rundt,isl,rg,resC,GenRisk)
+5385      $ (o_GenRiskGroupPrice_TP(dt,isl,rg,resC,GenRisk) <> 0),
+5386      put dt.tl,rundt.tl, isl.tl, resC.tl ;
+5387      if (ContingentEvents(GenRisk),
+5388           put 'CE', 'RISKGROUP';
+5389      else
+5390           put 'ECE','RISKGROUP';
+5391      );
+5392      put rg.tl, o_groupEnergy_TP(dt,rg,GenRisk),o_groupRes_TP(dt,rg,resC,GenRisk)
+5393          o_groupFKband_TP(dt,rg,GenRisk), FreeReserve(dt,isl,resC,GenRisk)
+5394          o_TotalIslandReserve(dt,isl,resC,GenRisk)
+5395          o_GenRiskGroupShortfall_TP(dt,isl,rg,resC,GenRisk)
+5396          o_ResViolation_TP(dt,isl,resC), o_ResPrice_TP(dt,isl,resC)
+5397          o_GenRiskGroupPrice_TP(dt,isl,rg,resC,GenRisk)  / ;
+5398  );
+5399   
+5400  * Trading period branch result
+5401  File
+5402  BranchResults_TP  / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_BranchResults_TP.csv" / ;
+5403  BranchResults_TP.pc = 5 ;     BranchResults_TP.lw = 0 ;
+5404  BranchResults_TP.pw = 9999 ;  BranchResults_TP.ap = 1 ;
+5405  BranchResults_TP.nd = 5 ;
+5406  put BranchResults_TP ;
+5407  loop( (dt,rundt,br,frB,toB) $ branchDefn(dt,br,frB,toB),
+5408      put dt.tl, rundt.tl, br.tl, frB.tl, toB.tl, o_branchFlow_TP(dt,br)
+5409          o_branchCapacity_TP(dt,br), o_branchDynamicLoss_TP(dt,br)
+5410          o_branchFixedLoss_TP(dt,br), o_branchFromBusPrice_TP(dt,br)
+5411          o_branchToBusPrice_TP(dt,br), o_branchMarginalPrice_TP(dt,br)
+5412          o_branchTotalRentals_TP(dt,br) / ;
+5413  ) ;
+5414   
+5415   
+5416  * Trading period branch constraint result
+5417  File BrCstrResults_TP
+5418  / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_BrConstraintResults_TP.csv" / ;
+5419  BrCstrResults_TP.pc = 5 ;      BrCstrResults_TP.lw = 0 ;
+5420  BrCstrResults_TP.pw = 9999 ;   BrCstrResults_TP.ap = 1 ;
+5421  BrCstrResults_TP.nd = 5 ;
+5422  put BrCstrResults_TP ;
+5423  loop( (dt,rundt,brCstr) $ branchConstraint(dt,brCstr),
+5424      put dt.tl,rundt.tl, brCstr.tl, o_brConstraintLHS_TP(dt,brCstr)
+5425          o_brConstraintSense_TP(dt,brCstr), o_brConstraintRHS_TP(dt,brCstr)
+5426          o_brConstraintPrice_TP(dt,brCstr) / ;
+5427  ) ;
+5428   
+5429   
+5430  * Trading period market node constraint result
+5431  File MnodeCstrResults_TP
+5432  / "C:\vSPD\ElectricityAuthority\Programs\..\Output\\RTD_202211061725_New\RTD_202211061725_New_MnodeConstraintResults_TP.csv" / ;
+5433  MnodeCstrResults_TP.pc = 5 ;    MnodeCstrResults_TP.lw = 0 ;
+5434  MnodeCstrResults_TP.pw = 9999 ; MnodeCstrResults_TP.ap = 1 ;
+5435  MnodeCstrResults_TP.nd = 5 ;
+5436  put MnodeCstrResults_TP ;
+5437  loop( (dt,rundt,MnodeCstr) $ MnodeConstraint(dt,MnodeCstr),
+5438      put dt.tl,rundt.tl, MnodeCstr.tl, o_MnodeConstraintLHS_TP(dt,MnodeCstr)
+5439          o_MnodeConstraintSense_TP(dt,MnodeCstr)
+5440          o_MnodeConstraintRHS_TP(dt,MnodeCstr)
+5441          o_MnodeConstraintPrice_TP(dt,MnodeCstr) / ;
+5442  ) ;
+5443   
+5445  *===============================================================================
+5446   
+5447   
+5448   
+5449  *===============================================================================
+5450  * Audit mode reporting process
+5451  *===============================================================================
+5453  *===============================================================================
+5454  *execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
+5455   
+5456   
+5457   
+5458   
+5460   
+5461   
+5462  * Post a progress message for use by EMI.
+5463  putclose rep 'Case: RTD_202211061725_61012022110425024_20221106172401_New is complete in ',timeExec,'(secs)'/ ;
+5464  putclose rep 'Case: RTD_202211061725_61012022110425024_20221106172401_New is finished in ',timeElapsed,'(secs)'/ ;
+5465   
+5466  * Go to the next input file
+5468   
+5469  * Post a progress message for use by EMI.
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\vSPD\ElectricityAuthority\Programs\vSPDsolve.gms
+     2     2109 INCLUDE        1      40  .C:\vSPD\ElectricityAuthority\Programs\vSPDsettings.inc
+     3     2162 INCLUDE        1      41  .C:\vSPD\ElectricityAuthority\Programs\vSPDcase.inc
+     4     2427 IF EXIST       1     305  C:\vSPD\ElectricityAuthority\Input\RTD_202211061725_61012022110425024_20221106172401_New.gdx
+     5     2431 GDXIN          1     309  C:\vSPD\ElectricityAuthority\Programs\vSPDPeriod.gdx
+     6     2436 GDXIN          1     314  C:\vSPD\ElectricityAuthority\Input\RTD_202211061725_61012022110425024_20221106172401_New.gdx
+     7     2585 IF EXIST       1     463  C:\vSPD\ElectricityAuthority\Override\.gdx
+     8     3421 INCLUDE        1    1299  .C:\vSPD\ElectricityAuthority\Programs\vSPDsolve_RTP.gms
+     9     5206 INCLUDE        1    2527  .C:\vSPD\ElectricityAuthority\Programs\vSPDreport.gms
+    10     5225 IF EXIST       9      19  .C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_BusResults_TP.csv
+    11     5470 IF EXIST       1    2539  C:\vSPD\ElectricityAuthority\Input\RTD_202211061725_61012022110425024_20221106172401_New.gdx
+
+
+COMPILATION TIME     =        0.031 SECONDS      4 MB  36.2.0 r433180e WEX-WEI
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3656
+
+
+LOOPS                            FOR/WHILE   1
+                                        dt   06-NOV-2022 17:25
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS          84     SINGLE EQUATIONS       32,420
+BLOCKS OF VARIABLES          67     SINGLE VARIABLES       56,701
+NON ZERO ELEMENTS       109,186     DISCRETE VARIABLES         14
+
+
+GENERATION TIME      =        0.079 SECONDS     30 MB  36.2.0 r433180e WEX-WEI
+               L O O P S          FOR/WHILE 1
+                                         dt 06-NOV-2022 17:25
+
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 6
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE vSPD_NMIR Using MIP From line 3656
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
+     TYPE    MIP                 DIRECTION  MAXIMIZE
+     SOLVER  CPLEX               FROM LINE  3656
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      1 Optimal
+**** OBJECTIVE VALUE         85985537.4795
+
+ RESOURCE USAGE, LIMIT          0.954      3600.000
+ ITERATION COUNT, LIMIT      6591    2000000000
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\vSPD\ElectricityAuthority\Programs\cplex.opt"
+>>  epint = 1e-9
+>>  epopt = 1e-9
+>>  sos1reform = -1
+>>  sos2reform = -1
+Finished reading from "C:\vSPD\ElectricityAuthority\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 6.12 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.29 Mb (peak 15.72 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 20.1.0.1 link memory 1.45 Mb (peak 9.99 Mb)
+--- Starting Cplex
+
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.58sec (det. 699.67 ticks)
+
+--- Fixing integer variables and solving final LP...
+
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.27sec (det. 306.07 ticks)
+
+
+Proven optimal solution
+MIP Solution:     85985537.479495    (6591 iterations, 6 nodes)
+Final Solve:      85985537.479495    (3747 iterations)
+
+Best possible:    85985537.479495
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 7
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+----   3820 PARAMETER EnergyShortfallMW  Quantity of energy shortfall at a node
+
+                      WAI0501
+
+06-NOV-2022 17:25     1.11315
+
+
+----   3835 PARAMETER IsNodeDead  Flag to indicate if a node is dead (1 = Yes)
+
+                   KIN0112 K~     WAI0111     WAI0501     WAI1101
+
+06-NOV-2022 17:25       1.000       1.000       1.000       1.000
+
+
+----   3838 PARAMETER ShortfallAdjustmentMW  Quantity of energy transfered from a node where energy shortfall occurs
+
+                      WAI0501
+
+06-NOV-2022 17:25     1.11315
+
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 8
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE vSPD_NMIR Using MIP From line 4213
+
+
+LOOPS                            FOR/WHILE   1
+                                        dt   06-NOV-2022 17:25
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS          84     SINGLE EQUATIONS       32,420
+BLOCKS OF VARIABLES          67     SINGLE VARIABLES       56,701
+NON ZERO ELEMENTS       109,189     DISCRETE VARIABLES         14
+
+
+GENERATION TIME      =        0.093 SECONDS     33 MB  36.2.0 r433180e WEX-WEI
+               L O O P S          FOR/WHILE 1
+                                         dt 06-NOV-2022 17:25
+
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 9
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE vSPD_NMIR Using MIP From line 4213
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
+     TYPE    MIP                 DIRECTION  MAXIMIZE
+     SOLVER  CPLEX               FROM LINE  4213
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      1 Optimal
+**** OBJECTIVE VALUE         86016951.1307
+
+ RESOURCE USAGE, LIMIT          0.891      3600.000
+ ITERATION COUNT, LIMIT      6507    2000000000
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\vSPD\ElectricityAuthority\Programs\cplex.opt"
+>>  epint = 1e-9
+>>  epopt = 1e-9
+>>  sos1reform = -1
+>>  sos2reform = -1
+Finished reading from "C:\vSPD\ElectricityAuthority\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 6.12 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.29 Mb (peak 15.72 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 20.1.0.1 link memory 1.45 Mb (peak 9.99 Mb)
+--- Starting Cplex
+
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.56sec (det. 692.52 ticks)
+
+--- Fixing integer variables and solving final LP...
+
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.25sec (det. 321.30 ticks)
+
+
+Proven optimal solution
+MIP Solution:     86016951.130744    (6507 iterations, 6 nodes)
+Final Solve:      86016951.130744    (3784 iterations)
+
+Best possible:    86016951.130744
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 01/12/23 11:20:10 Page 10
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+**** REPORT FILE SUMMARY
+
+rep C:\vSPD\ElectricityAuthority\Programs\ProgressReport.txt
+temp C:\vSPD\ElectricityAuthority\Programs\temp.put
+SummaryResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_SummaryResults_TP.csv
+IslandResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_IslandResults_TP.csv
+BusResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_BusResults_TP.csv
+NodeResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_NodeResults_TP.csv
+OfferResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_OfferResults_TP.csv
+ReserveResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_ReserveResults_TP.csv
+riskResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_RiskResults_TP.csv
+BranchResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_BranchResults_TP.csv
+BrCstrResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_BrConstraintResults_TP.csv
+MnodeCstrResults_TP C:\vSPD\ElectricityAuthority\Output\RTD_202211061725_New\RTD_202211061725_New_MnodeConstraintResults_TP.csv
+
+
+EXECUTION TIME       =        2.766 SECONDS     35 MB  36.2.0 r433180e WEX-WEI
+
+
+USER: Small MUD-5 User License                       G220916|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S10
+
+
+**** FILE SUMMARY
+
+Restart    C:\vSPD\ElectricityAuthority\Programs\vSPDmodel.g00
+Input      C:\vSPD\ElectricityAuthority\Programs\vSPDsolve.gms
+Output     C:\vSPD\ElectricityAuthority\Programs\vSPDsolve.lst
