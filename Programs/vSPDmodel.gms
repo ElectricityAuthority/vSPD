@@ -487,10 +487,10 @@ Positive variables
   SYSTEMCOST(dt)                                   'Total generation and reserve costs by period'
   SYSTEMPENALTYCOST(dt)                            'Total violation costs by period'
   TOTALPENALTYCOST                                 'Total violation costs'
-  SCARCITYCOST(dt)                                  'Total scarcity Cost'
+  SCARCITYCOST(dt)                                 'Total scarcity Cost'
 * scarcity variables
   ENERGYSCARCITYBLK(dt,n,blk)                      'Block energy scarcity cleared at bus b'
-  ENERGYSCARCITYNODE(dt,n)                          'Energy scarcity cleared at bus b'
+  ENERGYSCARCITYNODE(dt,n)                         'Energy scarcity cleared at bus b'
 
   RESERVESHORTFALLBLK(dt,isl,resC,riskC,blk)       'Block reserve shortfall by risk class (excluding genrisk and HVDC secondary risk)'
   RESERVESHORTFALL(dt,isl,resC,riskC)              'Reserve shortfall by risk class (excluding genris kand HVDC secondary risk)'

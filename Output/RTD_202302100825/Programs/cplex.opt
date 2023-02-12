@@ -1,0 +1,4 @@
+epint = 1e-9
+epopt = 1e-9
+sos1reform = -1
+sos2reform = -1

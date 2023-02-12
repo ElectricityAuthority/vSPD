@@ -11,6 +11,46 @@
 $onend
     Loop t $ (not unsolvedDT(t)) do
 
+        busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
+        busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
+        busPrice(bus(t,b))      = ACnodeNetInjectionDefinition2.m(t,b) ;
+
+        busDisconnected(bus(t,b)) $ { (busLoad(bus) = 0) and (busElectricalIsland(bus) = 0) } = 1 ;
+        busDisconnected(bus(t,b)) $ { ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) }, busLoad(t,b1) ] = 0) and ( busElectricalIsland(bus) > 0 ) } = 1 ;
+*       Set prices at dead buses with non-zero load
+        busPrice(bus(t,b)) $ { (busLoad(bus) > 0) and (busElectricalIsland(bus)= 0) } = DeficitBusGenerationPenalty ;
+        busPrice(bus(t,b)) $ { (busLoad(bus) < 0) and (busElectricalIsland(bus)= 0) } = -SurplusBusGenerationPenalty ;
+*       Set price at identified disconnected buses to 0
+        busPrice(bus)$busDisconnected(bus) = 0 ;
+*       End Check for disconnected nodes and adjust prices accordingly
+
+*       6f0. Replacing invalid prices after SOS1 (7.1.3)----------------------------
+        if SOS1_solve(dt) then
+            busSOSinvalid(dt,b)
+                = 1 $ { [ ( busPrice(dt,b) = 0 ) or ( busPrice(dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(dt,b) < -0.9*surplusBusGenerationPenalty ) ]
+                    and bus(dt,b)  and [ not busDisconnected(dt,b) ]  and [ busLoad(dt,b) = busGeneration(dt,b) ]
+                    and [ sum[(br,fd) $ { BranchBusConnect(dt,br,b) and branch(dt,br) }, ACBRANCHFLOWDIRECTED.l(dt,br,fd) ] = 0 ]
+                    and [ sum[ br     $ { BranchBusConnect(dt,br,b) and branch(dt,br) } , 1 ] > 0 ]
+                      };
+
+            numberofbusSOSinvalid(dt) = 2*sum[b, busSOSinvalid(dt,b)];
+
+            While sum[b, busSOSinvalid(dt,b)] < numberofbusSOSinvalid(dt) do
+                numberofbusSOSinvalid(dt) = sum[b, busSOSinvalid(dt,b)];
+
+                busPrice(dt,b) $ { busSOSinvalid(dt,b) and ( sum[ b1 $ { [ not busSOSinvalid(dt,b1) ] and sum[ br $ { branch(dt,br) and BranchBusConnect(dt,br,b) and BranchBusConnect(dt,br,b1) }, 1 ] }, 1 ] > 0 ) }
+                    = sum[ b1 $ { [ not busSOSinvalid(dt,b1) ] and sum[ br $ { branch(dt,br) and BranchBusConnect(dt,br,b) and BranchBusConnect(dt,br,b1) }, 1 ] }, busPrice(dt,b1) ]
+                    / sum[ b1 $ { [ not busSOSinvalid(dt,b1) ] and sum[ br $ { branch(dt,br) and BranchBusConnect(dt,br,b) and BranchBusConnect(dt,br,b1) }, 1 ] }, 1 ];
+
+                busSOSinvalid(dt,b)
+                  = 1 $ { [ ( busPrice(dt,b) = 0 ) or ( busPrice(dt,b) > 0.9 * deficitBusGenerationPenalty ) or ( busPrice(dt,b) < -0.9 * surplusBusGenerationPenalty ) ]
+                      and bus(dt,b) and [ not busDisconnected(dt,b) ] and [ busLoad(dt,b) = busGeneration(dt,b) ]
+                      and [ sum[(br,fd) $ { BranchBusConnect(dt,br,b) and branch(dt,br) }, ACBRANCHFLOWDIRECTED.l(dt,br,fd) ] = 0 ]
+                      and [ sum[ br $ { BranchBusConnect(dt,br,b) and branch(dt,br) }, 1 ] > 0 ]
+                        };
+            endwhile;
+        endif ;
+
         totalBusAllocation(t,b) $ bus(t,b)
             = sum[ n $ Node(t,n), NodeBusAllocationFactor(t,n,b)];
 
