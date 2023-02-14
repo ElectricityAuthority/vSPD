@@ -3,10 +3,10 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTD_202302100825
+$setglobal runName                       Test_Cases
 
 $setglobal programPath                   '%system.fp%' 
-$setglobal inputPath                     '%system.fp%..\Input\20230210\'
+$setglobal inputPath                     '%system.fp%..\Input\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 
@@ -49,4 +49,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          DWH      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+$setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
