@@ -3,39 +3,39 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       Run_All_Cases
+$setglobal runName                       Test_Cases
 
-$setglobal programPath                   '%system.fp%'
+$setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%..\Input\'
-$setglobal ovrdPath                      '%system.fp%..\Override\'
 $setglobal outputPath                    '%system.fp%..\Output\'
+$setglobal ovrdPath                      '%system.fp%..\Override\'
 
-$setglobal vSPDinputOvrdData             ''   !Name of override file
+$setglobal vSPDinputOvrdData             ''   !Name of override file 
 
 
 *+++ Model +++
-Scalar sequentialSolve                   / 1 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
 Scalar disconnectedNodePriceCorrection   / 1 / ;
 Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
 
 
 *+++ Network +++
-Scalar useACLossModel                    / 1 / ;
-Scalar useHVDCLossModel                  / 1 / ;
-Scalar useACBranchLimits                 / 1 / ;
-Scalar useHVDCBranchLimits               / 1 / ;
-Scalar resolveCircularBranchFlows        / 1 / ;
-Scalar resolveHVDCNonPhysicalLosses      / 1 / ;
-Scalar resolveACNonPhysicalLosses        / 0 / ;   ! Placeholder for future code development
-Scalar circularBranchFlowTolerance       / 0.0001 / ;
+Scalar useACLossModel                    / 1 /    ;
+Scalar useHVDCLossModel                  / 1 /    ;
+Scalar useACBranchLimits                 / 1 /    ;
+Scalar useHVDCBranchLimits               / 1 /    ;
+Scalar resolveCircularBranchFlows        / 1 /    ;
+Scalar resolveHVDCNonPhysicalLosses      / 1 /    ;
+Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for future code development
+Scalar circularBranchFlowTolerance       / 1e-4 / ;
 Scalar nonPhysicalLossTolerance          / 1e-6 / ;
 Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
 
 
 *+++ Constraints +++
-Scalar useReserveModel                   / 1 / ;
-Scalar suppressMixedConstraint           / 0 / ;   !  No longer used since Mixed MIP Constraints no longer exists
-Scalar mixedMIPtolerance                 / 1e-6 / ;
+Scalar useReserveModel                   / 1 /    ;
+Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
+Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
 
 
 *+++ Solver +++
@@ -49,4 +49,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          SPD      ! SPD for normal SPD run
+$setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis

@@ -87,7 +87,7 @@ Sets
   dt2tp(dt,tp)                        'Mapping of dateTime set to the tradePeriod set'
   node(dt,n)                          'Node definition for the different trading periods'
   bus(dt,b)                           'Bus definition for the different trading periods'
-  node2node(dt,n,n1)                  'Node to node mapping used ofr price transfer'
+  node2node(dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
   offerNode(dt,o,n)                   'Offers and the corresponding offer node for the different trading periods'
   offerTrader(dt,o,trdr)              'Offers and the corresponding trader for the different trading periods'
   bidNode(dt,bd,n)                    'Bids and the corresponding node for the different trading periods'
@@ -98,6 +98,7 @@ Sets
   riskGenerator(dt,o)                 'Set of generators (offers) that can set the risk in the different trading periods'
   primarySecondaryOffer(dt,o,o1)      'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
   dispatchableBid(dt,bd)              'Set of dispatchable bids - effective date 20 May 2014'
+  nodeoutagebranch(dt,n,br)           'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
   ;
 
 
@@ -166,11 +167,14 @@ Parameters
   loadIsBad(dt,n)                                                   'Flag if set to 1 --> InitialLoad will be replaced by Estimated Initial Load'
   loadIsNCL(dt,n)                                                   'Flag if set to 1 --> non-conforming load --> will be fixed in RTD load calculation'
   maxLoad(dt,n)                                                     'Pnode maximum load'
-  instructedloadshed(dt,n)                                          'Instructed load shedding applied to RTDP and should be ignore by all other schedules'
-  instructedshedactive(dt,n)                                        'Flag if Instructed load shedding is active; applied to RTDP and should be ignore by all other schedules'
+  instructedLoadShed(dt,n)                                          'Instructed load shedding applied to RTDP and should be ignore by all other schedules'
+  instructedShedActive(dt,n)                                        'Flag if Instructed load shedding is active; applied to RTDP and should be ignore by all other schedules'
   islandMWIPS(dt,isl)                                               'Island total generation at the start of RTD run'
   islandPDS(dt,isl)                                                 'Island pre-solve deviation - used to adjust RTD node demand'
   islandLosses(dt,isl)                                              'Island estimated losss - used to adjust RTD mode demand'
+  enrgShortfallRemovalMargin(dt)                                    'This small margin is added to the shortfall removed amount in order to prevent any associated binding ACLine constraint'
+  maxSolveLoops(dt)                                                 'The maximum number of times that the Energy Shortfall Check will re-solve the model'
+
 
   energyScarcityEnabled(dt)                                         'Flag to apply energy scarcity (this is different from FP scarcity situation)'
   reserveScarcityEnabled(dt)                                        'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
@@ -194,7 +198,6 @@ Parameters
 *===================================================================================
 
 Scalars
-  sequentialSolve
   useAClossModel
   useHVDClossModel
   useACbranchLimits                        'Use the AC branch limits (1 = Yes)'
@@ -415,6 +418,8 @@ Parameters
   EstLoadIsScalable(dt,n)                          'Binary value. If True then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad'
   EstNonScalableLoad(dt,n)                         'For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero'
   EstScalableLoad(dt,n)                            'For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero'
+
+
   ;
 
 Scalars
@@ -482,10 +487,10 @@ Positive variables
   SYSTEMCOST(dt)                                   'Total generation and reserve costs by period'
   SYSTEMPENALTYCOST(dt)                            'Total violation costs by period'
   TOTALPENALTYCOST                                 'Total violation costs'
-  SCARCITYCOST(dt)                                  'Total scarcity Cost'
+  SCARCITYCOST(dt)                                 'Total scarcity Cost'
 * scarcity variables
   ENERGYSCARCITYBLK(dt,n,blk)                      'Block energy scarcity cleared at bus b'
-  ENERGYSCARCITYNODE(dt,n)                          'Energy scarcity cleared at bus b'
+  ENERGYSCARCITYNODE(dt,n)                         'Energy scarcity cleared at bus b'
 
   RESERVESHORTFALLBLK(dt,isl,resC,riskC,blk)       'Block reserve shortfall by risk class (excluding genrisk and HVDC secondary risk)'
   RESERVESHORTFALL(dt,isl,resC,riskC)              'Reserve shortfall by risk class (excluding genris kand HVDC secondary risk)'
@@ -1748,9 +1753,6 @@ MNodeSecurityConstraintEQ(t,MnodeCstr)
   ;
 
 *======= SECURITY EQUATIONS END ================================================
-
-
-
 
 
 * Model declarations
