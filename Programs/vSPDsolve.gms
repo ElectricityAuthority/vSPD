@@ -36,6 +36,7 @@ $offText
 *=====================================================================================
 
 * Include paths, settings and case name files
+$include Intervals.inc 
 $include vSPDsettings.inc
 $include vSPDcase.inc
 

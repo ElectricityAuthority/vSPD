@@ -104,66 +104,7 @@ $onend
         endif;
 
 *       Offer output
-*        o_offerEnergy_TP(t,o) $ offer(t,o) = GENERATION.l(t,o) ;
-
-*       Bus level output
-*        o_busDeficit_TP(dt,b) $ bus(currTP,b) = DEFICITBUSGENERATION.l(currTP,b);
-* TN - post processing unmapped generation deficit buses
-$ontext
-The following code is added post-process generation deficit bus that is not
-mapped to a pnode (BusNodeAllocationFactor  = 0). In post-processing, when a
-deficit is detected at a bus that does not map directly to a pnode, SPD creates
-a ZBR mapping by following zero impendence branches (ZBRs) until it reaches a
-pnode. The price at the deficit bus is assigned directly to the pnode,
-overwriting any weighted price that post-processing originally calculated for
-the pnode. This is based on email from Nic Deller <Nic.Deller@transpower.co.nz>
-on 25 Feb 2015.
-The code is modified again on 16 Feb 2016 to avoid infinite loop when there are
-many generation deficit buses.
-This code is used to post-process generation deficit bus that is not mapped to
-
-        unmappedDeficitBus(dt,b) $ o_busDeficit_TP(dt,b)
-            = yes $ (Sum[ n, busNodeAllocationFactor(dt,b,n)] = 0);
-
-        changedDeficitBus(dt,b) = no;
-
-*$onend
-        If Sum[b $ unmappedDeficitBus(dt,b), 1] then
-
-            temp_busDeficit_TP(dt,b) = o_busDeficit_TP(dt,b);
-
-            Loop b $ unmappedDeficitBus(dt,b) do
-                o_busDeficit_TP(dt,b1)
-                  $ { Sum[ br $ { ( branchLossBlocks(tp,br)=0 )
-                              and ( branchBusDefn(tp,br,b1,b)
-                                 or branchBusDefn(tp,br,b,b1) )
-                                }, 1 ]
-                    } = o_busDeficit_TP(dt,b1) + o_busDeficit_TP(dt,b) ;
-
-                changedDeficitBus(dt,b1)
-                  $ Sum[ br $ { ( branchLossBlocks(tp,br)=0 )
-                            and ( branchBusDefn(tp,br,b1,b)
-                               or branchBusDefn(tp,br,b,b1) )
-                              }, 1 ] = yes;
-
-                unmappedDeficitBus(dt,b) = no;
-                changedDeficitBus(dt,b) = no;
-                o_busDeficit_TP(dt,b) = 0;
-            EndLoop;
-
-            Loop n $ sum[ b $ changedDeficitBus(dt,b)
-                        , busNodeAllocationFactor(dt,b,n)] do
-                o_nodePrice_TP(dt,n) = deficitBusGenerationPenalty ;
-                o_nodeDeficit_TP(dt,n) = sum[ b $ busNodeAllocationFactor(dt,b,n),
-                                                  busNodeAllocationFactor(dt,b,n)
-                                                * o_busDeficit_TP(dt,b) ] ;
-            EndLoop;
-
-            o_busDeficit_TP(dt,b) = temp_busDeficit_TP(dt,b);
-        Endif;
-*$offend
-* TN - Post-process generation deficit bus end
-$offtext
+        o_offerEnergy_TP(t,o) $ offer(t,o) = GENERATION.l(t,o) ;
 
 *       Island reserve output
         o_FIRprice_TP(t,isl) = Sum[ resC $ (ord(resC) = 1)

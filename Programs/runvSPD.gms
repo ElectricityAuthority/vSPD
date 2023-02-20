@@ -136,7 +136,7 @@ execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"
 $else
 execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
 $endif
-*execute 'if exist *.lst   erase /q *.lst '
+execute 'if exist *.lst   erase /q *.lst '
 execute 'if exist *.~gm   erase /q *.~gm '
 execute 'if exist *.lxi   erase /q *.lxi '
 execute 'if exist *.log   erase /q *.log '
