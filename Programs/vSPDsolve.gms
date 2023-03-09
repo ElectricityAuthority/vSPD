@@ -1059,12 +1059,14 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *   Constraint 6.1.1.1 - Offer blocks
     GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = EnrgOfrMW(genOfrBlk) ;
     GENERATIONBLOCK.fx(t,o,blk) $ (not genOfrBlk(t,o,blk)) = 0 ;
-*   Constraint 6.1.1.2 - Fix the invalid generation to Zero
+*   Constraint 6.1.1.3 - Fix the invalid generation to Zero
     GENERATION.fx(offer(t,o)) $ (not posEnrgOfr(offer)) = 0 ;
-*   Constraint 6.1.1.3 - Set Upper Bound for intermittent generation
+*   Constraint 6.1.1.4 - Set Upper Bound for intermittent generation
     GENERATION.up(offer(t,o)) $ { windOffer(offer) and priceResponsive(offer) } = min[ potentialMW(offer), ReserveGenerationMaximum(offer) ] ;
-*   TN - Fix the generation at dead node to Zero
+
+*   Dead node pre-processing - zero cleared qunatities 4.3.1
     GENERATION.fx(offer(t,o)) $ sum[n $ offernode(t,o,n),IsNodeDead(t,n)] = 0 ;
+    PURCHASE.fx(offer(t,bd)) $ sum[n $ bidnode(t,bd,n),IsNodeDead(t,n)] = 0 ;
 
 *   Constraint 6.1.1.4 & Constraint 6.1.1.5 - Set Upper/Lower Bound for Positive/Negative Demand Bid
     PURCHASEBLOCK.up(demBidBlk(t,bd,blk)) = DemBidMW(t,bd,blk) $ [DemBidMW(t,bd,blk) > 0];
