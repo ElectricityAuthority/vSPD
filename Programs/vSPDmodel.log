@@ -1,0 +1,25 @@
+--- Job vSPDmodel.gms Start 03/09/23 15:26:55 36.2.0 r433180e WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\36\gmsprmNT.txt
+    C:\Users\nguyent\Documents\GAMS\gamsconfig.yaml
+--- GAMS Parameters defined
+    Input C:\vSPD\ElectricityAuthority\Programs\vSPDmodel.gms
+    PageSize 0
+    ScrDir C:\vSPD\ElectricityAuthority\Programs\225a\
+    SysDir C:\GAMS\36\
+    LogOption 3
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S10
+          C:\GAMS\36\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 36.2.0   Copyright (C) 1987-2021 GAMS Development. All rights reserved
+--- Starting compilation
+--- vSPDmodel.gms(2071) 3 Mb
+--- Starting execution: elapsed 0:00:00.029
+*** Status: Normal completion
+--- Job vSPDmodel.gms Stop 03/09/23 15:26:55 elapsed 0:00:00.031
