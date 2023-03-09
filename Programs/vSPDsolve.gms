@@ -411,6 +411,10 @@ $load scarcityEnrgNodeLimit       = i_dateTimeScarcityEnrgNodeLimit
 $load scarcityEnrgNodeLimitPrice  = i_dateTimeScarcityEnrgNodeLimitPrice
 $load scarcityResrvIslandLimit    = i_dateTimeScarcityResrvIslandLimit
 $load scarcityResrvIslandPrice    = i_dateTimeScarcityResrvIslandPrice
+
+*RTP4 - new symbols to support Dispatch Lite
+$load discreteModeBid             = i_dateTimeDiscreteModeBid
+$load dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
 $gdxin
 
 *===============================================================================
@@ -488,8 +492,8 @@ reserveMaximumFactor(dt,o,resC) $ { windOffer(dt,o) and priceResponsive(dt,o) an
 
 * Initialise offer limits and prices -------------------------------------------
 * Initialise energy offer data for the current trade period start
-EnrgOfrMW(dt,o,blk) = energyOffer(dt,o,blk,'limitMW') ;
-EnrgOfrPrice(dt,o,blk) = energyOffer(dt,o,blk,'price') ;
+EnrgOfrMW(dt,o,blk) = energyOffer(dt,o,blk,'limitMW')  $ dispatchableEnrgOffer(dt,o) ;
+EnrgOfrPrice(dt,o,blk) = energyOffer(dt,o,blk,'price') $ dispatchableEnrgOffer(dt,o) ;
 * Initialise reserve offer data for the current trade period start
 PLRO(resT) $ (ord(resT) = 1) = yes ;
 TWRO(resT) $ (ord(resT) = 2) = yes ;
