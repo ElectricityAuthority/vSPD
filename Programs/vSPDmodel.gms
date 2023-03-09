@@ -242,8 +242,6 @@ Sets
   resOfrBlk(dt,o,blk,resC,resT)                          'Valid trade blocks for the respective reserve offers by class and type'
   posEnrgOfr(dt,o)                                       'Postive energy offers defined for the current trading period'
 
-
-
 * Bid
   Bid(dt,bd)                                             'Bids defined for the current trading period'
   DemBidBlk(dt,bd,blk)                                   'Valid trade blocks for the respective purchase bids'
@@ -557,7 +555,9 @@ Binary variables
   HVDCSENDING(dt,isl)                              'Binary variable indicating if island isl is the sending end of the HVDC flow. 1 = Yes.'
   INZONE(dt,isl,resC,z)                            'Binary variable (1 = Yes ) indicating if the HVDC flow is in a zone (z) that facilitates the appropriate quantity of shared reserves in the reverse direction to the HVDC sending island isl for reserve class resC.'
   HVDCSENTINSEGMENT(dt,isl,los)                    'Binary variable to decide which loss segment HVDC flow sent from an island falling into --> active segment loss model'
-* NMIR binary variables end
+* Discete dispachable demand block binary variables
+  PURCHASEBLOCKBINARY(dt,bd,blk)                   'Bibary variable to decide if a purchase block is cleared either fully or nothing at all'
+
   ;
 
 SOS1 Variables
@@ -585,16 +585,17 @@ Equations
 
 
 * Offer and purchase constraints
-  GenerationOfferDefintion(dt,o)                   'Definition of generation provided by an offer (6.1.1.2)'
-  DemBidDefintion(dt,bd)                           'Definition of purchase provided by a bid (6.1.1.6)'
-  EnergyScarcityDefinition(dt,n)                   'Definition of bus energy scarcity (6.1.1.8)'
+  GenerationChangeUpDown(dt,o)                     'Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
+  GenerationOfferDefintion(dt,o)                   'Definition of generation provided by an offer (6.1.1.3)'
+  DemBidDiscrete(dt,bd,blk)                        'Definition of discrete purchase mode (6.1.1.7)'
+  DemBidDefintion(dt,bd)                           'Definition of purchase provided by a bid (6.1.1.8)'
+  EnergyScarcityDefinition(dt,n)                   'Definition of bus energy scarcity (6.1.1.10)'
 
 * Ramping constraints
   GenerationRampUp(dt,o)                           'Maximum movement of the generator upwards due to up ramp rate (6.2.1.1)'
   GenerationRampDown(dt,o)                         'Maximum movement of the generator downwards due to down ramp rate (6.2.1.2)'
 
-* Generation change penalty for RTD and RTDP
-  GenerationChangeUpDown(dt,o)                     'Calculate the MW of generation increase/decrease'
+
 
 * HVDC transmission constraints
   HVDClinkMaximumFlow(dt,br)                       'Maximum flow on each HVDC link (6.3.1.1)'
@@ -808,21 +809,34 @@ TotalScarcityCostDefinition(t)..
 
 *======= GENERATION AND LOAD CONSTRAINTS =======================================
 
-* Definition of generation provided by an offer (6.1.1.2)
+* Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
+GenerationChangeUpDown(t,o) $ { (StudyMode = 101) or (StudyMode = 201) }..
+  GENERATIONUPDELTA(t,o) - GENERATIONDNDELTA(t,o)
+=e=
+  GENERATION(t,o) - generationStart(t,o);
+
+* Definition of generation provided by an offer (6.1.1.3)
 GenerationOfferDefintion(offer(t,o))..
   GENERATION(offer)
 =e=
   sum[ genOfrBlk(offer,blk), GENERATIONBLOCK(offer,blk) ]
   ;
 
-* Definition of purchase provided by a bid (6.1.1.6)
+* Definition of discrete purchase mode (6.1.1.7)
+DemBidDiscrete(bid(t,bd),blk) $ discreteModeBid(bid) ..
+  PURCHASEBLOCK(bid,blk)
+=e=
+  PURCHASEBLOCKBINARY(bid,blk) * DemBidMW(bid,blk) 
+  ;
+
+* Definition of purchase provided by a bid (6.1.1.8)
 DemBidDefintion(bid(t,bd))..
   PURCHASE(bid)
 =e=
   sum[ demBidBlk(bid,blk), PURCHASEBLOCK(bid,blk) ]
   ;
 
-* Definition of bus energy scarcity (6.1.1.8)
+* Definition of bus energy scarcity (6.1.1.10)
 EnergyScarcityDefinition(t,n)..
   ENERGYSCARCITYNODE(t,n)
 =e=
@@ -853,19 +867,6 @@ GenerationRampDown(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
   ;
 
 *======= RAMPING CONSTRAINTS END================================================
-
-
-
-*======= GENERATION CHANGE CONSTRAINT ==========================================
-* Calculate the MW of generation increase/decrease - only applid for RTD/RTDP
-* and this constraint is not documented in SPD formulation document
-GenerationChangeUpDown(t,o) $ { (StudyMode = 101) or (StudyMode = 201) }..
-  GENERATIONUPDELTA(t,o) - GENERATIONDNDELTA(t,o)
-=e=
-  GENERATION(t,o) - generationStart(t,o);
-
-*======= GENERATION CHANGE CONSTRAINT END ======================================
-
 
 
 *======= HVDC TRANSMISSION EQUATIONS ===========================================
@@ -1814,8 +1815,8 @@ Model vSPD_NMIR /
 * Objective function
   ObjectiveFunction
 * Offer and purchase definitions
-  GenerationOfferDefintion, DemBidDefintion
-  EnergyScarcityDefinition,
+  GenerationOfferDefintion, DemBidDiscrete,
+  DemBidDefintion, EnergyScarcityDefinition,
   GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
 * Network
   HVDClinkMaximumFlow, HVDClinkLossDefinition
@@ -1891,7 +1892,7 @@ Model vSPD_MIP /
 * Objective function
   ObjectiveFunction
 * Offer and purchase definitions
-  GenerationOfferDefintion, DemBidDefintion
+  GenerationOfferDefintion, DemBidDiscrete, DemBidDefintion
   EnergyScarcityDefinition,
   GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
 * Network
