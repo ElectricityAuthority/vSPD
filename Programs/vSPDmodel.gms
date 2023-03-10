@@ -682,8 +682,9 @@ Equations
 
 * Reserve
   PLSRReserveProportionMaximum(dt,o,blk,resC,resT)                              '6.5.3.1: Maximum PLSR as a proportion of the block MW'
-  ReserveOfferDefinition(dt,o,resC,resT)                                        '6.5.3.3: Definition of the reserve offers of different classes and types'
-  EnergyAndReserveMaximum(dt,o,resC)                                            '6.5.3.4: Definition of maximum energy and reserves from each generator'
+  ReserveInterruptibleOfferLimit(dt,o,bd,resC,resT)                             '6.5.3.3: Cleared IL reserve is constrained by cleared dispatchable demand'
+  ReserveOfferDefinition(dt,o,resC,resT)                                        '6.5.3.4: Definition of the reserve offers of different classes and types'
+  EnergyAndReserveMaximum(dt,o,resC)                                            '6.5.3.5: Definition of maximum energy and reserves from each generator'
 
 * Reserve scarcity/shortfall
   HVDCRiskReserveShortFallCalculation(dt,isl,resC,RiskC)                        '6.5.4.2: Total Reserve Shortfall for DCCE risk'
@@ -855,7 +856,7 @@ GenerationRampUp(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
   sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
 + GENERATION(t,o) - DEFICITRAMPRATE(t,o)
 =l=
-  (RampRateUp(t,o) * intervalDuration / 60) + generationStart(t,o)
+  generationStart(t,o) + (RampRateUp(t,o) * intervalDuration / 60)
   ;
 
 * Maximum movement of the generator downwards due to down ramp rate (6.2.1.2)
@@ -863,7 +864,7 @@ GenerationRampDown(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
   sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
 + GENERATION(t,o) + SURPLUSRAMPRATE(t,o)
 =g=
-  generationStart(t,o)  - (RampRateDn(t,o) * intervalDuration / 60)
+  generationStart(t,o) - (RampRateDn(t,o) * intervalDuration / 60)
   ;
 
 *======= RAMPING CONSTRAINTS END================================================
@@ -1556,14 +1557,22 @@ PLSRReserveProportionMaximum(offer(t,o),blk,resC,PLRO)
   ResOfrPct(Offer,blk,resC) * GENERATION(Offer)
   ;
 
-* 6.5.3.3 Definition of the reserve offers of different classes and types
+* 6.5.3.3: Cleared IL reserve is constrained by cleared dispatchable demand'
+ReserveInterruptibleOfferLimit(t,o,bd,resC,ILRO(resT))
+  $ { sameas(o,bd) and offer(t,o) and bid(t,bd) and (sum[blk,DemBidMW(t,bd,blk)] >= 0) } ..
+  RESERVE(t,o,resC,resT)
+=l=
+  PURCHASE(t,bd);
+
+
+* 6.5.3.4 Definition of the reserve offers of different classes and types
 ReserveOfferDefinition(offer(t,o),resC,resT)..
   RESERVE(offer,resC,resT)
 =e=
   sum[ blk, RESERVEBLOCK(offer,blk,resC,resT) ]
   ;
 
-* Definition of maximum energy and reserves from each generator (6.5.3.4)
+* 6.5.3.5 Definition of maximum energy and reserves from each generator
 EnergyAndReserveMaximum(offer(t,o),resC)..
   GENERATION(offer)
 + reserveMaximumFactor(offer,resC)
@@ -1834,8 +1843,8 @@ Model vSPD_NMIR /
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
 * Reserve
-  PLSRReserveProportionMaximum, ReserveOfferDefinition
-  EnergyAndReserveMaximum
+  PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit
+  ReserveOfferDefinition, EnergyAndReserveMaximum
 * Reserve scarcity/shortfall
   HVDCRiskReserveShortFallCalculation
   ManualRiskReserveShortFallCalculation
@@ -1913,8 +1922,8 @@ Model vSPD_MIP /
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
 * Reserve
-  PLSRReserveProportionMaximum, ReserveOfferDefinition
-  EnergyAndReserveMaximum
+  PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit
+  ReserveOfferDefinition, EnergyAndReserveMaximum
 * Reserve scarcity/shortfall
   HVDCRiskReserveShortFallCalculation
   ManualRiskReserveShortFallCalculation
