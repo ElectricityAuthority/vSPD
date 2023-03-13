@@ -556,8 +556,9 @@ Binary variables
   INZONE(dt,isl,resC,z)                            'Binary variable (1 = Yes ) indicating if the HVDC flow is in a zone (z) that facilitates the appropriate quantity of shared reserves in the reverse direction to the HVDC sending island isl for reserve class resC.'
   HVDCSENTINSEGMENT(dt,isl,los)                    'Binary variable to decide which loss segment HVDC flow sent from an island falling into --> active segment loss model'
 * Discete dispachable demand block binary variables
-  PURCHASEBLOCKBINARY(dt,bd,blk)                   'Bibary variable to decide if a purchase block is cleared either fully or nothing at all'
-
+  PURCHASEBLOCKBINARY(dt,bd,blk)                   'Binary variable to decide if a purchase block is cleared either fully or nothing at all'
+* HVDC Secondary risk should not be covered if HVDC sending is zero. The following binary variable is to enforced that (Update from RTP phase 4)
+  HVDCSENDZERO(dt,isl)                              'Binary variable indicating if island is NOT the sending energy through HVDC flow. 1 = Yes.'
   ;
 
 SOS1 Variables
@@ -629,20 +630,22 @@ Equations
   ACDirectedBranchFlowIntegerDefinition2(dt,br,fd) 'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses'
 
 * Risk
-  RiskOffsetCalculation_DCCE(dt,isl,resC,riskC)          'Calculation of the risk offset variable for the DCCE risk class.  (6.5.1.1)'
-  RiskOffsetCalculation_DCECE(dt,isl,resC,riskC)         'Calculation of the risk offset variable for the DCECE risk class. (6.5.1.3)'
-  HVDCRecCalculation(dt,isl)                             'Calculation of the net received HVDC MW flow into an island       (6.5.1.4)'
-  HVDCIslandRiskCalculation(dt,isl,resC,riskC)           'Calculation of the island risk for a DCCE and DCECE               (6.5.1.5)'
+  RiskOffsetCalculation_DCCE(dt,isl,resC,riskC)          '6.5.1.1 : Calculation of the risk offset variable for the DCCE risk class.'
+  RiskOffsetCalculation_DCECE(dt,isl,resC,riskC)         '6.5.1.3 : Calculation of the risk offset variable for the DCECE risk class.'
+  HVDCRecCalculation(dt,isl)                             '6.5.1.4 : Calculation of the net received HVDC MW flow into an island.'
+  HVDCIslandRiskCalculation(dt,isl,resC,riskC)           '6.5.1.5 : Calculation of the island risk for a DCCE and DCECE.'
 
-  GenIslandRiskCalculation(dt,isl,o,resC,riskC)          'Calculation of the island risk for risk setting generators (6.5.1.6)'
-  GenIslandRiskCalculation_1(dt,isl,o,resC,riskC)        'Calculation of the island risk for risk setting generators (6.5.1.6)'
-  ManualIslandRiskCalculation(dt,isl,resC,riskC)         'Calculation of the island risk based on manual specifications (6.5.1.7)'
-  HVDCIslandSecRiskCalculation_GEN(dt,isl,o,resC,riskC)  'Calculation of the island risk for an HVDC secondary risk to an AC risk (6.5.1.8)'
-  HVDCIslandSecRiskCalculation_GEN_1(dt,isl,o,resC,riskC)'Calculation of the island risk for an HVDC secondary risk to an AC risk (6.5.1.8)'
-  HVDCIslandSecRiskCalculation_Manual(dt,isl,resC,riskC) 'Calculation of the island risk for an HVDC secondary risk to a manual risk (6.5.1.9)'
-  HVDCIslandSecRiskCalculation_Manu_1(dt,isl,resC,riskC) 'Calculation of the island risk for an HVDC secondary risk to a manual risk (6.5.1.9)'
-  GenIslandRiskGroupCalculation(dt,isl,rg,resC,riskC)    'Calculation of the island risk of risk group (6.5.1.10)'
-  GenIslandRiskGroupCalculation_1(dt,isl,rg,resC,riskC)  'Calculation of the risk of risk group (6.5.1.10)'
+  GenIslandRiskCalculation(dt,isl,o,resC,riskC)          '6.5.1.6 : Calculation of the island risk for risk setting generators.'
+  GenIslandRiskCalculation_1(dt,isl,o,resC,riskC)        '6.5.1.6 : Calculation of the island risk for risk setting generators.'
+  ManualIslandRiskCalculation(dt,isl,resC,riskC)         '6.5.1.7 : Calculation of the island risk based on manual specifications.'
+  HVDCSendMustZeroBinaryDefinition(dt,isl)               '6.5.1.8: Define a flag to show if HVDC sending zero MW flow from an island '
+
+  HVDCIslandSecRiskCalculation_GEN(dt,isl,o,resC,riskC)     '6.5.1.9 : Calculation of the island risk for an HVDC secondary risk to an AC risk.'
+  HVDCIslandSecRiskCalculation_GEN_1(dt,isl,o,resC,riskC)   '6.5.1.9 : Calculation of the island risk for an HVDC secondary risk to an AC risk.'
+  HVDCIslandSecRiskCalculation_Manual(dt,isl,resC,riskC)    '6.5.1.10: Calculation of the island risk for an HVDC secondary risk to a manual risk.'
+  HVDCIslandSecRiskCalculation_Manu_1(dt,isl,resC,riskC)    '6.5.1.10: Calculation of the island risk for an HVDC secondary risk to a manual risk.'
+  GenIslandRiskGroupCalculation(dt,isl,rg,resC,riskC)       '6.5.1.11: Calculation of the island risk of risk group.'
+  GenIslandRiskGroupCalculation_1(dt,isl,rg,resC,riskC)     '6.5.1.11: Calculation of the risk of risk group.'
 
 * General NMIR equations
   EffectiveReserveShareCalculation(dt,isl,resC,riskC)                           '6.5.2.1 : Calculation of effective shared reserve'
@@ -1113,7 +1116,7 @@ ACDirectedBranchFlowIntegerDefinition2(ACBranch(lossBranch(t,br)),fd)
 
 *======= RISK EQUATIONS ========================================================
 
-* Calculation of the risk offset variable for the DCCE risk class. (6.5.1.1)
+* 6.5.1.1 : Calculation of the risk offset variable for the DCCE risk class.
 RiskOffsetCalculation_DCCE(t,isl,resC,riskC)
   $ { HVDCrisk(riskC) and ContingentEvents(riskC)  }..
   RISKOFFSET(t,isl,resC,riskC)
@@ -1121,7 +1124,7 @@ RiskOffsetCalculation_DCCE(t,isl,resC,riskC)
   FreeReserve(t,isl,resC,riskC) + HVDCPoleRampUp(t,isl,resC,riskC)
   ;
 
-* Calculation of the risk offset variable for the DCECE risk class. (6.5.1.3)
+* 6.5.1.3 : Calculation of the risk offset variable for the DCECE risk class.
 RiskOffsetCalculation_DCECE(t,isl,resC,riskC)
   $ { HVDCrisk(riskC) and ExtendedContingentEvent(riskC) }..
   RISKOFFSET(t,isl,resC,riskC)
@@ -1129,7 +1132,7 @@ RiskOffsetCalculation_DCECE(t,isl,resC,riskC)
   FreeReserve(t,isl,resC,riskC)
   ;
 
-* Calculation of the net received HVDC MW flow into an island (6.5.1.4)
+* 6.5.1.4 : Calculation of the net received HVDC MW flow into an island.
 HVDCRecCalculation(t,isl)..
   HVDCREC(t,isl)
 =e=
@@ -1145,7 +1148,7 @@ HVDCRecCalculation(t,isl)..
      ]
   ;
 
-* Calculation of the island risk for a DCCE and DCECE (6.5.1.5)
+* 6.5.1.5 : Calculation of the island risk for a DCCE and DCECE.
 HVDCIslandRiskCalculation(t,isl,resC,HVDCrisk)..
   ISLANDRISK(t,isl,resC,HVDCrisk)
 =e=
@@ -1158,7 +1161,7 @@ HVDCIslandRiskCalculation(t,isl,resC,HVDCrisk)..
   - RESERVESHORTFALL(t,isl,resC,HVDCrisk) $ ContingentEvents(HVDCrisk)
   ;
 
-* Calculation of the risk of risk setting generators (6.5.1.6)
+* 6.5.1.6 : Calculation of the risk of risk setting generators
 GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
   $ islandRiskGenerator(t,isl,o) ..
   GENISLANDRISK(t,isl,o,resC,GenRisk)
@@ -1177,14 +1180,14 @@ GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
 - RESERVESHORTFALLUNIT(t,isl,o,resC,GenRisk) $ ContingentEvents(GenRisk)
   ;
 
-* Calculation of the island risk for risk setting generators (6.5.1.6)
+* 6.5.1.6 : Calculation of the island risk for risk setting generators
 GenIslandRiskCalculation(t,isl,o,resC,GenRisk)
   $ islandRiskGenerator(t,isl,o) ..
   ISLANDRISK(t,isl,resC,GenRisk)
 =g=
   GENISLANDRISK(t,isl,o,resC,GenRisk) ;
 
-* Calculation of the island risk based on manual specifications (6.5.1.7)
+* 6.5.1.7 : Calculation of the island risk based on manual specifications
 ManualIslandRiskCalculation(t,isl,resC,ManualRisk)..
   ISLANDRISK(t,isl,resC,ManualRisk)
 =e=
@@ -1198,10 +1201,12 @@ ManualIslandRiskCalculation(t,isl,resC,ManualRisk)..
 - RESERVESHORTFALL(t,isl,resC,ManualRisk) $ ContingentEvents(ManualRisk)
   ;
 
-* Calculation of the island risk for an HVDC secondary generation risk(6.5.1.8)
-* HVDC secondary risk includes HVDC risk and
-* Generation of both primary and secondary generation unit +
-* cleared reserve + the FKBand for generator primary risk
+* 6.5.1.8: Define a flag to show if HVDC sending zero MW flow from an island
+HVDCSendMustZeroBinaryDefinition(t,isl).. HVDCSENT(t,isl) =l= BigM * [ 1 - HVDCSENDZERO(t,isl) ] ;
+
+
+* 6.5.1.9 : Calculation of the island risk for an HVDC secondary generation risk
+* HVDC secondary risk includes HVDC risk and Generation of both primary and secondary generation unit + cleared reserve + the FKBand for generator primary risk
 HVDCIslandSecRiskCalculation_GEN_1(t,isl,o,resC,HVDCSecRisk)
   $ { islandRiskGenerator(t,isl,o)  and
       HVDCSecRiskEnabled(t,isl,HVDCSecRisk) }..
@@ -1216,14 +1221,15 @@ HVDCIslandSecRiskCalculation_GEN_1(t,isl,o,resC,HVDCSecRisk)
     + sum[ resT, RESERVE(t,o,resC,resT) ]
     + sum[ o1 $ PrimarySecondaryOffer(t,o,o1)
          , sum[ resT, RESERVE(t,o1,resC,resT) ] + GENERATION(t,o1) ]
-*   SPD version 11.0 update
     + modulationRiskClass(t,HVDCSecRisk)
     ]
 * Scarcity reserve (only applied for CE risk)
-- RESERVESHORTFALLUNIT(t,isl,o,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+  - RESERVESHORTFALLUNIT(t,isl,o,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+* HVDC secondary risk not applied if HVDC sent is zero
+  - BigM * sum[ isl1 $ (not sameas(isl1,isl)), HVDCSENDZERO(t,isl) ]
   ;
 
-* Calculation of the island risk for an HVDC secondary generation risk (6.5.1.8)
+* 6.5.1.9 : Calculation of the island risk for an HVDC secondary generation risk
 HVDCIslandSecRiskCalculation_GEN(t,isl,o,resC,HVDCSecRisk)
   $ { islandRiskGenerator(t,isl,o)  and
       HVDCSecRiskEnabled(t,isl,HVDCSecRisk) }..
@@ -1232,7 +1238,7 @@ HVDCIslandSecRiskCalculation_GEN(t,isl,o,resC,HVDCSecRisk)
   HVDCGENISLANDRISK(t,isl,o,resC,HVDCSecRisk)
   ;
 
-* Calculation of the island risk for an HVDC secondary manual risk (6.5.1.9)
+* 6.5.1.10: Calculation of the island risk for an HVDC secondary manual risk
 HVDCIslandSecRiskCalculation_Manu_1(t,isl,resC,HVDCSecRisk)
   $ HVDCSecRiskEnabled(t,isl,HVDCSecRisk)..
   HVDCMANISLANDRISK(t,isl,resC,HVDCSecRisk)
@@ -1245,10 +1251,12 @@ HVDCIslandSecRiskCalculation_Manu_1(t,isl,resC,HVDCSecRisk)
     + modulationRiskClass(t,HVDCSecRisk)
     ]
 * Scarcity reserve (only applied for CE risk)
-- RESERVESHORTFALL(t,isl,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+  - RESERVESHORTFALL(t,isl,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+* HVDC secondary risk not applied if HVDC sent is zero
+  - BigM * sum[ isl1 $ (not sameas(isl1,isl)), HVDCSENDZERO(t,isl) ]
   ;
 
-* Calculation of the island risk for an HVDC secondary manual risk (6.5.1.9)
+* 6.5.1.10: Calculation of the island risk for an HVDC secondary manual risk
 HVDCIslandSecRiskCalculation_Manual(t,isl,resC,HVDCSecRisk)
   $ HVDCSecRiskEnabled(t,isl,HVDCSecRisk)..
   ISLANDRISK(t,isl,resC,HVDCSecRisk)
@@ -1256,7 +1264,7 @@ HVDCIslandSecRiskCalculation_Manual(t,isl,resC,HVDCSecRisk)
   HVDCMANISLANDRISK(t,isl,resC,HVDCSecRisk)
   ;
 
-* Calculation of the risk of risk group (6.5.1.10)
+* 6.5.1.11: Calculation of the risk of risk group
 GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
   $ islandRiskGroup(t,isl,rg,GenRisk)..
   GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
@@ -1275,7 +1283,7 @@ GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
 - RESERVESHORTFALLGROUP(t,isl,rg,resC,GenRisk) $ ContingentEvents(GenRisk)
   ;
 
-* Calculation of the island risk for risk group (6.5.1.10)
+* 6.5.1.11: Calculation of the island risk for risk group
 GenIslandRiskGroupCalculation(t,isl,rg,resC,GenRisk)
   $ islandRiskGroup(t,isl,rg,GenRisk)..
   ISLANDRISK(t,isl,resC,GenRisk)
@@ -1840,6 +1848,7 @@ Model vSPD_NMIR /
   HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
   GenIslandRiskCalculation, GenIslandRiskCalculation_1
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+  HVDCSendMustZeroBinaryDefinition
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
 * Reserve
@@ -1919,6 +1928,7 @@ Model vSPD_MIP /
   HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
   GenIslandRiskCalculation, GenIslandRiskCalculation_1
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+  HVDCSendMustZeroBinaryDefinition
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
 * Reserve
