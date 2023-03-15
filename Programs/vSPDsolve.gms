@@ -415,6 +415,7 @@ $load scarcityResrvIslandPrice    = i_dateTimeScarcityResrvIslandPrice
 *RTP4 - new symbols to support Dispatch Lite
 $load discreteModeBid             = i_dateTimeDiscreteModeBid
 $load dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
+$load differenceBid               = i_dateTimeDifferenceBid
 $gdxin
 
 *===============================================================================
@@ -780,8 +781,7 @@ If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then
 PnodeRequiredLoadpn is set to zero. The Pnode load will be determined by
 clearing the Pnode's Dispatchable Demand Bid when the LP Model is solved.
 $offtext
-RequiredLoad(node(dt,n))
-    $ { sum[ (bd,blk) $ bidNode(dt,bd,n), DemBidMW(dt,bd,blk) ] > 0 } = 0;
+RequiredLoad(node(dt,n)) $ { sum[ (bd,blk) $ ( bidNode(dt,bd,n) and (not differenceBid(dt,bd) ), DemBidMW(dt,bd,blk) ] > 0 } = 0;
 *-------------------------------------------------------------------------------
 
 
@@ -1066,7 +1066,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 
 *   Dead node pre-processing - zero cleared qunatities 4.3.1
     GENERATION.fx(offer(t,o)) $ sum[n $ offernode(t,o,n),IsNodeDead(t,n)] = 0 ;
-    PURCHASE.fx(offer(t,bd)) $ sum[n $ bidnode(t,bd,n),IsNodeDead(t,n)] = 0 ;
+    PURCHASE.fx(bid(t,bd)) $ sum[n $ bidnode(t,bd,n),IsNodeDead(t,n)] = 0 ;
 
 *   Constraint 6.1.1.4 & Constraint 6.1.1.5 - Set Upper/Lower Bound for Positive/Negative Demand Bid
     PURCHASEBLOCK.up(demBidBlk(t,bd,blk)) = DemBidMW(t,bd,blk) $ [DemBidMW(t,bd,blk) > 0];
