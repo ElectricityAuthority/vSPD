@@ -99,6 +99,7 @@ Sets
   primarySecondaryOffer(dt,o,o1)      'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
   dispatchableBid(dt,bd)              'Set of dispatchable bids - effective date 20 May 2014'
   discreteModeBid(dt,bd)              'Set of dispatchable discrete bids - Start From RTP phase 4 to support Dispatch Lite'
+  differenceBid(dt,bd)                'Set of difference bids - applied to PRSS mostly'
   dispatchableEnrgOffer(dt,o)         'Set of dispatchable energy offer - Start From RTP phase 4 to support Dispatch Lite'
   nodeoutagebranch(dt,n,br)           'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
   ;
