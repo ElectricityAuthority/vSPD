@@ -416,6 +416,8 @@ $load scarcityResrvIslandPrice    = i_dateTimeScarcityResrvIslandPrice
 $load discreteModeBid             = i_dateTimeDiscreteModeBid
 $load dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
 $load differenceBid               = i_dateTimeDifferenceBid
+$load dispatchedLoad              = i_dateTimeDispatchedLoad
+$load dispatchedGeneration        = i_dateTimeDispatchedGeneration
 $gdxin
 
 *===============================================================================
@@ -781,7 +783,7 @@ If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then
 PnodeRequiredLoadpn is set to zero. The Pnode load will be determined by
 clearing the Pnode's Dispatchable Demand Bid when the LP Model is solved.
 $offtext
-RequiredLoad(node(dt,n)) $ { sum[ (bd,blk) $ ( bidNode(dt,bd,n) and (not differenceBid(dt,bd) ), DemBidMW(dt,bd,blk) ] > 0 } = 0;
+RequiredLoad(node(dt,n)) $ { sum[ (bd,blk) $ ( bidNode(dt,bd,n) and (not differenceBid(dt,bd) ) ), DemBidMW(dt,bd,blk) ] > 0 } = 0;
 *-------------------------------------------------------------------------------
 
 
@@ -985,7 +987,7 @@ While ( sum[ dt $ unsolvedDT(dt), 1 ],
     if (studyMode = 101 or studyMode = 201,
 *       Calculate first target total load [4.10.6.5]
 *       Island-level MW load forecast. For the fist loop, uses islandLosses(t,isl)
-        TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl);
+        TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n)];
 
 *       Flag if estimate load is scalable [4.10.6.7]
 *       If True [1] then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad
