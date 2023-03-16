@@ -169,6 +169,9 @@ Parameters
   loadIsOverride(dt,n)                                              'Flag if set to 1 --> InputInitialLoad will be fixed as node demand'
   loadIsBad(dt,n)                                                   'Flag if set to 1 --> InitialLoad will be replaced by Estimated Initial Load'
   loadIsNCL(dt,n)                                                   'Flag if set to 1 --> non-conforming load --> will be fixed in RTD load calculation'
+  dispatchedLoad(dt,n)                                              'Initial dispatched lite demand'
+  dispatchedGeneration(dt,n)                                        'Initial dispatched lite generation'
+
   maxLoad(dt,n)                                                     'Pnode maximum load'
   instructedLoadShed(dt,n)                                          'Instructed load shedding applied to RTDP and should be ignore by all other schedules'
   instructedShedActive(dt,n)                                        'Flag if Instructed load shedding is active; applied to RTDP and should be ignore by all other schedules'
