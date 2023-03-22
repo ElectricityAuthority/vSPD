@@ -879,6 +879,7 @@ DidShortfallTransfer(dt,n) = 0;
 ShortfallDisabledScaling(dt,n) = 0;
 CheckedNodeCandidate(dt,n) = 0;
 PotentialModellingInconsistency(dt,n)= 1 $ { sum[ branch(dt,br) $ nodeoutagebranch(dt,n,br), 1] < sum[ br $ nodeoutagebranch(dt,n,br), 1] } ;
+
 ) ;
 
 unsolvedDT(dt) = yes;
@@ -987,7 +988,7 @@ While ( sum[ dt $ unsolvedDT(dt), 1 ],
     if (studyMode = 101 or studyMode = 201,
 *       Calculate first target total load [4.10.6.5]
 *       Island-level MW load forecast. For the fist loop, uses islandLosses(t,isl)
-        TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n)];
+        TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n) ];
 
 *       Flag if estimate load is scalable [4.10.6.7]
 *       If True [1] then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad
@@ -1312,8 +1313,8 @@ $offtext
     busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
     busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
     busDisconnected(bus(t,b)) $ { ( [busElectricalIsland(bus) = 0] and [busLoad(bus) = 0] )
-                                   or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busLoad(t,b1) ] = 0 )
-                                   or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busGeneration(t,b1) ] = 0 ) } = 1 ;
+                               or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busLoad(t,b1) ] = 0 )
+                               or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busGeneration(t,b1) ] = 0 ) } = 1 ;
 
 *   Energy Shortfall Check (7.2)
     if( smax[t,runEnrgShortfallTransfer(t)] = 1,
@@ -1330,12 +1331,12 @@ $offtext
 
 *       a.Checkable Energy Shortfall:
 *       If a node has an EnergyShortfallMW greater than zero and the node has LoadIsOverride set to False and the Pnode has InstructedShedActivepn set to False, then EnergyShortfall is checked.
-        EnergyShortFallCheck(t,n) $ { (EnergyShortfallMW(t,n) > 0) and (LoadIsOverride(t,n) = 0) and (instructedShedActive(t,n) = 0) } = 1 ;
+        EnergyShortFallCheck(t,n) = 1 $ { (EnergyShortfallMW(t,n) > 0) and (LoadIsOverride(t,n) = 0) and (instructedShedActive(t,n) = 0) } ;
 
 *       c. Eligible for Removal:
 *       An EnergyShortfall is eligible for removal if there is evidence that it is due to a modelling inconsistency (as described below),
 *       or if the RTD Required Load calculation used an estimated initial load rather than an actual initial load, or if the node is dead node.
-        EligibleShortfallRemoval(t,n) $ EnergyShortFallCheck(t,n) = 1 $ { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) } ;
+        EligibleShortfallRemoval(t,n) = 1 $ [EnergyShortFallCheck(t,n)  and { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) }] ;
 
 *       d. Shortfall Removal:
 *       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the RequiredLoad in order to remove the shortfall.
@@ -1347,8 +1348,6 @@ $offtext
         RequiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = RequiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
         RequiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (RequiredLoad(t,n) < 0) } = 0 ;
         DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
-
-
 
 $ontext
 e. Shortfall Transfer:
@@ -1408,6 +1407,7 @@ $offtext
 
         );
     ) ;
+    unsolvedDT(t) $ (LoopCount(t)=maxSolveLoops(t)) = no ;
 *   6g. Collect and store results of solved periods into output parameters -----
 *   Note: all the price relating outputs such as costs and revenues are calculated in section 7.b
 
