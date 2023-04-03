@@ -1,0 +1,35 @@
+Run: 'NRSS_202303022100'
+
+runvSPD started at: 03/20/23 14:14:05
+vSPDsetup started at: 03/20/23 14:14:05
+vSPDreportSetup started at: 03/20/23 14:14:05
+
+Case "NRSS_202303022100_21322023030800133_20230302210308" started at: 03/20/23 14:14:06
+The case: NRSS_202303022100_21322023030800133_20230302210308 (02-MAR-2023 21:00) is 1st solved successfully.
+Objective function value: 89173286.1735
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (02-MAR-2023 21:30) is 1st solved successfully.
+Objective function value: 85807027.3810
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (02-MAR-2023 22:00) is 1st solved successfully.
+Objective function value: 81910134.6625
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (02-MAR-2023 22:30) is 1st solved successfully.
+Objective function value: 78134322.6356
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (02-MAR-2023 23:00) is 1st solved successfully.
+Objective function value: 75626734.6256
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (02-MAR-2023 23:30) is 1st solved successfully.
+Objective function value: 72690599.0141
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (03-MAR-2023 00:00) is 1st solved successfully.
+Objective function value: 70036190.8914
+Violations cost         : 0.0000
+The case: NRSS_202303022100_21322023030800133_20230302210308 (03-MAR-2023 00:30) is 1st solved successfully.
+Objective function value: 67762224.9027
+Violations cost         : 0.0000
+Case: NRSS_202303022100_21322023030800133_20230302210308 is complete in        12.73(secs)
+Case: NRSS_202303022100_21322023030800133_20230302210308 is finished in        12.84(secs)
+
+Total execute time:        13.23(secs)
