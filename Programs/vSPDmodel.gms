@@ -56,6 +56,8 @@ Sets
   CstrRHS(*)          'Constraint RHS definition'                       / cnstrSense, cnstrLimit /
 
   z(*)                'Defined reverse reserve sharing zone for HVDC sent flow: RP -> round power zone, NR -> no reverse zone, RZ -> reverse zone' /RP, NR, RZ/
+  
+  testcases(*)        'Test Cases for RTP 4'                            /'MSS_21012023030850151_0X','MSS_21302023030830146_0X','MSS_21322023030800133_0X','MSS_61012023030935374_0X'/
   ;
 
 * Dynamic sets that are defined by /loaded from gdx inputs

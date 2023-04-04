@@ -411,13 +411,6 @@ $load scarcityEnrgNodeLimit       = i_dateTimeScarcityEnrgNodeLimit
 $load scarcityEnrgNodeLimitPrice  = i_dateTimeScarcityEnrgNodeLimitPrice
 $load scarcityResrvIslandLimit    = i_dateTimeScarcityResrvIslandLimit
 $load scarcityResrvIslandPrice    = i_dateTimeScarcityResrvIslandPrice
-
-*RTP4 - new symbols to support Dispatch Lite
-$load discreteModeBid             = i_dateTimeDiscreteModeBid
-$load dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
-$load differenceBid               = i_dateTimeDifferenceBid
-$load dispatchedLoad              = i_dateTimeDispatchedLoad
-$load dispatchedGeneration        = i_dateTimeDispatchedGeneration
 $gdxin
 
 *===============================================================================
@@ -432,15 +425,26 @@ $gdxin
 Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
 inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
 
-* The code below is for example and not currently used
-$ontext
 put_utility temp 'gdxin' / '%inputPath%\%GDXname%.gdx' ;
-if (inputGDXGDate >= jdate(2022,11,1) or sum[sameas(caseName,testCases),1] ,
+
+* *RTP4 - new symbols to support Dispatch Lite - applied from 1 April 2023
+if (inputGDXGDate >= jdate(2023,4,1) or sum[sameas(caseName,testCases),1] ,
     execute_load
-    energyScarcityEnabled       = i_energyScarcityEnabled
+    discreteModeBid             = i_dateTimeDiscreteModeBid
+    dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
+    differenceBid               = i_dateTimeDifferenceBid
+    dispatchedLoad              = i_dateTimeDispatchedLoad
+    dispatchedGeneration        = i_dateTimeDispatchedGeneration
     ;
+else
+    discreteModeBid(dt,bd)      = no   ;
+    dispatchableEnrgOffer(dt,o) = yes   ;
+    differenceBid(dt,bd)        = no   ;
+    dispatchedLoad(dt,n)        = 0    ;
+    dispatchedGeneration(dt,n)  = 0    ;
+    
 ) ;
-$oftext
+
 
 
 *=====================================================================================

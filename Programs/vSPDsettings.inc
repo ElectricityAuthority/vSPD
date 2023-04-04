@@ -3,10 +3,10 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTD_202303062235
+$setglobal runName                       RTD_202304010000
 
 $setglobal programPath                   '%system.fp%' 
-$setglobal inputPath                     '%system.fp%..\Input\20230306\'
+$setglobal inputPath                     '%system.fp%..\Input\20230401\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 
