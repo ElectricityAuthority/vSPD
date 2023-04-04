@@ -1,0 +1,368 @@
+Run: 'PRSS_202304030500_DPS'
+
+runvSPD started at: 04/04/23 15:26:14
+vSPDsetup started at: 04/04/23 15:26:14
+
+Case "PRSS_202304030500_21302023041700865_20230403050315" started at: 04/04/23 15:26:14
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 620679011.2245
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 625423859.1033
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 633938844.5398
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 642112167.8436
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 649275852.6919
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 652813106.3051
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 653012920.9400
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 650375913.4587
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 620920103.3030
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 625687424.7364
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 634243804.8816
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 642458085.8913
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 649656984.9873
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 653211070.0225
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 653411555.6781
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 650762170.1463
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 621161185.4030
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 625950942.8805
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 634548443.5588
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 642803615.2402
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 650037816.4257
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 653608952.2995
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 653810189.3083
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 651148187.2132
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 621402265.9773
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 626214402.1481
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 634852794.7577
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 643148986.7331
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 650418631.2415
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 654006770.4787
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 654206573.7421
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 651534017.4805
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 621643345.5999
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 626477468.6239
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 635156480.8462
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 643493357.5141
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 650799423.0332
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 654404544.5624
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 654601030.4692
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 651919769.0445
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 622125422.0045
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 627003551.2147
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 635763731.2987
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 644181160.3417
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 651558632.6298
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 655197872.7607
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 655389099.5192
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 652691138.6286
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 622606630.4828
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 627529371.8368
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 636370958.8567
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 644868929.2657
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 652315766.9181
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 655985764.1719
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 656177127.2287
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 653462348.0355
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 623087562.3312
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 628055098.2127
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 636978175.6863
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 645556619.0068
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 653071963.0120
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 656772151.8477
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 656964241.6741
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 654229917.7169
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 620437901.9599
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 625160209.4112
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 633633883.9942
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 641766076.6559
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 648894554.1161
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 652415083.8038
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 652614238.7713
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 649989643.2469
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 620196765.9615
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 624896527.2852
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 633328600.9911
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 641419966.2821
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 648513136.0907
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 652016893.1692
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 652215484.9391
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 649603356.0576
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 619955610.3520
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 624632683.0094
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 633023126.9642
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 641073767.0975
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 648131691.0927
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 651618421.2912
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 651816674.9045
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 649217063.2987
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 619714375.0280
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 624368838.3571
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 632717585.0313
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 640727437.0429
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 647750224.9195
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 651219925.0634
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 651417787.4821
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 648830753.5558
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 619231350.1853
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 623841142.1909
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 632106229.4607
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 640034514.9804
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 646987158.2103
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 650422902.3098
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 650619356.3014
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 648057028.3036
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 618748253.2852
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 623313404.5348
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 631494562.4510
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 639341379.1160
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 646223694.4699
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 649625663.3601
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 649820663.1357
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 647282299.2776
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:00) is 1st solved successfully.
+Objective function value: 618265117.6689
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 05:30) is 1st solved successfully.
+Objective function value: 622785604.7562
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:00) is 1st solved successfully.
+Objective function value: 630882719.2051
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 06:30) is 1st solved successfully.
+Objective function value: 638647119.6221
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:00) is 1st solved successfully.
+Objective function value: 645459523.0716
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 07:30) is 1st solved successfully.
+Objective function value: 648827238.1622
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:00) is 1st solved successfully.
+Objective function value: 649021790.4167
+Violations cost         : 0.0000
+The case: PRSS_202304030500_21302023041700865_20230403050315 (03-APR-2023 08:30) is 1st solved successfully.
+Objective function value: 646506640.7667
+Violations cost         : 0.0000
+
+Total execute time:       181.97(secs)
