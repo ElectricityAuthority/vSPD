@@ -1,3 +1,0 @@
-"DateTime","RunTime","Island","ReserveClass","RiskClass","RiskType","RiskSetter","CoveredEnergy","CoveredReserve","CoveredFKBand","RiskSubtractor","Reserve","Shortfall","Deficit","ReservePrice","RiskPrice"
-"06-MAR-2023 22:35","06-MAR-2023 22:34:04","NI","FIR","CE","GEN","HLY2201 HLY5",331.0000,0.0000,15.0000,82.4373,263.5627,0.0000,0.0000,4.5000,4.5000
-"06-MAR-2023 22:35","06-MAR-2023 22:34:04","NI","SIR","CE","GEN","HLY2201 HLY5",331.0000,0.0000,15.0000,-11.0000,357.0000,0.0000,0.0000,0.5177,0.5177
