@@ -790,63 +790,6 @@ $offtext
 RequiredLoad(node(dt,n)) $ { sum[ (bd,blk) $ ( bidNode(dt,bd,n) and (not differenceBid(dt,bd) ) ), DemBidMW(dt,bd,blk) ] > 0 } = 0;
 *-------------------------------------------------------------------------------
 
-
-$onText
-* 4.10 Real Time Pricing - First RTD load calculation --------------------------
-if (studyMode = 101 or studyMode = 201,
-    DidShortfallTransfer(dt,n) = 0;
-    ShortfallDisabledScaling(dt,n) = 0;
-    CheckedNodeCandidate(dt,n) = 0;
-
-*   Calculate first target total load [4.10.6.5]
-*   Island-level MW load forecast. For the fist loop, uses islandLosses(dt,isl)
-    TargetTotalLoad(dt,isl) = islandMWIPS(dt,isl) + islandPDS(dt,isl) - islandLosses(dt,isl);
-
-*   Flag if estimate load is scalable [4.10.6.7]
-*   If True [1] then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad
-    EstLoadIsScalable(dt,n) =  1 $ { (LoadIsNCL(dt,n) = 0) and (ConformingFactor(dt,n) > 0) } ;
-
-*   Calculate estimate non-scalable load [4.10.6.8]
-*   For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero
-    EstNonScalableLoad(dt,n) $ ( LoadIsNCL(dt,n) = 1 ) = NonConformingLoad(dt,n);
-    EstNonScalableLoad(dt,n) $ ( LoadIsNCL(dt,n) = 0 ) = ConformingFactor(dt,n);
-    EstNonScalableLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 1 ) = 0;
-
-*   Calculate estimate scalable load [4.10.6.10]
-*   For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero
-    EstScalableLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 1 ) = ConformingFactor(dt,n);
-
-*   Calculate Scaling applied to ConformingFactor load MW [4.10.6.9] in order to calculate EstimatedInitialLoad
-    EstScalingFactor(dt,isl) = (islandMWIPS(dt,isl) - islandLosses(dt,isl) - sum[ n $ nodeIsland(dt,n,isl), EstNonScalableLoad(dt,n) ]) / sum[ n $ nodeIsland(dt,n,isl), EstScalableLoad(dt,n) ];
-
-*   Calculate estimate initial load [4.10.6.6]
-*   Calculated estimate of initial MW load, available to be used as an alternative to InputInitialLoad
-    EstimatedInitialLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 1 ) = ConformingFactor(dt,n) * sum[ isl $ nodeisland(dt,n,isl), EstScalingFactor(dt,isl)] ;
-    EstimatedInitialLoad(dt,n) $ ( EstLoadIsScalable(dt,n) = 0 ) = EstNonScalableLoad(dt,n);
-
-*   Calculate initial load [4.10.6.2]
-*   Value that represents the Pnode load MW at the start of the solution interval. Depending on the inputs this value will be either actual load, an operator applied override or an estimated initial load
-    InitialLoad(dt,n) = InputInitialLoad(dt,n);
-    InitialLoad(dt,n) $ { (LoadIsOverride(dt,n) = 0) and ( (useActualLoad(dt) = 0) or (LoadIsBad(dt,n) = 1) ) } = EstimatedInitialLoad(dt,n) ;
-    InitialLoad(dt,n) $ { (LoadIsOverride(dt,n) = 1) and (useActualLoad(dt) = 1) and (InitialLoad(dt,n) > MaxLoad(dt,n)) } = MaxLoad(dt,n) ;
-    InitialLoad(dt,n) $ DidShortfallTransfer(dt,n) = RequiredLoad(dt,n);
-
-*   Flag if load is scalable [4.10.6.4]
-*   If True [1] then the Pnode InitialLoad will be scaled in order to calculate RequiredLoad, if False then Pnode InitialLoad will be directly assigned to RequiredLoad
-    LoadIsScalable(dt,n) = 1 $ { (LoadIsNCL(dt,n) = 0) and (LoadIsOverride(dt,n) = 0) and (InitialLoad(dt,n) >= 0) and (ShortfallDisabledScaling(dt,n) = 0) and (DidShortfallTransfer(dt,n) = 0) } ;
-
-*   Calculate Island-level scaling factor [4.10.6.3] --> applied to InitialLoad in order to calculate RequiredLoad
-    LoadScalingFactor(dt,isl) = ( TargetTotalLoad(dt,isl) - sum[n $ {nodeIsland(dt,n,isl) and (LoadIsScalable(dt,n) = 0)}, InitialLoad(dt,n)] ) / sum[n $ {nodeIsland(dt,n,isl) and (LoadIsScalable(dt,n) = 1)}, InitialLoad(dt,n)] ;
-
-*   Calculate RequiredLoad [4.10.6.1]
-    RequiredLoad(dt,n) $ { (DidShortfallTransfer(dt,n)=0) and (LoadIsScalable(dt,n) = 1) } = InitialLoad(dt,n) * sum[ isl $ nodeisland(dt,n,isl), LoadScalingFactor(dt,isl) ];
-    RequiredLoad(dt,n) $ { (DidShortfallTransfer(dt,n)=0) and (LoadIsScalable(dt,n) = 0) } = InitialLoad(dt,n);
-    RequiredLoad(dt,n) $ { (DidShortfallTransfer(dt,n)=0)                                } = RequiredLoad(dt,n) + [InstructedLoadShed(dt,n) $ InstructedShedActive(dt,n)];
-
-) ;
-*-------------------------------------------------------------------------------
-$offText
-
 * Initialize energy scarcity limits and prices ---------------------------------
 ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and (RequiredLoad(dt,n) > 0) }                                      = scarcityEnrgNationalFactor(dt,blk) * RequiredLoad(dt,n);
 ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and (ScarcityEnrgLimit(dt,n,blk) > 0 ) }                            = scarcityEnrgNationalPrice(dt,blk) ;
@@ -1778,6 +1721,8 @@ $endif.SummaryReport
 * 8b. Calculating price-relating outputs --------------------------------------
 
 $iftheni.PriceRelatedOutputs %opMode%=='DWH'
+$elseifi.PriceRelatedOutputs %opMode%=='DPS'
+$elseifi.PriceRelatedOutputs %opMode%=='PVT'
 $elseifi.PriceRelatedOutputs %opMode%=='FTR' $include "FTRental\vSPDSolveFTR_3a.gms"
 $else.PriceRelatedOutputs
 
