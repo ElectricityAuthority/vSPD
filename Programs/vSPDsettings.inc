@@ -3,10 +3,10 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       PRSS_202304030500_DPS
+$setglobal runName                       PRSS_202304052230_51302023041030350_20230405223310
 
 $setglobal programPath                   '%system.fp%' 
-$setglobal inputPath                     '%system.fp%..\Input\20230403\'
+$setglobal inputPath                     '%system.fp%..\Input\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 
