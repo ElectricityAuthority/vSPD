@@ -1,4 +1,4 @@
-vSPD (RTP4 development)
+vSPD (RTP4 v4.1.0 development)
 ====
 
 vectorised Scheduling, Pricing and Dispatch - an audited, mathematical replica of SPD, the
