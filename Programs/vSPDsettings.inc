@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       PRSS_202304052230_51302023041030350_20230405223310
+$setglobal runName                       RTD_20230601_new
 
 $setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%..\Input\'

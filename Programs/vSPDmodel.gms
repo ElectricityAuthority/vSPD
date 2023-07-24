@@ -87,10 +87,10 @@ Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB)
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  case2dt(ca<,dt<)                      'Mapping caseID to datetime'
-  dt2tp(ca,dt,tp<)                        'Mapping of dateTime set to the tradePeriod set'
-  node(ca,dt,n<)                          'Node definition for the different trading periods'
-  bus(ca,dt,b<)                           'Bus definition for the different trading periods'
+  case2dt(ca<,dt<)                       'Mapping caseID to datetime'
+  dt2tp(ca,dt,tp<)                       'Mapping of dateTime set to the tradePeriod set'
+  node(ca,dt,n<)                         'Node definition for the different trading periods'
+  bus(ca,dt,b<)                          'Bus definition for the different trading periods'
   node2node(ca,dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
   offerNode(ca,dt,o,n)                   'Offers and the corresponding offer node for the different trading periods'
   offerTrader(ca,dt,o,trdr)              'Offers and the corresponding trader for the different trading periods'
