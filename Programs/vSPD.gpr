@@ -12673,8 +12673,8 @@ PlaneRownr=-1
 [OPENWINDOW_1]
 MAXIM=0
 TOP=0
-LEFT=958
-HEIGHT=942
+LEFT=55
+HEIGHT=989
 WIDTH=958
 
 [GDXDISP: i_runDateTime Set 1]
@@ -13044,16 +13044,8 @@ PlaneRownr=-1
 [RP:VSPDSOLVE - COPY]
 1=
 
-[RP:VSPDPERIOD]
-1=
-
 [RP:VSPDSOLVE_RTP]
 1=
-
-[RP:RUNVSPD]
-1=
-2=errmsg=1
-3=e
 
 [RP:VSPDREPORTSETUP]
 1=
@@ -13082,13 +13074,21 @@ PlaneRownr=-1
 [RP:VSPDREPORT]
 1=
 
+[RP:RUNVSPD]
+1=
+2=errmsg=1
+3=e
+
+[RP:VSPDPERIOD]
+1=
+
 [MRUFILES]
-1=C:\vSPD\Real-Time-Pricing-vSPD-Local\Programs\vSPDreport.gms
-2=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDmodel.gms
-3=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDreport.gms
-4=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDsolve.gms
-5=C:\vSPD\Real-Time-Pricing-vSPD\Programs\vSPDreport.gms
-6=C:\vSPD\Real-Time-Pricing-vSPD\Input\PRSS_202208021530_21302022080330347_20220802153312.gms
-7=C:\vSPD\Real-Time-Pricing-vSPD\Input\NRSS_202210101230_91322022102330478_20221010123314.gms
-8=C:\vSPD\Real-Time-Pricing-vSPD\Programs\vSPDmodel.lst
-9=C:\vSPD\Real-Time-Pricing-vSPD\Programs\DWmode\vSPDSolveDWH_4.gms
+1=C:\vSPD\vSPD\Programs\vSPDperiod.gms
+2=C:\vSPD\vSPD\Programs\runvSPD.lst
+3=C:\vSPD\vSPD\Programs\runvSPD.gms
+4=C:\vSPD\vSPD\Programs\vSPDperiod.lst
+5=C:\vSPD\Real-Time-Pricing-vSPD-Local\Programs\vSPDreport.gms
+6=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDmodel.gms
+7=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDreport.gms
+8=C:\vSPD\Real-Time-Pricing-vSPD\Output\RTD_202210120000\Programs\vSPDsolve.gms
+9=C:\vSPD\Real-Time-Pricing-vSPD\Programs\vSPDreport.gms
