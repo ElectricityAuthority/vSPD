@@ -6,6 +6,7 @@ del "*.log"
 del "*.put"
 del "*.txt"
 del "*.gdx"
+del "temp.*"
 del /S "*.~*"
 
 *pause

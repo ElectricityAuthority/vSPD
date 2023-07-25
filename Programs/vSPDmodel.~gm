@@ -87,7 +87,6 @@ Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB)
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  case2name(ca<,caseName<)                'Mapping caseID to CaseNanme'
   case2dt(ca<,dt<)                       'Mapping caseID to datetime'
   case2rundt(ca<,rundt<)                 'Mapping caseID to rundatetime'
   dt2tp(dt,tp<)                          'Mapping of dateTime set to the tradePeriod set'
@@ -113,8 +112,7 @@ Sets
 
 Parameters
 * 6 scalars - values are loaded from GDX file in vSPDsolve.gms
-  caseGdxDate(ca,*)                                 'day, month, year of trade date for each caseID'
-  gdxDate(*)                                        'day, month, year of trade date'
+  gdxDate(ca,*)                                        'day, month, year of trade date'
   intervalDuration(ca)                                 'Length of the trading period in minutes (e.g. 30)'
 
 * 49 parameters - values are loaded from GDX file in vSPDsolve.gms
@@ -308,8 +306,6 @@ Sets
   islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
   ;
 
-Alias (t,t1,t2);
-
 Parameters
 * Offers
   GenerationStart(ca,dt,o)                                  'The MW generation level associated with the offer at the start of a trading period'
@@ -398,8 +394,8 @@ Parameters
   HVDCReserveBreakPointMWFlow(ca,dt,isl,los)                           'Value of total HVDC sent power flow + reserve at the break point     --> lambda segment loss model'
   HVDCReserveBreakPointMWLoss(ca,dt,isl,los)                           'Value of post-contingent variable HVDC losses at the break point     --> lambda segment loss model'
 * The follwing are flag and scalar for testing
-  UseShareReserve(ca)                                                  'Flag to indicate if the reserve share is applied for CaseID'
-  BigM                                                                 'Big M value to be applied for single active segment HVDC loss model' /10000/
+  UseShareReserve                                                   'Flag to indicate if the reserve share is applied'
+  BigM                                                              'Big M value to be applied for single active segment HVDC loss model' /10000/
 * NMIR parameters end
 
 * Branch constraint
@@ -826,7 +822,7 @@ TotalScarcityCostDefinition(t)..
 *======= GENERATION AND LOAD CONSTRAINTS =======================================
 
 * Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
-GenerationChangeUpDown(t(ca,dt),o) $ { (StudyMode(ca) = 101) or (StudyMode(ca) = 201) }..
+GenerationChangeUpDown(t,o) $ { (StudyMode = 101) or (StudyMode = 201) }..
   GENERATIONUPDELTA(t,o) - GENERATIONDNDELTA(t,o)
 =e=
   GENERATION(t,o) - generationStart(t,o);

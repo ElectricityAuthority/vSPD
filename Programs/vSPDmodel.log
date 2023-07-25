@@ -1,0 +1,29 @@
+
+--- Job vSPDmodel.gms Start 07/25/23 15:27:57 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\42\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\vSPD\vSPD\Programs\vSPDmodel.gms
+    PageWidth 80
+    PageSize 0
+    PageContr 3
+    Action CE
+    ScrDir C:\vSPD\vSPD\Programs\225a\
+    SysDir C:\GAMS\42\
+    WorkDir C:\vSPD\vSPD\Programs\
+    LogOption 3
+    DFormat 0
+    TFormat 0
+    ErrorLog 99
+    IDE 1
+Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S10
+          C:\GAMS\42\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
+--- Starting compilation
+--- vSPDmodel.gms(2103) 3 Mb
+--- Starting execution: elapsed 0:00:00.012
+*** Status: Normal completion
+--- Job vSPDmodel.gms Stop 07/25/23 15:27:57 elapsed 0:00:00.039

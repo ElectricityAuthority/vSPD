@@ -1,0 +1,169 @@
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  *=====================================================================================
+   2  * Name:               vSPDPeriod.gms
+   3  * Function:           Establish the set of periods selected to be solved in vSPD
+   4  *                     and unload to gdx file for later use in vSPDsolve.gms
+   5  * Developed by:       Electricity Authority, New Zealand
+   6  * Source:             https://github.com/ElectricityAuthority/vSPD
+   7  *                     https://www.emi.ea.govt.nz/Tools/vSPD
+   8  * Contact:            Forum: https://www.emi.ea.govt.nz/forum/
+   9  *                     Email: emi@ea.govt.nz
+  10  * Last modified on:   1 Nov 2022
+  11  *
+  12  *=====================================================================================
+  13   
+INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
+  15  *+++ vSPD settings +++
+  18   
+  19  *+++ Paths +++
+  21   
+  26   
+  28   
+  29   
+  30  *+++ Model +++
+  31  Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+  32  Scalar disconnectedNodePriceCorrection   / 1 / ;
+  33  Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
+  34   
+  35   
+  36  *+++ Network +++
+  37  Scalar useACLossModel                    / 1 /    ;
+  38  Scalar useHVDCLossModel                  / 1 /    ;
+  39  Scalar useACBranchLimits                 / 1 /    ;
+  40  Scalar useHVDCBranchLimits               / 1 /    ;
+  41  Scalar resolveCircularBranchFlows        / 1 /    ;
+  42  Scalar resolveHVDCNonPhysicalLosses      / 1 /    ;
+  43  Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for future code development
+  44  Scalar circularBranchFlowTolerance       / 1e-4 / ;
+  45  Scalar nonPhysicalLossTolerance          / 1e-6 / ;
+  46  Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
+  47   
+  48   
+  49  *+++ Constraints +++
+  50  Scalar useReserveModel                   / 1 /    ;
+  51  Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
+  52  Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
+  53   
+  54   
+  55  *+++ Solver +++
+  56  Scalar LPtimeLimit                       / 3600 / ;
+  57  Scalar LPiterationLimit                  / 2000000000 / ;
+  58  Scalar MIPtimeLimit                      / 3600 / ;
+  59  Scalar MIPiterationLimit                 / 2000000000 / ;
+  60  Scalar MIPoptimality                     / 0 / ;
+  63   
+  64   
+  65  *+++ Various switches +++
+INCLUDE    C:\vSPD\vSPD\Programs\vSPDcase.inc
+  69   
+  70  * If input file does not exist then go to the next input file
+  72   
+  73   
+  74  *===============================================================================
+  75  * 1. Initialize set and data
+  76  *===============================================================================
+  77  Sets
+  78  tp                      'Set of trading periods'
+  79  dt                      'Set of datetime'
+  80  dt2tp(dt,tp)            'Mapping datetime to trading periods'
+  81   
+  82  ca                      'Set of caseID'
+  83  case2dt2tp(ca<,dt<,tp<) 'Mapping caseID to datetime and to tp'
+  84   
+  85  stp(tp)                 'Trading periods to be solved'
+  86  sdt(dt)                 'Date time to be solved'
+  87  sdt2tp(dt,tp)           'Mapping solved datetime to trading periods'
+  88  ;
+  89  alias (tp,tp1);
+  90   
+  91  Parameter
+  92  gdxDate(*,*)                        'day, month, year of trade date'
+  93  ;
+  94   
+GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+--- LOAD  gdxDate = 3:gdxDate
+  97  *$load tp = i_tradePeriod
+  98  *$load dt = i_dateTime
+  99  *$load dt2tp = i_dateTimeTradePeriodMap
+--- LOAD  case2dt2tp = 8:i_dateTimeTradePeriodMap
+ 102   
+ 103  *===============================================================================
+ 104  * 2. Establish which trading periods are to be solved
+ 105  *===============================================================================
+ 106  Sets
+ 107  alp            'All trading periods to be solved'  / All /
+ 108  tmp            'Temporary list of trading period to be solved'
+INCLUDE    C:\vSPD\vSPD\Programs\vSPDtpsToSolve.inc
+      a. to solve all trading periods
+      /  
+      All
+      /  
+       
+      b. to solve trading periods 3 and 6
+      /                /        
+      TP3      Or      TP3, TP6 
+      TP6              /        
+      /                         
+ 122  *============================================= // ==========================================
+ 123   
+ 124  /
+ 125  TP1
+ 126  /
+ 127  ;
+ 128   
+ 129  stp(tp) = no ;
+ 130  sdt(dt) = no;
+ 131   
+ 132  stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
+ 133  sdt(dt) $ sum[ tmp, diag(dt,tmp)] = yes ;
+ 134   
+ 135  stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
+ 137   
+ 138  dt2tp(dt,tp) = yes $ sum[ca $ case2dt2tp(ca,dt,tp),1] ;
+ 139  sdt(dt) $ sum[ stp(tp) $ dt2tp(dt,tp), 1 ] = yes ;
+ 140  stp(tp) $ sum[ sdt(dt) $ dt2tp(dt,tp), 1 ] = yes ;
+ 141   
+ 142  sdt2tp(dt,tp) $ sum[ (sdt(dt), stp(tp)) $ dt2tp(dt,tp), 1 ] = yes ;
+ 143   
+ 144  execute_unload 'C:\vSPD\vSPD\Programs\\vSPDperiod.gdx'
+ 145    stp    = i_TradePeriod
+ 146    sdt    = i_DateTime
+ 147    sdt2tp = i_DateTimeTradePeriod
+ 148    ;
+ 149   
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\vSPD\vSPD\Programs\vSPDperiod.gms
+     2       14 INCLUDE        1      14  .C:\vSPD\vSPD\Programs\vSPDsettings.inc
+     3       67 INCLUDE        1      15  .C:\vSPD\vSPD\Programs\vSPDcase.inc
+     4       71 IF EXIST       1      18  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+     5       95 GDXIN          1      42  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+     6      109 INCLUDE        1      56  .C:\vSPD\vSPD\Programs\vSPDtpsToSolve.inc
+
+
+COMPILATION TIME     =        0.016 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+EXECUTION TIME       =        0.000 SECONDS      4 MB  42.5.0 cf11b917 WEX-WEI
+
+
+USER: Small MUD-5 User License                       G220916|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S10
+
+
+**** FILE SUMMARY
+
+Input      C:\vSPD\vSPD\Programs\vSPDperiod.gms
+Output     C:\vSPD\vSPD\Programs\vSPDperiod.lst

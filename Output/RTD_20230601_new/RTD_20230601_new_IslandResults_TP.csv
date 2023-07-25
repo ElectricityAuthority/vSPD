@@ -1,0 +1,1 @@
+"CaseID","DateTime","RunTime","Island","Gen (MW)","Load (MW)","Bid Load (MW)","IslandACLoss (MW)","HVDCFlow (MW)","HVDCLoss (MW)","ReferencePrice ($/MWh)","FIR_req (MW)","SIR_req (MW)","FIR Price ($/MWh)","SIR Price ($/MWh)","FIR_Clear","SIR_Clear","FIR_Share","SIR_Share","FIR_Receive","SIR_Receive","FIR_Effective_CE","SIR_Effective_CE","FIR_Effective_ECE","SIR_Effective_ECE"

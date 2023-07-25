@@ -308,8 +308,6 @@ Sets
   islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
   ;
 
-Alias (t,t1,t2);
-
 Parameters
 * Offers
   GenerationStart(ca,dt,o)                                  'The MW generation level associated with the offer at the start of a trading period'

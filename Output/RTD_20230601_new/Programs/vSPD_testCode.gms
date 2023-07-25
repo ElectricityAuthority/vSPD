@@ -56,7 +56,7 @@ Sets
   CstrRHS(*)          'Constraint RHS definition'                       / cnstrSense, cnstrLimit /
 
   z(*)                'Defined reverse reserve sharing zone for HVDC sent flow: RP -> round power zone, NR -> no reverse zone, RZ -> reverse zone' /RP, NR, RZ/
-
+  
   testcases(*)        'Test Cases for RTP 4'                            /'MSS_21012023030850151_0X','MSS_21302023030830146_0X','MSS_21322023030800133_0X','MSS_61012023030935374_0X'/
   ;
 
@@ -87,20 +87,18 @@ Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB)
 
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  case2name(ca<,caseName<)                'Mapping caseID to CaseNanme'
-  case2dt(ca<,dt<)                       'Mapping caseID to datetime'
-  case2rundt(ca<,rundt<)                 'Mapping caseID to rundatetime'
-  dt2tp(dt,tp<)                          'Mapping of dateTime set to the tradePeriod set'
-  node(ca,dt,n<)                         'Node definition for the different trading periods'
-  bus(ca,dt,b<)                          'Bus definition for the different trading periods'
+  case2dt(ca<,dt<)                      'Mapping caseID to datetime'
+  dt2tp(ca,dt,tp<)                        'Mapping of dateTime set to the tradePeriod set'
+  node(ca,dt,n<)                          'Node definition for the different trading periods'
+  bus(ca,dt,b<)                           'Bus definition for the different trading periods'
   node2node(ca,dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
-  offerNode(ca,dt,o<,n)                   'Offers and the corresponding offer node for the different trading periods'
-  offerTrader(ca,dt,o<,trdr<)             'Offers and the corresponding trader for the different trading periods'
-  bidNode(ca,dt,bd<,n)                    'Bids and the corresponding node for the different trading periods'
-  bidTrader(ca,dt,bd<,trdr<)              'Bids and the corresponding trader for the different trading periods'
+  offerNode(ca,dt,o,n)                   'Offers and the corresponding offer node for the different trading periods'
+  offerTrader(ca,dt,o,trdr)              'Offers and the corresponding trader for the different trading periods'
+  bidNode(ca,dt,bd,n)                    'Bids and the corresponding node for the different trading periods'
+  bidTrader(ca,dt,bd,trdr)               'Bids and the corresponding trader for the different trading periods'
   busIsland(ca,dt,b,isl)                 'Bus island mapping for the different trade periods'
   nodeBus(ca,dt,n,b)                     'Node bus mapping for the different trading periods'
-  branchDefn(ca,dt,br<,frB,toB)           'Branch definition for the different trading periods'
+  branchDefn(ca,dt,br,frB,toB)           'Branch definition for the different trading periods'
   riskGenerator(ca,dt,o)                 'Set of generators (offers) that can set the risk in the different trading periods'
   primarySecondaryOffer(ca,dt,o,o1)      'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
   dispatchableBid(ca,dt,bd)              'Set of dispatchable bids - effective date 20 May 2014'
@@ -113,8 +111,7 @@ Sets
 
 Parameters
 * 6 scalars - values are loaded from GDX file in vSPDsolve.gms
-  caseGdxDate(ca,*)                                 'day, month, year of trade date for each caseID'
-  gdxDate(*)                                        'day, month, year of trade date'
+  gdxDate(ca,*)                                        'day, month, year of trade date'
   intervalDuration(ca)                                 'Length of the trading period in minutes (e.g. 30)'
 
 * 49 parameters - values are loaded from GDX file in vSPDsolve.gms
@@ -150,11 +147,11 @@ Parameters
   reserveMaximumFactor(ca,dt,o,resC)                   'Factor to adjust the maximum reserve of the different classes for the different offers'
 
 * Branch constraint data
-  branchCstrFactors(ca,dt,brCstr<,br)                   'Branch security constraint factors (sensitivities) for the current trading period'
+  branchCstrFactors(ca,dt,brCstr,br)                   'Branch security constraint factors (sensitivities) for the current trading period'
   branchCstrRHS(ca,dt,brCstr,CstrRHS)                  'Branch constraint sense and limit for the different trading periods'
 
 * Market node constraint data
-  mnCstrEnrgFactors(ca,dt,MnodeCstr<,o)                 'Market node energy offer constraint factors for the current trading period'
+  mnCstrEnrgFactors(ca,dt,MnodeCstr,o)                 'Market node energy offer constraint factors for the current trading period'
   mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT)     'Market node reserve offer constraint factors for the current trading period'
   mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd)            'Market node energy bid constraint factors for the different trading periods'
   mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC)      'Market node IL reserve bid constraint factors for the different trading periods - currently not used'
@@ -162,7 +159,7 @@ Parameters
 
 
 * Real Time Pricing - Inputs
-  studyMode(ca)                                                        'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
+  studyMode                                                         'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120' /101/
   useGenInitialMW(ca,dt)                                               'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
   runEnrgShortfallTransfer(ca,dt)                                      'Flag that if set to 1 will enable shortfall transfer- post processing'
   runPriceTransfer(ca,dt)                                              'Flag that if set to 1 will enable price transfer - post processing.'
@@ -304,11 +301,9 @@ Sets
   bipoleConstraint(ca,dt,isl,brCstr)                                   'Subset of branch constraints that limit total HVDC sent from an island'
   monopoleConstraint(ca,dt,isl,brCstr,br)                              'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
 
-  riskGroupOffer(ca,dt,rg<,o,riskC)                                     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
+  riskGroupOffer(ca,dt,rg,o,riskC)                                     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
   islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
   ;
-
-Alias (t,t1,t2);
 
 Parameters
 * Offers
@@ -398,8 +393,8 @@ Parameters
   HVDCReserveBreakPointMWFlow(ca,dt,isl,los)                           'Value of total HVDC sent power flow + reserve at the break point     --> lambda segment loss model'
   HVDCReserveBreakPointMWLoss(ca,dt,isl,los)                           'Value of post-contingent variable HVDC losses at the break point     --> lambda segment loss model'
 * The follwing are flag and scalar for testing
-  UseShareReserve(ca)                                                  'Flag to indicate if the reserve share is applied for CaseID'
-  BigM                                                                 'Big M value to be applied for single active segment HVDC loss model' /10000/
+  UseShareReserve                                                   'Flag to indicate if the reserve share is applied'
+  BigM                                                              'Big M value to be applied for single active segment HVDC loss model' /10000/
 * NMIR parameters end
 
 * Branch constraint
@@ -756,7 +751,7 @@ SystemBenefitDefinition(t)..
   ;
 
 * Defined as the sum of the individual violation costs
-SystemPenaltyCostDefinition(t(ca,dt))..
+SystemPenaltyCostDefinition(t)..
   SYSTEMPENALTYCOST(t)
 =e=
   sum[ bus(t,b), deficitBusGenerationPenalty * DEFICITBUSGENERATION(bus)
@@ -780,7 +775,7 @@ SystemPenaltyCostDefinition(t(ca,dt))..
        + [DeficitReservePenalty_ECE * DEFICITRESERVE_ECE(t,isl,resC)]
      ]
 
-+ sum[ o $ { (StudyMode(ca) = 101) or (StudyMode(ca) = 201) }
++ sum[ o $ { (StudyMode = 101) or (StudyMode = 201) }
          , 0.0005 * ( GENERATIONUPDELTA(t,o) + GENERATIONDNDELTA(t,o) )
      ]
   ;
@@ -826,7 +821,7 @@ TotalScarcityCostDefinition(t)..
 *======= GENERATION AND LOAD CONSTRAINTS =======================================
 
 * Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
-GenerationChangeUpDown(t(ca,dt),o) $ { (StudyMode(ca) = 101) or (StudyMode(ca) = 201) }..
+GenerationChangeUpDown(t,o) $ { (StudyMode = 101) or (StudyMode = 201) }..
   GENERATIONUPDELTA(t,o) - GENERATIONDNDELTA(t,o)
 =e=
   GENERATION(t,o) - generationStart(t,o);
@@ -842,7 +837,7 @@ GenerationOfferDefintion(offer(t,o))..
 DemBidDiscrete(bid(t,bd),blk) $ discreteModeBid(bid) ..
   PURCHASEBLOCK(bid,blk)
 =e=
-  PURCHASEBLOCKBINARY(bid,blk) * DemBidMW(bid,blk)
+  PURCHASEBLOCKBINARY(bid,blk) * DemBidMW(bid,blk) 
   ;
 
 * Definition of purchase provided by a bid (6.1.1.8)

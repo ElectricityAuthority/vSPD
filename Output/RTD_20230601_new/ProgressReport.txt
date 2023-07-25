@@ -1,0 +1,7 @@
+Run: 'RTD_20230601_new'
+
+runvSPD started at: 07/25/23 15:16:38
+vSPDsetup started at: 07/25/23 15:16:38
+vSPDreportSetup started at: 07/25/23 15:16:38
+
+Total execute time:         0.83(secs)

@@ -1,30 +1,25 @@
-GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 07/24/23 15:30:53 Page 1
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
 
-   1  *=========================================================================
-      ============
+   1  *=====================================================================================
    2  * Name:                 runvSPD.gms
-   3  * Function:             This file is invoked to control the entire operati
-      on of vSPD.
+   3  * Function:             This file is invoked to control the entire operation of vSPD.
    4  * Developed by:         Electricity Authority, New Zealand
    5  * Source:               https://github.com/ElectricityAuthority/vSPD
    6  *                       https://www.emi.ea.govt.nz/Tools/vSPD
    7  * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
    8  *                       Email: emi@ea.govt.nz
    9  * Last modified on:     1 Oct 2019
-  10  *=========================================================================
-      ============
+  10  *=====================================================================================
   11   
   12   
   19   
   20   
-  21  *=========================================================================
-      ============
+  21  *=====================================================================================
   22  *Include paths and settings files
-  23  *=========================================================================
-      ============
+  23  *=====================================================================================
 INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
   25  *+++ vSPD settings +++
   28   
@@ -34,11 +29,9 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
   38   
   39   
   40  *+++ Model +++
-  41  Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-
-      > i_SequentialSolve: 0
+  41  Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
   42  Scalar disconnectedNodePriceCorrection   / 1 / ;
-  43  Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports
-       at trading period level, 0 otherwise
+  43  Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
   44   
   45   
   46  *+++ Network +++
@@ -48,8 +41,7 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
   50  Scalar useHVDCBranchLimits               / 1 /    ;
   51  Scalar resolveCircularBranchFlows        / 1 /    ;
   52  Scalar resolveHVDCNonPhysicalLosses      / 1 /    ;
-  53  Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for fu
-      ture code development
+  53  Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for future code development
   54  Scalar circularBranchFlowTolerance       / 1e-4 / ;
   55  Scalar nonPhysicalLossTolerance          / 1e-6 / ;
   56  Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
@@ -57,10 +49,8 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
   58   
   59  *+++ Constraints +++
   60  Scalar useReserveModel                   / 1 /    ;
-  61  Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used sin
-      ce Mixed MIP Constraints no longer exists
-  62  Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used sin
-      ce Mixed MIP Constraints no longer exists
+  61  Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
+  62  Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
   63   
   64   
   65  *+++ Solver +++
@@ -74,34 +64,26 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
   75  *+++ Various switches +++
   77   
   78   
-  79  *=========================================================================
-      ============
+  79  *=====================================================================================
   80  * Create a progress report file
-  81  *=========================================================================
-      ============
+  81  *=====================================================================================
   82  File rep "Write a progess report" /"ProgressReport.txt"/ ;  rep.lw = 0 ;
-  83  putclose rep "Run: 'PRSS_202304052230_51302023041030350_20230405223310'" /
-      /
+  83  putclose rep "Run: 'RTD_20230601_new'" //
   84               "runvSPD started at: " system.date " " system.time;
   85   
   86   
-  87  *=========================================================================
-      ============
+  87  *=====================================================================================
   88  * Define external files
-  89  *=========================================================================
-      ============
+  89  *=====================================================================================
   90  Files
   91  temp       "A temporary, recyclable batch file"
   92  vSPDcase   "The current input case file"      / "vSPDcase.inc" /;
   93  vSPDcase.lw = 0 ;   vSPDcase.sw = 0 ;
   94   
   95   
-  96  *=========================================================================
-      ============
-  97  * Install the set of input GDX file names over which the solve and reporti
-      ng loops will operate
-  98  *=========================================================================
-      ============
+  96  *=====================================================================================
+  97  * Install the set of input GDX file names over which the solve and reporting loops will operate
+  98  *=====================================================================================
  100  Set i_fileName(*) 'Input GDX file names'
 INCLUDE    C:\vSPD\vSPD\Programs\vSPDfileList.inc
  102  /
@@ -109,99 +91,73 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDfileList.inc
  104  /
  105  ;
  107   
- 108  *=========================================================================
-      ============
+ 108  *=====================================================================================
  109  * Compiling vSPDModel if required
  110  * Establish the output folders for the current job
  111  * Copy program codes for repeatability and reproducibility
- 112  *=========================================================================
-      ============
+ 112  *=====================================================================================
  113  rep.ap = 1 ;
  114  putclose rep "vSPDsetup started at: " system.date " " system.time ;
  115   
  116  * Invoke vSPDmodel if license type is developer (licenseMode=1)
  119   
- 120  execute 'if exist "C:\vSPD\vSPD\Programs\..\Output\PRSS_202304052230_51302
-      023041030350_20230405223310" rmdir "C:\vSPD\vSPD\Programs\..\Output\PRSS_2
-      02304052230_51302023041030350_20230405223310" /s /q';
- 121  execute 'if exist "C:\vSPD\vSPD\Programs\lst"  rmdir "C:\vSPD\vSPD\Program
-      s\lst" /s /q';
+ 120  execute 'if exist "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new" rmdir "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new" /s /q';
+ 121  execute 'if exist "C:\vSPD\vSPD\Programs\lst"  rmdir "C:\vSPD\vSPD\Programs\lst" /s /q';
  122  execute 'mkdir "C:\vSPD\vSPD\Programs\lst"';
- 123  execute 'mkdir "C:\vSPD\vSPD\Programs\..\Output\PRSS_202304052230_51302023
-      041030350_20230405223310\Programs"';
- 124  execute 'copy /y vSPD*.inc "C:\vSPD\vSPD\Programs\..\Output\PRSS_202304052
-      230_51302023041030350_20230405223310\Programs"'
- 125  execute 'copy /y *.gms "C:\vSPD\vSPD\Programs\..\Output\PRSS_202304052230_
-      51302023041030350_20230405223310\Programs"'
- 126  execute 'copy /y cplex.opt "C:\vSPD\vSPD\Programs\..\Output\PRSS_202304052
-      230_51302023041030350_20230405223310\Programs"'
+ 123  execute 'mkdir "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"';
+ 124  execute 'copy /y vSPD*.inc "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"'
+ 125  execute 'copy /y *.gms "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"'
+ 126  execute 'copy /y cplex.opt "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"'
  127   
  129   
- 130  execute 'gams Demand\DPSreportSetup.gms'
- 131    execute 'mkdir  "C:\vSPD\vSPD\Programs\..\Output\PRSS_202304052230_51302
-      023041030350_20230405223310\Programs\Demand"'
- 132    execute 'copy /y "Demand\*.*" "C:\vSPD\vSPD\Programs\..\Output\PRSS_2023
-      04052230_51302023041030350_20230405223310\Programs\Demand"'
- 134   
- 135   
- 136  *=========================================================================
-      ============
- 137  * Initialize reports
- 138  *=========================================================================
-      ============
- 139  * Call vSPDreportSetup to establish the report files ready to write result
-      s into
- 140  execute 'gams Demand\DPSreportSetup.gms'
- 142   
- 143   
- 144  *=========================================================================
-      ============
- 145  * Solve vSPD and report - loop over the designated input GDX files and sol
-      ve each one in turn.
- 146  *=========================================================================
-      ============
- 147  loop(i_fileName,
- 148   
- 149  *  Create the file that has the name of the input file for the current cas
-      e being solved
- 150     putclose vSPDcase "$setglobal  GDXname  " i_fileName.tl:0 ;
- 151   
- 152  *  Create a gdx file contains periods to be solved
- 153     put_utility temp 'exec' / 'gams vSPDperiod' ;
- 154   
- 155  *  Solve the model for the current input file
- 156  *   put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 E
-      rrmsg = 1 holdFixed = 0' ;
- 157   
- 158  *  Copy the vSPDsolve.lst file to i_fileName.lst in ..\Programs\lst\
- 159  *   put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', 
-      i_fileName.tl:0, '.lst' ;
- 160   
- 161  ) ;
- 162  rep.ap = 1 ;
- 163  putclose rep / "Total execute time: " timeExec "(secs)" /;
- 164   
- 165   
- 166  *=========================================================================
-      ============
- 167  * Clean up
- 168  *=========================================================================
-      ============
- 170  execute 'erase "vSPDcase.inc"' ;
- 172  execute 'move /y ProgressReport.txt "C:\vSPD\vSPD\Programs\..\Output\PRSS_
-      202304052230_51302023041030350_20230405223310"';
- 174  execute 'if exist *.lst   erase /q *.lst '
- 175  execute 'if exist *.~gm   erase /q *.~gm '
- 176  execute 'if exist *.lxi   erase /q *.lxi '
- 177  execute 'if exist *.log   erase /q *.log '
- 178  execute 'if exist *.put   erase /q *.put '
- 179  execute 'if exist *.txt   erase /q *.txt '
- 180  execute 'if exist *.gdx   erase /q *.gdx '
- 181  execute 'if exist temp.*  erase /q temp.*'
+ 132   
+ 133   
+ 134  *=====================================================================================
+ 135  * Initialize reports
+ 136  *=====================================================================================
+ 137  * Call vSPDreportSetup to establish the report files ready to write results into
+ 138  execute 'gams vSPDreportSetup.gms'
+ 140   
+ 141   
+ 142  *=====================================================================================
+ 143  * Solve vSPD and report - loop over the designated input GDX files and solve each one in turn.
+ 144  *=====================================================================================
+ 145  loop(i_fileName,
+ 146   
+ 147  *  Create the file that has the name of the input file for the current case being solved
+ 148     putclose vSPDcase "$setglobal  GDXname  " i_fileName.tl:0 ;
+ 149   
+ 150  *  Create a gdx file contains periods to be solved
+ 151     put_utility temp 'exec' / 'gams vSPDperiod' ;
+ 152   
+ 153  *  Solve the model for the current input file
+ 154     put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1 holdFixed = 0' ;
+ 155   
+ 156  *  Copy the vSPDsolve.lst file to i_fileName.lst in ..\Programs\lst\
+ 157     put_utility temp 'shell' / 'copy vSPDsolve.lst "C:\vSPD\vSPD\Programs\"\lst\', i_fileName.tl:0, '.lst' ;
+ 158   
+ 159  ) ;
+ 160  rep.ap = 1 ;
+ 161  putclose rep / "Total execute time: " timeExec "(secs)" /;
+ 162   
+ 163   
+ 164  *=====================================================================================
+ 165  * Clean up
+ 166  *=====================================================================================
+ 168  *execute 'erase "vSPDcase.inc"' ;
+ 170  execute 'move /y ProgressReport.txt "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new"';
+ 172  *execute 'if exist *.lst   erase /q *.lst '
+ 173  *execute 'if exist *.~gm   erase /q *.~gm '
+ 174  *execute 'if exist *.lxi   erase /q *.lxi '
+ 175  *execute 'if exist *.log   erase /q *.log '
+ 176  *execute 'if exist *.put   erase /q *.put '
+ 177  *execute 'if exist *.txt   erase /q *.txt '
+ 178  **execute 'if exist *.gdx   erase /q *.gdx '
+ 179  *execute 'if exist temp.*  erase /q temp.*'
+ 180   
+ 181   
  182   
- 183   
- 184   
-GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 07/24/23 15:30:53 Page 2
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -210,16 +166,14 @@ Include File Summary
 
      1        1 INPUT          0       0  C:\vSPD\vSPD\Programs\runvSPD.gms
      2       13 CALL           1      13  cls
-     3       24 INCLUDE        1      24  .C:\vSPD\vSPD\Programs\vSPDsettings.in
-                                           c
-     4      101 INCLUDE        1      49  .C:\vSPD\vSPD\Programs\vSPDfileList.in
-                                           c
+     3       24 INCLUDE        1      24  .C:\vSPD\vSPD\Programs\vSPDsettings.inc
+     4      101 INCLUDE        1      49  .C:\vSPD\vSPD\Programs\vSPDfileList.inc
      5      117 CALL           1      62  gams vSPDmodel.gms s=vSPDmodel
      6      128 IF EXIST       1      73  C:\vSPD\vSPD\Override\.gdx
 
 
-COMPILATION TIME     =        0.110 SECONDS      3 MB  36.2.0 r433180e WEX-WEI
-GAMS 36.2.0  r433180e Released Sep  3, 2021 WEX-WEI x86 64bit/MS Windows - 07/24/23 15:30:53 Page 3
+COMPILATION TIME     =        0.094 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -231,7 +185,7 @@ temp C:\vSPD\vSPD\Programs\temp.put
 vSPDcase C:\vSPD\vSPD\Programs\vSPDcase.inc
 
 
-EXECUTION TIME       =        1.000 SECONDS      4 MB  36.2.0 r433180e WEX-WEI
+EXECUTION TIME       =        0.859 SECONDS      4 MB  42.5.0 cf11b917 WEX-WEI
 
 
 USER: Small MUD-5 User License                       G220916|0002CO-GEN
