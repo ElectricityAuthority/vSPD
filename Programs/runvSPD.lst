@@ -1,4 +1,4 @@
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 1
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -157,7 +157,7 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDfileList.inc
  180   
  181   
  182   
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 2
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -167,32 +167,4 @@ Include File Summary
      1        1 INPUT          0       0  C:\vSPD\vSPD\Programs\runvSPD.gms
      2       13 CALL           1      13  cls
      3       24 INCLUDE        1      24  .C:\vSPD\vSPD\Programs\vSPDsettings.inc
-     4      101 INCLUDE        1      49  .C:\vSPD\vSPD\Programs\vSPDfileList.inc
-     5      117 CALL           1      62  gams vSPDmodel.gms s=vSPDmodel
-     6      128 IF EXIST       1      73  C:\vSPD\vSPD\Override\.gdx
-
-
-COMPILATION TIME     =        0.094 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 15:16:38 Page 3
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-E x e c u t i o n
-
-
-**** REPORT FILE SUMMARY
-
-rep C:\vSPD\vSPD\Programs\ProgressReport.txt
-temp C:\vSPD\vSPD\Programs\temp.put
-vSPDcase C:\vSPD\vSPD\Programs\vSPDcase.inc
-
-
-EXECUTION TIME       =        0.859 SECONDS      4 MB  42.5.0 cf11b917 WEX-WEI
-
-
-USER: Small MUD-5 User License                       G220916|0002CO-GEN
-      Electricity Authority - Te Mana Hiko,                  DC5643-S10
-
-
-**** FILE SUMMARY
-
-Input      C:\vSPD\vSPD\Programs\runvSPD.gms
-Output     C:\vSPD\vSPD\Programs\runvSPD.lst
+     4      101 INCLUDE        1      49  .C:\vSPD\vSPD\Pr

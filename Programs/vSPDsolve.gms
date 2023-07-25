@@ -327,7 +327,7 @@ $load riskGroupOffer = i_dateTimeRiskGroup
 $load nodeoutagebranch = i_dateTimeNodeOutageBranch
 
 * Parameters
-$load caseGdxDate = gdxDate intervalDuration = i_intervalLength
+$load caseGdxDate = gdxDate caseIntervalDuration = i_intervalLength
 $load offerParameter = i_dateTimeOfferParameter
 $load energyOffer = i_dateTimeEnergyOffer
 $load fastPLSRoffer = i_dateTimeFastPLSRoffer
@@ -378,7 +378,7 @@ $load RMTreserveLimitTo     = i_dateTimeRMTreserveLimit
 $load rampingConstraint     = i_dateTimeRampingConstraint
 
 *Real Time Pricing Project
-$load studyMode                   = i_studyMode
+$load caseStudyMode                   = i_studyMode
 $load useGenInitialMW             = i_dateTimeUseGenInitialMW
 $load runEnrgShortfallTransfer    = i_dateTimeRunEnrgShortfallTransfer
 $load runPriceTransfer            = i_dateTimeRunPriceTransfer
@@ -477,6 +477,12 @@ $if exist "%ovrdPath%%vSPDinputOvrdData%.gdx"  $include vSPDoverrides.gms
 *===============================================================================
 * 5. Initialise model mapping and inputs
 *===============================================================================
+
+* Calculate studyMode(t)
+studyMode(ca,dt) = caseStudyMode(ca);
+
+* Calculate IntervalDuration(t)
+IntervalDuration(ca,dt) = caseIntervalDuration(ca);
 
 * Check if NMIR is enabled
 UseShareReserve(ca) = 1 $ sum[ (dt,resC), reserveShareEnabled(ca,dt,resC)] ;
@@ -773,9 +779,9 @@ MnodeConstraintLimit(MnodeConstraint) = mnCnstrRHS(MnodeConstraint,'cnstrLimit')
 
 * Generation Ramp Pre_processing -----------------------------------------------
 * For PRICERESPONSIVEIG generators, The RTD RampRateUp is capped: (4.7.2.2)
-loop(ca,
-  if (studyMode(ca) = 101 or studyMode(ca) = 201,
-      RampRateUp(offer(ca,dt,o)) $ { windOffer(offer) and priceResponsive(offer) } = Min[ RampRateUp(offer), rtdIgIncreaseLimit(ca,dt)*60/intervalDuration(ca) ];
+loop( (ca,dt),
+  if (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201,
+      RampRateUp(offer(ca,dt,o)) $ { windOffer(offer) and priceResponsive(offer) } = Min[ RampRateUp(offer), rtdIgIncreaseLimit(ca,dt)*60/intervalDuration(ca,dt) ];
   ) ;
 ) ;
 
@@ -934,7 +940,7 @@ While ( sum[ (ca,dt) $ unsolvedDT(ca,dt), 1 ],
     generationStart(offer(t(ca,dt),o)) $ { sum[ o1, generationStart(ca,dt,o1)] = 0 } = sum[ dt1 $ (ord(dt1) = ord(dt)-1), o_offerEnergy_TP(ca,dt1,o) ] ;
 
 *   4.10 Real Time Pricing - First RTD load calculation --------------------------
-    if (studyMode(ca) = 101 or studyMode(ca) = 201,
+    if (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201,
 *       Calculate first target total load [4.10.6.5]
 *       Island-level MW load forecast. For the fist loop, uses islandLosses(t,isl)
         TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n) ];
@@ -1102,7 +1108,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *   7d. Solve Models
 
 *   Solve the NMIR model -------------------------------------------------------
-    if ( sum[t, VSPDModel(t)] = 0,
+    if ( sum[t(ca,dt), VSPDModel(t)] = 0,
 
         option bratio = 1 ;
         vSPD_NMIR.Optfile = 1 ;
@@ -1116,14 +1122,14 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *       Post a progress message to the console and for use by EMI.
         if (ModelSolved = 1,
             loop (t,
-                putclose rep 'The case: %GDXname% (' t.tl ') is 1st solved successfully.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
                              'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
             ) ;
         elseif (ModelSolved = 0) and (sequentialSolve = 1),
             loop (t,
                 unsolvedDT(t) = no;
-                putclose rep 'The case: %GDXname% (' t.tl ') is 1st solved unsuccessfully.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved unsuccessfully.'/
             ) ;
 
         ) ;
@@ -1163,7 +1169,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             loop( unsolvedDT(t),
                 if( UseBranchFlowMIP(t) >= 1,
                     VSPDModel(t) = 1;
-                    putclose rep 'The case: %GDXname% requires a vSPD_BranchFlowMIP resolve for period ' t.tl '.'/
+                    putclose rep 'The caseID: ' ca.tl ' requires a vSPD_BranchFlowMIP resolve for period ' dt.tl '.'/
                 ) ;
             ) ;
         ) ;
@@ -1200,7 +1206,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             SOS1_solve(t)  = yes;
             loop(t,
                 unsolvedDT(t) = no;
-                putclose rep 'The case: %GDXname% (' t.tl ') is 1st solved successfully for branch integer.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully for branch integer.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
                              'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
             ) ;
@@ -1208,7 +1214,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             loop (t,
                 unsolvedDT(t) = yes;
                 VSPDModel(t) = 2;
-                putclose rep 'The case: %GDXname% (' t.tl ') is 1st solved unsuccessfully for branch integer.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved unsuccessfully for branch integer.'/
             ) ;
         ) ;
     ) ;
@@ -1229,7 +1235,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *       Post a progress message for use by EMI.
         if (ModelSolved = 1,
             loop (t,
-                putclose rep 'The case: %GDXname% (' t.tl ') branch flow integer resolve was unsuccessful.' /
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') branch flow integer resolve was unsuccessful.' /
                                 'Reverting back to base model (NMIR) and solve successfully. ' /
                                 'Objective function value: ' NETBENEFIT.l:<15:4 /
                                 'Violations cost         : '  TOTALPENALTYCOST.l:<15:4 /
@@ -1237,7 +1243,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             ) ;
         else
             loop (t,
-                putclose rep 'The case: %GDXname% (' t.tl') integer solve was unsuccessful. Reverting back to base model (NMIR) and solve unsuccessfully.' /
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') integer solve was unsuccessful. Reverting back to base model (NMIR) and solve unsuccessfully.' /
             ) ;
         ) ;
 
@@ -1342,8 +1348,8 @@ $offtext
     ) ;
 *   Energy Shortfall Check End
 
-    unsolvedDT(t) $ {(studyMode = 101 or studyMode = 201) and (LoopCount(t)=1)} = yes ;
-    if ((studyMode = 101 or studyMode = 201) and sum[unsolvedDT(t),1],
+    unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1)} = yes ;
+    if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1],
         putclose rep 'Recalculate RTD Island Loss for next solve'/;
         LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
@@ -1443,7 +1449,7 @@ $ontext
         If an eligible price transfer source is found then the energy price of the dead Pnode and its associated ACNode are assigned the energy price of the transfer Pnode. If no eligible price is found then the dead Pnode
         and its associated ACNode are assigned a price of zero.
 $offtext
-        if (runPriceTransfer(t) and [(studyMode = 101) or (studyMode = 201) or (studyMode = 130) or (studyMode = 131)],
+        if (runPriceTransfer(t) and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
             o_nodeDead_TP(t,n) = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b)) }, NodeBusAllocationFactor(t,n,b) ] = 0 )} ;
             o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
             o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { [ ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = Smin[b1 $ NodeBus(t,n1,b1), busElectricalIsland(t,b1)] )
@@ -1731,8 +1737,8 @@ $else.PriceRelatedOutputs
 * branch output update
 o_branchFromBusPrice_TP(ca,dt,br) $ branch(ca,dt,br) = sum[ b $ branchFrBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
 o_branchToBusPrice_TP(ca,dt,br) $ branch(ca,dt,br)   = sum[ b $ branchToBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
-o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) >= 0) } = (intervalDuration/60) * [ o_branchToBusPrice_TP(ca,dt,br)*[o_branchFlow_TP(ca,dt,br) - o_branchTotalLoss_TP(ca,dt,br)] - o_branchFromBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) ] ;
-o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) < 0) }  = (intervalDuration/60) * [ o_branchToBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) - o_branchFromBusPrice_TP(ca,dt,br)*[o_branchTotalLoss_TP(ca,dt,br) + o_branchFlow_TP(ca,dt,br)] ] ;
+o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) >= 0) } = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*[o_branchFlow_TP(ca,dt,br) - o_branchTotalLoss_TP(ca,dt,br)] - o_branchFromBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) ] ;
+o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) < 0) }  = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) - o_branchFromBusPrice_TP(ca,dt,br)*[o_branchTotalLoss_TP(ca,dt,br) + o_branchFlow_TP(ca,dt,br)] ] ;
 *   Island output
 o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,dt,n,isl) } , o_nodePrice_TP(ca,dt,n) ] ;
 

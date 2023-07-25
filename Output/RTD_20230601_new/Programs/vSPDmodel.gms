@@ -88,9 +88,9 @@ Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB)
 Sets
 * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
   case2name(ca<,caseName<)                'Mapping caseID to CaseNanme'
-  case2dt(ca<,dt<)                       'Mapping caseID to datetime'
+  case2dt(ca<,dt)                       'Mapping caseID to datetime'
   case2rundt(ca<,rundt<)                 'Mapping caseID to rundatetime'
-  dt2tp(dt,tp<)                          'Mapping of dateTime set to the tradePeriod set'
+  dt2tp(dt,tp)                          'Mapping of dateTime set to the tradePeriod set'
   node(ca,dt,n<)                         'Node definition for the different trading periods'
   bus(ca,dt,b<)                          'Bus definition for the different trading periods'
   node2node(ca,dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
@@ -115,7 +115,8 @@ Parameters
 * 6 scalars - values are loaded from GDX file in vSPDsolve.gms
   caseGdxDate(ca,*)                                 'day, month, year of trade date for each caseID'
   gdxDate(*)                                        'day, month, year of trade date'
-  intervalDuration(ca)                                 'Length of the trading period in minutes (e.g. 30)'
+  intervalDuration(ca,dt)                           'Length of the trading period in minutes (e.g. 30)'
+  caseIntervalDuration(ca)                          'Length of the trading period in minutes (e.g. 30) for each caseID'
 
 * 49 parameters - values are loaded from GDX file in vSPDsolve.gms
 * Offer data
@@ -162,7 +163,8 @@ Parameters
 
 
 * Real Time Pricing - Inputs
-  studyMode(ca)                                                        'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
+  studyMode(ca,dt)                                                     'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
+  caseStudyMode(ca)                                                    'Study mode applied in a CaseID'
   useGenInitialMW(ca,dt)                                               'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
   runEnrgShortfallTransfer(ca,dt)                                      'Flag that if set to 1 will enable shortfall transfer- post processing'
   runPriceTransfer(ca,dt)                                              'Flag that if set to 1 will enable price transfer - post processing.'
@@ -307,6 +309,8 @@ Sets
   riskGroupOffer(ca,dt,rg<,o,riskC)                                     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
   islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
   ;
+
+Alias (t,t1,t2);
 
 Parameters
 * Offers
@@ -754,7 +758,7 @@ SystemBenefitDefinition(t)..
   ;
 
 * Defined as the sum of the individual violation costs
-SystemPenaltyCostDefinition(t(ca,dt))..
+SystemPenaltyCostDefinition(t)..
   SYSTEMPENALTYCOST(t)
 =e=
   sum[ bus(t,b), deficitBusGenerationPenalty * DEFICITBUSGENERATION(bus)
@@ -778,7 +782,7 @@ SystemPenaltyCostDefinition(t(ca,dt))..
        + [DeficitReservePenalty_ECE * DEFICITRESERVE_ECE(t,isl,resC)]
      ]
 
-+ sum[ o $ { (StudyMode(ca) = 101) or (StudyMode(ca) = 201) }
++ sum[ o $ { (StudyMode(t) = 101) or (StudyMode(t) = 201) }
          , 0.0005 * ( GENERATIONUPDELTA(t,o) + GENERATIONDNDELTA(t,o) )
      ]
   ;
@@ -824,7 +828,7 @@ TotalScarcityCostDefinition(t)..
 *======= GENERATION AND LOAD CONSTRAINTS =======================================
 
 * Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
-GenerationChangeUpDown(t(ca,dt),o) $ { (StudyMode(ca) = 101) or (StudyMode(ca) = 201) }..
+GenerationChangeUpDown(t,o) $ { (StudyMode(t) = 101) or (StudyMode(t) = 201) }..
   GENERATIONUPDELTA(t,o) - GENERATIONDNDELTA(t,o)
 =e=
   GENERATION(t,o) - generationStart(t,o);
@@ -865,19 +869,19 @@ EnergyScarcityDefinition(t,n)..
 * Note: The CoefficientForRampRate in SPD formulation  = intervalDuration / 60
 
 * Maximum movement of the generator downwards due to up ramp rate (6.2.1.1)
-GenerationRampUp(t(ca,dt),o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
+GenerationRampUp(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
   sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
 + GENERATION(t,o) - DEFICITRAMPRATE(t,o)
 =l=
-  generationStart(t,o) + (RampRateUp(t,o) * intervalDuration(ca) / 60)
+  generationStart(t,o) + (RampRateUp(t,o) * intervalDuration(t) / 60)
   ;
 
 * Maximum movement of the generator downwards due to down ramp rate (6.2.1.2)
-GenerationRampDown(t(ca,dt),o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
+GenerationRampDown(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
   sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
 + GENERATION(t,o) + SURPLUSRAMPRATE(t,o)
 =g=
-  generationStart(t,o) - (RampRateDn(t,o) * intervalDuration(ca) / 60)
+  generationStart(t,o) - (RampRateDn(t,o) * intervalDuration(t) / 60)
   ;
 
 *======= RAMPING CONSTRAINTS END================================================

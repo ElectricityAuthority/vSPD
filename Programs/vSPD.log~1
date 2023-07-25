@@ -1,11 +1,11 @@
-
---- Job runvSPD.gms Start 07/25/23 15:15:42 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- vSPDsolve.gms(3462) 1782 Mb
+--- Job runvSPD.gms Start 07/25/23 16:15:32 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\42\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\vSPD\vSPD\Programs\runvSPD.gms
     PageSize 0
-    ScrDir C:\vSPD\vSPD\Programs\225a\
+    ScrDir C:\vSPD\vSPD\Programs\225c\
     SysDir C:\GAMS\42\
     LogOption 3
     ErrMsg 1
@@ -29,13 +29,13 @@ GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
 --- . vSPDfileList.inc(3) 3 Mb
 --- runvSPD.gms(62) 3 Mb
 --- call gams vSPDmodel.gms s=vSPDmodel
---- Job vSPDmodel.gms Start 07/25/23 15:15:42 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Job vSPDmodel.gms Start 07/25/23 16:15:32 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\42\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\vSPD\vSPD\Programs\vSPDmodel.gms
     Save C:\vSPD\vSPD\Programs\vSPDmodel.g0?
-    ScrDir C:\vSPD\vSPD\Programs\225b\
+    ScrDir C:\vSPD\vSPD\Programs\225d\
     SysDir C:\GAMS\42\
 Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
           Electricity Authority - Te Mana Hiko,                  DC5643-S10
@@ -44,12 +44,12 @@ Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
 Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
 GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
 --- Starting compilation
---- vSPDmodel.gms(2101) 3 Mb
---- Starting execution: elapsed 0:00:00.012
+--- vSPDmodel.gms(2105) 3 Mb
+--- Starting execution: elapsed 0:00:00.016
 *** Status: Normal completion
---- Job vSPDmodel.gms Stop 07/25/23 15:15:42 elapsed 0:00:00.014
+--- Job vSPDmodel.gms Stop 07/25/23 16:15:32 elapsed 0:00:00.018
 --- runvSPD.gms(149) 3 Mb
---- Starting execution: elapsed 0:00:00.096
+--- Starting execution: elapsed 0:00:00.180
 --- runvSPD.gms(120) 4 Mb
 --- runvSPD.gms(121) 4 Mb
 --- runvSPD.gms(122) 4 Mb
@@ -69,16 +69,17 @@ vSPDreport.gms
 vSPDreportSetup.gms
 vSPDsolve.gms
 vSPD_testCode.gms
-        8 file(s) copied.
+~$vSPDmodel.gms
+        9 file(s) copied.
 --- runvSPD.gms(126) 4 Mb
         1 file(s) copied.
 --- runvSPD.gms(138) 4 Mb
---- Job vSPDreportSetup.gms Start 07/25/23 15:15:43 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Job vSPDreportSetup.gms Start 07/25/23 16:15:33 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\42\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\vSPD\vSPD\Programs\vSPDreportSetup.gms
-    ScrDir C:\vSPD\vSPD\Programs\225b\
+    ScrDir C:\vSPD\vSPD\Programs\225d\
     SysDir C:\GAMS\42\
 Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
           Electricity Authority - Te Mana Hiko,                  DC5643-S10
@@ -90,7 +91,7 @@ GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
 --- vSPDreportSetup.gms(14) 2 Mb
 --- . vSPDsettings.inc(52) 2 Mb
 --- vSPDreportSetup.gms(146) 2 Mb
---- Starting execution: elapsed 0:00:00.008
+--- Starting execution: elapsed 0:00:00.009
 --- vSPDreportSetup.gms(151) 3 Mb
 --- Putfile rep C:\vSPD\vSPD\Programs\ProgressReport.txt
 --- Putfile summaryResults_TP C:\vSPD\vSPD\Output\RTD_20230601_new\RTD_20230601_new_SummaryResults_TP.csv
@@ -105,14 +106,14 @@ GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
 --- Putfile brCstrResults_TP C:\vSPD\vSPD\Output\RTD_20230601_new\RTD_20230601_new_BrConstraintResults_TP.csv
 --- Putfile MNodeCstrResults_TP C:\vSPD\vSPD\Output\RTD_20230601_new\RTD_20230601_new_MNodeConstraintResults_TP.csv
 *** Status: Normal completion
---- Job vSPDreportSetup.gms Stop 07/25/23 15:15:43 elapsed 0:00:00.014
+--- Job vSPDreportSetup.gms Stop 07/25/23 16:15:33 elapsed 0:00:00.015
 --- runvSPD.gms(145) 4 Mb
---- Job vSPDperiod Start 07/25/23 15:15:43 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Job vSPDperiod Start 07/25/23 16:15:33 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\42\gmsprmNT.txt
 --- GAMS Parameters defined
     Input C:\vSPD\vSPD\Programs\vSPDperiod.gms
-    ScrDir C:\vSPD\vSPD\Programs\225b\
+    ScrDir C:\vSPD\vSPD\Programs\225d\
     SysDir C:\GAMS\42\
 Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
           Electricity Authority - Te Mana Hiko,                  DC5643-S10
@@ -131,18 +132,18 @@ GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
 --- vSPDperiod.gms(56) 3 Mb
 --- . vSPDtpsToSolve.inc(17) 3 Mb
 --- vSPDperiod.gms(80) 3 Mb
---- Starting execution: elapsed 0:00:00.008
+--- Starting execution: elapsed 0:00:00.017
 --- vSPDperiod.gms(144) 4 Mb
 --- GDX File (execute_unload) C:\vSPD\vSPD\Programs\vSPDperiod.gdx
 *** Status: Normal completion
---- Job vSPDperiod.gms Stop 07/25/23 15:15:43 elapsed 0:00:00.009
---- Job vSPDsolve.gms Start 07/25/23 15:15:43 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Job vSPDperiod.gms Stop 07/25/23 16:15:33 elapsed 0:00:00.018
+--- Job vSPDsolve.gms Start 07/25/23 16:15:33 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\42\gmsprmNT.txt
 --- GAMS Parameters defined
     Restart C:\vSPD\vSPD\Programs\vSPDmodel.g0?
     Input C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    ScrDir C:\vSPD\vSPD\Programs\225b\
+    ScrDir C:\vSPD\vSPD\Programs\225d\
     SysDir C:\GAMS\42\
     LogOption 3
     ErrMsg 1
@@ -168,249 +169,53 @@ GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
 --- vSPDsolve.gms(308) 5 Mb
 --- GDXin=C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
 --- GDX File ($gdxIn) C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
---- vSPDsolve.gms(937) 174 Mb 2 Errors
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
---- vSPDsolve.gms(1112) 174 Mb 3 Errors
-*** Error 257 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Solve statement not checked because of previous errors
---- vSPDsolve.gms(1119) 174 Mb 4 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1126) 174 Mb 5 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1166) 174 Mb 6 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1193) 174 Mb 7 Errors
-*** Error 257 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Solve statement not checked because of previous errors
---- vSPDsolve.gms(1203) 174 Mb 8 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1211) 174 Mb 9 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1225) 174 Mb 10 Errors
-*** Error 257 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Solve statement not checked because of previous errors
---- vSPDsolve.gms(1232) 174 Mb 11 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1240) 174 Mb 12 Errors
-*** Error 259 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    A mapping set with the suffix .TL has to have a dimension of one
---- vSPDsolve.gms(1345) 174 Mb 14 Errors
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
---- vSPDsolve.gms(1346) 174 Mb 16 Errors
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
---- vSPDsolve.gms(1384) 174 Mb 17 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1446) 174 Mb 21 Errors
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
---- vSPDsolve.gms(1533) 174 Mb 22 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1534) 174 Mb 23 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1549) 174 Mb 24 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1552) 174 Mb 25 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1555) 174 Mb 26 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1558) 174 Mb 27 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1561) 174 Mb 28 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1564) 174 Mb 29 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1570) 174 Mb 30 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1571) 174 Mb 31 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1572) 174 Mb 32 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1579) 174 Mb 33 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1580) 174 Mb 34 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1581) 174 Mb 35 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1586) 174 Mb 36 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1651) 174 Mb 37 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1654) 174 Mb 38 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1655) 174 Mb 39 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1656) 174 Mb 40 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1674) 174 Mb 41 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1675) 174 Mb 42 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1676) 174 Mb 43 Errors
-*** Error 141 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Symbol declared but no values have been assigned. Check for missing
-       data definition, assignment, data loading or implicit assignment
-       via a solve statement.
-       A wild shot: You may have spurious commas in the explanatory
-       text of a declaration. Check symbol reference list.
---- vSPDsolve.gms(1734) 174 Mb 44 Errors
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
---- vSPDsolve.gms(1735) 174 Mb 45 Errors
-*** Error 148 in C:\vSPD\vSPD\Programs\vSPDsolve.gms
-    Dimension different - The symbol is referenced with more/less
-       indices as declared
---- vSPDsolve.gms(1747) 174 Mb
---- . vSPDreport.gms(435) 174 Mb
---- vSPDsolve.gms(1763) 174 Mb 45 Errors
-*** Status: Compilation error(s)
---- Job vSPDsolve.gms Stop 07/25/23 15:15:43 elapsed 0:00:00.581
-        1 file(s) copied.
---- runvSPD.gms(170) 4 Mb
-        1 file(s) moved.
---- Putfile rep C:\vSPD\vSPD\Programs\ProgressReport.txt
---- Putfile temp C:\vSPD\vSPD\Programs\temp.put
---- Putfile vSPDcase C:\vSPD\vSPD\Programs\vSPDcase.inc
-*** Status: Normal completion
---- Job runvSPD.gms Stop 07/25/23 15:15:43 elapsed 0:00:01.053
+--- vSPDsolve.gms(1753) 10 Mb
+--- . vSPDreport.gms(435) 10 Mb
+--- vSPDsolve.gms(1769) 11 Mb
+--- Starting execution: elapsed 0:00:00.301
+--- vSPDsolve.gms(3055) 12 Mb
+--- GDXin=C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+--- GDX File (execute_load) C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+--- vSPDsolve.gms(3462) 50 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(3736) 63 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 311012023051200876
+---       dt = 01-JUN-2023 00:00
+---   31,780 rows  56,138 columns  107,583 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 7.433E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 2.982E-04, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:01.690
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
+>>  sos1reform = -1
+>>  sos2reform = -1
+Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.62 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.15 Mb (peak 15.58 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Preprocessing_SOS1Reform                -1
+CPXPARAM_Preprocessing_SOS2Reform                -1
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+Generic callback                                 0x50

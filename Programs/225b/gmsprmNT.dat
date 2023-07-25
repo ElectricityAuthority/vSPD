@@ -1,0 +1,9 @@
+Restart=vSPDmodel
+Input=vSPDsolve.gms
+ScrDir=225b
+SysDir=C:\GAMS\42
+ScriptNext=225b\gamsnext.cmd
+LogOption=3
+ErrMsg=1
+IDE=1
+HoldFixed=0
