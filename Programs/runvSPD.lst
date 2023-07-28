@@ -1,4 +1,4 @@
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 1
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -68,7 +68,7 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDsettings.inc
   80  * Create a progress report file
   81  *=====================================================================================
   82  File rep "Write a progess report" /"ProgressReport.txt"/ ;  rep.lw = 0 ;
-  83  putclose rep "Run: 'RTD_20230601_new'" //
+  83  putclose rep "Run: 'RTD_20230601_0030'" //
   84               "runvSPD started at: " system.date " " system.time;
   85   
   86   
@@ -101,13 +101,13 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDfileList.inc
  115   
  116  * Invoke vSPDmodel if license type is developer (licenseMode=1)
  119   
- 120  execute 'if exist "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new" rmdir "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new" /s /q';
+ 120  execute 'if exist "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030" rmdir "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030" /s /q';
  121  execute 'if exist "C:\vSPD\vSPD\Programs\lst"  rmdir "C:\vSPD\vSPD\Programs\lst" /s /q';
  122  execute 'mkdir "C:\vSPD\vSPD\Programs\lst"';
- 123  execute 'mkdir "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"';
- 124  execute 'copy /y vSPD*.inc "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"'
- 125  execute 'copy /y *.gms "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"'
- 126  execute 'copy /y cplex.opt "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new\Programs"'
+ 123  execute 'mkdir "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030\Programs"';
+ 124  execute 'copy /y vSPD*.inc "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030\Programs"'
+ 125  execute 'copy /y *.gms "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030\Programs"'
+ 126  execute 'copy /y cplex.opt "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030\Programs"'
  127   
  129   
  132   
@@ -145,7 +145,7 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDfileList.inc
  165  * Clean up
  166  *=====================================================================================
  168  *execute 'erase "vSPDcase.inc"' ;
- 170  execute 'move /y ProgressReport.txt "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_new"';
+ 170  execute 'move /y ProgressReport.txt "C:\vSPD\vSPD\Programs\..\Output\RTD_20230601_0030"';
  172  *execute 'if exist *.lst   erase /q *.lst '
  173  *execute 'if exist *.~gm   erase /q *.~gm '
  174  *execute 'if exist *.lxi   erase /q *.lxi '
@@ -157,7 +157,7 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDfileList.inc
  180   
  181   
  182   
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 2
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -167,4 +167,32 @@ Include File Summary
      1        1 INPUT          0       0  C:\vSPD\vSPD\Programs\runvSPD.gms
      2       13 CALL           1      13  cls
      3       24 INCLUDE        1      24  .C:\vSPD\vSPD\Programs\vSPDsettings.inc
-     4      101 INCLUDE        1      49  .C:\vSPD\vSPD\Pr
+     4      101 INCLUDE        1      49  .C:\vSPD\vSPD\Programs\vSPDfileList.inc
+     5      117 CALL           1      62  gams vSPDmodel.gms s=vSPDmodel
+     6      128 IF EXIST       1      73  C:\vSPD\vSPD\Override\.gdx
+
+
+COMPILATION TIME     =        0.110 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+**** REPORT FILE SUMMARY
+
+rep C:\vSPD\vSPD\Programs\ProgressReport.txt
+temp C:\vSPD\vSPD\Programs\temp.put
+vSPDcase C:\vSPD\vSPD\Programs\vSPDcase.inc
+
+
+EXECUTION TIME       =        4.875 SECONDS      4 MB  42.5.0 cf11b917 WEX-WEI
+
+
+USER: Small MUD-5 User License                       G220916|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S10
+
+
+**** FILE SUMMARY
+
+Input      C:\vSPD\vSPD\Programs\runvSPD.gms
+Output     C:\vSPD\vSPD\Programs\runvSPD.lst

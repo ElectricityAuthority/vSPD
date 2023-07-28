@@ -1,4 +1,4 @@
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 1
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -67,36 +67,50 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDcase.inc
   75  * 1. Initialize set and data
   76  *===============================================================================
   77  Sets
-  78  tp                      'Set of trading periods'
-  79  dt                      'Set of datetime'
-  80  dt2tp(dt,tp)            'Mapping datetime to trading periods'
-  81   
-  82  ca                      'Set of caseID'
-  83  case2dt2tp(ca<,dt<,tp<) 'Mapping caseID to datetime and to tp'
-  84   
-  85  stp(tp)                 'Trading periods to be solved'
-  86  sdt(dt)                 'Date time to be solved'
-  87  sdt2tp(dt,tp)           'Mapping solved datetime to trading periods'
-  88  ;
-  89  alias (tp,tp1);
+  78  ca                      'Set of caseID'
+  79  tp                      'Set of trading periods'
+  80  dt                      'Set of datetime'
+  81  rundt                   'Set of Rundatetime'
+  82  caseName                'Set of CaseName'
+  83   
+  84  case2dt2tp(ca<,dt<,tp<) 'Mapping caseID to datetime and to tp'
+  85  case2rundt(ca,rundt<)   'Mapping caseID to rundatetime'
+  86  case2Name(ca,caseName<) 'Mapping caseID to case name'
+  87   
+  88   
+  89  dt2tp(dt,tp)            'Mapping datetime to trading periods'
   90   
-  91  Parameter
-  92  gdxDate(*,*)                        'day, month, year of trade date'
-  93  ;
-  94   
+  91  sca(ca)                 'caseID to be solved'
+  92  stp(tp)                 'Trading periods to be solved'
+  93  sdt(dt)                 'Date time to be solved'
+  94  srt(rundt)           'RunDateTime of cases to be solved'
+  95  scn(caseName)     'Name of cases to be solved'
+  96   
+  97   
+  98  sdt2tp(dt,tp)           'Mapping solved datetime to trading periods'
+  99  scase2dt(ca,dt)         ''
+ 100  scase2Name(ca,caseName) ''
+ 101  scase2rundt(ca,rundt)   ''
+ 102   
+ 103  ;
+ 104  alias (tp,tp1);
+ 105   
+ 106  Parameter
+ 107  gdxDate(*,*)                        'day, month, year of trade date'
+ 108  ;
+ 109   
 GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
 --- LOAD  gdxDate = 3:gdxDate
-  97  *$load tp = i_tradePeriod
-  98  *$load dt = i_dateTime
-  99  *$load dt2tp = i_dateTimeTradePeriodMap
 --- LOAD  case2dt2tp = 8:i_dateTimeTradePeriodMap
- 102   
- 103  *===============================================================================
- 104  * 2. Establish which trading periods are to be solved
- 105  *===============================================================================
- 106  Sets
- 107  alp            'All trading periods to be solved'  / All /
- 108  tmp            'Temporary list of trading period to be solved'
+--- LOAD  case2rundt = 2:i_runDateTime
+--- LOAD  case2Name = 1:caseName
+ 116   
+ 117  *===============================================================================
+ 118  * 2. Establish which trading periods are to be solved
+ 119  *===============================================================================
+ 120  Sets
+ 121  alp            'All trading periods to be solved'  / All /
+ 122  tmp            'Temporary list of trading period to be solved'
 INCLUDE    C:\vSPD\vSPD\Programs\vSPDtpsToSolve.inc
       a. to solve all trading periods
       /  
@@ -108,34 +122,53 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDtpsToSolve.inc
       TP3      Or      TP3, TP6 
       TP6              /        
       /                         
- 122  *============================================= // ==========================================
- 123   
- 124  /
- 125  TP1
- 126  /
- 127  ;
- 128   
- 129  stp(tp) = no ;
- 130  sdt(dt) = no;
- 131   
- 132  stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
- 133  sdt(dt) $ sum[ tmp, diag(dt,tmp)] = yes ;
- 134   
- 135  stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
+ 136  *============================================= // ==========================================
  137   
- 138  dt2tp(dt,tp) = yes $ sum[ca $ case2dt2tp(ca,dt,tp),1] ;
- 139  sdt(dt) $ sum[ stp(tp) $ dt2tp(dt,tp), 1 ] = yes ;
- 140  stp(tp) $ sum[ sdt(dt) $ dt2tp(dt,tp), 1 ] = yes ;
- 141   
- 142  sdt2tp(dt,tp) $ sum[ (sdt(dt), stp(tp)) $ dt2tp(dt,tp), 1 ] = yes ;
- 143   
- 144  execute_unload 'C:\vSPD\vSPD\Programs\\vSPDperiod.gdx'
- 145    stp    = i_TradePeriod
- 146    sdt    = i_DateTime
- 147    sdt2tp = i_DateTimeTradePeriod
- 148    ;
- 149   
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 2
+ 138  /
+ 139  '01-JUN-2023 00:30'
+ 140  /
+ 141  ;
+ 142  sca(ca)       = no ;
+ 143  stp(tp)       = no ;
+ 144  sdt(dt)       = no ;
+ 145  srt(rundt)    = no ;
+ 146  scn(caseName) = no;
+ 147   
+ 148  stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
+ 149  sdt(dt) $ sum[ tmp, diag(dt,tmp)] = yes ;
+ 150   
+ 151  stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
+ 153   
+ 154   
+ 155  sdt(dt) $ sum[ (ca,stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+ 156  stp(tp) $ sum[ (ca,sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+ 157   
+ 158  sdt2tp(sdt(dt),stp(tp)) = yes $ sum[ca $ case2dt2tp(ca,dt,tp),1] ;
+ 159   
+ 160  sca(ca)  = yes $ sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp),1] ;
+ 161  scase2dt(ca,dt) = yes $ sum[(sca(ca),sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp),1] ;
+ 162   
+ 163  scn(caseName) $ sum[sca(ca) $ case2Name(ca,caseName), 1]  = yes ;
+ 164  scase2Name(ca,caseName) = yes $ sum[ (sca(ca),scn(caseName)) $ case2Name(ca,caseName), 1 ] ;
+ 165   
+ 166  srt(rundt) $ sum[sca(ca) $ case2rundt(ca,rundt), 1]  = yes ;
+ 167  scase2rundt(ca,rundt) = yes $ sum[ (sca(ca),srt(rundt)) $ case2rundt(ca,rundt), 1] ;
+ 168   
+ 169   
+ 170   
+ 171  execute_unload 'C:\vSPD\vSPD\Programs\\vSPDperiod.gdx'
+ 172    sca    = i_caseID
+ 173    stp    = i_tradePeriod
+ 174    sdt    = i_dateTime
+ 175    srt    = i_runDateTime
+ 176    scn    = i_caseName
+ 177    sdt2tp      = i_DateTimeTradePeriod
+ 178    scase2dt    = i_caseDateTime
+ 179    scase2Name  = i_caseIdName
+ 180    scase2rundt = i_case2rundt
+ 181    ;
+ 182   
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -146,12 +179,12 @@ Include File Summary
      2       14 INCLUDE        1      14  .C:\vSPD\vSPD\Programs\vSPDsettings.inc
      3       67 INCLUDE        1      15  .C:\vSPD\vSPD\Programs\vSPDcase.inc
      4       71 IF EXIST       1      18  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
-     5       95 GDXIN          1      42  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
-     6      109 INCLUDE        1      56  .C:\vSPD\vSPD\Programs\vSPDtpsToSolve.inc
+     5      110 GDXIN          1      57  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+     6      123 INCLUDE        1      70  .C:\vSPD\vSPD\Programs\vSPDtpsToSolve.inc
 
 
-COMPILATION TIME     =        0.000 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 3
+COMPILATION TIME     =        0.016 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 

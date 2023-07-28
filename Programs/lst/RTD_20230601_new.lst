@@ -1,4 +1,4 @@
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 3
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -802,15 +802,15 @@ INCLUDE    C:\vSPD\vSPD\Programs\vSPDcase.inc
 2918   
 2919  * Load trading period to be solved
 GDXIN   C:\vSPD\vSPD\Programs\vSPDPeriod.gdx
---- LOAD  tp = 1:i_TradePeriod
---- LOAD  dt = 2:i_DateTime
---- LOAD  dt2tp = 3:i_DateTimeTradePeriod
+--- LOAD  tp = 2:i_tradePeriod
+--- LOAD  dt = 3:i_dateTime
+--- LOAD  dt2tp = 6:i_DateTimeTradePeriod
 2924   
 2925  * Call the GDX routine and load the input data:
 GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
 2927  * Sets
---- LOAD  case2name = 1:caseName
 --- LOAD  case2dt = 6:i_dateTime
+--- LOAD  case2name = 1:caseName
 --- LOAD  case2rundt = 2:i_runDateTime
 2929  *$load b = i_bus  n = i_node  o = i_offer  bd = i_bid  trdr = i_trader
 2930  *$load br = i_branch  brCstr = i_branchConstraint  MnodeCstr = i_MnodeConstraint
@@ -1329,9 +1329,9 @@ GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
 3459  VSPDModel(ca,dt) = 0 ;
 3460  LoopCount(ca,dt) = 1;
 3461  IsNodeDead(ca,dt,n) = 0;
-3462  While ( sum[ (ca,dt) $ unsolvedDT(ca,dt), 1 ],
+3462  While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 3463   
-3464    loop[ (ca,dt) $ {unsolvedDT(ca,dt) and (LoopCount(ca,dt) < maxSolveLoops(ca,dt)) },
+3464    loop[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt) and (LoopCount(ca,dt) < maxSolveLoops(ca,dt)) },
 3465   
 3466  *   7a. Reset all sets, parameters and variables -------------------------------
 3467      option clear = t ;
@@ -1740,54 +1740,55 @@ GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
 3872      ) ;
 3873  *   Solve the models end
 3874   
-3875   
-3876  *   Post-Solve Checks ----------------------------------------------------------
-3877   
-3878  *   Check for disconnected nodes
+3875      display unsolvedDT;
+3876   
+3877  *   Post-Solve Checks ----------------------------------------------------------
+3878   
+3879  *   Check for disconnected nodes
           8.2 Dead Electrical Island
               If an Electrical Island > 2 has no positive load or if the total energy offered within the Electrical Island is zero then the Electrical Island is determined to be a dead
               Electrical Island and each ACNode in the Electrical Island is added to the set of DeadACNodes and each Pnode in the Electrical Island is added to the set of DeadPnodes.
           8.4 Disconnected Pnodes
               Each Pnode that has a scheduled load of zero and is in the set of DeadPnodes is added to the set of DisconnectedPnodes.
-3886      busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
-3887      busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
-3888      busDisconnected(bus(t,b)) $ { ( [busElectricalIsland(bus) = 0] and [busLoad(bus) = 0] )
-3889                                 or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busLoad(t,b1) ] = 0 )
-3890                                 or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busGeneration(t,b1) ] = 0 ) } = 1 ;
-3891   
-3892  *   Energy Shortfall Check (7.2)
-3893      if( smax[t,runEnrgShortfallTransfer(t)] = 1,
-3894   
-3895  *       Check for dead nodes
-3896          IsNodeDead(t,n) = 1 $ ( sum[b $ { NodeBus(t,n,b) and (busDisconnected(t,b)=0) }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
-3897          IsNodeDead(t,n) $ ( sum[b $ NodeBus(t,n,b), busElectricalIsland(t,b) ] = 0 ) = 1 ;
-3898          NodeElectricalIsland(t,n) = smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] ;
-3899          InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
-3900   
-3901  *       Check if a pnode has energy shortfall
-3902          EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
-3903          EnergyShortfallMW(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
-3904   
-3905  *       a.Checkable Energy Shortfall:
-3906  *       If a node has an EnergyShortfallMW greater than zero and the node has LoadIsOverride set to False and the Pnode has InstructedShedActivepn set to False, then EnergyShortfall is checked.
-3907          EnergyShortFallCheck(t,n) = 1 $ { (EnergyShortfallMW(t,n) > 0) and (LoadIsOverride(t,n) = 0) and (instructedShedActive(t,n) = 0) } ;
-3908   
-3909  *       c. Eligible for Removal:
-3910  *       An EnergyShortfall is eligible for removal if there is evidence that it is due to a modelling inconsistency (as described below),
-3911  *       or if the RTD Required Load calculation used an estimated initial load rather than an actual initial load, or if the node is dead node.
-3912          EligibleShortfallRemoval(t,n) = 1 $ [EnergyShortFallCheck(t,n)  and { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) }] ;
-3913   
-3914  *       d. Shortfall Removal:
-3915  *       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the RequiredLoad in order to remove the shortfall.
-3916  *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
-3917  *       If the adjustment would make RequiredLoad negative then RequiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
-3918  *       the RTD Required Load calculation does not recalculate its RequiredLoad at this node
-3919          ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [enrgShortfallRemovalMargin(t) $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
-3920   
-3921          RequiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = RequiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
-3922          RequiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (RequiredLoad(t,n) < 0) } = 0 ;
-3923          DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
-3924   
+3887      busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
+3888      busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
+3889      busDisconnected(bus(t,b)) $ { ( [busElectricalIsland(bus) = 0] and [busLoad(bus) = 0] )
+3890                                 or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busLoad(t,b1) ] = 0 )
+3891                                 or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busGeneration(t,b1) ] = 0 ) } = 1 ;
+3892   
+3893  *   Energy Shortfall Check (7.2)
+3894      if( smax[t,runEnrgShortfallTransfer(t)] = 1,
+3895   
+3896  *       Check for dead nodes
+3897          IsNodeDead(t,n) = 1 $ ( sum[b $ { NodeBus(t,n,b) and (busDisconnected(t,b)=0) }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
+3898          IsNodeDead(t,n) $ ( sum[b $ NodeBus(t,n,b), busElectricalIsland(t,b) ] = 0 ) = 1 ;
+3899          NodeElectricalIsland(t,n) = smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] ;
+3900          InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
+3901   
+3902  *       Check if a pnode has energy shortfall
+3903          EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
+3904          EnergyShortfallMW(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
+3905   
+3906  *       a.Checkable Energy Shortfall:
+3907  *       If a node has an EnergyShortfallMW greater than zero and the node has LoadIsOverride set to False and the Pnode has InstructedShedActivepn set to False, then EnergyShortfall is checked.
+3908          EnergyShortFallCheck(t,n) = 1 $ { (EnergyShortfallMW(t,n) > 0) and (LoadIsOverride(t,n) = 0) and (instructedShedActive(t,n) = 0) } ;
+3909   
+3910  *       c. Eligible for Removal:
+3911  *       An EnergyShortfall is eligible for removal if there is evidence that it is due to a modelling inconsistency (as described below),
+3912  *       or if the RTD Required Load calculation used an estimated initial load rather than an actual initial load, or if the node is dead node.
+3913          EligibleShortfallRemoval(t,n) = 1 $ [EnergyShortFallCheck(t,n)  and { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) }] ;
+3914   
+3915  *       d. Shortfall Removal:
+3916  *       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the RequiredLoad in order to remove the shortfall.
+3917  *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
+3918  *       If the adjustment would make RequiredLoad negative then RequiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
+3919  *       the RTD Required Load calculation does not recalculate its RequiredLoad at this node
+3920          ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [enrgShortfallRemovalMargin(t) $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
+3921   
+3922          RequiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = RequiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
+3923          RequiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (RequiredLoad(t,n) < 0) } = 0 ;
+3924          DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
+3925   
       e. Shortfall Transfer:
       If the previous step adjusts RequiredLoad then the processing will search for a transfer target Pnode to receive the Shortfall Adjustment quantity (the search process is described below).
       If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node and the DidShortfallTransfer of the transfer target Pnode flag is set to True.
@@ -1798,116 +1799,116 @@ GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
       more candidates are found. A candidate node isn't eligible as a target if it has a non-zero EnergyShortfall in the solution being checked or had one in the solution of a previous solve loop, or if the
       candidate node has LoadIsOverridepn set to True, or if the candidate node has InstructedShedActivepn set to True, or if the node with the shortfall is not in Electrical Island 0 and the ElectricalIsland
       of the candidate node is not the same as the ElectricalIslandpn of the node with the shortfall, or if the candidate node is in the set of DEADPNODESpn.
-3937          unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
-3938   
-3939          nodeTonode(t,n,n1) = node2node(t,n,n1)
-3940          while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
-3941   
-3942  *           Check if shortfall from node n is eligibly transfered to node n1
-3943              ShortfallTransferFromTo(nodeTonode(t,n,n1))
-3944                  $ { (ShortfallAdjustmentMW(t,n) > 0) and (ShortfallAdjustmentMW(t,n1) = 0) and (CheckedNodeCandidate(t,n1) = 0)
-3945                  and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
-3946                  and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
-3947                    } = 1;
-3948   
-3949  *           If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node
-3950              RequiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= RequiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-3951   
-3952  *           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
-3953              ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-3954   
-3955  *           and the DidShortfallTransfer of the transfer target node is set to 1
-3956              DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
-3957   
-3958  *           Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
-3959              ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
-3960   
-3961          ) ;
-3962   
-3963  *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
-3964  *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
-3965          ShortfallDisabledScaling(t,n) = 1 $ { (EnergyShortFallCheck(t,n)=1) and (EligibleShortfallRemoval(t,n)=0) };
-3966      ) ;
-3967  *   Energy Shortfall Check End
-3968   
-3969      unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1)} = yes ;
-3970      if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1],
-3971          putclose rep 'Recalculate RTD Island Loss for next solve'/;
-3972          LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
-3973                               + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
-3974                               + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
-3975          LoopCount(t) = LoopCount(t) + 1 ;
-3976          loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > 0.0005 )},
-3977              putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
-3978  *            putclose rep 'Using SPDLoadCalcLosses instead. /' ;
-3979              LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
-3980   
-3981          );
-3982      ) ;
-3983      unsolvedDT(t) $ (LoopCount(t)=maxSolveLoops(t)) = no ;
-3984  *   6g. Collect and store results of solved periods into output parameters -----
-3985  *   Note: all the price relating outputs such as costs and revenues are calculated in section 7.b
-3986   
-3988   
-3989  *   Normal vSPD run - write results out for for reporting
-3990      Loop (t $ (not unsolvedDT(t)),
-3991   
+3938          unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
+3939   
+3940          nodeTonode(t,n,n1) = node2node(t,n,n1)
+3941          while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
+3942   
+3943  *           Check if shortfall from node n is eligibly transfered to node n1
+3944              ShortfallTransferFromTo(nodeTonode(t,n,n1))
+3945                  $ { (ShortfallAdjustmentMW(t,n) > 0) and (ShortfallAdjustmentMW(t,n1) = 0) and (CheckedNodeCandidate(t,n1) = 0)
+3946                  and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
+3947                  and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
+3948                    } = 1;
+3949   
+3950  *           If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node
+3951              RequiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= RequiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+3952   
+3953  *           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
+3954              ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+3955   
+3956  *           and the DidShortfallTransfer of the transfer target node is set to 1
+3957              DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
+3958   
+3959  *           Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
+3960              ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
+3961   
+3962          ) ;
+3963   
+3964  *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
+3965  *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
+3966          ShortfallDisabledScaling(t,n) = 1 $ { (EnergyShortFallCheck(t,n)=1) and (EligibleShortfallRemoval(t,n)=0) };
+3967      ) ;
+3968  *   Energy Shortfall Check End
+3969   
+3970      unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1)} = yes ;
+3971      if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1],
+3972          putclose rep 'Recalculate RTD Island Loss for next solve'/;
+3973          LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
+3974                               + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
+3975                               + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
+3976          LoopCount(t) = LoopCount(t) + 1 ;
+3977          loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > 0.0005 )},
+3978              putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
+3979  *            putclose rep 'Using SPDLoadCalcLosses instead. /' ;
+3980              LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
+3981   
+3982          );
+3983      ) ;
+3984      unsolvedDT(t) $ (LoopCount(t)=maxSolveLoops(t)) = no ;
+3985  *   6g. Collect and store results of solved periods into output parameters -----
+3986  *   Note: all the price relating outputs such as costs and revenues are calculated in section 7.b
+3987   
+3989   
+3990  *   Normal vSPD run - write results out for for reporting
+3991      Loop (t $ (not unsolvedDT(t)),
 3992   
-3993  *       6f. Check for disconnected nodes and adjust prices accordingly -------------
+3993   
+3994  *       6f. Check for disconnected nodes and adjust prices accordingly -------------
           8.2 Dead Electrical Island
               If an Electrical Island > 2 has no positive load or if the total energy offered within the Electrical Island is zero then the Electrical Island is determined to be a dead
               Electrical Island and each ACNode in the Electrical Island is added to the set of DeadACNodes and each Pnode in the Electrical Island is added to the set of DeadPnodes.
           8.4 Disconnected Pnodes
               Each Pnode that has a scheduled load of zero and is in the set of DeadPnodes is added to the set of DisconnectedPnodes.
-4001   
-4002          busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
-4003          busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
-4004          busPrice(bus(t,b))      = ACnodeNetInjectionDefinition2.m(t,b) ;
-4005   
-4006          busDisconnected(bus(t,b)) $ { (busLoad(bus) = 0) and (busElectricalIsland(bus) = 0) } = 1 ;
-4007          busDisconnected(bus(t,b)) $ { ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) }, busLoad(t,b1) ] = 0) and ( busElectricalIsland(bus) > 0 ) } = 1 ;
-4008  *       Set prices at dead buses with non-zero load
-4009          busPrice(bus(t,b)) $ { (busLoad(bus) > 0) and (busElectricalIsland(bus)= 0) } = DeficitBusGenerationPenalty ;
-4010          busPrice(bus(t,b)) $ { (busLoad(bus) < 0) and (busElectricalIsland(bus)= 0) } = -SurplusBusGenerationPenalty ;
-4011  *       Set price at identified disconnected buses to 0
-4012          busPrice(bus)$busDisconnected(bus) = 0 ;
-4013  *       End Check for disconnected nodes and adjust prices accordingly
-4014   
-4015  *       6f0. Replacing invalid prices after SOS1 (7.1.3)----------------------------
-4016          if ( SOS1_solve(ca,dt),
-4017              busSOSinvalid(ca,dt,b)
-4018                  = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty ) ]
-4019                      and bus(ca,dt,b)  and [ not busDisconnected(ca,dt,b) ]  and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
-4020                      and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
-4021                      and [ sum[ br     $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) } , 1 ] > 0 ]
-4022                        };
-4023   
-4024              numberofbusSOSinvalid(ca,dt) = 2*sum[b, busSOSinvalid(ca,dt,b)];
-4025   
-4026              While ( sum[b, busSOSinvalid(ca,dt,b)] < numberofbusSOSinvalid(ca,dt) ,
-4027                  numberofbusSOSinvalid(ca,dt) = sum[b, busSOSinvalid(ca,dt,b)];
-4028   
-4029                  busPrice(ca,dt,b) $ { busSOSinvalid(ca,dt,b) and ( sum[ b1 $ { [ not busSOSinvalid(ca,dt,b1) ] and sum[ br $ { branch(ca,dt,br) and BranchBusConnect(ca,dt,br,b) and BranchBusConnect(ca,dt,br,b1) }, 1 ] }, 1 ] > 0 ) }
-4030                      = sum[ b1 $ { [ not busSOSinvalid(ca,dt,b1) ] and sum[ br $ { branch(ca,dt,br) and BranchBusConnect(ca,dt,br,b) and BranchBusConnect(ca,dt,br,b1) }, 1 ] }, busPrice(ca,dt,b1) ]
-4031                      / sum[ b1 $ { [ not busSOSinvalid(ca,dt,b1) ] and sum[ br $ { branch(ca,dt,br) and BranchBusConnect(ca,dt,br,b) and BranchBusConnect(ca,dt,br,b1) }, 1 ] }, 1 ];
-4032   
-4033                  busSOSinvalid(ca,dt,b)
-4034                    = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9 * deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9 * surplusBusGenerationPenalty ) ]
-4035                        and bus(ca,dt,b) and [ not busDisconnected(ca,dt,b) ] and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
-4036                        and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
-4037                        and [ sum[ br $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, 1 ] > 0 ]
-4038                          };
-4039              );
-4040          );
-4041  *   End Replacing invalid prices after SOS1 (7.1.3) ----------------------------
-4042   
+4002   
+4003          busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
+4004          busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
+4005          busPrice(bus(t,b))      = ACnodeNetInjectionDefinition2.m(t,b) ;
+4006   
+4007          busDisconnected(bus(t,b)) $ { (busLoad(bus) = 0) and (busElectricalIsland(bus) = 0) } = 1 ;
+4008          busDisconnected(bus(t,b)) $ { ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) }, busLoad(t,b1) ] = 0) and ( busElectricalIsland(bus) > 0 ) } = 1 ;
+4009  *       Set prices at dead buses with non-zero load
+4010          busPrice(bus(t,b)) $ { (busLoad(bus) > 0) and (busElectricalIsland(bus)= 0) } = DeficitBusGenerationPenalty ;
+4011          busPrice(bus(t,b)) $ { (busLoad(bus) < 0) and (busElectricalIsland(bus)= 0) } = -SurplusBusGenerationPenalty ;
+4012  *       Set price at identified disconnected buses to 0
+4013          busPrice(bus)$busDisconnected(bus) = 0 ;
+4014  *       End Check for disconnected nodes and adjust prices accordingly
+4015   
+4016  *       6f0. Replacing invalid prices after SOS1 (7.1.3)----------------------------
+4017          if ( SOS1_solve(ca,dt),
+4018              busSOSinvalid(ca,dt,b)
+4019                  = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty ) ]
+4020                      and bus(ca,dt,b)  and [ not busDisconnected(ca,dt,b) ]  and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
+4021                      and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
+4022                      and [ sum[ br     $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) } , 1 ] > 0 ]
+4023                        };
+4024   
+4025              numberofbusSOSinvalid(ca,dt) = 2*sum[b, busSOSinvalid(ca,dt,b)];
+4026   
+4027              While ( sum[b, busSOSinvalid(ca,dt,b)] < numberofbusSOSinvalid(ca,dt) ,
+4028                  numberofbusSOSinvalid(ca,dt) = sum[b, busSOSinvalid(ca,dt,b)];
+4029   
+4030                  busPrice(ca,dt,b) $ { busSOSinvalid(ca,dt,b) and ( sum[ b1 $ { [ not busSOSinvalid(ca,dt,b1) ] and sum[ br $ { branch(ca,dt,br) and BranchBusConnect(ca,dt,br,b) and BranchBusConnect(ca,dt,br,b1) }, 1 ] }, 1 ] > 0 ) }
+4031                      = sum[ b1 $ { [ not busSOSinvalid(ca,dt,b1) ] and sum[ br $ { branch(ca,dt,br) and BranchBusConnect(ca,dt,br,b) and BranchBusConnect(ca,dt,br,b1) }, 1 ] }, busPrice(ca,dt,b1) ]
+4032                      / sum[ b1 $ { [ not busSOSinvalid(ca,dt,b1) ] and sum[ br $ { branch(ca,dt,br) and BranchBusConnect(ca,dt,br,b) and BranchBusConnect(ca,dt,br,b1) }, 1 ] }, 1 ];
+4033   
+4034                  busSOSinvalid(ca,dt,b)
+4035                    = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9 * deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9 * surplusBusGenerationPenalty ) ]
+4036                        and bus(ca,dt,b) and [ not busDisconnected(ca,dt,b) ] and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
+4037                        and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
+4038                        and [ sum[ br $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, 1 ] > 0 ]
+4039                          };
+4040              );
+4041          );
+4042  *   End Replacing invalid prices after SOS1 (7.1.3) ----------------------------
 4043   
-4044  *   Reporting at trading period start
-4045  *       Node level output
-4046          o_nodeGeneration_TP(t,n) $ Node(t,n) = sum[ o $ offerNode(t,o,n), GENERATION.l(t,o) ] ;
-4047          o_nodeLoad_TP(t,n)       $ Node(t,n) = RequiredLoad(t,n) + sum[ bd $ bidNode(t,bd,n), PURCHASE.l(t,bd) ];
-4048          o_nodePrice_TP(t,n)      $ Node(t,n) = sum[ b $ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * busPrice(t,b) ] ;
-4049   
+4044   
+4045  *   Reporting at trading period start
+4046  *       Node level output
+4047          o_nodeGeneration_TP(t,n) $ Node(t,n) = sum[ o $ offerNode(t,o,n), GENERATION.l(t,o) ] ;
+4048          o_nodeLoad_TP(t,n)       $ Node(t,n) = RequiredLoad(t,n) + sum[ bd $ bidNode(t,bd,n), PURCHASE.l(t,bd) ];
+4049          o_nodePrice_TP(t,n)      $ Node(t,n) = sum[ b $ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * busPrice(t,b) ] ;
+4050   
               8.3.5 Dead Price Replacement
               Dead Price Replacement is applied to the Schedule Types that produce settlement prices, i.e., RTD, RTDP, PRS. For each Pnode in the set of DeadPnodes the Dead Price Replacement processing will search for a suitable
               price transfer source Pnode to provide a replacement price
@@ -1922,43 +1923,43 @@ GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
        
               If an eligible price transfer source is found then the energy price of the dead Pnode and its associated ACNode are assigned the energy price of the transfer Pnode. If no eligible price is found then the dead Pnode
               and its associated ACNode are assigned a price of zero.
-4066          if (runPriceTransfer(t) and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
-4067              o_nodeDead_TP(t,n) = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b)) }, NodeBusAllocationFactor(t,n,b) ] = 0 )} ;
-4068              o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
-4069              o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { [ ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = Smin[b1 $ NodeBus(t,n1,b1), busElectricalIsland(t,b1)] )
-4070                                                    or ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = 0 ) ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0)  };
-4071              while (sum[ n $ o_nodeDead_TP(t,n), o_nodeDeadPrice_TP(t,n) ],
-4072                  o_nodePrice_TP(t,n) $ { o_nodeDead_TP(t,n) and o_nodeDeadPrice_TP(t,n) } = sum[n1 $ o_nodeDeadPriceFrom_TP(t,n,n1), o_nodePrice_TP(t,n1) ] ;
-4073                  o_nodeDeadPrice_TP(t,n) = 1 $ sum[n1 $ o_nodeDead_TP(t,n1), o_nodeDeadPriceFrom_TP(t,n,n1) ];
-4074                  o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n) = 1 $ { sum[ n1 $ { node2node(t,n1,n2) and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ] } ;
-4075                  o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;
-4076              ) ;
-4077          ) ;
-4078   
-4079  *       Offer output
-4080          o_offerEnergy_TP(t,o)   $ offer(t,o) = GENERATION.l(t,o) ;
-4081          o_offerRes_TP(t,o,resC) $ offer(t,o) = sum[ resT, RESERVE.l(t,o,resC,resT) ] ;
-4082          o_offerFIR_TP(t,o)      $ offer(t,o) = sum[ resC $ (ord(resC) = 1),o_offerRes_TP(t,o,resC) ] ;
-4083          o_offerSIR_TP(t,o)      $ offer(t,o) = sum[ resC $ (ord(resC) = 2),o_offerRes_TP(t,o,resC) ] ;
-4084   
-4085  *       Risk group output
-4086          o_groupEnergy_TP(t,rg,GenRisk)   = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerEnergy_TP(t,o) ];
-4087          o_groupFKband_TP(t,rg,GenRisk)   = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), FKBand(t,o) ];
-4088          o_groupRes_TP(t,rg,resC,GenRisk) = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerRes_TP(t,o,resC)];
-4089   
-4090  *       Bus level output
-4091          o_busGeneration_TP(t,b) $ bus(t,b) = busGeneration(t,b) ;
-4092          o_busLoad_TP(t,b)       $ bus(t,b) = busLoad(t,b) + sum[ (bd,n) $ { bidNode(t,bd,n) and NodeBus(t,n,b) }, PURCHASE.l(t,bd) ];
-4093          o_busDeficit_TP(t,b)    $ bus(t,b) = DEFICITBUSGENERATION.l(t,b) + sum[n, NodeBusAllocationFactor(t,n,b)*ENERGYSCARCITYNODE.l(t,n)];
-4094          o_busSurplus_TP(t,b)    $ bus(t,b) = SURPLUSBUSGENERATION.l(t,b) ;
-4095          o_busPrice_TP(t,b)      $ bus(t,b) = busPrice(t,b) ;
-4096          o_busPrice_TP(t,b)      $ sum[n $ NodeBus(t,n,b), o_nodeDead_TP(t,n)] = sum[n $ NodeBus(t,n,b), o_nodePrice_TP(t,n) * NodeBusAllocationFactor(t,n,b)]  ;
-4097   
-4098  *       Node level output
-4099          totalBusAllocation(t,b) $ bus(t,b) = sum[ n $ Node(t,n), NodeBusAllocationFactor(t,n,b)];
-4100          busNodeAllocationFactor(t,b,n) $ (totalBusAllocation(t,b) > 0) = NodeBusAllocationFactor(t,n,b) / totalBusAllocation(t,b) ;
-4101   
-4102  * TN - post processing unmapped generation deficit buses start
+4067          if (runPriceTransfer(t) and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
+4068              o_nodeDead_TP(t,n) = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b)) }, NodeBusAllocationFactor(t,n,b) ] = 0 )} ;
+4069              o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
+4070              o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { [ ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = Smin[b1 $ NodeBus(t,n1,b1), busElectricalIsland(t,b1)] )
+4071                                                    or ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = 0 ) ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0)  };
+4072              while (sum[ n $ o_nodeDead_TP(t,n), o_nodeDeadPrice_TP(t,n) ],
+4073                  o_nodePrice_TP(t,n) $ { o_nodeDead_TP(t,n) and o_nodeDeadPrice_TP(t,n) } = sum[n1 $ o_nodeDeadPriceFrom_TP(t,n,n1), o_nodePrice_TP(t,n1) ] ;
+4074                  o_nodeDeadPrice_TP(t,n) = 1 $ sum[n1 $ o_nodeDead_TP(t,n1), o_nodeDeadPriceFrom_TP(t,n,n1) ];
+4075                  o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n) = 1 $ { sum[ n1 $ { node2node(t,n1,n2) and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ] } ;
+4076                  o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;
+4077              ) ;
+4078          ) ;
+4079   
+4080  *       Offer output
+4081          o_offerEnergy_TP(t,o)   $ offer(t,o) = GENERATION.l(t,o) ;
+4082          o_offerRes_TP(t,o,resC) $ offer(t,o) = sum[ resT, RESERVE.l(t,o,resC,resT) ] ;
+4083          o_offerFIR_TP(t,o)      $ offer(t,o) = sum[ resC $ (ord(resC) = 1),o_offerRes_TP(t,o,resC) ] ;
+4084          o_offerSIR_TP(t,o)      $ offer(t,o) = sum[ resC $ (ord(resC) = 2),o_offerRes_TP(t,o,resC) ] ;
+4085   
+4086  *       Risk group output
+4087          o_groupEnergy_TP(t,rg,GenRisk)   = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerEnergy_TP(t,o) ];
+4088          o_groupFKband_TP(t,rg,GenRisk)   = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), FKBand(t,o) ];
+4089          o_groupRes_TP(t,rg,resC,GenRisk) = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerRes_TP(t,o,resC)];
+4090   
+4091  *       Bus level output
+4092          o_busGeneration_TP(t,b) $ bus(t,b) = busGeneration(t,b) ;
+4093          o_busLoad_TP(t,b)       $ bus(t,b) = busLoad(t,b) + sum[ (bd,n) $ { bidNode(t,bd,n) and NodeBus(t,n,b) }, PURCHASE.l(t,bd) ];
+4094          o_busDeficit_TP(t,b)    $ bus(t,b) = DEFICITBUSGENERATION.l(t,b) + sum[n, NodeBusAllocationFactor(t,n,b)*ENERGYSCARCITYNODE.l(t,n)];
+4095          o_busSurplus_TP(t,b)    $ bus(t,b) = SURPLUSBUSGENERATION.l(t,b) ;
+4096          o_busPrice_TP(t,b)      $ bus(t,b) = busPrice(t,b) ;
+4097          o_busPrice_TP(t,b)      $ sum[n $ NodeBus(t,n,b), o_nodeDead_TP(t,n)] = sum[n $ NodeBus(t,n,b), o_nodePrice_TP(t,n) * NodeBusAllocationFactor(t,n,b)]  ;
+4098   
+4099  *       Node level output
+4100          totalBusAllocation(t,b) $ bus(t,b) = sum[ n $ Node(t,n), NodeBusAllocationFactor(t,n,b)];
+4101          busNodeAllocationFactor(t,b,n) $ (totalBusAllocation(t,b) > 0) = NodeBusAllocationFactor(t,n,b) / totalBusAllocation(t,b) ;
+4102   
+4103  * TN - post processing unmapped generation deficit buses start
       The following code is added post-process generation deficit bus that is not
       mapped to a pnode (BusNodeAllocationFactor  = 0). In post-processing, when a
       deficit is detected at a bus that does not map directly to a pnode, SPD creates
@@ -1970,502 +1971,502 @@ GDXIN   C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
       The code is modified again on 16 Feb 2016 to avoid infinite loop when there are
       many generation deficit buses.
       This code is used to post-process generation deficit bus that is not mapped to
-4116          unmappedDeficitBus(t,b) $ o_busDeficit_TP(t,b) = yes $ (sum[ n, busNodeAllocationFactor(t,b,n)] = 0);
-4117          changedDeficitBus(t,b) = no;
-4118   
-4119          If (sum[b $ unmappedDeficitBus(t,b), 1],
-4120   
-4121              temp_busDeficit_TP(t,b) = o_busDeficit_TP(t,b);
-4122   
-4123              loop (b $ unmappedDeficitBus(t,b),
-4124                  o_busDeficit_TP(t,b1)   $ sum[ br $ { ( branchLossBlocks(t,br)=0 ) and ( branchBusDefn(t,br,b1,b) or branchBusDefn(t,br,b,b1) ) }, 1 ] = o_busDeficit_TP(t,b1) + o_busDeficit_TP(t,b) ;
-4125                  changedDeficitBus(t,b1) $ sum[ br $ { ( branchLossBlocks(t,br)=0 ) and ( branchBusDefn(t,br,b1,b) or branchBusDefn(t,br,b,b1) ) }, 1 ] = yes;
-4126   
-4127                  unmappedDeficitBus(t,b) = no;  changedDeficitBus(t,b) = no;  o_busDeficit_TP(t,b) = 0;
-4128              ) ;
-4129   
-4130              Loop (n $ sum[ b $ changedDeficitBus(t,b), busNodeAllocationFactor(t,b,n)],
-4131                  o_nodePrice_TP(t,n) = deficitBusGenerationPenalty ;
-4132                  o_nodeDeficit_TP(t,n) = sum[ b $ busNodeAllocationFactor(t,b,n), busNodeAllocationFactor(t,b,n) * o_busDeficit_TP(t,b) ] ;
-4133              ) ;
-4134   
-4135              o_busDeficit_TP(t,b) = temp_busDeficit_TP(t,b);
-4136          ) ;
-4137  * TN - post processing unmapped generation deficit buses end
-4138   
-4139          o_nodeDeficit_TP(t,n) $ Node(t,n)
-4140              = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
-4141   
-4142          o_nodeSurplus_TP(t,n) $ Node(t,n) = sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * SURPLUSBUSGENERATION.l(t,b) ] ;
-4143   
-4144  *       branch output
-4145          o_branchFlow_TP(t,br) $ ACbranch(t,br) = ACBRANCHFLOW.l(t,br);
-4146          o_branchFlow_TP(t,br) $ HVDClink(t,br) = HVDCLINKFLOW.l(t,br);
-4147   
-4148          o_branchDynamicLoss_TP(t,br) $  ACbranch(t,br) = sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] ;
-4149          o_branchDynamicLoss_TP(t,br) $ HVDClink(t,br)  = HVDCLINKLOSSES.l(t,br) ;
-4150          o_branchFixedLoss_TP(t,br) $ branch(t,br) = branchFixedLoss(t,br) ;
-4151          o_branchTotalLoss_TP(t,br) $ branch(t,br) = o_branchDynamicLoss_TP(t,br) + o_branchFixedLoss_TP(t,br) ;
-4152   
-4153          o_branchMarginalPrice_TP(t,br) $ ACbranch(t,br) = sum[ fd, ACbranchMaximumFlow.m(t,br,fd) ] ;
-4154          o_branchMarginalPrice_TP(t,br) $ HVDClink(t,br) = HVDClinkMaximumFlow.m(t,br) ;
-4155   
-4156          o_branchCapacity_TP(t,br) $ branch(t,br) = sum[ fd $ ( ord(fd) = 1 ), branchCapacity(t,br,fd)] $  { o_branchFlow_TP(t,br) >= 0 }
-4157                                                   + sum[ fd $ ( ord(fd) = 2 ), branchCapacity(t,br,fd)] $  { o_branchFlow_TP(t,br) < 0 } ;
-4158   
-4159  *       bid output
-4160          o_bidEnergy_TP(t,bd)  $ bid(t,bd) = PURCHASE.l(t,bd) ;
-4161          o_bidTotalMW_TP(t,bd) $ bid(t,bd) = sum[ blk, DemBidMW(t,bd,blk) ] ;
-4162   
-4163  *       Violation reporting based on the CE and ECE
-4164          o_ResViolation_TP(t,isl,resC) = DEFICITRESERVE_CE.l(t,isl,resC) + DEFICITRESERVE_ECE.l(t,isl,resC)  ;
-4165          o_FIRviolation_TP(t,isl) = sum[ resC $ (ord(resC) = 1), o_ResViolation_TP(t,isl,resC) ] ;
-4166          o_SIRviolation_TP(t,isl) = sum[ resC $ (ord(resC) = 2), o_ResViolation_TP(t,isl,resC) ] ;
-4167   
-4168  *       Risk marginal prices and shortfall outputs
-4169          o_GenRiskPrice_TP(t,isl,o,resC,GenRisk)     = -GenIslandRiskCalculation_1.m(t,isl,o,resC,GenRisk) ;
-4170          o_GenRiskShortfall_TP(t,isl,o,resC,GenRisk) = RESERVESHORTFALLUNIT.l(t,isl,o,resC,GenRisk) ;
-4171   
-4172          o_HVDCSecRiskPrice_TP(t,isl,o,resC,HVDCSecRisk)     = -HVDCIslandSecRiskCalculation_GEN_1.m(t,isl,o,resC,HVDCSecRisk) ;
-4173          o_HVDCSecRiskShortfall_TP(t,isl,o,resC,HVDCSecRisk) = RESERVESHORTFALLUNIT.l(t,isl,o,resC,HVDCSecRisk) ;
-4174   
-4175          o_GenRiskGroupPrice_TP(t,isl,rg,resC,GenRisk)     = -GenIslandRiskGroupCalculation_1.m(t,isl,rg,resC,GenRisk) ;
-4176          o_GenRiskGroupShortfall_TP(t,isl,rg,resC,GenRisk) = RESERVESHORTFALLGROUP.l(t,isl,rg,resC,GenRisk) ;
-4177   
-4178          o_HVDCRiskPrice_TP(t,isl,resC,HVDCrisk)     = -HVDCIslandRiskCalculation.m(t,isl,resC,HVDCrisk);
-4179          o_HVDCRiskShortfall_TP(t,isl,resC,HVDCrisk) = RESERVESHORTFALL.l(t,isl,resC,HVDCrisk);
-4180   
-4181          o_ManualRiskPrice_TP(t,isl,resC,ManualRisk)     = -ManualIslandRiskCalculation.m(t,isl,resC,ManualRisk) ;
-4182          o_ManualRiskShortfall_TP(t,isl,resC,ManualRisk) = RESERVESHORTFALL.l(t,isl,resC,ManualRisk) ;
-4183   
-4184          o_HVDCSecManualRiskPrice_TP(t,isl,resC,HVDCSecRisk)     = -HVDCIslandSecRiskCalculation_Manu_1.m(t,isl,resC,HVDCSecRisk);
-4185          o_HVDCSecManualRiskShortfall_TP(t,isl,resC,HVDCSecRisk) = RESERVESHORTFALL.l(t,isl,resC,HVDCSecRisk) ;
-4186   
-4187  *       Security constraint data
-4188          o_brConstraintSense_TP(t,brCstr) $ branchConstraint(t,brCstr) = branchConstraintSense(t,brCstr) ;
-4189          o_brConstraintRHS_TP(t,brCstr) $ branchConstraint(t,brCstr)   = branchConstraintLimit(t,brCstr) ;
-4190          o_brConstraintLHS_TP(t,brCstr) $ branchConstraint(t,brCstr)   = [ branchSecurityConstraintLE.l(t,brCstr) $ (branchConstraintSense(t,brCstr) = -1) ]
-4191                                                                        + [ branchSecurityConstraintGE.l(t,brCstr) $ (branchConstraintSense(t,brCstr) =  1) ]
-4192                                                                        + [ branchSecurityConstraintEQ.l(t,brCstr) $ (branchConstraintSense(t,brCstr) =  0) ];
-4193          o_brConstraintPrice_TP(t,brCstr) $ branchConstraint(t,brCstr) = [ branchSecurityConstraintLE.m(t,brCstr) $ (branchConstraintSense(t,brCstr) = -1) ]
-4194                                                                        + [ branchSecurityConstraintGE.m(t,brCstr) $ (branchConstraintSense(t,brCstr) =  1) ]
-4195                                                                        + [ branchSecurityConstraintEQ.m(t,brCstr) $ (branchConstraintSense(t,brCstr) =  0) ];
-4196  *       Mnode constraint data
-4197          o_MnodeConstraintSense_TP(t,MnodeCstr) $ MnodeConstraint(t,MnodeCstr) = MnodeConstraintSense(t,MnodeCstr) ;
-4198          o_MnodeConstraintRHS_TP(t,MnodeCstr)   $ MnodeConstraint(t,MnodeCstr) = MnodeConstraintLimit(t,MnodeCstr) ;
-4199          o_MnodeConstraintLHS_TP(t,MnodeCstr)   $ MnodeConstraint(t,MnodeCstr) = [ MnodeSecurityConstraintLE.l(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = -1) ]
-4200                                                                                + [ MnodeSecurityConstraintGE.l(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 1)  ]
-4201                                                                                + [ MnodeSecurityConstraintEQ.l(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
-4202          o_MnodeConstraintPrice_TP(t,MnodeCstr) $ MnodeConstraint(t,MnodeCstr) = [ MnodeSecurityConstraintLE.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = -1) ]
-4203                                                                                + [ MnodeSecurityConstraintGE.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 1)  ]
-4204                                                                                + [ MnodeSecurityConstraintEQ.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
-4205  *       Island output
-4206          o_ResPrice_TP(t,isl,resC)   = IslandReserveCalculation.m(t,isl,resC);
-4207          o_FIRprice_TP(t,isl)        = sum[ resC $ (ord(resC) = 1), o_ResPrice_TP(t,isl,resC) ];
-4208          o_SIRprice_TP(t,isl)        = sum[ resC $ (ord(resC) = 2), o_ResPrice_TP(t,isl,resC) ];
-4209          o_islandGen_TP(t,isl)       = sum[ b $ busIsland(t,b,isl), busGeneration(t,b) ] ;
-4210          o_islandClrBid_TP(t,isl)    = sum[ bd $ bidIsland(t,bd,isl), PURCHASE.l(t,bd) ] ;
-4211          o_islandLoad_TP(t,isl)      = sum[ b $ busIsland(t,b,isl), busLoad(t,b) ] + o_islandClrBid_TP(t,isl) ;
-4212          o_ResCleared_TP(t,isl,resC) = ISLANDRESERVE.l(t,isl,resC);
-4213          o_FirCleared_TP(t,isl)      = sum[ resC $ (ord(resC) = 1), o_ResCleared_TP(t,isl,resC) ];
-4214          o_SirCleared_TP(t,isl)      = sum[ resC $ (ord(resC) = 2), o_ResCleared_TP(t,isl,resC) ];
-4215          o_islandBranchLoss_TP(t,isl)= sum[ (br,frB,toB) $ { ACbranch(t,br) and busIsland(t,toB,isl) and branchBusDefn(t,br,frB,toB) }, o_branchTotalLoss_TP(t,br) ] ;
-4216          o_HVDCflow_TP(t,isl)        = sum[ (br,frB,toB) $ { HVDClink(t,br) and busIsland(t,frB,isl) and branchBusDefn(t,br,frB,toB) }, o_branchFlow_TP(t,br) ] ;
-4217          o_HVDCpoleFixedLoss_TP(t,isl) = sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * o_branchFixedLoss_TP(t,br) ] ;
-4218          o_HVDCloss_TP(t,isl)  = o_HVDCpoleFixedLoss_TP(t,isl)  + sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, o_branchDynamicLoss_TP(t,br) ] ;
-4219          o_HVDCreceived(t,isl) = HVDCREC.l(t,isl);
-4220          o_HVDCRiskSubtractor(t,isl,resC,HVDCrisk) = RISKOFFSET.l(t,isl,resC,HVDCrisk) ;
-4221   
-4222  *       Island shared reserve output
-4223          o_EffectiveRes_TP(t,isl,resC,riskC) $ reserveShareEnabled(t,resC) = RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ;
-4224          If (sum[ resC $ (ord(resC) = 1), reserveShareEnabled(t,resC)],
-4225              o_FirSent_TP(t,isl)     = sum[ (rd,resC) $ (ord(resC) = 1), RESERVESHARESENT.l(t,isl,resC,rd)];
-4226              o_FirReceived_TP(t,isl) = sum[ (rd,resC) $ (ord(resC) = 1), RESERVESHARERECEIVED.l(t,isl,resC,rd) ];
-4227              o_FirEffectiveCE_TP(t,isl)  = smax[ (resC,riskC) $ { (ord(resC) = 1) and ContingentEvents(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
-4228              o_FirEffectiveECE_TP(t,isl) = smax[ (resC,riskC) $ { (ord(resC) = 1) and ExtendedContingentEvent(riskC) } , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
-4229              o_FirEffReport_TP(t,isl)    = smax[ (resC,riskC) $ (ord(resC)=1), RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
-4230          ) ;
-4231          If (sum[ resC $ (ord(resC) = 2), reserveShareEnabled(t,resC)],
-4232              o_SirSent_TP(t,isl)     = sum[ (rd,resC) $ (ord(resC) = 2),  RESERVESHARESENT.l(t,isl,resC,rd) ];
-4233              o_SirReceived_TP(t,isl) = sum[ (fd,resC) $ (ord(resC) = 2),  RESERVESHARERECEIVED.l(t,isl,resC,fd) ];
-4234              o_SirEffectiveCE_TP(t,isl)  = smax[ (resC,riskC) $ { (ord(resC) = 2) and ContingentEvents(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
-4235              o_SirEffectiveECE_TP(t,isl) = smax[ (resC,riskC) $ { (ord(resC) = 2) and ExtendedContingentEvent(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
-4236              o_SirEffReport_TP(t,isl)    = smax[ (resC,riskC) $ (ord(resC)=2), RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
-4237          ) ;
-4238          o_TotalIslandReserve(t,isl,resC,riskC) = o_ResCleared_TP(t,isl,resC) + o_EffectiveRes_TP(t,isl,resC,riskC);
-4239   
+4117          unmappedDeficitBus(t,b) $ o_busDeficit_TP(t,b) = yes $ (sum[ n, busNodeAllocationFactor(t,b,n)] = 0);
+4118          changedDeficitBus(t,b) = no;
+4119   
+4120          If (sum[b $ unmappedDeficitBus(t,b), 1],
+4121   
+4122              temp_busDeficit_TP(t,b) = o_busDeficit_TP(t,b);
+4123   
+4124              loop (b $ unmappedDeficitBus(t,b),
+4125                  o_busDeficit_TP(t,b1)   $ sum[ br $ { ( branchLossBlocks(t,br)=0 ) and ( branchBusDefn(t,br,b1,b) or branchBusDefn(t,br,b,b1) ) }, 1 ] = o_busDeficit_TP(t,b1) + o_busDeficit_TP(t,b) ;
+4126                  changedDeficitBus(t,b1) $ sum[ br $ { ( branchLossBlocks(t,br)=0 ) and ( branchBusDefn(t,br,b1,b) or branchBusDefn(t,br,b,b1) ) }, 1 ] = yes;
+4127   
+4128                  unmappedDeficitBus(t,b) = no;  changedDeficitBus(t,b) = no;  o_busDeficit_TP(t,b) = 0;
+4129              ) ;
+4130   
+4131              Loop (n $ sum[ b $ changedDeficitBus(t,b), busNodeAllocationFactor(t,b,n)],
+4132                  o_nodePrice_TP(t,n) = deficitBusGenerationPenalty ;
+4133                  o_nodeDeficit_TP(t,n) = sum[ b $ busNodeAllocationFactor(t,b,n), busNodeAllocationFactor(t,b,n) * o_busDeficit_TP(t,b) ] ;
+4134              ) ;
+4135   
+4136              o_busDeficit_TP(t,b) = temp_busDeficit_TP(t,b);
+4137          ) ;
+4138  * TN - post processing unmapped generation deficit buses end
+4139   
+4140          o_nodeDeficit_TP(t,n) $ Node(t,n)
+4141              = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
+4142   
+4143          o_nodeSurplus_TP(t,n) $ Node(t,n) = sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * SURPLUSBUSGENERATION.l(t,b) ] ;
+4144   
+4145  *       branch output
+4146          o_branchFlow_TP(t,br) $ ACbranch(t,br) = ACBRANCHFLOW.l(t,br);
+4147          o_branchFlow_TP(t,br) $ HVDClink(t,br) = HVDCLINKFLOW.l(t,br);
+4148   
+4149          o_branchDynamicLoss_TP(t,br) $  ACbranch(t,br) = sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] ;
+4150          o_branchDynamicLoss_TP(t,br) $ HVDClink(t,br)  = HVDCLINKLOSSES.l(t,br) ;
+4151          o_branchFixedLoss_TP(t,br) $ branch(t,br) = branchFixedLoss(t,br) ;
+4152          o_branchTotalLoss_TP(t,br) $ branch(t,br) = o_branchDynamicLoss_TP(t,br) + o_branchFixedLoss_TP(t,br) ;
+4153   
+4154          o_branchMarginalPrice_TP(t,br) $ ACbranch(t,br) = sum[ fd, ACbranchMaximumFlow.m(t,br,fd) ] ;
+4155          o_branchMarginalPrice_TP(t,br) $ HVDClink(t,br) = HVDClinkMaximumFlow.m(t,br) ;
+4156   
+4157          o_branchCapacity_TP(t,br) $ branch(t,br) = sum[ fd $ ( ord(fd) = 1 ), branchCapacity(t,br,fd)] $  { o_branchFlow_TP(t,br) >= 0 }
+4158                                                   + sum[ fd $ ( ord(fd) = 2 ), branchCapacity(t,br,fd)] $  { o_branchFlow_TP(t,br) < 0 } ;
+4159   
+4160  *       bid output
+4161          o_bidEnergy_TP(t,bd)  $ bid(t,bd) = PURCHASE.l(t,bd) ;
+4162          o_bidTotalMW_TP(t,bd) $ bid(t,bd) = sum[ blk, DemBidMW(t,bd,blk) ] ;
+4163   
+4164  *       Violation reporting based on the CE and ECE
+4165          o_ResViolation_TP(t,isl,resC) = DEFICITRESERVE_CE.l(t,isl,resC) + DEFICITRESERVE_ECE.l(t,isl,resC)  ;
+4166          o_FIRviolation_TP(t,isl) = sum[ resC $ (ord(resC) = 1), o_ResViolation_TP(t,isl,resC) ] ;
+4167          o_SIRviolation_TP(t,isl) = sum[ resC $ (ord(resC) = 2), o_ResViolation_TP(t,isl,resC) ] ;
+4168   
+4169  *       Risk marginal prices and shortfall outputs
+4170          o_GenRiskPrice_TP(t,isl,o,resC,GenRisk)     = -GenIslandRiskCalculation_1.m(t,isl,o,resC,GenRisk) ;
+4171          o_GenRiskShortfall_TP(t,isl,o,resC,GenRisk) = RESERVESHORTFALLUNIT.l(t,isl,o,resC,GenRisk) ;
+4172   
+4173          o_HVDCSecRiskPrice_TP(t,isl,o,resC,HVDCSecRisk)     = -HVDCIslandSecRiskCalculation_GEN_1.m(t,isl,o,resC,HVDCSecRisk) ;
+4174          o_HVDCSecRiskShortfall_TP(t,isl,o,resC,HVDCSecRisk) = RESERVESHORTFALLUNIT.l(t,isl,o,resC,HVDCSecRisk) ;
+4175   
+4176          o_GenRiskGroupPrice_TP(t,isl,rg,resC,GenRisk)     = -GenIslandRiskGroupCalculation_1.m(t,isl,rg,resC,GenRisk) ;
+4177          o_GenRiskGroupShortfall_TP(t,isl,rg,resC,GenRisk) = RESERVESHORTFALLGROUP.l(t,isl,rg,resC,GenRisk) ;
+4178   
+4179          o_HVDCRiskPrice_TP(t,isl,resC,HVDCrisk)     = -HVDCIslandRiskCalculation.m(t,isl,resC,HVDCrisk);
+4180          o_HVDCRiskShortfall_TP(t,isl,resC,HVDCrisk) = RESERVESHORTFALL.l(t,isl,resC,HVDCrisk);
+4181   
+4182          o_ManualRiskPrice_TP(t,isl,resC,ManualRisk)     = -ManualIslandRiskCalculation.m(t,isl,resC,ManualRisk) ;
+4183          o_ManualRiskShortfall_TP(t,isl,resC,ManualRisk) = RESERVESHORTFALL.l(t,isl,resC,ManualRisk) ;
+4184   
+4185          o_HVDCSecManualRiskPrice_TP(t,isl,resC,HVDCSecRisk)     = -HVDCIslandSecRiskCalculation_Manu_1.m(t,isl,resC,HVDCSecRisk);
+4186          o_HVDCSecManualRiskShortfall_TP(t,isl,resC,HVDCSecRisk) = RESERVESHORTFALL.l(t,isl,resC,HVDCSecRisk) ;
+4187   
+4188  *       Security constraint data
+4189          o_brConstraintSense_TP(t,brCstr) $ branchConstraint(t,brCstr) = branchConstraintSense(t,brCstr) ;
+4190          o_brConstraintRHS_TP(t,brCstr) $ branchConstraint(t,brCstr)   = branchConstraintLimit(t,brCstr) ;
+4191          o_brConstraintLHS_TP(t,brCstr) $ branchConstraint(t,brCstr)   = [ branchSecurityConstraintLE.l(t,brCstr) $ (branchConstraintSense(t,brCstr) = -1) ]
+4192                                                                        + [ branchSecurityConstraintGE.l(t,brCstr) $ (branchConstraintSense(t,brCstr) =  1) ]
+4193                                                                        + [ branchSecurityConstraintEQ.l(t,brCstr) $ (branchConstraintSense(t,brCstr) =  0) ];
+4194          o_brConstraintPrice_TP(t,brCstr) $ branchConstraint(t,brCstr) = [ branchSecurityConstraintLE.m(t,brCstr) $ (branchConstraintSense(t,brCstr) = -1) ]
+4195                                                                        + [ branchSecurityConstraintGE.m(t,brCstr) $ (branchConstraintSense(t,brCstr) =  1) ]
+4196                                                                        + [ branchSecurityConstraintEQ.m(t,brCstr) $ (branchConstraintSense(t,brCstr) =  0) ];
+4197  *       Mnode constraint data
+4198          o_MnodeConstraintSense_TP(t,MnodeCstr) $ MnodeConstraint(t,MnodeCstr) = MnodeConstraintSense(t,MnodeCstr) ;
+4199          o_MnodeConstraintRHS_TP(t,MnodeCstr)   $ MnodeConstraint(t,MnodeCstr) = MnodeConstraintLimit(t,MnodeCstr) ;
+4200          o_MnodeConstraintLHS_TP(t,MnodeCstr)   $ MnodeConstraint(t,MnodeCstr) = [ MnodeSecurityConstraintLE.l(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = -1) ]
+4201                                                                                + [ MnodeSecurityConstraintGE.l(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 1)  ]
+4202                                                                                + [ MnodeSecurityConstraintEQ.l(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
+4203          o_MnodeConstraintPrice_TP(t,MnodeCstr) $ MnodeConstraint(t,MnodeCstr) = [ MnodeSecurityConstraintLE.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = -1) ]
+4204                                                                                + [ MnodeSecurityConstraintGE.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 1)  ]
+4205                                                                                + [ MnodeSecurityConstraintEQ.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
+4206  *       Island output
+4207          o_ResPrice_TP(t,isl,resC)   = IslandReserveCalculation.m(t,isl,resC);
+4208          o_FIRprice_TP(t,isl)        = sum[ resC $ (ord(resC) = 1), o_ResPrice_TP(t,isl,resC) ];
+4209          o_SIRprice_TP(t,isl)        = sum[ resC $ (ord(resC) = 2), o_ResPrice_TP(t,isl,resC) ];
+4210          o_islandGen_TP(t,isl)       = sum[ b $ busIsland(t,b,isl), busGeneration(t,b) ] ;
+4211          o_islandClrBid_TP(t,isl)    = sum[ bd $ bidIsland(t,bd,isl), PURCHASE.l(t,bd) ] ;
+4212          o_islandLoad_TP(t,isl)      = sum[ b $ busIsland(t,b,isl), busLoad(t,b) ] + o_islandClrBid_TP(t,isl) ;
+4213          o_ResCleared_TP(t,isl,resC) = ISLANDRESERVE.l(t,isl,resC);
+4214          o_FirCleared_TP(t,isl)      = sum[ resC $ (ord(resC) = 1), o_ResCleared_TP(t,isl,resC) ];
+4215          o_SirCleared_TP(t,isl)      = sum[ resC $ (ord(resC) = 2), o_ResCleared_TP(t,isl,resC) ];
+4216          o_islandBranchLoss_TP(t,isl)= sum[ (br,frB,toB) $ { ACbranch(t,br) and busIsland(t,toB,isl) and branchBusDefn(t,br,frB,toB) }, o_branchTotalLoss_TP(t,br) ] ;
+4217          o_HVDCflow_TP(t,isl)        = sum[ (br,frB,toB) $ { HVDClink(t,br) and busIsland(t,frB,isl) and branchBusDefn(t,br,frB,toB) }, o_branchFlow_TP(t,br) ] ;
+4218          o_HVDCpoleFixedLoss_TP(t,isl) = sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * o_branchFixedLoss_TP(t,br) ] ;
+4219          o_HVDCloss_TP(t,isl)  = o_HVDCpoleFixedLoss_TP(t,isl)  + sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, o_branchDynamicLoss_TP(t,br) ] ;
+4220          o_HVDCreceived(t,isl) = HVDCREC.l(t,isl);
+4221          o_HVDCRiskSubtractor(t,isl,resC,HVDCrisk) = RISKOFFSET.l(t,isl,resC,HVDCrisk) ;
+4222   
+4223  *       Island shared reserve output
+4224          o_EffectiveRes_TP(t,isl,resC,riskC) $ reserveShareEnabled(t,resC) = RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ;
+4225          If (sum[ resC $ (ord(resC) = 1), reserveShareEnabled(t,resC)],
+4226              o_FirSent_TP(t,isl)     = sum[ (rd,resC) $ (ord(resC) = 1), RESERVESHARESENT.l(t,isl,resC,rd)];
+4227              o_FirReceived_TP(t,isl) = sum[ (rd,resC) $ (ord(resC) = 1), RESERVESHARERECEIVED.l(t,isl,resC,rd) ];
+4228              o_FirEffectiveCE_TP(t,isl)  = smax[ (resC,riskC) $ { (ord(resC) = 1) and ContingentEvents(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4229              o_FirEffectiveECE_TP(t,isl) = smax[ (resC,riskC) $ { (ord(resC) = 1) and ExtendedContingentEvent(riskC) } , RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4230              o_FirEffReport_TP(t,isl)    = smax[ (resC,riskC) $ (ord(resC)=1), RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4231          ) ;
+4232          If (sum[ resC $ (ord(resC) = 2), reserveShareEnabled(t,resC)],
+4233              o_SirSent_TP(t,isl)     = sum[ (rd,resC) $ (ord(resC) = 2),  RESERVESHARESENT.l(t,isl,resC,rd) ];
+4234              o_SirReceived_TP(t,isl) = sum[ (fd,resC) $ (ord(resC) = 2),  RESERVESHARERECEIVED.l(t,isl,resC,fd) ];
+4235              o_SirEffectiveCE_TP(t,isl)  = smax[ (resC,riskC) $ { (ord(resC) = 2) and ContingentEvents(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4236              o_SirEffectiveECE_TP(t,isl) = smax[ (resC,riskC) $ { (ord(resC) = 2) and ExtendedContingentEvent(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4237              o_SirEffReport_TP(t,isl)    = smax[ (resC,riskC) $ (ord(resC)=2), RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
+4238          ) ;
+4239          o_TotalIslandReserve(t,isl,resC,riskC) = o_ResCleared_TP(t,isl,resC) + o_EffectiveRes_TP(t,isl,resC,riskC);
 4240   
-4241  *       Additional output for audit reporting
-4242          o_ACbusAngle(t,b) = ACNODEANGLE.l(t,b) ;
-4243   
-4244  *       Check if there are non-physical losses on AC branches
-4245          ManualBranchSegmentMWFlow(LossBranch(ACbranch(t,br)),los,fd) $ { ( ord(los) <= branchLossBlocks(ACbranch) ) and validLossSegment(ACbranch,los,fd) and ( ACBRANCHFLOWDIRECTED.l(ACbranch,fd) > 0 ) }
-4246              = Min[ Max( 0, [ abs(o_branchFlow_TP(t,br)) - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)] ] ),
-4247                     ( LossSegmentMW(ACbranch,los,fd) - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)] ) ] ;
-4248   
-4249          ManualBranchSegmentMWFlow(LossBranch(HVDClink(t,br)),los,fd) $ { ( ord(los) <= branchLossBlocks(HVDClink) ) and validLossSegment(HVDClink,los,fd) and ( ord(fd) = 1 ) }
-4250              = Min[ Max( 0, [ abs(o_branchFlow_TP(t,br)) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ] ),
-4251                     ( LossSegmentMW(HVDClink,los,fd) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ) ] ;
-4252   
-4253          ManualLossCalculation(LossBranch(branch(t,br))) = sum[ (los,fd), LossSegmentFactor(branch,los,fd)  * ManualBranchSegmentMWFlow(branch,los,fd) ] ;
-4254          o_nonPhysicalLoss(t,br) = o_branchDynamicLoss_TP(t,br) - ManualLossCalculation(t,br) ;
-4255   
-4256          o_lossSegmentBreakPoint(t,br,los) = sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 1) }, LossSegmentMW(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) >= 0 }
-4257                                            + sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 2) }, LossSegmentMW(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) < 0 } ;
-4258   
-4259          o_lossSegmentFactor(t,br,los) = sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 1) }, LossSegmentFactor(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) >= 0 }
-4260                                        + sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 2) }, LossSegmentFactor(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) < 0 }  ;
-4261   
-4262          o_PLRO_FIR_TP(t,o) $ offer(t,o) = sum[(resC,PLRO) $ (ord(resC)=1), RESERVE.l(t,o,resC,PLRO)] ;
-4263          o_PLRO_SIR_TP(t,o) $ offer(t,o) = sum[(resC,PLRO) $ (ord(resC)=2), RESERVE.l(t,o,resC,PLRO)] ;
-4264          o_TWRO_FIR_TP(t,o) $ offer(t,o) = sum[(resC,TWRO) $ (ord(resC)=1), RESERVE.l(t,o,resC,TWRO)] ;
-4265          o_TWRO_SIR_TP(t,o) $ offer(t,o) = sum[(resC,TWRO) $ (ord(resC)=2), RESERVE.l(t,o,resC,TWRO)] ;
-4266          o_ILRO_FIR_TP(t,o) $ offer(t,o) = sum[(resC,ILRO) $ (ord(resC)=1), RESERVE.l(t,o,resC,ILRO)] ;
-4267          o_ILRO_SIR_TP(t,o) $ offer(t,o) = sum[ (resC,ILRO)$ (ord(resC)=2), RESERVE.l(t,o,resC,ILRO)] ;
-4268          o_ILbus_FIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and offerNode(t,o,n) }, o_ILRO_FIR_TP(t,o) ] ;
-4269          o_ILbus_SIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and offerNode(t,o,n) }, o_ILRO_SIR_TP(t,o) ] ;
-4270   
-4271          o_generationRiskLevel(t,isl,o,resC,GenRisk) = GENISLANDRISK.l(t,isl,o,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) ;
-4272          o_HVDCriskLevel(t,isl,resC,HVDCrisk)        = ISLANDRISK.l(t,isl,resC,HVDCrisk) ;
-4273          o_manuRiskLevel(t,isl,resC,ManualRisk)      = ISLANDRISK.l(t,isl,resC,ManualRisk)   + RESERVESHAREEFFECTIVE.l(t,isl,resC,ManualRisk) ;
-4274          o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk)= HVDCGENISLANDRISK.l(t,isl,o,resC,HVDCsecRisk) ;
-4275          o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk) = HVDCMANISLANDRISK.l(t,isl,resC,HVDCsecRisk);
-4276          o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk) $ islandRiskGroup(t,isl,rg,GenRisk) = GENISLANDRISKGROUP.l(t,isl,rg,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) ;
-4277   
-4278  *       FIR and SIR required based on calculations of the island risk to overcome reporting issues of the risk setter under degenerate conditions when reserve price = 0 - See below
-4279          o_ReserveReqd_TP(t,isl,resC)
-4280              = Max[ 0,
-4281                     smax[(o,GenRisk)     , o_generationRiskLevel(t,isl,o,resC,GenRisk)],
-4282                     smax[ HVDCrisk       , o_HVDCriskLevel(t,isl,resC,HVDCrisk) ] ,
-4283                     smax[ ManualRisk     , o_manuRiskLevel(t,isl,resC,ManualRisk) ] ,
-4284                     smax[ (o,HVDCsecRisk), o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk) ] ,
-4285                     smax[ HVDCsecRisk    , o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)  ] ,
-4286                     smax[ (rg,GenRisk)   , o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk)  ]
-4287                   ] ;
-4288   
-4289          o_FIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=1), o_ReserveReqd_TP(t,isl,resC) ] ;
-4290          o_SIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=2), o_ReserveReqd_TP(t,isl,resC) ] ;
-4291   
-4292  *       Summary reporting by trading period
-4293          o_solveOK_TP(t)       = ModelSolved ;
-4294          o_systemCost_TP(t)    = SYSTEMCOST.l(t) ;
-4295          o_systemBenefit_TP(t) = SYSTEMBENEFIT.l(t) ;
-4296          o_penaltyCost_TP(t)   = SYSTEMPENALTYCOST.l(t) ;
-4297          o_ofv_TP(t)           = o_systemBenefit_TP(t) - o_systemCost_TP(t) - o_penaltyCost_TP(t)
-4298                                - SCARCITYCOST.l(t) - RESERVESHAREPENALTY.l(t)
-4299                                + sum[(n,blk), ScarcityEnrgLimit(t,n,blk) * ScarcityEnrgPrice(t,n,blk)];
-4300   
+4241   
+4242  *       Additional output for audit reporting
+4243          o_ACbusAngle(t,b) = ACNODEANGLE.l(t,b) ;
+4244   
+4245  *       Check if there are non-physical losses on AC branches
+4246          ManualBranchSegmentMWFlow(LossBranch(ACbranch(t,br)),los,fd) $ { ( ord(los) <= branchLossBlocks(ACbranch) ) and validLossSegment(ACbranch,los,fd) and ( ACBRANCHFLOWDIRECTED.l(ACbranch,fd) > 0 ) }
+4247              = Min[ Max( 0, [ abs(o_branchFlow_TP(t,br)) - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)] ] ),
+4248                     ( LossSegmentMW(ACbranch,los,fd) - [LossSegmentMW(ACbranch,los-1,fd) $ (ord(los) > 1)] ) ] ;
+4249   
+4250          ManualBranchSegmentMWFlow(LossBranch(HVDClink(t,br)),los,fd) $ { ( ord(los) <= branchLossBlocks(HVDClink) ) and validLossSegment(HVDClink,los,fd) and ( ord(fd) = 1 ) }
+4251              = Min[ Max( 0, [ abs(o_branchFlow_TP(t,br)) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ] ),
+4252                     ( LossSegmentMW(HVDClink,los,fd) - [LossSegmentMW(HVDClink,los-1,fd) $ (ord(los) > 1)] ) ] ;
+4253   
+4254          ManualLossCalculation(LossBranch(branch(t,br))) = sum[ (los,fd), LossSegmentFactor(branch,los,fd)  * ManualBranchSegmentMWFlow(branch,los,fd) ] ;
+4255          o_nonPhysicalLoss(t,br) = o_branchDynamicLoss_TP(t,br) - ManualLossCalculation(t,br) ;
+4256   
+4257          o_lossSegmentBreakPoint(t,br,los) = sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 1) }, LossSegmentMW(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) >= 0 }
+4258                                            + sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 2) }, LossSegmentMW(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) < 0 } ;
+4259   
+4260          o_lossSegmentFactor(t,br,los) = sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 1) }, LossSegmentFactor(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) >= 0 }
+4261                                        + sum [ fd $ { validLossSegment(t,br,los,fd) and (ord(fd) = 2) }, LossSegmentFactor(t,br,los,fd) ] $ { o_branchFlow_TP(t,br) < 0 }  ;
+4262   
+4263          o_PLRO_FIR_TP(t,o) $ offer(t,o) = sum[(resC,PLRO) $ (ord(resC)=1), RESERVE.l(t,o,resC,PLRO)] ;
+4264          o_PLRO_SIR_TP(t,o) $ offer(t,o) = sum[(resC,PLRO) $ (ord(resC)=2), RESERVE.l(t,o,resC,PLRO)] ;
+4265          o_TWRO_FIR_TP(t,o) $ offer(t,o) = sum[(resC,TWRO) $ (ord(resC)=1), RESERVE.l(t,o,resC,TWRO)] ;
+4266          o_TWRO_SIR_TP(t,o) $ offer(t,o) = sum[(resC,TWRO) $ (ord(resC)=2), RESERVE.l(t,o,resC,TWRO)] ;
+4267          o_ILRO_FIR_TP(t,o) $ offer(t,o) = sum[(resC,ILRO) $ (ord(resC)=1), RESERVE.l(t,o,resC,ILRO)] ;
+4268          o_ILRO_SIR_TP(t,o) $ offer(t,o) = sum[ (resC,ILRO)$ (ord(resC)=2), RESERVE.l(t,o,resC,ILRO)] ;
+4269          o_ILbus_FIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and offerNode(t,o,n) }, o_ILRO_FIR_TP(t,o) ] ;
+4270          o_ILbus_SIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and offerNode(t,o,n) }, o_ILRO_SIR_TP(t,o) ] ;
+4271   
+4272          o_generationRiskLevel(t,isl,o,resC,GenRisk) = GENISLANDRISK.l(t,isl,o,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) ;
+4273          o_HVDCriskLevel(t,isl,resC,HVDCrisk)        = ISLANDRISK.l(t,isl,resC,HVDCrisk) ;
+4274          o_manuRiskLevel(t,isl,resC,ManualRisk)      = ISLANDRISK.l(t,isl,resC,ManualRisk)   + RESERVESHAREEFFECTIVE.l(t,isl,resC,ManualRisk) ;
+4275          o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk)= HVDCGENISLANDRISK.l(t,isl,o,resC,HVDCsecRisk) ;
+4276          o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk) = HVDCMANISLANDRISK.l(t,isl,resC,HVDCsecRisk);
+4277          o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk) $ islandRiskGroup(t,isl,rg,GenRisk) = GENISLANDRISKGROUP.l(t,isl,rg,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) ;
+4278   
+4279  *       FIR and SIR required based on calculations of the island risk to overcome reporting issues of the risk setter under degenerate conditions when reserve price = 0 - See below
+4280          o_ReserveReqd_TP(t,isl,resC)
+4281              = Max[ 0,
+4282                     smax[(o,GenRisk)     , o_generationRiskLevel(t,isl,o,resC,GenRisk)],
+4283                     smax[ HVDCrisk       , o_HVDCriskLevel(t,isl,resC,HVDCrisk) ] ,
+4284                     smax[ ManualRisk     , o_manuRiskLevel(t,isl,resC,ManualRisk) ] ,
+4285                     smax[ (o,HVDCsecRisk), o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk) ] ,
+4286                     smax[ HVDCsecRisk    , o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)  ] ,
+4287                     smax[ (rg,GenRisk)   , o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk)  ]
+4288                   ] ;
+4289   
+4290          o_FIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=1), o_ReserveReqd_TP(t,isl,resC) ] ;
+4291          o_SIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=2), o_ReserveReqd_TP(t,isl,resC) ] ;
+4292   
+4293  *       Summary reporting by trading period
+4294          o_solveOK_TP(t)       = ModelSolved ;
+4295          o_systemCost_TP(t)    = SYSTEMCOST.l(t) ;
+4296          o_systemBenefit_TP(t) = SYSTEMBENEFIT.l(t) ;
+4297          o_penaltyCost_TP(t)   = SYSTEMPENALTYCOST.l(t) ;
+4298          o_ofv_TP(t)           = o_systemBenefit_TP(t) - o_systemCost_TP(t) - o_penaltyCost_TP(t)
+4299                                - SCARCITYCOST.l(t) - RESERVESHAREPENALTY.l(t)
+4300                                + sum[(n,blk), ScarcityEnrgLimit(t,n,blk) * ScarcityEnrgPrice(t,n,blk)];
 4301   
-4302  *       Separete violation reporting at trade period level
-4303          o_defGenViolation_TP(t)      = sum[ b, o_busDeficit_TP(t,b) ] ;
-4304          o_surpGenViolation_TP(t)     = sum[ b, o_busSurplus_TP(t,b) ] ;
-4305          o_surpBranchFlow_TP(t)       = sum[ br$branch(t,br), SURPLUSBRANCHFLOW.l(t,br) ] ;
-4306          o_defRampRate_TP(t)          = sum[ o $ offer(t,o), DEFICITRAMPRATE.l(t,o) ] ;
-4307          o_surpRampRate_TP(t)         = sum[ o $ offer(t,o), SURPLUSRAMPRATE.l(t,o) ] ;
-4308          o_surpBranchGroupConst_TP(t) = sum[ brCstr $ branchConstraint(t,brCstr), SURPLUSBRANCHSECURITYCONSTRAINT.l(t,brCstr) ] ;
-4309          o_defBranchGroupConst_TP(t)  = sum[ brCstr $ branchConstraint(t,brCstr), DEFICITBRANCHSECURITYCONSTRAINT.l(t,brCstr) ] ;
-4310          o_defMnodeConst_TP(t)        = sum[ MnodeCstr $ MnodeConstraint(t,MnodeCstr), DEFICITMnodeCONSTRAINT.l(t,MnodeCstr) ] ;
-4311          o_surpMnodeConst_TP(t)       = sum[ MnodeCstr $ MnodeConstraint(t,MnodeCstr), SURPLUSMnodeCONSTRAINT.l(t,MnodeCstr) ] ;
-4312          o_defResv_TP(t)              = sum[ (isl,resC) , o_ResViolation_TP(t,isl,resC) ] ;
-4313   
-4314  *   Reporting at trading period end
-4315      ) ;
-4316   
+4302   
+4303  *       Separete violation reporting at trade period level
+4304          o_defGenViolation_TP(t)      = sum[ b, o_busDeficit_TP(t,b) ] ;
+4305          o_surpGenViolation_TP(t)     = sum[ b, o_busSurplus_TP(t,b) ] ;
+4306          o_surpBranchFlow_TP(t)       = sum[ br$branch(t,br), SURPLUSBRANCHFLOW.l(t,br) ] ;
+4307          o_defRampRate_TP(t)          = sum[ o $ offer(t,o), DEFICITRAMPRATE.l(t,o) ] ;
+4308          o_surpRampRate_TP(t)         = sum[ o $ offer(t,o), SURPLUSRAMPRATE.l(t,o) ] ;
+4309          o_surpBranchGroupConst_TP(t) = sum[ brCstr $ branchConstraint(t,brCstr), SURPLUSBRANCHSECURITYCONSTRAINT.l(t,brCstr) ] ;
+4310          o_defBranchGroupConst_TP(t)  = sum[ brCstr $ branchConstraint(t,brCstr), DEFICITBRANCHSECURITYCONSTRAINT.l(t,brCstr) ] ;
+4311          o_defMnodeConst_TP(t)        = sum[ MnodeCstr $ MnodeConstraint(t,MnodeCstr), DEFICITMnodeCONSTRAINT.l(t,MnodeCstr) ] ;
+4312          o_surpMnodeConst_TP(t)       = sum[ MnodeCstr $ MnodeConstraint(t,MnodeCstr), SURPLUSMnodeCONSTRAINT.l(t,MnodeCstr) ] ;
+4313          o_defResv_TP(t)              = sum[ (isl,resC) , o_ResViolation_TP(t,isl,resC) ] ;
+4314   
+4315  *   Reporting at trading period end
+4316      ) ;
 4317   
-4319   
-4320  * End of the solve vSPD loop
-4321    ] ;
-4322  * End of the While loop
-4323  );
-4324   
+4318   
+4320   
+4321  * End of the solve vSPD loop
+4322    ] ;
+4323  * End of the While loop
+4324  );
 4325   
-4326  *   Summary reports - only applied for normal and audit vSPD run.
-4328   
-4329  *   System level
-4330   
+4326   
+4327  *   Summary reports - only applied for normal and audit vSPD run.
+4329   
+4330  *   System level
 4331   
-4332  *   Offer level - This does not include revenue from wind generators for
-4333  *   final pricing because the wind generation is netted off against load
-4334  *   at the particular bus for the final pricing solves
-4335   
-4337   
+4332   
+4333  *   Offer level - This does not include revenue from wind generators for
+4334  *   final pricing because the wind generation is netted off against load
+4335  *   at the particular bus for the final pricing solves
+4336   
 4338   
-4339  * 8b. Calculating price-relating outputs --------------------------------------
-4340   
-4342   
-4343  * branch output update
-4344  o_branchFromBusPrice_TP(ca,dt,br) $ branch(ca,dt,br) = sum[ b $ branchFrBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
-4345  o_branchToBusPrice_TP(ca,dt,br) $ branch(ca,dt,br)   = sum[ b $ branchToBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
-4346  o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) >= 0) } = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*[o_branchFlow_TP(ca,dt,br) - o_branchTotalLoss_TP(ca,dt,br)] - o_branchFromBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) ] ;
-4347  o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) < 0) }  = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) - o_branchFromBusPrice_TP(ca,dt,br)*[o_branchTotalLoss_TP(ca,dt,br) + o_branchFlow_TP(ca,dt,br)] ] ;
-4348  *   Island output
-4349  o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,dt,n,isl) } , o_nodePrice_TP(ca,dt,n) ] ;
-4350   
+4339   
+4340  * 8b. Calculating price-relating outputs --------------------------------------
+4341   
+4343   
+4344  * branch output update
+4345  o_branchFromBusPrice_TP(ca,dt,br) $ branch(ca,dt,br) = sum[ b $ branchFrBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
+4346  o_branchToBusPrice_TP(ca,dt,br) $ branch(ca,dt,br)   = sum[ b $ branchToBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
+4347  o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) >= 0) } = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*[o_branchFlow_TP(ca,dt,br) - o_branchTotalLoss_TP(ca,dt,br)] - o_branchFromBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) ] ;
+4348  o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) < 0) }  = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) - o_branchFromBusPrice_TP(ca,dt,br)*[o_branchTotalLoss_TP(ca,dt,br) + o_branchFlow_TP(ca,dt,br)] ] ;
+4349  *   Island output
+4350  o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,dt,n,isl) } , o_nodePrice_TP(ca,dt,n) ] ;
 4351   
-4353  *   Calculating price-relating outputs end -------------------------------------
-4354   
-4355  *=====================================================================================
-4356  * 9. Write results to CSV report files and GDX files
-4357  *=====================================================================================
-4358  * TN - Pivot analysis end
+4352   
+4354  *   Calculating price-relating outputs end -------------------------------------
+4355   
+4356  *=====================================================================================
+4357  * 9. Write results to CSV report files and GDX files
+4358  *=====================================================================================
+4359  * TN - Pivot analysis end
 INCLUDE    C:\vSPD\vSPD\Programs\vSPDreport.gms
-4360  *=====================================================================================
-4361  * Name:                 vSPDreport.gms
-4362  * Function:             Creates the detailed reports for normal SPD mode
-4363  * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
-4364  * Source:               https://github.com/ElectricityAuthority/vSPD
-4365  *                       https://www.emi.ea.govt.nz/Tools/vSPD
-4366  * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
-4367  *                       Email: emi@ea.govt.nz
-4368  * Last modified on:     1 Oct 2019
-4369  *
-4370  *=====================================================================================
-4371   
-4372  * Normal vSPD run output
-4373  *=====================================================================================
-4374  * Writing data in to CSV result files
-4375  *=====================================================================================
-4376   
-4377  * Trading period level report
-4379   
-4380  * Trading period summary result
-4381  File
-4382  SummaryResults_TP / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_SummaryResults_TP.csv" / ;
-4383  SummaryResults_TP.pc = 5 ;    SummaryResults_TP.lw = 0 ;
-4384  SummaryResults_TP.pw = 9999 ; SummaryResults_TP.ap = 1 ;
-4385  SummaryResults_TP.nd = 5 ;    SummaryResults_TP.nw = 20 ;
-4386  put SummaryResults_TP ;
-4387  loop( (ca,dt,rundt),
-4388      put ca.tl,dt.tl,rundt.tl, o_solveOK_TP(ca,dt), o_ofv_TP(ca,dt)
-4389          o_systemCost_TP(ca,dt), o_systemBenefit_TP(ca,dt)
-4390          o_penaltyCost_TP(ca,dt), o_DefGenViolation_TP(ca,dt)
-4391          o_SurpGenViolation_TP(ca,dt),o_DefResv_TP(ca,dt),o_SurpBranchFlow_TP(ca,dt)
-4392          o_DefRampRate_TP(ca,dt), o_SurpRampRate_TP(ca,dt)
-4393          o_DefBranchGroupConst_TP(ca,dt), o_SurpBranchGroupConst_TP(ca,dt)
-4394          o_DefMnodeConst_TP(ca,dt), o_SurpMnodeConst_TP(ca,dt) / ;
-4395  ) ;
-4396   
-4397  * Trading period island result
-4398  File IslandResults_TP /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_IslandResults_TP.csv"/;
-4399  IslandResults_TP.pc = 5 ;     IslandResults_TP.lw = 0 ;
-4400  IslandResults_TP.pw = 9999 ;  IslandResults_TP.ap = 1 ;
-4401  IslandResults_TP.nd = 5 ;
-4402  put IslandResults_TP ;
-4403  loop( (ca,dt,rundt,isl),
-4404      put ca.tl,dt.tl,rundt.tl, isl.tl, o_islandGen_TP(ca,dt,isl), o_islandLoad_TP(ca,dt,isl)
-4405          o_islandClrBid_TP(ca,dt,isl), o_islandBranchLoss_TP(ca,dt,isl)
-4406          o_HVDCFlow_TP(ca,dt,isl), o_HVDCLoss_TP(ca,dt,isl)
-4407          o_islandRefPrice_TP(ca,dt,isl), o_FIRReqd_TP(ca,dt,isl)
-4408          o_SIRReqd_TP(ca,dt,isl), o_FIRPrice_TP(ca,dt,isl)o_SIRPrice_TP(ca,dt,isl)
-4409  * NIRM output
-4410      o_FirCleared_TP(ca,dt,isl), o_SirCleared_TP(ca,dt,isl)
-4411      o_FirSent_TP(ca,dt,isl), o_SirSent_TP(ca,dt,isl)
-4412      o_FirReceived_TP(ca,dt,isl), o_SirReceived_TP(ca,dt,isl)
-4413      o_FirEffectiveCE_TP(ca,dt,isl), o_SirEffectiveCE_TP(ca,dt,isl)
-4414      o_FirEffectiveECE_TP(ca,dt,isl), o_SirEffectiveECE_TP(ca,dt,isl)
-4415  *NIRM output end
-4416      / ;
-4417  ) ;
-4418   
+4361  *=====================================================================================
+4362  * Name:                 vSPDreport.gms
+4363  * Function:             Creates the detailed reports for normal SPD mode
+4364  * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
+4365  * Source:               https://github.com/ElectricityAuthority/vSPD
+4366  *                       https://www.emi.ea.govt.nz/Tools/vSPD
+4367  * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
+4368  *                       Email: emi@ea.govt.nz
+4369  * Last modified on:     1 Oct 2019
+4370  *
+4371  *=====================================================================================
+4372   
+4373  * Normal vSPD run output
+4374  *=====================================================================================
+4375  * Writing data in to CSV result files
+4376  *=====================================================================================
+4377   
+4378  * Trading period level report
+4380   
+4381  * Trading period summary result
+4382  File
+4383  SummaryResults_TP / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_SummaryResults_TP.csv" / ;
+4384  SummaryResults_TP.pc = 5 ;    SummaryResults_TP.lw = 0 ;
+4385  SummaryResults_TP.pw = 9999 ; SummaryResults_TP.ap = 1 ;
+4386  SummaryResults_TP.nd = 5 ;    SummaryResults_TP.nw = 20 ;
+4387  put SummaryResults_TP ;
+4388  loop( (ca,dt,rundt) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
+4389      put ca.tl,dt.tl,rundt.tl, o_solveOK_TP(ca,dt), o_ofv_TP(ca,dt)
+4390          o_systemCost_TP(ca,dt), o_systemBenefit_TP(ca,dt)
+4391          o_penaltyCost_TP(ca,dt), o_DefGenViolation_TP(ca,dt)
+4392          o_SurpGenViolation_TP(ca,dt),o_DefResv_TP(ca,dt),o_SurpBranchFlow_TP(ca,dt)
+4393          o_DefRampRate_TP(ca,dt), o_SurpRampRate_TP(ca,dt)
+4394          o_DefBranchGroupConst_TP(ca,dt), o_SurpBranchGroupConst_TP(ca,dt)
+4395          o_DefMnodeConst_TP(ca,dt), o_SurpMnodeConst_TP(ca,dt) / ;
+4396  ) ;
+4397   
+4398  * Trading period island result
+4399  File IslandResults_TP /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_IslandResults_TP.csv"/;
+4400  IslandResults_TP.pc = 5 ;     IslandResults_TP.lw = 0 ;
+4401  IslandResults_TP.pw = 9999 ;  IslandResults_TP.ap = 1 ;
+4402  IslandResults_TP.nd = 5 ;
+4403  put IslandResults_TP ;
+4404  loop( (ca,dt,rundt,isl) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
+4405      put ca.tl,dt.tl,rundt.tl, isl.tl, o_islandGen_TP(ca,dt,isl), o_islandLoad_TP(ca,dt,isl)
+4406          o_islandClrBid_TP(ca,dt,isl), o_islandBranchLoss_TP(ca,dt,isl)
+4407          o_HVDCFlow_TP(ca,dt,isl), o_HVDCLoss_TP(ca,dt,isl)
+4408          o_islandRefPrice_TP(ca,dt,isl), o_FIRReqd_TP(ca,dt,isl)
+4409          o_SIRReqd_TP(ca,dt,isl), o_FIRPrice_TP(ca,dt,isl)o_SIRPrice_TP(ca,dt,isl)
+4410  * NIRM output
+4411      o_FirCleared_TP(ca,dt,isl), o_SirCleared_TP(ca,dt,isl)
+4412      o_FirSent_TP(ca,dt,isl), o_SirSent_TP(ca,dt,isl)
+4413      o_FirReceived_TP(ca,dt,isl), o_SirReceived_TP(ca,dt,isl)
+4414      o_FirEffectiveCE_TP(ca,dt,isl), o_SirEffectiveCE_TP(ca,dt,isl)
+4415      o_FirEffectiveECE_TP(ca,dt,isl), o_SirEffectiveECE_TP(ca,dt,isl)
+4416  *NIRM output end
+4417      / ;
+4418  ) ;
 4419   
-4420  * Trading period bus result
-4421  File BusResults_TP   / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_BusResults_TP.csv" / ;
-4422  BusResults_TP.pc = 5 ;
-4423  BusResults_TP.lw = 0 ;
-4424  BusResults_TP.pw = 9999 ;
-4425  BusResults_TP.ap = 1 ;
-4426  BusResults_TP.nd = 3
-4427  put BusResults_TP ;
-4428  loop( (ca,dt,rundt,b) $ bus(ca,dt,b),
-4429      put ca.tl,dt.tl,rundt.tl, b.tl, o_busGeneration_TP(ca,dt,b), o_busLoad_TP(ca,dt,b)
-4430          o_busPrice_TP(ca,dt,b), o_busDeficit_TP(ca,dt,b), o_busSurplus_TP(ca,dt,b) / ;
-4431  ) ;
-4432   
-4433  * Trading period node result
-4434  File NodeResults_TP  /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_NodeResults_TP.csv" / ;
-4435  NodeResults_TP.pc = 5 ;
-4436  NodeResults_TP.lw = 0 ;
-4437  NodeResults_TP.pw = 9999 ;
-4438  NodeResults_TP.ap = 1 ;
-4439  NodeResults_TP.nd = 4 ;
-4440  put NodeResults_TP ;
-4441  loop( (ca,dt,rundt,n) $ node(ca,dt,n),
-4442      put ca.tl,dt.tl,rundt.tl, n.tl, o_nodeGeneration_TP(ca,dt,n), o_nodeLoad_TP(ca,dt,n)
-4443          o_nodePrice_TP(ca,dt,n), o_nodeDeficit_TP(ca,dt,n), o_nodeSurplus_TP(ca,dt,n) / ;
-4444  ) ;
-4445   
-4446  * Trading period offer result
-4447  File OfferResults_TP  /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_OfferResults_TP.csv"/ ;
-4448  OfferResults_TP.pc = 5 ;      OfferResults_TP.lw = 0 ;
-4449  OfferResults_TP.pw = 9999 ;   OfferResults_TP.ap = 1 ;
-4450  OfferResults_TP.nd = 4 ;
-4451  put OfferResults_TP ;
-4452  loop( (ca,dt,rundt,o,trdr) $ { offer(ca,dt,o) and OfferTrader(ca,dt,o,trdr) },
-4453      put ca.tl,dt.tl, rundt.tl, o.tl, trdr.tl
-4454          o_offerEnergy_TP(ca,dt,o), o_offerFIR_TP(ca,dt,o), o_offerSIR_TP(ca,dt,o) / ;
-4455  ) ;
-4456   
-4457  * Trading period bid result
-4458  File BidResults_TP    / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_BidResults_TP.csv" / ;
-4459  BidResults_TP.pc = 5 ;     BidResults_TP.lw = 0 ;
-4460  BidResults_TP.pw = 9999 ;  BidResults_TP.ap = 1 ;
-4461  BidResults_TP.nd = 4 ;
-4462  put BidResults_TP ;
-4463  loop( (ca,dt,rundt,bd,trdr) $ { bid(ca,dt,bd) and BidTrader(ca,dt,bd,trdr) },
-4464      put ca.tl,dt.tl,rundt.tl, bd.tl, trdr.tl
-4465          o_bidTotalMW_TP(ca,dt,bd), o_bidEnergy_TP(ca,dt,bd) / ;
-4466  ) ;
-4467   
-4468  * Trading period reserve result
-4469  File
-4470  ReserveResults_TP /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_ReserveResults_TP.csv" / ;
-4471  ReserveResults_TP.pc = 5 ;    ReserveResults_TP.lw = 0 ;
-4472  ReserveResults_TP.pw = 9999 ; ReserveResults_TP.ap = 1 ;
-4473  ReserveResults_TP.nd = 3 ;
-4474  put ReserveResults_TP ;
-4475  loop( (ca,dt,rundt,isl),
-4476      put ca.tl,dt.tl,rundt.tl, isl.tl, o_FIRReqd_TP(ca,dt,isl), o_SIRReqd_TP(ca,dt,isl)
-4477          o_FIRPrice_TP(ca,dt,isl), o_SIRPrice_TP(ca,dt,isl)
-4478          o_FIRViolation_TP(ca,dt,isl), o_SIRViolation_TP(ca,dt,isl) / ;
-4479  ) ;
-4480   
+4420   
+4421  * Trading period bus result
+4422  File BusResults_TP   / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_BusResults_TP.csv" / ;
+4423  BusResults_TP.pc = 5 ;
+4424  BusResults_TP.lw = 0 ;
+4425  BusResults_TP.pw = 9999 ;
+4426  BusResults_TP.ap = 1 ;
+4427  BusResults_TP.nd = 3
+4428  put BusResults_TP ;
+4429  loop( (ca,dt,rundt,b) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and  bus(ca,dt,b)},
+4430      put ca.tl,dt.tl,rundt.tl, b.tl, o_busGeneration_TP(ca,dt,b), o_busLoad_TP(ca,dt,b)
+4431          o_busPrice_TP(ca,dt,b), o_busDeficit_TP(ca,dt,b), o_busSurplus_TP(ca,dt,b) / ;
+4432  ) ;
+4433   
+4434  * Trading period node result
+4435  File NodeResults_TP  /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_NodeResults_TP.csv" / ;
+4436  NodeResults_TP.pc = 5 ;
+4437  NodeResults_TP.lw = 0 ;
+4438  NodeResults_TP.pw = 9999 ;
+4439  NodeResults_TP.ap = 1 ;
+4440  NodeResults_TP.nd = 4 ;
+4441  put NodeResults_TP ;
+4442  loop( (ca,dt,rundt,n) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and node(ca,dt,n)},
+4443      put ca.tl,dt.tl,rundt.tl, n.tl, o_nodeGeneration_TP(ca,dt,n), o_nodeLoad_TP(ca,dt,n)
+4444          o_nodePrice_TP(ca,dt,n), o_nodeDeficit_TP(ca,dt,n), o_nodeSurplus_TP(ca,dt,n) / ;
+4445  ) ;
+4446   
+4447  * Trading period offer result
+4448  File OfferResults_TP  /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_OfferResults_TP.csv"/ ;
+4449  OfferResults_TP.pc = 5 ;      OfferResults_TP.lw = 0 ;
+4450  OfferResults_TP.pw = 9999 ;   OfferResults_TP.ap = 1 ;
+4451  OfferResults_TP.nd = 4 ;
+4452  put OfferResults_TP ;
+4453  loop( (ca,dt,rundt,o,trdr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and offer(ca,dt,o) and OfferTrader(ca,dt,o,trdr) },
+4454      put ca.tl,dt.tl, rundt.tl, o.tl, trdr.tl
+4455          o_offerEnergy_TP(ca,dt,o), o_offerFIR_TP(ca,dt,o), o_offerSIR_TP(ca,dt,o) / ;
+4456  ) ;
+4457   
+4458  * Trading period bid result
+4459  File BidResults_TP    / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_BidResults_TP.csv" / ;
+4460  BidResults_TP.pc = 5 ;     BidResults_TP.lw = 0 ;
+4461  BidResults_TP.pw = 9999 ;  BidResults_TP.ap = 1 ;
+4462  BidResults_TP.nd = 4 ;
+4463  put BidResults_TP ;
+4464  loop( (ca,dt,rundt,bd,trdr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and bid(ca,dt,bd) and BidTrader(ca,dt,bd,trdr) },
+4465      put ca.tl,dt.tl,rundt.tl, bd.tl, trdr.tl
+4466          o_bidTotalMW_TP(ca,dt,bd), o_bidEnergy_TP(ca,dt,bd) / ;
+4467  ) ;
+4468   
+4469  * Trading period reserve result
+4470  File
+4471  ReserveResults_TP /"C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_ReserveResults_TP.csv" / ;
+4472  ReserveResults_TP.pc = 5 ;    ReserveResults_TP.lw = 0 ;
+4473  ReserveResults_TP.pw = 9999 ; ReserveResults_TP.ap = 1 ;
+4474  ReserveResults_TP.nd = 3 ;
+4475  put ReserveResults_TP ;
+4476  loop( (ca,dt,rundt,isl) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
+4477      put ca.tl,dt.tl,rundt.tl, isl.tl, o_FIRReqd_TP(ca,dt,isl), o_SIRReqd_TP(ca,dt,isl)
+4478          o_FIRPrice_TP(ca,dt,isl), o_SIRPrice_TP(ca,dt,isl)
+4479          o_FIRViolation_TP(ca,dt,isl), o_SIRViolation_TP(ca,dt,isl) / ;
+4480  ) ;
 4481   
-4482  * Trading period risk result
-4483  File riskResults_TP / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_RiskResults_TP.csv" /;
-4484  riskResults_TP.pc = 5;        riskResults_TP.lw = 0;
-4485  riskResults_TP.pw = 9999;     riskResults_TP.ap = 1 ;
-4486  riskResults_TP.nd = 4 ;
-4487  put riskResults_TP ;
-4488  loop( (ca,dt,rundt,isl,o,resC,GenRisk)
-4489      $ (o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk) <> 0),
-4490      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
-4491      if (ContingentEvents(GenRisk),
-4492           put 'CE', 'GEN' ;
-4493      else
-4494           put 'ECE','GEN' ;
-4495      );
-4496   
-4497      put o.tl, o_offerEnergy_TP(ca,dt,o), o_offerRes_TP(ca,dt,o,resC), FKband(ca,dt,o)
-4498          FreeReserve(ca,dt,isl,resC,GenRisk)
-4499          o_TotalIslandReserve(ca,dt,isl,resC,GenRisk)
-4500          o_GenRiskShortfall_TP(ca,dt,isl,o,resC,GenRisk)
-4501          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
-4502          o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk)  / ;
-4503  );
-4504   
-4505  loop( (ca,dt,rundt,isl,resC,HVDCRisk)
-4506      $ (o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk)  <> 0),
-4507      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
-4508      if (ContingentEvents(HVDCRisk),
-4509           put 'CE', 'HVDC', 'HVDC';
-4510      else
-4511           put 'ECE','HVDC', 'HVDC';
-4512      );
-4513      put o_HVDCreceived(ca,dt,isl), 0, modulationRiskClass(ca,dt,HVDCrisk)
-4514          o_HVDCRiskSubtractor(ca,dt,isl,resC,HVDCrisk)
-4515          o_TotalIslandReserve(ca,dt,isl,resC,HVDCrisk)
-4516          o_HVDCRiskShortfall_TP(ca,dt,isl,resC,HVDCrisk)
-4517          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
-4518          o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk)  / ;
-4519  );
-4520   
-4521  loop( (ca,dt,rundt,isl,resC,ManualRisk)
-4522      $ (o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk)  <> 0),
-4523      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
-4524      if (ContingentEvents(ManualRisk),
-4525           put 'CE', 'MANUAL', 'MANUAL';
-4526      else
-4527           put 'ECE','MANUAL', 'MANUAL';
-4528      );
-4529      put IslandMinimumRisk(ca,dt,isl,resC,ManualRisk) , 0, 0
-4530          FreeReserve(ca,dt,isl,resC,ManualRisk)
-4531          o_TotalIslandReserve(ca,dt,isl,resC,ManualRisk)
-4532          o_ManualRiskShortfall_TP(ca,dt,isl,resC,ManualRisk)
-4533          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
-4534          o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk)    / ;
-4535  );
-4536   
-4537  loop( (ca,dt,rundt,isl,rg,resC,GenRisk)
-4538      $ (o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk) <> 0),
-4539      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
-4540      if (ContingentEvents(GenRisk),
-4541           put 'CE', 'RISKGROUP';
-4542      else
-4543           put 'ECE','RISKGROUP';
-4544      );
-4545      put rg.tl, o_groupEnergy_TP(ca,dt,rg,GenRisk),o_groupRes_TP(ca,dt,rg,resC,GenRisk)
-4546          o_groupFKband_TP(ca,dt,rg,GenRisk), FreeReserve(ca,dt,isl,resC,GenRisk)
-4547          o_TotalIslandReserve(ca,dt,isl,resC,GenRisk)
-4548          o_GenRiskGroupShortfall_TP(ca,dt,isl,rg,resC,GenRisk)
-4549          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
-4550          o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk)  / ;
-4551  );
-4552   
-4553  * Trading period branch result
-4554  File
-4555  BranchResults_TP  / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_BranchResults_TP.csv" / ;
-4556  BranchResults_TP.pc = 5 ;     BranchResults_TP.lw = 0 ;
-4557  BranchResults_TP.pw = 9999 ;  BranchResults_TP.ap = 1 ;
-4558  BranchResults_TP.nd = 5 ;
-4559  put BranchResults_TP ;
-4560  loop( (ca,dt,rundt,br,frB,toB) $ branchDefn(ca,dt,br,frB,toB),
-4561      put ca.tl,dt.tl, rundt.tl, br.tl, frB.tl, toB.tl, o_branchFlow_TP(ca,dt,br)
-4562          o_branchCapacity_TP(ca,dt,br), o_branchDynamicLoss_TP(ca,dt,br)
-4563          o_branchFixedLoss_TP(ca,dt,br), o_branchFromBusPrice_TP(ca,dt,br)
-4564          o_branchToBusPrice_TP(ca,dt,br), o_branchMarginalPrice_TP(ca,dt,br)
-4565          o_branchTotalRentals_TP(ca,dt,br) / ;
-4566  ) ;
-4567   
+4482   
+4483  * Trading period risk result
+4484  File riskResults_TP / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_RiskResults_TP.csv" /;
+4485  riskResults_TP.pc = 5;        riskResults_TP.lw = 0;
+4486  riskResults_TP.pw = 9999;     riskResults_TP.ap = 1 ;
+4487  riskResults_TP.nd = 4 ;
+4488  put riskResults_TP ;
+4489  loop( (ca,dt,rundt,isl,o,resC,GenRisk)
+4490      $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk) <> 0)},
+4491      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+4492      if (ContingentEvents(GenRisk),
+4493           put 'CE', 'GEN' ;
+4494      else
+4495           put 'ECE','GEN' ;
+4496      );
+4497   
+4498      put o.tl, o_offerEnergy_TP(ca,dt,o), o_offerRes_TP(ca,dt,o,resC), FKband(ca,dt,o)
+4499          FreeReserve(ca,dt,isl,resC,GenRisk)
+4500          o_TotalIslandReserve(ca,dt,isl,resC,GenRisk)
+4501          o_GenRiskShortfall_TP(ca,dt,isl,o,resC,GenRisk)
+4502          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
+4503          o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk)  / ;
+4504  );
+4505   
+4506  loop( (ca,dt,rundt,isl,resC,HVDCRisk)
+4507      $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk)  <> 0)},
+4508      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+4509      if (ContingentEvents(HVDCRisk),
+4510           put 'CE', 'HVDC', 'HVDC';
+4511      else
+4512           put 'ECE','HVDC', 'HVDC';
+4513      );
+4514      put o_HVDCreceived(ca,dt,isl), 0, modulationRiskClass(ca,dt,HVDCrisk)
+4515          o_HVDCRiskSubtractor(ca,dt,isl,resC,HVDCrisk)
+4516          o_TotalIslandReserve(ca,dt,isl,resC,HVDCrisk)
+4517          o_HVDCRiskShortfall_TP(ca,dt,isl,resC,HVDCrisk)
+4518          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
+4519          o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk)  / ;
+4520  );
+4521   
+4522  loop( (ca,dt,rundt,isl,resC,ManualRisk)
+4523      $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk)  <> 0)},
+4524      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+4525      if (ContingentEvents(ManualRisk),
+4526           put 'CE', 'MANUAL', 'MANUAL';
+4527      else
+4528           put 'ECE','MANUAL', 'MANUAL';
+4529      );
+4530      put IslandMinimumRisk(ca,dt,isl,resC,ManualRisk) , 0, 0
+4531          FreeReserve(ca,dt,isl,resC,ManualRisk)
+4532          o_TotalIslandReserve(ca,dt,isl,resC,ManualRisk)
+4533          o_ManualRiskShortfall_TP(ca,dt,isl,resC,ManualRisk)
+4534          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
+4535          o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk)    / ;
+4536  );
+4537   
+4538  loop( (ca,dt,rundt,isl,rg,resC,GenRisk)
+4539      $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk) <> 0)},
+4540      put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+4541      if (ContingentEvents(GenRisk),
+4542           put 'CE', 'RISKGROUP';
+4543      else
+4544           put 'ECE','RISKGROUP';
+4545      );
+4546      put rg.tl, o_groupEnergy_TP(ca,dt,rg,GenRisk),o_groupRes_TP(ca,dt,rg,resC,GenRisk)
+4547          o_groupFKband_TP(ca,dt,rg,GenRisk), FreeReserve(ca,dt,isl,resC,GenRisk)
+4548          o_TotalIslandReserve(ca,dt,isl,resC,GenRisk)
+4549          o_GenRiskGroupShortfall_TP(ca,dt,isl,rg,resC,GenRisk)
+4550          o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
+4551          o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk)  / ;
+4552  );
+4553   
+4554  * Trading period branch result
+4555  File
+4556  BranchResults_TP  / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_BranchResults_TP.csv" / ;
+4557  BranchResults_TP.pc = 5 ;     BranchResults_TP.lw = 0 ;
+4558  BranchResults_TP.pw = 9999 ;  BranchResults_TP.ap = 1 ;
+4559  BranchResults_TP.nd = 5 ;
+4560  put BranchResults_TP ;
+4561  loop( (ca,dt,rundt,br,frB,toB) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and branchDefn(ca,dt,br,frB,toB)},
+4562      put ca.tl,dt.tl, rundt.tl, br.tl, frB.tl, toB.tl, o_branchFlow_TP(ca,dt,br)
+4563          o_branchCapacity_TP(ca,dt,br), o_branchDynamicLoss_TP(ca,dt,br)
+4564          o_branchFixedLoss_TP(ca,dt,br), o_branchFromBusPrice_TP(ca,dt,br)
+4565          o_branchToBusPrice_TP(ca,dt,br), o_branchMarginalPrice_TP(ca,dt,br)
+4566          o_branchTotalRentals_TP(ca,dt,br) / ;
+4567  ) ;
 4568   
-4569  * Trading period branch constraint result
-4570  File BrCstrResults_TP
-4571  / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_BrConstraintResults_TP.csv" / ;
-4572  BrCstrResults_TP.pc = 5 ;      BrCstrResults_TP.lw = 0 ;
-4573  BrCstrResults_TP.pw = 9999 ;   BrCstrResults_TP.ap = 1 ;
-4574  BrCstrResults_TP.nd = 5 ;
-4575  put BrCstrResults_TP ;
-4576  loop( (ca,dt,rundt,brCstr) $ branchConstraint(ca,dt,brCstr),
-4577      put ca.tl,dt.tl,rundt.tl, brCstr.tl, o_brConstraintLHS_TP(ca,dt,brCstr)
-4578          o_brConstraintSense_TP(ca,dt,brCstr), o_brConstraintRHS_TP(ca,dt,brCstr)
-4579          o_brConstraintPrice_TP(ca,dt,brCstr) / ;
-4580  ) ;
-4581   
+4569   
+4570  * Trading period branch constraint result
+4571  File BrCstrResults_TP
+4572  / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_BrConstraintResults_TP.csv" / ;
+4573  BrCstrResults_TP.pc = 5 ;      BrCstrResults_TP.lw = 0 ;
+4574  BrCstrResults_TP.pw = 9999 ;   BrCstrResults_TP.ap = 1 ;
+4575  BrCstrResults_TP.nd = 5 ;
+4576  put BrCstrResults_TP ;
+4577  loop( (ca,dt,rundt,brCstr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and branchConstraint(ca,dt,brCstr)},
+4578      put ca.tl,dt.tl,rundt.tl, brCstr.tl, o_brConstraintLHS_TP(ca,dt,brCstr)
+4579          o_brConstraintSense_TP(ca,dt,brCstr), o_brConstraintRHS_TP(ca,dt,brCstr)
+4580          o_brConstraintPrice_TP(ca,dt,brCstr) / ;
+4581  ) ;
 4582   
-4583  * Trading period market node constraint result
-4584  File MnodeCstrResults_TP
-4585  / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_MnodeConstraintResults_TP.csv" / ;
-4586  MnodeCstrResults_TP.pc = 5 ;    MnodeCstrResults_TP.lw = 0 ;
-4587  MnodeCstrResults_TP.pw = 9999 ; MnodeCstrResults_TP.ap = 1 ;
-4588  MnodeCstrResults_TP.nd = 5 ;
-4589  put MnodeCstrResults_TP ;
-4590  loop( (ca,dt,rundt,MnodeCstr) $ MnodeConstraint(ca,dt,MnodeCstr),
-4591      put ca.tl,dt.tl,rundt.tl, MnodeCstr.tl, o_MnodeConstraintLHS_TP(ca,dt,MnodeCstr)
-4592          o_MnodeConstraintSense_TP(ca,dt,MnodeCstr)
-4593          o_MnodeConstraintRHS_TP(ca,dt,MnodeCstr)
-4594          o_MnodeConstraintPrice_TP(ca,dt,MnodeCstr) / ;
-4595  ) ;
-4596   
-4598  *===============================================================================
-4599   
+4583   
+4584  * Trading period market node constraint result
+4585  File MnodeCstrResults_TP
+4586  / "C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_0030_MnodeConstraintResults_TP.csv" / ;
+4587  MnodeCstrResults_TP.pc = 5 ;    MnodeCstrResults_TP.lw = 0 ;
+4588  MnodeCstrResults_TP.pw = 9999 ; MnodeCstrResults_TP.ap = 1 ;
+4589  MnodeCstrResults_TP.nd = 5 ;
+4590  put MnodeCstrResults_TP ;
+4591  loop( (ca,dt,rundt,MnodeCstr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and MnodeConstraint(ca,dt,MnodeCstr)},
+4592      put ca.tl,dt.tl,rundt.tl, MnodeCstr.tl, o_MnodeConstraintLHS_TP(ca,dt,MnodeCstr)
+4593          o_MnodeConstraintSense_TP(ca,dt,MnodeCstr)
+4594          o_MnodeConstraintRHS_TP(ca,dt,MnodeCstr)
+4595          o_MnodeConstraintPrice_TP(ca,dt,MnodeCstr) / ;
+4596  ) ;
+4597   
+4599  *===============================================================================
 4600   
 4601   
-4602  *===============================================================================
-4603  * Audit mode reporting process
-4604  *===============================================================================
-4606  *===============================================================================
-4607  execute_unload 'C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_new\RTD_20230601_new_AllData.gdx' ;
-4608   
+4602   
+4603  *===============================================================================
+4604  * Audit mode reporting process
+4605  *===============================================================================
+4607  *===============================================================================
+4608  execute_unload 'C:\vSPD\vSPD\Programs\..\Output\\RTD_20230601_0030\RTD_20230601_new_AllData.gdx' ;
 4609   
-4611   
+4610   
 4612   
-4613  * Post a progress message for use by EMI.
-4614  putclose rep 'Case: RTD_20230601_new is complete in ',timeExec,'(secs)'/ ;
-4615  putclose rep 'Case: RTD_20230601_new is finished in ',timeElapsed,'(secs)'/ ;
-4616   
-4617  * Go to the next input file
-4619   
-4620  * Post a progress message for use by EMI.
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 4
+4613   
+4614  * Post a progress message for use by EMI.
+4615  putclose rep 'Case: RTD_20230601_new is complete in ',timeExec,'(secs)'/ ;
+4616  putclose rep 'Case: RTD_20230601_new is finished in ',timeElapsed,'(secs)'/ ;
+4617   
+4618  * Go to the next input file
+4620   
+4621  * Post a progress message for use by EMI.
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -2480,46 +2481,46 @@ Include File Summary
      6     2921 GDXIN          1     303  C:\vSPD\vSPD\Programs\vSPDPeriod.gdx
      7     2926 GDXIN          1     308  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
      8     3092 IF EXIST       1     474  C:\vSPD\vSPD\Override\.gdx
-     9     4359 INCLUDE        1    1757  .C:\vSPD\vSPD\Programs\vSPDreport.gms
-    10     4378 IF EXIST       9      19  .C:\vSPD\vSPD\Output\RTD_20230601_new\RTD_20230601_new_BusResults_TP.csv
-    11     4621 IF EXIST       1    1769  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
+     9     4360 INCLUDE        1    1758  .C:\vSPD\vSPD\Programs\vSPDreport.gms
+    10     4379 IF EXIST       9      19  .C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_BusResults_TP.csv
+    11     4622 IF EXIST       1    1770  C:\vSPD\vSPD\Input\RTD_20230601_new.gdx
 
 
-COMPILATION TIME     =        0.265 SECONDS     10 MB  42.5.0 cf11b917 WEX-WEI
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 5
+COMPILATION TIME     =        0.266 SECONDS      7 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
 
 
 RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
 
-RHS       [min, max] : [ 1.650E-03, 7.433E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.982E-04, 9.999E+03] - Zero values observed as well
+RHS       [min, max] : [ 1.650E-03, 7.156E+07] - Zero values observed as well
+Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
 Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
 
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 6
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
 
 
 LOOPS                            FOR/WHILE   1
-                                        ca   311012023051200876
-                                        dt   01-JUN-2023 00:00
+                                        ca   311012023051230886
+                                        dt   01-JUN-2023 00:30
 
 
 MODEL STATISTICS
 
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
+BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,784
 BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,583     DISCRETE VARIABLES         16
+NON ZERO ELEMENTS       107,601     DISCRETE VARIABLES         16
 
 
-GENERATION TIME      =        0.094 SECONDS     63 MB  42.5.0 cf11b917 WEX-WEI
+GENERATION TIME      =        0.094 SECONDS     36 MB  42.5.0 cf11b917 WEX-WEI
                L O O P S          FOR/WHILE 1
-                                         ca 311012023051200876
-                                         dt 01-JUN-2023 00:00
+                                         ca 311012023051230886
+                                         dt 01-JUN-2023 00:30
 
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 7
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 7
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
 
@@ -2532,10 +2533,10 @@ Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
 
 **** SOLVER STATUS     1 Normal Completion
 **** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         74328680.1754
+**** OBJECTIVE VALUE         71563247.0601
 
  RESOURCE USAGE, LIMIT          0.687      3600.000
- ITERATION COUNT, LIMIT      6065    2000000000
+ ITERATION COUNT, LIMIT      6301    2000000000
 --- GAMS/Cplex Link licensed for continuous and discrete problems.
 
 Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
@@ -2546,28 +2547,28 @@ Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
 --- GMO setup time: 0.00s
 --- Space for names approximately 7.62 Mb
 --- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
+--- GMO memory 15.16 Mb (peak 15.58 Mb)
 --- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
+--- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.45 Mb)
 --- Starting Cplex
 
 
 --- MIP status (101): integer optimal solution.
---- Cplex Time: 0.48sec (det. 643.72 ticks)
+--- Cplex Time: 0.48sec (det. 634.71 ticks)
 
 --- Returning a primal only solution to GAMS (marginals all set to NA).
 --- Fixing integer variables and solving final LP...
 
 
 --- Fixed MIP status (1): optimal.
---- Cplex Time: 0.19sec (det. 278.81 ticks)
+--- Cplex Time: 0.17sec (det. 281.50 ticks)
 
 
 Proven optimal solution
-MIP Solution:     74328680.175380    (6065 iterations, 6 nodes)
-Final Solve:      74328680.175380    (3806 iterations)
+MIP Solution:     71563247.060132    (6301 iterations, 6 nodes)
+Final Solve:      71563247.060132    (3755 iterations)
 
-Best possible:    74328680.175380
+Best possible:    71563247.060132
 Absolute gap:            0.000000
 Relative gap:            0.000000
 
@@ -2576,310 +2577,40 @@ Relative gap:            0.000000
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 8
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.290E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.448E-04, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 9
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051205879
-                                        dt   01-JUN-2023 00:05
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,586     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.110 SECONDS     65 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051205879
-                                         dt 01-JUN-2023 00:05
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 10
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72897082.6281
-
- RESOURCE USAGE, LIMIT          0.719      3600.000
- ITERATION COUNT, LIMIT      6172    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.50sec (det. 654.77 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.20sec (det. 299.03 ticks)
-
-
-Proven optimal solution
-MIP Solution:     72897082.628139    (6172 iterations, 6 nodes)
-Final Solve:      72897082.628139    (4025 iterations)
-
-Best possible:    72897082.628139
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 11
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.251E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.457E-04, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 12
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051210880
-                                        dt   01-JUN-2023 00:10
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,589     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.125 SECONDS     68 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051210880
-                                         dt 01-JUN-2023 00:10
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 13
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72506474.4698
-
- RESOURCE USAGE, LIMIT          0.718      3600.000
- ITERATION COUNT, LIMIT      6267    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.51sec (det. 687.23 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.19sec (det. 278.49 ticks)
-
-
-Proven optimal solution
-MIP Solution:     72506474.469792    (6267 iterations, 6 nodes)
-Final Solve:      72506474.469792    (3882 iterations)
-
-Best possible:    72506474.469792
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 14
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.202E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 15
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051215883
-                                        dt   01-JUN-2023 00:15
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,586     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.141 SECONDS     71 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051215883
-                                         dt 01-JUN-2023 00:15
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 16
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72015455.4103
-
- RESOURCE USAGE, LIMIT          0.704      3600.000
- ITERATION COUNT, LIMIT      6130    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.48sec (det. 644.98 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.20sec (det. 301.88 ticks)
-
-
-Proven optimal solution
-MIP Solution:     72015455.410293    (6130 iterations, 7 nodes)
-Final Solve:      72015455.410293    (3813 iterations)
-
-Best possible:    72015455.410293
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 17
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 8
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
 
 
 RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
 
-RHS       [min, max] : [ 1.650E-03, 7.202E+07] - Zero values observed as well
+RHS       [min, max] : [ 1.650E-03, 7.156E+07] - Zero values observed as well
 Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
 Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
 
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 18
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 9
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
 
 
 LOOPS                            FOR/WHILE   1
-                                        ca   311012023051215883
-                                        dt   01-JUN-2023 00:15
+                                        ca   311012023051230886
+                                        dt   01-JUN-2023 00:30
 
 
 MODEL STATISTICS
 
-BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,087
+BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,091
 BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
-NON ZERO ELEMENTS       113,742     DISCRETE VARIABLES         14
+NON ZERO ELEMENTS       113,757     DISCRETE VARIABLES         14
 
 
-GENERATION TIME      =        0.141 SECONDS     76 MB  42.5.0 cf11b917 WEX-WEI
+GENERATION TIME      =        0.094 SECONDS     42 MB  42.5.0 cf11b917 WEX-WEI
                L O O P S          FOR/WHILE 1
-                                         ca 311012023051215883
-                                         dt 01-JUN-2023 00:15
+                                         ca 311012023051230886
+                                         dt 01-JUN-2023 00:30
 
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 19
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 10
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
 
@@ -2892,10 +2623,380 @@ Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
 
 **** SOLVER STATUS     1 Normal Completion
 **** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72015455.4103
+**** OBJECTIVE VALUE         71563247.0601
+
+ RESOURCE USAGE, LIMIT          0.625      3600.000
+ ITERATION COUNT, LIMIT      6071    2000000000
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
+>>  sos1reform = -1
+>>  sos2reform = -1
+Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 8.00 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 16.09 Mb (peak 16.53 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.49 Mb (peak 11.98 Mb)
+--- Starting Cplex
+
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.50sec (det. 712.74 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.11sec (det. 138.58 ticks)
+
+
+Proven optimal solution
+MIP Solution:     71563247.060132    (6071 iterations, 6 nodes)
+Final Solve:      71563247.060129    (2060 iterations)
+
+Best possible:    71563247.060132
+Absolute gap:            0.000003
+Relative gap:            0.000000
+
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 11
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+----   3875 SET unsolvedDT  Set of datetime that are not solved yet
+
+                    01-JUN-20~
+
+11012023060000128          YES
+11012023060005133          YES
+11012023060010134          YES
+11012023060015137          YES
+11012023060020138          YES
+11012023060025139          YES
+11012023060030140          YES
+11012023060035143          YES
+11012023060040144          YES
+11012023060045145          YES
+11012023060050146          YES
+11012023060055149          YES
+11012023060100150          YES
+11012023060105153          YES
+11012023060110154          YES
+11012023060115155          YES
+11012023060120156          YES
+11012023060125157          YES
+11012023060130158          YES
+11012023060135161          YES
+11012023060140162          YES
+11012023060145163          YES
+11012023060150166          YES
+11012023060155167          YES
+11012023060200168          YES
+11012023060205171          YES
+11012023060210174          YES
+11012023060215177          YES
+11012023060220178          YES
+11012023060225181          YES
+11012023060230182          YES
+11012023060235186          YES
+11012023060240189          YES
+11012023060245190          YES
+11012023060250191          YES
+11012023060255192          YES
+11012023060300193          YES
+11012023060305196          YES
+11012023060310197          YES
+11012023060315198          YES
+11012023060320199          YES
+11012023060325200          YES
+11012023060330201          YES
+11012023060335206          YES
+11012023060340207          YES
+11012023060345208          YES
+11012023060350209          YES
+11012023060355210          YES
+11012023060400211          YES
+11012023060405214          YES
+11012023060415220          YES
+11012023060420223          YES
+11012023060425226          YES
+11012023060430227          YES
+11012023060435230          YES
+11012023060440231          YES
+11012023060445235          YES
+11012023060450236          YES
+11012023060455240          YES
+11012023060500242          YES
+11012023060505245          YES
+11012023060510246          YES
+11012023060515247          YES
+11012023060520248          YES
+11012023060525251          YES
+11012023060530252          YES
+11012023060535255          YES
+11012023060535256          YES
+11012023060540257          YES
+11012023060545258          YES
+11012023060550260          YES
+11012023060555261          YES
+11012023060600262          YES
+11012023060605265          YES
+11012023060630272          YES
+11012023060635275          YES
+11012023060640276          YES
+11012023060645277          YES
+11012023060650278          YES
+11012023060655279          YES
+11012023060700280          YES
+11012023060705283          YES
+11012023060710284          YES
+11012023060715285          YES
+11012023060720286          YES
+11012023060725287          YES
+11012023060730288          YES
+11012023060735291          YES
+11012023060740292          YES
+11012023060745293          YES
+11012023060755297          YES
+11012023060800298          YES
+11012023060805301          YES
+11012023060810302          YES
+11012023060815305          YES
+11012023060820306          YES
+11012023060830308          YES
+11012023060845313          YES
+11012023060850314          YES
+11012023060900316          YES
+11012023060905319          YES
+11012023060910320          YES
+11012023060915321          YES
+11012023060930325          YES
+11012023060935328          YES
+11012023060940331          YES
+11012023060945332          YES
+11012023060950333          YES
+11012023060955334          YES
+11012023061000335          YES
+11012023061005338          YES
+11012023061010339          YES
+11012023061015342          YES
+11012023061020343          YES
+11012023061025344          YES
+11012023061030345          YES
+11012023061035348          YES
+11012023061040350          YES
+11012023061045351          YES
+11012023061050352          YES
+11012023061055353          YES
+11012023061100354          YES
+11012023061105358          YES
+11012023061115361          YES
+11012023061120363          YES
+11012023061125364          YES
+11012023061130365          YES
+11012023061135368          YES
+11012023061140369          YES
+11012023061145370          YES
+11012023061150372          YES
+11012023061155373          YES
+311012023051200876         YES
+311012023051205879         YES
+311012023051210880         YES
+311012023051215883         YES
+311012023051220884         YES
+311012023051225885         YES
+311012023051235889         YES
+311012023051240890         YES
+311012023051245891         YES
+311012023051250892         YES
+311012023051255893         YES
+311012023051300894         YES
+311012023051305897         YES
+311012023051310898         YES
+311012023051315899         YES
+311012023051320900         YES
+311012023051325901         YES
+311012023051330902         YES
+311012023051335906         YES
+311012023051340907         YES
+311012023051345908         YES
+311012023051350909         YES
+311012023051355910         YES
+311012023051400911         YES
+311012023051405914         YES
+311012023051410915         YES
+311012023051415918         YES
+311012023051420919         YES
+311012023051425920         YES
+311012023051430921         YES
+311012023051435925         YES
+311012023051440927         YES
+311012023051445929         YES
+311012023051450930         YES
+311012023051500934         YES
+311012023051505937         YES
+311012023051510938         YES
+311012023051515939         YES
+311012023051520940         YES
+311012023051525941         YES
+311012023051530942         YES
+311012023051535945         YES
+311012023051540946         YES
+311012023051545947         YES
+311012023051550950         YES
+311012023051555951         YES
+311012023051600952         YES
+311012023051605955         YES
+311012023051610956         YES
+311012023051615959         YES
+311012023051620960         YES
+311012023051625961         YES
+311012023051630962         YES
+311012023051635965         YES
+311012023051640966         YES
+311012023051645967         YES
+311012023051650970         YES
+311012023051655971         YES
+311012023051700972         YES
+311012023051705975         YES
+311012023051715977         YES
+311012023051720978         YES
+311012023051725979         YES
+311012023051730980         YES
+311012023051735983         YES
+311012023051740984         YES
+311012023051745987         YES
+311012023051750988         YES
+311012023051755989         YES
+311012023051800990         YES
+311012023051805993         YES
+311012023051810994         YES
+311012023051815997         YES
+311012023051820998         YES
+311012023051825000         YES
+311012023051830001         YES
+311012023051835004         YES
+311012023051840005         YES
+311012023051845006         YES
+311012023051850007         YES
+311012023051855008         YES
+311012023051900010         YES
+311012023051905013         YES
+311012023051910015         YES
+311012023051915019         YES
+311012023051920021         YES
+311012023051925023         YES
+311012023051930027         YES
+311012023051935030         YES
+311012023051940031         YES
+311012023051945032         YES
+311012023051950033         YES
+311012023051955034         YES
+311012023052000035         YES
+311012023052010039         YES
+311012023052015044         YES
+311012023052020045         YES
+311012023052025046         YES
+311012023052030047         YES
+311012023052035050         YES
+311012023052040051         YES
+311012023052045052         YES
+311012023052050053         YES
+311012023052055056         YES
+311012023052100059         YES
+311012023052105062         YES
+311012023052110063         YES
+311012023052115064         YES
+311012023052120065         YES
+311012023052125066         YES
+311012023052130067         YES
+311012023052135070         YES
+311012023052140071         YES
+311012023052145072         YES
+311012023052150074         YES
+311012023052155076         YES
+311012023052200077         YES
+311012023052205081         YES
+311012023052215086         YES
+311012023052220088         YES
+311012023052225089         YES
+311012023052230091         YES
+311012023052235094         YES
+311012023052240097         YES
+311012023052245098         YES
+311012023052250099         YES
+311012023052300107         YES
+311012023052305112         YES
+311012023052310113         YES
+311012023052315114         YES
+311012023052320116         YES
+311012023052325117         YES
+311012023052330118         YES
+311012023052335121         YES
+311012023052340122         YES
+311012023052345123         YES
+311012023052350124         YES
+311012023052355127         YES
+
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 12
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
+
+
+RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
+
+RHS       [min, max] : [ 1.650E-03, 7.157E+07] - Zero values observed as well
+Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
+
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 13
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
+
+
+LOOPS                            FOR/WHILE   2
+                                        ca   311012023051230886
+                                        dt   01-JUN-2023 00:30
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,091
+BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
+NON ZERO ELEMENTS       113,757     DISCRETE VARIABLES         14
+
+
+GENERATION TIME      =        0.110 SECONDS     42 MB  42.5.0 cf11b917 WEX-WEI
+               L O O P S          FOR/WHILE 2
+                                         ca 311012023051230886
+                                         dt 01-JUN-2023 00:30
+
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 14
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   vSPD_BranchFlowMIP   OBJECTIVE  NETBENEFIT
+     TYPE    MIP                  DIRECTION  MAXIMIZE
+     SOLVER  CPLEX                FROM LINE  3817
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      1 Optimal
+**** OBJECTIVE VALUE         71573440.2120
 
  RESOURCE USAGE, LIMIT          0.656      3600.000
- ITERATION COUNT, LIMIT      5893    2000000000
+ ITERATION COUNT, LIMIT      6232    2000000000
 --- GAMS/Cplex Link licensed for continuous and discrete problems.
 
 Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
@@ -2913,22 +3014,22 @@ Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
 
 
 --- MIP status (101): integer optimal solution.
---- Cplex Time: 0.53sec (det. 737.47 ticks)
+--- Cplex Time: 0.53sec (det. 744.28 ticks)
 
 --- Returning a primal only solution to GAMS (marginals all set to NA).
 --- Fixing integer variables and solving final LP...
 
 
 --- Fixed MIP status (1): optimal.
---- Cplex Time: 0.11sec (det. 146.36 ticks)
+--- Cplex Time: 0.09sec (det. 137.11 ticks)
 
 
 Proven optimal solution
-MIP Solution:     72015455.410293    (5893 iterations, 7 nodes)
-Final Solve:      72015455.410293    (2440 iterations)
+MIP Solution:     71573440.212000    (6232 iterations, 7 nodes)
+Final Solve:      71573440.211998    (1873 iterations)
 
-Best possible:    72015455.410293
-Absolute gap:            0.000000
+Best possible:    71573440.212000
+Absolute gap:            0.000003
 Relative gap:            0.000000
 
 
@@ -2936,912 +3037,312 @@ Relative gap:            0.000000
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 20
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 15
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.130E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 21
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051220884
-                                        dt   01-JUN-2023 00:20
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,589     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.141 SECONDS     77 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051220884
-                                         dt 01-JUN-2023 00:20
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 22
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         71302453.3018
-
- RESOURCE USAGE, LIMIT          0.719      3600.000
- ITERATION COUNT, LIMIT      6296    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.52sec (det. 687.59 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.17sec (det. 268.63 ticks)
-
-
-Proven optimal solution
-MIP Solution:     71302453.301800    (6296 iterations, 7 nodes)
-Final Solve:      71302453.301800    (3476 iterations)
-
-Best possible:    71302453.301800
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 23
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.130E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 24
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051220884
-                                        dt   01-JUN-2023 00:20
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,087
-BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
-NON ZERO ELEMENTS       113,745     DISCRETE VARIABLES         14
-
-
-GENERATION TIME      =        0.156 SECONDS     79 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051220884
-                                         dt 01-JUN-2023 00:20
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 25
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_BranchFlowMIP   OBJECTIVE  NETBENEFIT
-     TYPE    MIP                  DIRECTION  MAXIMIZE
-     SOLVER  CPLEX                FROM LINE  3817
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         71302453.3018
-
- RESOURCE USAGE, LIMIT          0.640      3600.000
- ITERATION COUNT, LIMIT      6132    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 8.00 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 16.09 Mb (peak 16.53 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.49 Mb (peak 11.98 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.53sec (det. 709.11 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.09sec (det. 143.72 ticks)
-
-
-Proven optimal solution
-MIP Solution:     71302453.301800    (6132 iterations, 7 nodes)
-Final Solve:      71302453.301792    (1929 iterations)
-
-Best possible:    71302453.301800
-Absolute gap:            0.000008
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 26
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.131E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 27
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051225885
-                                        dt   01-JUN-2023 00:25
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,589     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.172 SECONDS     79 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051225885
-                                         dt 01-JUN-2023 00:25
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 28
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         71308844.6660
-
- RESOURCE USAGE, LIMIT          0.688      3600.000
- ITERATION COUNT, LIMIT      6052    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.50sec (det. 691.33 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.17sec (det. 280.44 ticks)
-
-
-Proven optimal solution
-MIP Solution:     71308844.665860    (6052 iterations, 6 nodes)
-Final Solve:      71308844.666002    (3753 iterations)
-
-Best possible:    71308844.665860
-Absolute gap:           -0.000142
-Relative gap:           -0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 29
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.131E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 30
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-LOOPS                            FOR/WHILE   1
-                                        ca   311012023051225885
-                                        dt   01-JUN-2023 00:25
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,087
-BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
-NON ZERO ELEMENTS       113,745     DISCRETE VARIABLES         14
-
-
-GENERATION TIME      =        0.172 SECONDS     82 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 1
-                                         ca 311012023051225885
-                                         dt 01-JUN-2023 00:25
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 31
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_BranchFlowMIP   OBJECTIVE  NETBENEFIT
-     TYPE    MIP                  DIRECTION  MAXIMIZE
-     SOLVER  CPLEX                FROM LINE  3817
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         71308844.6660
-
- RESOURCE USAGE, LIMIT          0.657      3600.000
- ITERATION COUNT, LIMIT      6064    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 8.00 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 16.09 Mb (peak 16.53 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.49 Mb (peak 11.98 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.53sec (det. 745.97 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.11sec (det. 134.97 ticks)
-
-
-Proven optimal solution
-MIP Solution:     71308844.666040    (6064 iterations, 6 nodes)
-Final Solve:      71308844.666040    (1827 iterations)
-
-Best possible:    71308844.666040
-Absolute gap:            0.000001
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 32
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.431E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.977E-04, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 33
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   2
-                                        ca   311012023051200876
-                                        dt   01-JUN-2023 00:00
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,583     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.172 SECONDS     82 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 2
-                                         ca 311012023051200876
-                                         dt 01-JUN-2023 00:00
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 34
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         74310140.3149
-
- RESOURCE USAGE, LIMIT          0.703      3600.000
- ITERATION COUNT, LIMIT      6319    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.48sec (det. 675.69 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.20sec (det. 287.23 ticks)
-
-
-Proven optimal solution
-MIP Solution:     74310140.314872    (6319 iterations, 6 nodes)
-Final Solve:      74310140.314872    (3892 iterations)
-
-Best possible:    74310140.314872
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 35
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.301E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.454E-04, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 36
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   2
-                                        ca   311012023051205879
-                                        dt   01-JUN-2023 00:05
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,586     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.203 SECONDS     82 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 2
-                                         ca 311012023051205879
-                                         dt 01-JUN-2023 00:05
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 37
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         73012242.0162
-
- RESOURCE USAGE, LIMIT          0.704      3600.000
- ITERATION COUNT, LIMIT      6435    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.48sec (det. 665.46 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.20sec (det. 313.20 ticks)
-
-
-Proven optimal solution
-MIP Solution:     73012242.016245    (6435 iterations, 6 nodes)
-Final Solve:      73012242.016245    (4223 iterations)
-
-Best possible:    73012242.016245
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 38
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.250E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.457E-04, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 39
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-LOOPS                            FOR/WHILE   2
-                                        ca   311012023051210880
-                                        dt   01-JUN-2023 00:10
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          87     SINGLE EQUATIONS       31,780
-BLOCKS OF VARIABLES          69     SINGLE VARIABLES       56,138
-NON ZERO ELEMENTS       107,589     DISCRETE VARIABLES         16
-
-
-GENERATION TIME      =        0.203 SECONDS     82 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 2
-                                         ca 311012023051210880
-                                         dt 01-JUN-2023 00:10
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 40
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_NMIR Using MIP From line 3736
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_NMIR           OBJECTIVE  NETBENEFIT
-     TYPE    MIP                 DIRECTION  MAXIMIZE
-     SOLVER  CPLEX               FROM LINE  3736
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72502695.8491
-
- RESOURCE USAGE, LIMIT          0.687      3600.000
- ITERATION COUNT, LIMIT      6235    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 7.62 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 15.15 Mb (peak 15.58 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.43 Mb (peak 11.44 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.48sec (det. 666.95 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.17sec (det. 264.77 ticks)
-
-
-Proven optimal solution
-MIP Solution:     72502695.849206    (6235 iterations, 7 nodes)
-Final Solve:      72502695.849146    (3512 iterations)
-
-Best possible:    72502695.849206
-Absolute gap:            0.000060
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 41
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.250E+07] - Zero values observed as well
-Bound     [min, max] : [ 2.457E-04, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 42
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-LOOPS                            FOR/WHILE   2
-                                        ca   311012023051210880
-                                        dt   01-JUN-2023 00:10
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,087
-BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
-NON ZERO ELEMENTS       113,745     DISCRETE VARIABLES         14
-
-
-GENERATION TIME      =        0.203 SECONDS     84 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 2
-                                         ca 311012023051210880
-                                         dt 01-JUN-2023 00:10
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 43
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_BranchFlowMIP   OBJECTIVE  NETBENEFIT
-     TYPE    MIP                  DIRECTION  MAXIMIZE
-     SOLVER  CPLEX                FROM LINE  3817
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72502695.8492
-
- RESOURCE USAGE, LIMIT          0.641      3600.000
- ITERATION COUNT, LIMIT      6455    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 8.00 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 16.09 Mb (peak 16.53 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.49 Mb (peak 11.98 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.52sec (det. 715.69 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.09sec (det. 135.92 ticks)
-
-
-Proven optimal solution
-MIP Solution:     72502695.849205    (6455 iterations, 7 nodes)
-Final Solve:      72502695.849205    (1989 iterations)
-
-Best possible:    72502695.849205
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 44
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.203E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 45
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-LOOPS                            FOR/WHILE   2
-                                        ca   311012023051215883
-                                        dt   01-JUN-2023 00:15
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,087
-BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
-NON ZERO ELEMENTS       113,742     DISCRETE VARIABLES         14
-
-
-GENERATION TIME      =        0.203 SECONDS     84 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 2
-                                         ca 311012023051215883
-                                         dt 01-JUN-2023 00:15
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 46
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_BranchFlowMIP   OBJECTIVE  NETBENEFIT
-     TYPE    MIP                  DIRECTION  MAXIMIZE
-     SOLVER  CPLEX                FROM LINE  3817
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         72029671.0373
-
- RESOURCE USAGE, LIMIT          0.656      3600.000
- ITERATION COUNT, LIMIT      6023    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 8.00 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 16.09 Mb (peak 16.53 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.49 Mb (peak 11.98 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.53sec (det. 735.10 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.09sec (det. 143.43 ticks)
-
-
-Proven optimal solution
-MIP Solution:     72029671.037316    (6023 iterations, 7 nodes)
-Final Solve:      72029671.037316    (2245 iterations)
-
-Best possible:    72029671.037316
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 47
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.135E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
-Matrix    [min, max] : [ 1.098E-07, 1.000E+06]
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 48
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Model Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-LOOPS                            FOR/WHILE   2
-                                        ca   311012023051220884
-                                        dt   01-JUN-2023 00:20
-
-
-MODEL STATISTICS
-
-BLOCKS OF EQUATIONS          92     SINGLE EQUATIONS       34,087
-BLOCKS OF VARIABLES          72     SINGLE VARIABLES       57,682
-NON ZERO ELEMENTS       113,745     DISCRETE VARIABLES         14
-
-
-GENERATION TIME      =        0.234 SECONDS     84 MB  42.5.0 cf11b917 WEX-WEI
-               L O O P S          FOR/WHILE 2
-                                         ca 311012023051220884
-                                         dt 01-JUN-2023 00:20
-
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 49
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Solution Report     SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-               S O L V E      S U M M A R Y
-
-     MODEL   vSPD_BranchFlowMIP   OBJECTIVE  NETBENEFIT
-     TYPE    MIP                  DIRECTION  MAXIMIZE
-     SOLVER  CPLEX                FROM LINE  3817
-
-**** SOLVER STATUS     1 Normal Completion
-**** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE         71354682.8004
-
- RESOURCE USAGE, LIMIT          0.672      3600.000
- ITERATION COUNT, LIMIT      5998    2000000000
---- GAMS/Cplex Link licensed for continuous and discrete problems.
-
-Reading parameter(s) from "C:\vSPD\vSPD\Programs\cplex.opt"
->>  sos1reform = -1
->>  sos2reform = -1
-Finished reading from "C:\vSPD\vSPD\Programs\cplex.opt"
-
---- GMO setup time: 0.00s
---- Space for names approximately 8.00 Mb
---- Use option 'names no' to turn use of names off
---- GMO memory 16.09 Mb (peak 16.53 Mb)
---- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 1.49 Mb (peak 11.98 Mb)
---- Starting Cplex
-
-
---- MIP status (101): integer optimal solution.
---- Cplex Time: 0.55sec (det. 680.62 ticks)
-
---- Returning a primal only solution to GAMS (marginals all set to NA).
---- Fixing integer variables and solving final LP...
-
-
---- Fixed MIP status (1): optimal.
---- Cplex Time: 0.11sec (det. 140.00 ticks)
-
-
-Proven optimal solution
-MIP Solution:     71354682.800364    (5998 iterations, 7 nodes)
-Final Solve:      71354682.800363    (2018 iterations)
-
-Best possible:    71354682.800364
-Absolute gap:            0.000000
-Relative gap:            0.000000
-
-
-
-**** REPORT SUMMARY :        0     NONOPT
-                             0 INFEASIBLE
-                             0  UNBOUNDED
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 50
-G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
-Range Statistics    SOLVE vSPD_BranchFlowMIP Using MIP From line 3817
-
-
-RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
-
-RHS       [min, max] : [ 1.650E-03, 7.127E+07] - Zero values observed as well
-Bound     [min, max] : [ 1.000E-03, 9.999
+E x e c u t i o n
+
+
+----   3875 SET unsolvedDT  Set of datetime that are not solved yet
+
+                    01-JUN-20~
+
+11012023060000128          YES
+11012023060005133          YES
+11012023060010134          YES
+11012023060015137          YES
+11012023060020138          YES
+11012023060025139          YES
+11012023060030140          YES
+11012023060035143          YES
+11012023060040144          YES
+11012023060045145          YES
+11012023060050146          YES
+11012023060055149          YES
+11012023060100150          YES
+11012023060105153          YES
+11012023060110154          YES
+11012023060115155          YES
+11012023060120156          YES
+11012023060125157          YES
+11012023060130158          YES
+11012023060135161          YES
+11012023060140162          YES
+11012023060145163          YES
+11012023060150166          YES
+11012023060155167          YES
+11012023060200168          YES
+11012023060205171          YES
+11012023060210174          YES
+11012023060215177          YES
+11012023060220178          YES
+11012023060225181          YES
+11012023060230182          YES
+11012023060235186          YES
+11012023060240189          YES
+11012023060245190          YES
+11012023060250191          YES
+11012023060255192          YES
+11012023060300193          YES
+11012023060305196          YES
+11012023060310197          YES
+11012023060315198          YES
+11012023060320199          YES
+11012023060325200          YES
+11012023060330201          YES
+11012023060335206          YES
+11012023060340207          YES
+11012023060345208          YES
+11012023060350209          YES
+11012023060355210          YES
+11012023060400211          YES
+11012023060405214          YES
+11012023060415220          YES
+11012023060420223          YES
+11012023060425226          YES
+11012023060430227          YES
+11012023060435230          YES
+11012023060440231          YES
+11012023060445235          YES
+11012023060450236          YES
+11012023060455240          YES
+11012023060500242          YES
+11012023060505245          YES
+11012023060510246          YES
+11012023060515247          YES
+11012023060520248          YES
+11012023060525251          YES
+11012023060530252          YES
+11012023060535255          YES
+11012023060535256          YES
+11012023060540257          YES
+11012023060545258          YES
+11012023060550260          YES
+11012023060555261          YES
+11012023060600262          YES
+11012023060605265          YES
+11012023060630272          YES
+11012023060635275          YES
+11012023060640276          YES
+11012023060645277          YES
+11012023060650278          YES
+11012023060655279          YES
+11012023060700280          YES
+11012023060705283          YES
+11012023060710284          YES
+11012023060715285          YES
+11012023060720286          YES
+11012023060725287          YES
+11012023060730288          YES
+11012023060735291          YES
+11012023060740292          YES
+11012023060745293          YES
+11012023060755297          YES
+11012023060800298          YES
+11012023060805301          YES
+11012023060810302          YES
+11012023060815305          YES
+11012023060820306          YES
+11012023060830308          YES
+11012023060845313          YES
+11012023060850314          YES
+11012023060900316          YES
+11012023060905319          YES
+11012023060910320          YES
+11012023060915321          YES
+11012023060930325          YES
+11012023060935328          YES
+11012023060940331          YES
+11012023060945332          YES
+11012023060950333          YES
+11012023060955334          YES
+11012023061000335          YES
+11012023061005338          YES
+11012023061010339          YES
+11012023061015342          YES
+11012023061020343          YES
+11012023061025344          YES
+11012023061030345          YES
+11012023061035348          YES
+11012023061040350          YES
+11012023061045351          YES
+11012023061050352          YES
+11012023061055353          YES
+11012023061100354          YES
+11012023061105358          YES
+11012023061115361          YES
+11012023061120363          YES
+11012023061125364          YES
+11012023061130365          YES
+11012023061135368          YES
+11012023061140369          YES
+11012023061145370          YES
+11012023061150372          YES
+11012023061155373          YES
+311012023051200876         YES
+311012023051205879         YES
+311012023051210880         YES
+311012023051215883         YES
+311012023051220884         YES
+311012023051225885         YES
+311012023051235889         YES
+311012023051240890         YES
+311012023051245891         YES
+311012023051250892         YES
+311012023051255893         YES
+311012023051300894         YES
+311012023051305897         YES
+311012023051310898         YES
+311012023051315899         YES
+311012023051320900         YES
+311012023051325901         YES
+311012023051330902         YES
+311012023051335906         YES
+311012023051340907         YES
+311012023051345908         YES
+311012023051350909         YES
+311012023051355910         YES
+311012023051400911         YES
+311012023051405914         YES
+311012023051410915         YES
+311012023051415918         YES
+311012023051420919         YES
+311012023051425920         YES
+311012023051430921         YES
+311012023051435925         YES
+311012023051440927         YES
+311012023051445929         YES
+311012023051450930         YES
+311012023051500934         YES
+311012023051505937         YES
+311012023051510938         YES
+311012023051515939         YES
+311012023051520940         YES
+311012023051525941         YES
+311012023051530942         YES
+311012023051535945         YES
+311012023051540946         YES
+311012023051545947         YES
+311012023051550950         YES
+311012023051555951         YES
+311012023051600952         YES
+311012023051605955         YES
+311012023051610956         YES
+311012023051615959         YES
+311012023051620960         YES
+311012023051625961         YES
+311012023051630962         YES
+311012023051635965         YES
+311012023051640966         YES
+311012023051645967         YES
+311012023051650970         YES
+311012023051655971         YES
+311012023051700972         YES
+311012023051705975         YES
+311012023051715977         YES
+311012023051720978         YES
+311012023051725979         YES
+311012023051730980         YES
+311012023051735983         YES
+311012023051740984         YES
+311012023051745987         YES
+311012023051750988         YES
+311012023051755989         YES
+311012023051800990         YES
+311012023051805993         YES
+311012023051810994         YES
+311012023051815997         YES
+311012023051820998         YES
+311012023051825000         YES
+311012023051830001         YES
+311012023051835004         YES
+311012023051840005         YES
+311012023051845006         YES
+311012023051850007         YES
+311012023051855008         YES
+311012023051900010         YES
+311012023051905013         YES
+311012023051910015         YES
+311012023051915019         YES
+311012023051920021         YES
+311012023051925023         YES
+311012023051930027         YES
+311012023051935030         YES
+311012023051940031         YES
+311012023051945032         YES
+311012023051950033         YES
+311012023051955034         YES
+311012023052000035         YES
+311012023052010039         YES
+311012023052015044         YES
+311012023052020045         YES
+311012023052025046         YES
+311012023052030047         YES
+311012023052035050         YES
+311012023052040051         YES
+311012023052045052         YES
+311012023052050053         YES
+311012023052055056         YES
+311012023052100059         YES
+311012023052105062         YES
+311012023052110063         YES
+311012023052115064         YES
+311012023052120065         YES
+311012023052125066         YES
+311012023052130067         YES
+311012023052135070         YES
+311012023052140071         YES
+311012023052145072         YES
+311012023052150074         YES
+311012023052155076         YES
+311012023052200077         YES
+311012023052205081         YES
+311012023052215086         YES
+311012023052220088         YES
+311012023052225089         YES
+311012023052230091         YES
+311012023052235094         YES
+311012023052240097         YES
+311012023052245098         YES
+311012023052250099         YES
+311012023052300107         YES
+311012023052305112         YES
+311012023052310113         YES
+311012023052315114         YES
+311012023052320116         YES
+311012023052325117         YES
+311012023052330118         YES
+311012023052335121         YES
+311012023052340122         YES
+311012023052345123         YES
+311012023052350124         YES
+311012023052355127         YES
+
+
+**** REPORT FILE SUMMARY
+
+rep C:\vSPD\vSPD\Programs\ProgressReport.txt
+temp C:\vSPD\vSPD\Programs\temp.put
+SummaryResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_SummaryResults_TP.csv
+IslandResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_IslandResults_TP.csv
+BusResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_BusResults_TP.csv
+NodeResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_NodeResults_TP.csv
+OfferResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_OfferResults_TP.csv
+ReserveResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_ReserveResults_TP.csv
+riskResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_RiskResults_TP.csv
+BranchResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_BranchResults_TP.csv
+BrCstrResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_BrConstraintResults_TP.csv
+MnodeCstrResults_TP C:\vSPD\vSPD\Output\RTD_20230601_0030\RTD_20230601_0030_MnodeConstraintResults_TP.csv
+
+
+EXECUTION TIME       =        4.062 SECONDS     45 MB  42.5.0 cf11b917 WEX-WEI
+
+
+USER: Small MUD-5 User License                       G220916|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S10
+
+
+**** FILE SUMMARY
+
+Restart    C:\vSPD\vSPD\Programs\vSPDmodel.g00
+Input      C:\vSPD\vSPD\Programs\vSPDsolve.gms
+Output     C:\vSPD\vSPD\Programs\vSPDsolve.lst

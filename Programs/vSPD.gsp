@@ -40,12 +40,6 @@
         },
         {
             "codecMib": 106,
-            "file": "vSPDperiod.gdx",
-            "name": "vSPDperiod.gdx",
-            "type": "gdx"
-        },
-        {
-            "codecMib": 106,
             "file": "vSPDperiod.gms",
             "name": "vSPDperiod.gms",
             "type": "gms"

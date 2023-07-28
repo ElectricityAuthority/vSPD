@@ -1,4 +1,4 @@
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 1
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -89,17 +89,17 @@ C o m p i l a t i o n
   87   
   88  Sets
   89  * 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  90    case2name(ca<,caseName<)                'Mapping caseID to CaseNanme'
-  91    case2dt(ca<,dt)                       'Mapping caseID to datetime'
+  90    case2name(ca,caseName<)                'Mapping caseID to CaseNanme'
+  91    case2dt(ca<,dt)                        'Mapping caseID to datetime'
   92    case2rundt(ca<,rundt<)                 'Mapping caseID to rundatetime'
-  93    dt2tp(dt,tp)                          'Mapping of dateTime set to the tradePeriod set'
+  93    dt2tp(dt,tp)                           'Mapping of dateTime set to the tradePeriod set'
   94    node(ca,dt,n<)                         'Node definition for the different trading periods'
   95    bus(ca,dt,b<)                          'Bus definition for the different trading periods'
   96    node2node(ca,dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
-  97    offerNode(ca,dt,o<,n)                   'Offers and the corresponding offer node for the different trading periods'
-  98    offerTrader(ca,dt,o<,trdr<)             'Offers and the corresponding trader for the different trading periods'
-  99    bidNode(ca,dt,bd<,n)                    'Bids and the corresponding node for the different trading periods'
- 100    bidTrader(ca,dt,bd<,trdr<)              'Bids and the corresponding trader for the different trading periods'
+  97    offerNode(ca,dt,o<,n)                  'Offers and the corresponding offer node for the different trading periods'
+  98    offerTrader(ca,dt,o<,trdr<)            'Offers and the corresponding trader for the different trading periods'
+  99    bidNode(ca,dt,bd<,n)                   'Bids and the corresponding node for the different trading periods'
+ 100    bidTrader(ca,dt,bd<,trdr<)             'Bids and the corresponding trader for the different trading periods'
  101    busIsland(ca,dt,b,isl)                 'Bus island mapping for the different trade periods'
  102    nodeBus(ca,dt,n,b)                     'Node bus mapping for the different trading periods'
  103    branchDefn(ca,dt,br<,frB,toB)           'Branch definition for the different trading periods'
@@ -2108,7 +2108,7 @@ C o m p i l a t i o n
 
 
 COMPILATION TIME     =        0.000 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
-GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/25/23 16:15:42 Page 2
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/28/23 13:59:01 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 

@@ -307,7 +307,7 @@ $gdxin
 * Call the GDX routine and load the input data:
 $gdxin "%inputPath%\%GDXname%.gdx"
 * Sets
-$load case2Name = caseName case2dt = i_dateTime  case2rundt = i_runDateTime
+$load case2dt = i_dateTime  case2Name = caseName  case2rundt = i_runDateTime
 *$load b = i_bus  n = i_node  o = i_offer  bd = i_bid  trdr = i_trader
 *$load br = i_branch  brCstr = i_branchConstraint  MnodeCstr = i_MnodeConstraint
 $load node = i_dateTimeNode  bus = i_dateTimeBus
@@ -841,9 +841,9 @@ unsolvedDT(ca,dt) = yes;
 VSPDModel(ca,dt) = 0 ;
 LoopCount(ca,dt) = 1;
 IsNodeDead(ca,dt,n) = 0;
-While ( sum[ (ca,dt) $ unsolvedDT(ca,dt), 1 ],
+While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 
-  loop[ (ca,dt) $ {unsolvedDT(ca,dt) and (LoopCount(ca,dt) < maxSolveLoops(ca,dt)) },
+  loop[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt) and (LoopCount(ca,dt) < maxSolveLoops(ca,dt)) },
 
 *   7a. Reset all sets, parameters and variables -------------------------------
     option clear = t ;
@@ -1254,6 +1254,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
     ) ;
 *   Solve the models end
 
+    display unsolvedDT;
 
 *   Post-Solve Checks ----------------------------------------------------------
 
