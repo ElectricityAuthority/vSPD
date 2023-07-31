@@ -43,7 +43,7 @@ Scalar LPtimeLimit                       / 3600 / ;
 Scalar LPiterationLimit                  / 2000000000 / ;
 Scalar MIPtimeLimit                      / 3600 / ;
 Scalar MIPiterationLimit                 / 2000000000 / ;
-Scalar MIPoptimality                     / 1e-4 / ;
+Scalar MIPoptimality                     / 0 / ;
 $setglobal Solver                          Cplex
 $setglobal licenseMode                     1
 

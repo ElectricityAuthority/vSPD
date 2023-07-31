@@ -302,7 +302,7 @@ $if not exist "%inputPath%\%GDXname%.gdx" $goto nextInput
 $onmulti
 $gdxin "vSPDPeriod.gdx"
 $load tp=i_tradePeriod  dt=i_dateTime  ca=i_caseID  rundt=i_runDateTime  caseName=i_caseName
-$load dt2tp = i_dateTimeTradePeriod  case2dt=i_caseDateTime  case2Name=caseName  case2rundt= i_runDateTime
+$load dt2tp = i_dateTimeTradePeriod  case2dt=i_caseDateTime  case2Name=i_caseIdName  case2rundt= i_case2rundt
 $gdxin
 
 * Call the GDX routine and load the input data:
@@ -1134,10 +1134,10 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             ) ;
 
         ) ;
-display t, LoopCount, VSPDModel, unsolvedDT;
+
 *       Post-Solve - Circulating flow check ------------------------------------
         if((ModelSolved = 1),
-            Loop( t $ (VSPDModel(t)=0) ,
+            Loop( t $ {(VSPDModel(t)=0)} ,
 *               Check if there are circulating branch flows on loss AC branches
                 circularBranchFlowExist(LossBranch(ACbranch(t,br))) $ { sum[fd, ACBRANCHFLOWDIRECTED.l(ACbranch,fd)] - abs(ACBRANCHFLOW.l(ACbranch)) > circularBranchFlowTolerance } = 1 ;
 *               Determine the circular branch flow flag on each HVDC pole
@@ -1156,15 +1156,18 @@ display t, LoopCount, VSPDModel, unsolvedDT;
 *               Set UseBranchFlowMIP = 1 if the number of circular branch flow or non-physical loss branches exceeds the specified tolerance
                 useBranchFlowMIP(t) $ { ( sum[ br $ { ACbranch(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
                                         + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
-                                        + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveHVDCnonPhysicalLosses * NonPhysicalLossExist(t,br) ]
+*                                        + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveHVDCnonPhysicalLosses * NonPhysicalLossExist(t,br) ]
                                         + sum[ pole, resolveCircularBranchFlows * poleCircularBranchFlowExist(t,pole)]
                                         ) > UseBranchFlowMIPTolerance
                                       } = 1 ;
-display circularBranchFlowExist,NonPhysicalLossExist,poleCircularBranchFlowExist, ACBRANCHFLOWDIRECTED.l, ACBRANCHFLOW.l ;
+
 
 
             );
-*           Post-Solve - Circulating flow check  end
+*           Post-Solve - Circulating flow check end
+
+*           Use this to not 
+            useBranchFlowMIP(t) $ (LoopCount(t)=1) = 0 ;
 
 *           A period is unsolved if MILP model is required
             unsolvedDT(t) = yes $ UseBranchFlowMIP(t) ;
@@ -1361,7 +1364,7 @@ $offtext
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
         LoopCount(t) = LoopCount(t) + 1 ;
-        loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > 0.0005 )},
+        loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > 0.00005 )},
             putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
 *            putclose rep 'Using SPDLoadCalcLosses instead. /' ;
             LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
