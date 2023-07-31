@@ -1,22 +1,23 @@
 Run: 'RTD_20230601_0030'
 
-runvSPD started at: 07/28/23 16:25:47
-vSPDsetup started at: 07/28/23 16:25:47
-vSPDreportSetup started at: 07/28/23 16:25:47
+runvSPD started at: 07/31/23 16:17:02
+vSPDsetup started at: 07/31/23 16:17:02
+vSPDreportSetup started at: 07/31/23 16:17:03
 
-Case "RTD_20230601_new" started at: 07/28/23 16:25:47
+Case "RTD_20230601_new" started at: 07/31/23 16:17:03
 The caseID: 311012023051230886 (01-JUN-2023 00:30) is 1st solved successfully.
 Objective function value: 71563247.0601
 Violations cost         : 0.2946
+Recalculate RTD Island Loss for next solve
+Recalulated losses for SI are different between vSPD (50.44616  ) and SPD (50.44592  ) --> Using SPD calculated losses instead.
+The caseID: 311012023051230886 (01-JUN-2023 00:30) is 1st solved successfully.
+Objective function value: 71573442.9105
+Violations cost         : 0.2949
 The caseID: 311012023051230886 requires a vSPD_BranchFlowMIP resolve for period 01-JUN-2023 00:30.
 The caseID: 311012023051230886 (01-JUN-2023 00:30) is 1st solved successfully for branch integer.
-Objective function value: 71563247.0601
-Violations cost         : 0.2946
-Recalculate RTD Island Loss for next solve
-The caseID: 311012023051230886 (01-JUN-2023 00:30) is 1st solved successfully for branch integer.
-Objective function value: 71573440.2120
+Objective function value: 71573442.9105
 Violations cost         : 0.2949
-Case: RTD_20230601_new is complete in         3.84(secs)
-Case: RTD_20230601_new is finished in         4.17(secs)
+Case: RTD_20230601_new is complete in         3.99(secs)
+Case: RTD_20230601_new is finished in         4.35(secs)
 
-Total execute time:         4.72(secs)
+Total execute time:         5.03(secs)
