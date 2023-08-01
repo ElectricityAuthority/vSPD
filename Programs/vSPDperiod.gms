@@ -38,8 +38,8 @@ dt2tp(dt,tp)            'Mapping datetime to trading periods'
 sca(ca)                 'caseID to be solved'
 stp(tp)                 'Trading periods to be solved'
 sdt(dt)                 'Date time to be solved'
-srt(rundt)           'RunDateTime of cases to be solved'
-scn(caseName)     'Name of cases to be solved'
+srt(rundt)              'RunDateTime of cases to be solved'
+scn(caseName)           'Name of cases to be solved'
 
 
 sdt2tp(dt,tp)           'Mapping solved datetime to trading periods'
@@ -48,7 +48,7 @@ scase2Name(ca,caseName) ''
 scase2rundt(ca,rundt)   ''
 
 ;
-alias (tp,tp1);
+alias (tp,tp1), (dt,dt1), (ca,ca1);
 
 Parameter
 gdxDate(*,*)                        'day, month, year of trade date'
@@ -77,19 +77,22 @@ scn(caseName) = no;
 
 stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
 sdt(dt) $ sum[ tmp, diag(dt,tmp)] = yes ;
+sca(ca) $ sum[ tmp, diag(ca,tmp)] = yes ;
 
 stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
 $if %opMode% == 'DWH' stp(tp) = yes;
 
 
 sdt(dt) $ sum[ (ca,stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+sdt(dt) $ sum[ (sca(ca),tp) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+
 stp(tp) $ sum[ (ca,sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+stp(tp) $ sum[ (sca(ca),dt) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+
+sca(ca) $ {not(sum[ (ca1,tmp), diag(ca1,tmp)]) and sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ]} = yes ;
 
 sdt2tp(sdt(dt),stp(tp)) = yes $ sum[ca $ case2dt2tp(ca,dt,tp),1] ;
-
-sca(ca)  = yes $ sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp),1] ;
 scase2dt(ca,dt) = yes $ sum[(sca(ca),sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp),1] ;
-
 scn(caseName) $ sum[sca(ca) $ case2Name(ca,caseName), 1]  = yes ;
 scase2Name(ca,caseName) = yes $ sum[ (sca(ca),scn(caseName)) $ case2Name(ca,caseName), 1 ] ;
 
