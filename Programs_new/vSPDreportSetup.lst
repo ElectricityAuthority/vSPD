@@ -1,0 +1,196 @@
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 08/08/23 15:40:46 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  *===============================================================================
+   2  * Name:                 vSPDreportSetup.gms
+   3  * Function:             Creates the report templates for normal SPD run
+   4  * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
+   5  * Source:               https://github.com/ElectricityAuthority/vSPD
+   6  *                       https://www.emi.ea.govt.nz/Tools/vSPD
+   7  * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
+   8  *                       Email: emi@ea.govt.nz
+   9  * Last modified on:     1 Oct 2019
+  10  * Last modified on:     08 August 2023
+  11  *                       add Period to report
+  12  *===============================================================================
+  13   
+INCLUDE    C:\vSPD\vSPD\Programs_new\vSPDsettings.inc
+  15  *+++ vSPD settings +++
+  18   
+  19  *+++ Paths +++
+  21   
+  26   
+  28   
+  29   
+  30  *+++ Model +++
+  31  Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+  32  Scalar disconnectedNodePriceCorrection   / 1 / ;
+  33  Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
+  34   
+  35   
+  36  *+++ Network +++
+  37  Scalar useACLossModel                    / 1 /    ;
+  38  Scalar useHVDCLossModel                  / 1 /    ;
+  39  Scalar useACBranchLimits                 / 1 /    ;
+  40  Scalar useHVDCBranchLimits               / 1 /    ;
+  41  Scalar resolveCircularBranchFlows        / 1 /    ;
+  42  Scalar resolveHVDCNonPhysicalLosses      / 1 /    ;
+  43  Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for future code development
+  44  Scalar circularBranchFlowTolerance       / 1e-4 / ;
+  45  Scalar nonPhysicalLossTolerance          / 1e-6 / ;
+  46  Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
+  47   
+  48   
+  49  *+++ Constraints +++
+  50  Scalar useReserveModel                   / 1 /    ;
+  51  Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
+  52  Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
+  53   
+  54   
+  55  *+++ Solver +++
+  56  Scalar LPtimeLimit                       / 3600 / ;
+  57  Scalar LPiterationLimit                  / 2000000000 / ;
+  58  Scalar MIPtimeLimit                      / 3600 / ;
+  59  Scalar MIPiterationLimit                 / 2000000000 / ;
+  60  Scalar MIPoptimality                     / 0 / ;
+  63   
+  64   
+  65  *+++ Various switches +++
+  67   
+  68  File rep "Write a progess report" /"ProgressReport.txt"/ ;
+  69  rep.lw = 0 ; rep.ap = 1 ;
+  70  putclose rep "vSPDreportSetup started at: " system.date " " system.time /;
+  71   
+  72  * Trade Period Reports *********************************************************
+  73  File summaryResults_TP   / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_SummaryResults_TP.csv" /;
+  74  summaryResults_TP.pc = 5; summaryResults_TP.lw = 0; summaryResults_TP.pw = 9999;
+  75  put summaryResults_TP 'CaseID','DateTime','Period','SolveStatus (1=OK)', 'SystemOFV'
+  76      'SystemCost', 'SystemBenefit', 'ViolationCost'
+  77      'DeficitGenViol (MW)', 'SurplusGenViol (MW)', 'DeficitReserveViol (MW)'
+  78      'SurplusBranchFlowViol (MW)', 'DeficitRampRateViol (MW)'
+  79      'SurplusRampRateViol (MW)', 'DeficitBranchGroupConstraintViol (MW)'
+  80      'SurplusBranchGroupConstraintViol (MW)',
+  81      'DeficitMNodeConstraintViol (MW)', 'SurplusMNodeConstraintViol (MW)';
+  82   
+  83   
+  84  File islandResults_TP    / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_IslandResults_TP.csv" /;
+  85  islandResults_TP.pc = 5; islandResults_TP.lw = 0; islandResults_TP.pw = 9999;
+  86  put islandResults_TP 'CaseID','DateTime','Period', 'Island', 'Gen (MW)', 'Load (MW)'
+  87      'Bid Load (MW)', 'IslandACLoss (MW)', 'HVDCFlow (MW)', 'HVDCLoss (MW)'
+  88      'ReferencePrice ($/MWh)', 'FIR_req (MW)', 'SIR_req (MW)',
+  89      'FIR Price ($/MWh)', 'SIR Price ($/MWh)'
+  90  * NIRM output
+  91      'FIR_Clear', 'SIR_Clear', 'FIR_Share', 'SIR_Share'
+  92      'FIR_Receive', 'SIR_Receive', 'FIR_Effective_CE', 'SIR_Effective_CE'
+  93      'FIR_Effective_ECE', 'SIR_Effective_ECE'
+  94  *NIRM output end
+  95  ;
+  96   
+  97   
+  98  File busResults_TP       / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_BusResults_TP.csv" /;
+  99  busResults_TP.pc = 5; busResults_TP.lw = 0; busResults_TP.pw = 9999;
+ 100  put busResults_TP 'CaseID','DateTime','Period', 'Bus', 'Generation (MW)', 'Load (MW)'
+ 101      'Price ($/MWh)', 'Deficit(MW)', 'Surplus(MW)';
+ 102   
+ 103   
+ 104  File nodeResults_TP      / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_NodeResults_TP.csv" /;
+ 105  nodeResults_TP.pc = 5; nodeResults_TP.lw = 0; nodeResults_TP.pw = 9999;
+ 106  put nodeResults_TP 'CaseID','DateTime','Period', 'Node', 'Generation (MW)', 'Load (MW)'
+ 107      'Price ($/MWh)', 'Deficit(MW)', 'Surplus(MW)';
+ 108   
+ 109   
+ 110  File offerResults_TP     / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_OfferResults_TP.csv" /;
+ 111  offerResults_TP.pc = 5; offerResults_TP.lw = 0; offerResults_TP.pw = 9999;
+ 112  put offerResults_TP 'CaseID','DateTime','Period', 'Offer', 'Trader'
+ 113       'Generation (MW)', 'FIR (MW)', 'SIR (MW)' ;
+ 114   
+ 115   
+ 116  File bidResults_TP       / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_BidResults_TP.csv" /;
+ 117  bidResults_TP.pc = 5; bidResults_TP.lw = 0; bidResults_TP.pw = 9999;
+ 118  put bidResults_TP 'CaseID','DateTime','Period', 'Bid', 'Trader'
+ 119      'Total Bid (MW)', 'Cleared Bid (MW)' ;
+ 120   
+ 121   
+ 122  File reserveResults_TP   / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_ReserveResults_TP.csv" /;
+ 123  reserveResults_TP.pc = 5; reserveResults_TP.lw = 0; reserveResults_TP.pw = 9999;
+ 124  put reserveResults_TP 'CaseID','DateTime','Period', 'Island', 'FIR Reqd (MW)', 'SIR Reqd (MW)'
+ 125      'FIR Price ($/MW)', 'SIR Price ($/MW)', 'FIR Violation (MW)', 'SIR Violation (MW)' ;
+ 126   
+ 127   
+ 128  File riskResults_TP   / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_RiskResults_TP.csv" /;
+ 129  riskResults_TP.pc = 5; riskResults_TP.lw = 0; riskResults_TP.pw = 9999;
+ 130  put riskResults_TP 'CaseID','DateTime','Period', 'Island', 'ReserveClass', 'RiskClass'
+ 131      'RiskType','RiskSetter','CoveredEnergy','CoveredReserve','CoveredFKBand'
+ 132      'RiskSubtractor','Reserve','Shortfall','Deficit','ReservePrice','RiskPrice';
+ 133   
+ 134   
+ 135  File branchResults_TP    / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_BranchResults_TP.csv" /;
+ 136  branchResults_TP.pc = 5; branchResults_TP.lw = 0; branchResults_TP.pw = 9999;
+ 137  put branchResults_TP 'CaseID','DateTime','Period', 'Branch', 'FromBus', 'ToBus'
+ 138      'Flow (MW) (From->To)', 'Capacity (MW)', 'DynamicLoss (MW)'
+ 139      'FixedLoss (MW)', 'FromBusPrice ($/MWh)', 'ToBusPrice ($/MWh)'
+ 140      'BranchPrice ($/MWh)', 'BranchRentals ($)' ;
+ 141   
+ 142   
+ 143  File brCstrResults_TP    / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_BrConstraintResults_TP.csv" /;
+ 144  brCstrResults_TP.pc = 5; brCstrResults_TP.lw = 0; brCstrResults_TP.pw = 9999;
+ 145  put brCstrResults_TP 'CaseID','DateTime','Period', 'BranchConstraint', 'LHS (MW)'
+ 146      'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
+ 147   
+ 148   
+ 149  File MNodeCstrResults_TP / "C:\vSPD\vSPD\Programs_new\..\Output\\RTD_20230731_new\RTD_20230731_new_MNodeConstraintResults_TP.csv" /;
+ 150  MNodeCstrResults_TP.pc = 5; MNodeCstrResults_TP.lw = 0; MNodeCstrResults_TP.pw = 9999 ;
+ 151  put MNodeCstrResults_TP 'CaseID','DateTime','Period', 'MNodeConstraint', 'LHS (MW)'
+ 152      'Sense (-1:<=, 0:=, 1:>=)', 'RHS (MW)', 'Price ($/MWh)' ;
+ 153   
+ 154   
+ 155  *===============================================================================
+ 156  * Audit mode reporting process
+ 157  *===============================================================================
+ 159   
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 08/08/23 15:40:46 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\vSPD\vSPD\Programs_new\vSPDreportSetup.gms
+     2       14 INCLUDE        1      14  .C:\vSPD\vSPD\Programs_new\vSPDsettings.inc
+
+
+COMPILATION TIME     =        0.000 SECONDS      2 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 08/08/23 15:40:46 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+**** REPORT FILE SUMMARY
+
+rep C:\vSPD\vSPD\Programs_new\ProgressReport.txt
+summaryResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_SummaryResults_TP.csv
+islandResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_IslandResults_TP.csv
+busResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_BusResults_TP.csv
+nodeResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_NodeResults_TP.csv
+offerResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_OfferResults_TP.csv
+bidResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_BidResults_TP.csv
+reserveResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_ReserveResults_TP.csv
+riskResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_RiskResults_TP.csv
+branchResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_BranchResults_TP.csv
+brCstrResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_BrConstraintResults_TP.csv
+MNodeCstrResults_TP C:\vSPD\vSPD\Output\RTD_20230731_new\RTD_20230731_new_MNodeConstraintResults_TP.csv
+
+
+EXECUTION TIME       =        0.000 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+
+
+USER: Small MUD-5 User License                       G220916|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S10
+
+
+**** FILE SUMMARY
+
+Input      C:\vSPD\vSPD\Programs_new\vSPDreportSetup.gms
+Output     C:\vSPD\vSPD\Programs_new\vSPDreportSetup.lst

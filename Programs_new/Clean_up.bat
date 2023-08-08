@@ -1,0 +1,8 @@
+del "*.lst"
+del "*.lxi"
+del "*.log"
+del "*.put"
+del "*.txt"
+del "*.gdx"
+del "*.gsp"
+del /S "*.~*"
