@@ -310,6 +310,8 @@ $gdxin "%inputPath%\%GDXname%.gdx"
 $load n=i_node  node2node=i_dateTimeNodetoNode  refNode=i_dateTimeReferenceNode
 
 $load b=i_bus
+$load busIsland = i_dateTimeBusIsland
+$load busElectricalIsland = i_dateTimeBusElectricalIsland
 
 $load offerTrader = i_dateTimeOfferTrader
 $load offerNode = i_dateTimeOfferNode
@@ -317,7 +319,7 @@ $load offerNode = i_dateTimeOfferNode
 $load bidTrader = i_dateTimeBidTrader
 $load bidNode = i_dateTimeBidNode
 $load nodeBus = i_dateTimeNodeBus
-$load busIsland = i_dateTimeBusIsland
+
 $load branchDefn = i_dateTimeBranchDefn
 $load riskGenerator = i_dateTimeRiskGenerator
 $load PrimarySecondaryOffer = i_dateTimePrimarySecondaryOffer
@@ -346,7 +348,7 @@ $load branchParameter = i_dateTimeBranchParameter
 $load branchCapacity = i_dateTimeBranchCapacity
 $load branchOpenStatus = i_dateTimeBranchOpenStatus
 $load nodeBusAllocationFactor = i_dateTimeNodeBusAllocationFactor
-$load busElectricalIsland = i_dateTimeBusElectricalIsland
+
 
 $load riskParameter = i_dateTimeRiskParameter
 $load islandMinimumRisk = i_dateTimeManualRisk
