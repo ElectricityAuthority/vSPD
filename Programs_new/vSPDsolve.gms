@@ -306,114 +306,33 @@ $gdxin
 
 * Call the GDX routine and load the input data:
 $gdxin "%inputPath%\%GDXname%.gdx"
-* Sets
-$load n=i_node  node2node=i_dateTimeNodetoNode  refNode=i_dateTimeReferenceNode
+$load gdxDate = i_gdxDate  caseDefn = i_caseDefn  runMode = i_runMode
 
-$load b=i_bus
-$load busIsland = i_dateTimeBusIsland
-$load busElectricalIsland = i_dateTimeBusElectricalIsland
+$load dtParameter = i_dateTimeParameter  dtIslandParameter = i_dateTimeIslandParameter
 
-$load offerTrader = i_dateTimeOfferTrader
-$load offerNode = i_dateTimeOfferNode
+$load n = i_node  node2node = i_dateTimeNodetoNode  refNode = i_dateTimeReferenceNode nodeParameter = i_dateTimeNodeParameter
 
-$load bidTrader = i_dateTimeBidTrader
-$load bidNode = i_dateTimeBidNode
-$load nodeBus = i_dateTimeNodeBus
+$load b = i_bus  busIsland = i_dateTimeBusIsland  busElectricalIsland = i_dateTimeBusElectricalIsland
+$load nodeBus = i_dateTimeNodeBus  nodeBusAllocationFactor = i_dateTimeNodeBusAllocationFactor
 
-$load branchDefn = i_dateTimeBranchDefn
-$load riskGenerator = i_dateTimeRiskGenerator
-$load PrimarySecondaryOffer = i_dateTimePrimarySecondaryOffer
-$load dispatchableBid =  i_dateTimeDispatchableBid
-*$load rg = i_riskGroup
-$load riskGroupOffer = i_dateTimeRiskGroup
-$load nodeoutagebranch = i_dateTimeNodeOutageBranch
+$load branchDefn = i_dateTimeBranchDefn  nodeoutagebranch = i_dateTimeNodeOutageBranch  branchParameter = i_dateTimeBranchParameter 
+$load branchCstrFactors = i_dateTimeBranchConstraintFactors  branchCstrRHS = i_dateTimeBranchConstraintRHS
 
-* Parameters
-$load caseGdxDate = gdxDate caseIntervalDuration = i_intervalLength
-$load offerParameter = i_dateTimeOfferParameter
-$load energyOffer = i_dateTimeEnergyOffer
-$load fastPLSRoffer = i_dateTimeFastPLSRoffer
-$load sustainedPLSRoffer =  i_dateTimeSustainedPLSRoffer
-$load fastTWDRoffer = i_dateTimeFastTWDRoffer
-$load sustainedTWDRoffer = i_dateTimeSustainedTWDRoffer
-$load fastILRoffer = i_dateTimeFastILRoffer
-$load sustainedILRoffer = i_dateTimeSustainedILRoffer
+$load offerNode = i_dateTimeOfferNode  offerTrader = i_dateTimeOfferTrader  primarySecondaryOffer = i_dateTimePrimarySecondaryOffer
+$load energyOffer = i_dateTimeEnergyOffer  reserveOffer = i_dateTimeReserveOffer  offerParameter = i_dateTimeOfferParameter
 
+$load bidNode = i_dateTimeBidNode  bidTrader = i_dateTimeBidTrader
 $load energyBid = i_dateTimeEnergyBid
-$load nodeDemand = i_dateTimeNodeDemand
 
-
-$load HVDCBranch = i_dateTimeHVDCBranch
-$load branchParameter = i_dateTimeBranchParameter
-$load branchCapacity = i_dateTimeBranchCapacity
-$load branchOpenStatus = i_dateTimeBranchOpenStatus
-$load nodeBusAllocationFactor = i_dateTimeNodeBusAllocationFactor
-
-
-$load riskParameter = i_dateTimeRiskParameter
-$load islandMinimumRisk = i_dateTimeManualRisk
-$load HVDCsecRiskEnabled = i_dateTimeHVDCsecRiskEnabled
-$load HVDCsecRiskSubtractor = i_dateTimeHVDCsecRiskSubtractor
-$load ReserveMaximumFactor = i_dateTimeReserveMaximumFactor
-
-$load branchCstrFactors = i_dateTimeBranchConstraintFactors
-$load branchCstrRHS = i_dateTimeBranchConstraintRHS
-$load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors
-$load mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
-$load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors
-$load mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
 $load mnCnstrRHS = i_dateTimeMNCnstrRHS
+$load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
+$load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
 
-* National market for IR effective date 20 Oct 2016
-$load reserveRoundPower     = i_dateTimeReserveRoundPower
-$load reserveShareEnabled   = i_dateTimeReserveSharing
-$load modulationRiskClass   = i_dateTimeModulationRisk
-$load roundPower2MonoLevel  = i_dateTimeRoundPower2Mono
-$load bipole2MonoLevel      = i_dateTimeBipole2Mono
-$load monopoleMinimum       = i_dateTimeReserveSharingPoleMin
-$load HVDCControlBand       = i_dateTimeHVDCcontrolBand
-$load HVDClossScalingFactor = i_dateTimeHVDClossScalingFactor
-$load sharedNFRfactor       = i_dateTimeSharedNFRfactor
-$load sharedNFRLoadOffset   = i_dateTimeSharedNFRLoadOffset
-$load effectiveFactor       = i_dateTimeReserveEffectiveFactor
-$load RMTreserveLimitTo     = i_dateTimeRMTreserveLimit
-$load rampingConstraint     = i_dateTimeRampingConstraint
+$load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharingParameter  riskGroupOffer = i_dateTimeRiskGroup
 
-*Real Time Pricing Project
-$load caseStudyMode                   = i_studyMode
-$load useGenInitialMW             = i_dateTimeUseGenInitialMW
-$load runEnrgShortfallTransfer    = i_dateTimeRunEnrgShortfallTransfer
-$load runPriceTransfer            = i_dateTimeRunPriceTransfer
-$load replaceSurplusPrice         = i_dateTimeReplaceSurplusPrice
-$load rtdIgIncreaseLimit          = i_dateTimeRtdIgIncreaseLimit
-$load useActualLoad               = i_dateTimeUseActualLoad
-$load dontScaleNegativeLoad       = i_dateTimeDontScaleNegativeLoad
-$load inputInitialLoad            = i_dateTimeInputInitialLoad
-$load conformingFactor            = i_dateTimeConformingFactor
-$load nonConformingLoad           = i_dateTimeNonConformingLoad
-$load loadIsOverride              = i_dateTimeLoadIsOverride
-$load loadIsBad                   = i_dateTimeLoadIsBad
-$load loadIsNCL                   = i_dateTimeLoadIsNCL
-$load maxLoad                     = i_dateTimeMaxLoad
-$load instructedLoadShed          = i_dateTimeInstructedLoadShed
-$load InstructedShedActive        = i_dateTimeInstructedShedActive
-$load islandMWIPS                 = i_dateTimeIslandMWIPS
-$load islandPDS                   = i_dateTimeIslandPDS
-$load islandLosses                = i_dateTimeIslandLosses
-$load enrgShortfallRemovalMargin  = i_dateTimeEnrgShortfallRemovalMargin
-$load maxSolveLoops               = i_dateTimeMaxSolveLoops
-$load SPDLoadCalcLosses           = i_dateTimeSPDLoadCalcLosses
+$load scarcityNationalFactor = i_dateTimeScarcityNationalFactor  scarcityResrvLimit = i_dateTimeScarcityResrvLimit
+$load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit   
 
-$load energyScarcityEnabled       = i_dateTimeEnergyScarcityEnabled
-$load reserveScarcityEnabled      = i_dateTimeReserveScarcityEnabled
-$load scarcityEnrgNationalFactor  = i_dateTimeScarcityEnrgNationalFactor
-$load scarcityEnrgNationalPrice   = i_dateTimeScarcityEnrgNationalPrice
-$load scarcityEnrgNodeFactor      = i_dateTimeScarcityEnrgNodeFactor
-$load scarcityEnrgNodeFactorPrice = i_dateTimeScarcityEnrgNodeFactorPrice
-$load scarcityEnrgNodeLimit       = i_dateTimeScarcityEnrgNodeLimit
-$load scarcityEnrgNodeLimitPrice  = i_dateTimeScarcityEnrgNodeLimitPrice
-$load scarcityResrvIslandLimit    = i_dateTimeScarcityResrvIslandLimit
-$load scarcityResrvIslandPrice    = i_dateTimeScarcityResrvIslandPrice
 $gdxin
 
 *===============================================================================
@@ -426,10 +345,6 @@ $gdxin
 
 * Gregorian date of when symbols have been included into the GDX files
 Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
-
-gdxDate('year')  = sum[ca $ (ord(ca)=1), caseGdxDate(ca,'year')]  ;
-gdxDate('month') = sum[ca $ (ord(ca)=1), caseGdxDate(ca,'month')] ;
-gdxDate('day')   = sum[ca $ (ord(ca)=1), caseGdxDate(ca,'day')]   ;
 
 inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
 
@@ -480,11 +395,9 @@ $if exist "%ovrdPath%%vSPDinputOvrdData%.gdx"  $include vSPDoverrides.gms
 * 5. Initialise model mapping and inputs
 *===============================================================================
 
-* Calculate studyMode(t)
-studyMode(ca,dt) = caseStudyMode(ca);
-
-* Calculate IntervalDuration(t)
-IntervalDuration(ca,dt) = caseIntervalDuration(ca);
+* Calculate studyMode(t) and IntervalDuration(t)
+studyMode(ca,dt)        = runMode(ca,'studyMode');
+IntervalDuration(ca,dt) = runMode(ca,'intervalLength');
 
 * Check if NMIR is enabled
 UseShareReserve(ca) = 1 $ sum[ (dt,resC), reserveShareEnabled(ca,dt,resC)] ;
@@ -513,20 +426,24 @@ reserveMaximumFactor(ca,dt,o,resC) $ { windOffer(ca,dt,o) and priceResponsive(ca
 
 * Initialise offer limits and prices -------------------------------------------
 * Initialise energy offer data for the current trade period start
-EnrgOfrMW(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'limitMW')  $ dispatchableEnrgOffer(ca,dt,o) ;
-EnrgOfrPrice(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'price') $ dispatchableEnrgOffer(ca,dt,o) ;
+EnrgOfrMW(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'limitMW')  $ { offerParameter(ca,dt,o,'dispatchable') = 1 } ;
+EnrgOfrPrice(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'price') $ { offerParameter(ca,dt,o,'dispatchable') = 1 } ;
+
+
+
 * Initialise reserve offer data for the current trade period start
 PLRO(resT) $ (ord(resT) = 1) = yes ;
 TWRO(resT) $ (ord(resT) = 2) = yes ;
 ILRO(resT) $ (ord(resT) = 3) = yes ;
 
-ResOfrPct(ca,dt,o,blk,resC) = (fastPLSRoffer(ca,dt,o,blk,'plsrPct') / 100)$(ord(resC)=1 ) + (sustainedPLSRoffer(ca,dt,o,blk,'plsrPct') / 100)$(ord(resC)=2);
-ResOfrMW(ca,dt,o,blk,resC,PLRO) = fastPLSRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=1)  + sustainedPLSRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=2) ;
-ResOfrMW(ca,dt,o,blk,resC,TWRO) = fastTWDRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=1)  + sustainedTWDRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=2) ;
-ResOfrMW(ca,dt,o,blk,resC,ILRO) = fastILRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=1)   + sustainedILRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=2) ;
-ResOfrPrice(ca,dt,o,blk,resC,PLRO) = fastPLSRoffer(ca,dt,o,blk,'price')$(ord(resC)=1) + sustainedPLSRoffer(ca,dt,o,blk,'price')$(ord(resC)=2) ;
-ResOfrPrice(ca,dt,o,blk,resC,TWRO) = fastTWDRoffer(ca,dt,o,blk,'price')$(ord(resC)=1) + sustainedTWDRoffer(ca,dt,o,blk,'price')$(ord(resC)=2) ;
-ResOfrPrice(ca,dt,o,blk,resC,ILRO) = fastILRoffer(ca,dt,o,blk,'price')$(ord(resC)=1)  + sustainedILRoffer(ca,dt,o,blk,'price')$(ord(resC)=2)  ;
+ResOfrPct(ca,dt,o,blk,resC)        = reserveOffer(ca,dt,o,resC,'PLRO',blk,'plsrPct') / 100 ;
+ResOfrMW(ca,dt,o,blk,resC,resT)    = reserveOffer(ca,dt,o,resC,resT,blk,'limitMW')  ;
+ResOfrPrice(ca,dt,o,blk,resC,resT) = reserveOffer(ca,dt,o,resC,resT,blk,'price')  ;
+
+
+
+
+
 *-------------------------------------------------------------------------------
 
 * Define valid offers and valid offer block ------------------------------------
@@ -546,8 +463,9 @@ resOfrBlk(ca,dt,o,blk,resC,resT) $ (ResOfrMW(ca,dt,o,blk,resC,resT) > 0) = yes ;
 * Valid bid must be mapped to a bus with electrical island <> 0
 bid(ca,dt,bd) $ sum[ (n,b) $ { bidNode(ca,dt,bd,n) and nodeBus(ca,dt,n,b) }, busElectricalIsland(ca,dt,b) ] = yes ;
 * Bid energy data and valid bid block
-DemBidMW(bid,blk)    $ dispatchableBid(bid) = energyBid(bid,blk,'limitMW') ;
-DemBidPrice(bid,blk) $ dispatchableBid(bid) = energyBid(bid,blk,'price')   ;
+
+DemBidMW(bid,blk)    $ { bidParameter(bid,'dispatchable') = 1 } = energyBid(bid,blk,'limitMW') ;
+DemBidPrice(bid,blk) $ { bidParameter(bid,'dispatchable') = 1 } = energyBid(bid,blk,'price')   ;
 DemBidBlk(bid,blk)   $ ( DemBidMW(bid,blk) <> 0 ) = yes ;
 *-------------------------------------------------------------------------------
 
@@ -558,7 +476,9 @@ bus(ca,dt,b)  = yes $ sum[ isl $ busIsland(ca,dt,b,isl), 1 ] ;
 nodeIsland(ca,dt,n,isl) $ sum[ b $ { bus(ca,dt,b) and node(ca,dt,n) and nodeBus(ca,dt,n,b) and busIsland(ca,dt,b,isl) }, 1 ] = yes ;
 offerIsland(offer(ca,dt,o),isl) $ sum[ n $ { offerNode(ca,dt,o,n) and nodeIsland(ca,dt,n,isl) }, 1 ] = yes ;
 bidIsland(bid(ca,dt,bd),isl) $ sum[ n $ { bidNode(ca,dt,bd,n) and nodeIsland(ca,dt,n,isl) }, 1 ] = yes ;
-islandRiskGenerator(ca,dt,isl,o) $ { offerIsland(ca,dt,o,isl) and riskGenerator(ca,dt,o) } = yes ;
+
+
+islandRiskGenerator(ca,dt,isl,o) $ { offerIsland(ca,dt,o,isl) and offerParameter(ca,dt,o,'riskGenerator') } = yes ;
 
 * Identification of primary and secondary units
 PrimaryOffer(ca,dt,o) = 1 ;
@@ -567,18 +487,23 @@ PrimaryOffer(ca,dt,o) $ SecondaryOffer(ca,dt,o) = 0 ;
 *-------------------------------------------------------------------------------
 
 * Initialize AC and DC branches ------------------------------------------------
-*Branch is defined if there is a defined terminal bus, it is in servcie for that trade period and has positive capacity limit for both direction (only forward direction for HVDC).
-branch(ca,dt,br) = yes $ { (not branchOpenStatus(ca,dt,br)) and branchCapacity(ca,dt,br,'forward') and branchCapacity(ca,dt,br,'backward') and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] }  ;
-branch(ca,dt,br) $ { (not branchOpenStatus(ca,dt,br)) and (HVDCBranch(ca,dt,br)) and branchCapacity(ca,dt,br,'forward') and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] } = yes ;
+* Branch is defined if there is a defined terminal bus, it is in servcie for that trade period and has positive capacity limit for both direction (only forward direction for HVDC).
+branchCapacity(ca,dt,br,'forward')  = branchParameter(ca,dt,br,'forwardCap') ;
+branchCapacity(ca,dt,br,'backward') = branchParameter(ca,dt,br,'backwardCap') ;
 
-branchBusDefn(branch,b,b1) $ branchDefn(branch,b,b1)    = yes ;
-branchFrBus(branch,frB) $ sum[ toB $ branchBusDefn(branch,frB,toB), 1 ] = yes ;
-branchToBus(branch,toB) $ sum[ frB $ branchBusDefn(branch,frB,toB), 1 ] = yes ;
+branch(ca,dt,br) = yes $ { (not branchParameter(ca,dt,br,'isOpen')) and branchCapacity(ca,dt,br,'forward') and branchCapacity(ca,dt,br,'backward')
+                       and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] }  ;
+branch(ca,dt,br) $ { (not branchParameter(ca,dt,br,'isOpen')) and (branchParameter(ca,dt,br,'HVDCbranch')) and branchCapacity(ca,dt,br,'forward')
+                 and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] } = yes ;
+
+branchBusDefn(branch,b,b1) $ branchDefn(branch,b,b1)                            = yes ;
+branchFrBus(branch,frB)    $ sum[ toB $ branchBusDefn(branch,frB,toB), 1 ]      = yes ;
+branchToBus(branch,toB)    $ sum[ frB $ branchBusDefn(branch,frB,toB), 1 ]      = yes ;
 branchBusConnect(branch,b) $ { branchFrBus(branch,b) or branchToBus(branch,b) } = yes ;
 
 * HVDC link and AC branch definition
-HVDClink(branch) = yes $ HVDCBranch(branch) ;
-ACbranch(branch) = yes $ [not HVDCBranch(branch)];
+HVDClink(branch) = yes $ branchParameter(branch,'HVDCbranch') ;
+ACbranch(branch) = yes $ [not branchParameter(branch,'HVDCbranch')];
 
 * Determine sending and receiving bus for each branch flow direction
 loop ((frB,toB),
@@ -764,13 +689,13 @@ HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <
 * Initialze parameters for NMIR project end ----------------------------------
 
 * Initialise risk/reserve data for the current trade period start
-GenRisk(riskC)     $ { (ord(riskC) = 1) or (ord(riskC) = 5) } = yes ;
-HVDCrisk(riskC)    $ { (ord(riskC) = 2) or (ord(riskC) = 3) } = yes ;
-ManualRisk(riskC)  $ { (ord(riskC) = 4) or (ord(riskC) = 6) } = yes ;
+GenRisk(riskC)     $ { (ord(riskC) = 1) or (ord(riskC) = 2) } = yes ;
+HVDCrisk(riskC)    $ { (ord(riskC) = 3) or (ord(riskC) = 4) } = yes ;
+ManualRisk(riskC)  $ { (ord(riskC) = 5) or (ord(riskC) = 6) } = yes ;
 HVDCsecRisk(riskC) $ { (ord(riskC) = 7) or (ord(riskC) = 8) } = yes ;
 * Define the CE and ECE risk class set to support the different CE and ECE CVP
-ContingentEvents(riskC)        $ { (ord(riskC) = 1) or (ord(riskC) = 2) or (ord(riskC) = 4) or (ord(riskC) = 7) } = yes ;
-ExtendedContingentEvent(riskC) $ { (ord(riskC) = 3) or (ord(riskC) = 5) or (ord(riskC) = 6) or (ord(riskC) = 8) }= yes ;
+ContingentEvents(riskC)        $ { (ord(riskC) = 1) or (ord(riskC) = 3) or (ord(riskC) = 5) or (ord(riskC) = 7) } = yes ;
+ExtendedContingentEvent(riskC) $ { (ord(riskC) = 2) or (ord(riskC) = 4) or (ord(riskC) = 6) or (ord(riskC) = 8) } = yes ;
 
 * Risk parameters
 IslandRiskAdjustmentFactor(ca,dt,isl,resC,riskC) $ useReserveModel = riskParameter(ca,dt,isl,resC,riskC,'adjustFactor') ;
@@ -798,15 +723,11 @@ o_offerEnergy_TP(ca,dt,o) = 0;
 
 
 * Initialise demand/bid data ---------------------------------------------------
-RequiredLoad(node) = nodeDemand(node) ;
+RequiredLoad(node) = nodeParameter(ca,dt,n,'demand') ;
 
 * 4.9.2 Dispatchable Pnodes
-$ontext
-If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then
-PnodeRequiredLoadpn is set to zero. The Pnode load will be determined by
-clearing the Pnode's Dispatchable Demand Bid when the LP Model is solved.
-$offtext
-RequiredLoad(node(ca,dt,n)) $ { sum[ (bd,blk) $ ( bidNode(ca,dt,bd,n) and (not differenceBid(ca,dt,bd) ) ), DemBidMW(ca,dt,bd,blk) ] > 0 } = 0;
+* If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then PnodeRequiredLoad is set to zero. This is not applicable for "difference bid"
+RequiredLoad(node(ca,dt,n)) $ { sum[ (bd,blk) $ ( bidNode(ca,dt,bd,n) and (bidParameter(ca,dt,bd,'difference') = 0 ) ), DemBidMW(ca,dt,bd,blk) ] > 0 } = 0;
 *-------------------------------------------------------------------------------
 
 * Initialize energy scarcity limits and prices ---------------------------------

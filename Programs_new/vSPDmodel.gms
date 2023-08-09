@@ -46,35 +46,34 @@ Sets
   los(*)              'Loss segments available for loss modelling'              / ls1*ls13 /
   fd(*)               'Directional flow definition used in the SPD formulation' / forward, backward /
   resC(*)             'Definition of fast and sustained instantaneous reserve'  / FIR, SIR /
-  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, DCCE, DCECE, manual, genRiskECE, manualECE, HVDCsecRisk, HVDCsecRiskECE /
+  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE /
   resT(*)             'Definition of reserve types (PLSR, TWDR, ILR)'           / PLRO, TWRO, ILRO /
 
-  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD,
-                                                                          useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+  casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
+  
+  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+                                                                          
+  islPar(*)           'The various parameters applied for each island'  / HVDCsecRisk, HVDCsecRiskECE, HVDCSecSubtractor, sharedNFRLoadOffset, RMTlimitFIR, RMTlimitSIR, MWIPS, PDS, Losses, SPDLoadCalcLosses/
                                                                           
   bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct, factor /
   
-  offerPar(*)         'The various parameters required for each offer'  / initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW,
-                                                                          riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR /
+  offerPar(*)         'The various parameters required for each offer'  / initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW, riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR /
                                                                           
   bidPar(*)           'The various parameters required for each offer'  / dispatchable, discrete, difference /
   
-  nodePar(*)          'The various parameters applied for each  node'   / demand, initialLoad, conformingFactor, nonConformingFactor, loadIsOverride, loadIsBad,loadIsNCL,
-                                                                          maxLoad, instructedLoadShed, instructedShedActive, dispatchedLoad, dispatchedGeneration  /
+  nodePar(*)          'The various parameters applied for each  node'   / demand, initialLoad, conformingFactor, nonConformingFactor, loadIsOverride, loadIsBad,loadIsNCL, maxLoad, instructedLoadShed, instructedShedActive, dispatchedLoad, dispatchedGeneration /
+
+  brPar(*)            'Branch parameter specified'                      / forwardCap, backwardCap, resistance, susceptance, fixedLosses, numLossTranches, HVDCbranch, isOpen /                                                                          
                                                                           
-  islPar(*)           'The various parameters applied for each island'  / HVDCsecRisk, HVDCsecRiskECE, HVDCSecSubtractor, sharedNFRLoadOffset, RMTlimitFIR, RMTlimitSIR,
-                                                                          MWIPS, PDS, Losses, SPDLoadCalcLosses/
-                                                                          
-  resPar(*)           'Parameters applied to reserve class'             / sharingFIR, sharingSIR, roundPwrFIR, roundPwrSIR, roundPwr2Mono, biPole2Mono, monoPoleMin,
-                                                                          modulationRisk, lossScalingFactorHVDC, sharedNFRfactor,forwardHVDCcontrolBand, backwardHVDCcontrolBand /
+  resPar(*)           'Parameters applied to reserve class'             / sharingFIR, sharingSIR, roundPwrFIR, roundPwrSIR, roundPwr2Mono, biPole2Mono, monoPoleMin, modulationRisk, lossScalingFactorHVDC, sharedNFRfactor,forwardHVDCcontrolBand, backwardHVDCcontrolBand /
                                                                           
   riskPar(*)          'Different risk parameters'                       / freeReserve, adjustFactor, HVDCRampUp, manualRisk, sharingEffectiveFactor /
-  
-  brPar(*)            'Branch parameter specified'                      / forwardCap, backwardCap, resistance, susceptance, fixedLosses, numLossTranches, HVDCbranch, isOpen /
   
   CstrRHS(*)          'Constraint RHS definition'                       / cnstrSense, cnstrLimit, rampingCnstr /
   
   z(*)                'RP: round power, NR: no reverse, RZ: reverse'    /RP, NR, RZ/
+  
+  pole(*)             'HVDC poles'                                      / pole1, pole2 /
 
   testcases(*)        'Test Cases for RTP 4'                            /'MSS_21012023030850151_0X','MSS_21302023030830146_0X','MSS_21322023030800133_0X','MSS_61012023030935374_0X'/
   ;
@@ -98,96 +97,163 @@ Sets
   ;
 
 * Aliases
-Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB)
-      (n,n1,n2),          (o,o1,o2),        (bd,bd2,bd1),     (br,br1)
-      (fd,fd1,rd,rd1),    (z,z1,rrz,rrz1),  (rg,rg1),         (blk,blk1,blk2)
-      (los,los1,bp,bp1,rsbp,rsbp1)
+Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB),      (n,n1,n2),          (o,o1,o2),        (bd,bd2,bd1)
+      (br,br1),           (fd,fd1,rd,rd1),  (z,z1,rrz,rrz1),  (rg,rg1),            (blk,blk1,blk2),    (los,los1,bp,bp1,rsbp,rsbp1)
   ;
 
 * Dynamic sets that are loaded from GDX
 Sets
-* 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
+* Case/period sets
   caseDefn(ca,cn,rundt)                 'Mapping caseid - casename - rundatetime set'
   case2dt2tp(ca,dt,tp)                  'Mapping caseid - datetime - tradePeriod set'
-  
-  node2node(ca,dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
-  
-  offerNode(ca,dt,o<,n)                  'Offers and the corresponding offer node for the different trading periods'
-  offerTrader(ca,dt,o<,trdr<)            'Offers and the corresponding trader for the different trading periods'
-  bidNode(ca,dt,bd<,n)                   'Bids and the corresponding node for the different trading periods'
-  bidTrader(ca,dt,bd<,trdr<)             'Bids and the corresponding trader for the different trading periods'
-  busIsland(ca,dt,b,isl)                 'Bus island mapping for the different trade periods'
-  nodeBus(ca,dt,n,b)                     'Node bus mapping for the different trading periods'
-  branchDefn(ca,dt,br<,frB,toB)           'Branch definition for the different trading periods'
-  riskGenerator(ca,dt,o)                 'Set of generators (offers) that can set the risk in the different trading periods'
-  primarySecondaryOffer(ca,dt,o,o1)      'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
-  dispatchableBid(ca,dt,bd)              'Set of dispatchable bids - effective date 20 May 2014'
-  discreteModeBid(ca,dt,bd)              'Set of dispatchable discrete bids - Start From RTP phase 4 to support Dispatch Lite'
-  differenceBid(ca,dt,bd)                'Set of difference bids - applied to PRSS mostly'
-  dispatchableEnrgOffer(ca,dt,o)         'Set of dispatchable energy offer - Start From RTP phase 4 to support Dispatch Lite'
-  nodeoutagebranch(ca,dt,n,br)           'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
+
+* Node/bus sets  
+  node2node(ca,dt,n,n1)                 'Node to node mapping used for price and energy shortfall transfer'
+  busIsland(ca,dt,b,isl)                'Bus island mapping for the different trade periods'
+  nodeBus(ca,dt,n,b)                    'Node bus mapping for the different trading periods'
+
+* Branch sets  
+  branchDefn(ca,dt,br<,frB,toB)         'Branch definition for the different trading periods'
+  nodeoutagebranch(ca,dt,n,br)          'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
+
+* Offer sets
+  offerNode(ca,dt,o<,n)                 'Offers and the corresponding offer node for the different trading periods'
+  offerTrader(ca,dt,o,trdr<)            'Offers and the corresponding trader for the different trading periods'
+  primarySecondaryOffer(ca,dt,o,o1)     'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
+
+* Bid sets  
+  bidNode(ca,dt,bd<,n)                  'Bids and the corresponding node for the different trading periods'
+  bidTrader(ca,dt,bd,trdr<)             'Bids and the corresponding trader for the different trading periods'
+
+* Risk sets   
+  riskGroupOffer(ca,dt,rg<,o,riskC)     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
   ;
+
+
+* Paraeters loaded from GDX file in vSPDsolve.gms
+Parameters
+* Case-Period data
+  gdxDate(*)                                        'day, month, year of trade date applied to daily GDX'
+  runMode(ca,casePar)                               'Study mode and interval length applied to each caseID'
+  dtParameter(ca,dt,dtPar)                          'Parameters applied to each caseID-datetime pair'
+
+* Island data
+  dtIslandParameter(ca,dt,isl,islPar)               'Island parameters for the different trading periods'
+  
+* Nodal data
+  refNode(ca,dt,n)                                  'Reference nodes for the different trading periods'
+  nodeParameter(ca,dt,n,nodePar)                    'Nodal input data for all trading periods'
+  
+* Bus data
+  busElectricalIsland(ca,dt,b)                      'Electrical island status of each bus for the different trading periods (0 = Dead)'
+  nodeBusAllocationFactor(ca,dt,n,b)                'Allocation factor of market node quantities to bus for the different trading periods'
+  
+* Branch and branch constraint data
+  branchParameter(ca,dt,br,brPar)                   'Branch parameters for the different time periods'
+  branchCstrFactors(ca,dt,brCstr<,br)               'Branch security constraint factors (sensitivities) for the current trading period'
+  branchCstrRHS(ca,dt,brCstr,CstrRHS)               'Branch constraint sense and limit for the different trading periods'
+
+* Offer data
+  energyOffer(ca,dt,o,blk,bidofrCmpnt)              'Energy offers for the different trading periods'
+  reserveOffer(ca,dt,o,resC,resT,blk,bidofrCmpnt)   'Reserve offers for the different trading periods'
+  offerParameter(ca,dt,o,offerPar)                  'Initial MW for each offer for the different trading periods'
+
+* Bid data
+  energyBid(ca,dt,bd,blk,bidofrCmpnt)               'Energy bids for the different trading periods'
+  bidParameter(ca,dt,bd,bidPar)                     'Parameters applied to each bid for the different trading periods'
+  
+* Market node constraint data
+  mnCnstrRHS(ca,dt,MnodeCstr<,CstrRHS)              'Market node constraint sense and limit for the different trading periods'
+  mnCstrEnrgFactors(ca,dt,MnodeCstr,o)              'Market node energy offer constraint factors for the current trading period'
+  mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT)  'Market node reserve offer constraint factors for the current trading period'
+  mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd)         'Market node energy bid constraint factors for the different trading periods'
+  mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC)   'Market node IL reserve bid constraint factors for the different trading periods - currently not used'
+
+* Risk and reserve/sharing data
+  riskParameter(ca,dt,isl,resC,riskC,riskPar)       'Risk parameters for the different trading periods'
+  reserveSharingParameter(ca,dt,resPar)             'Reserve (sharing) parameters for the different trading periods'
+
+* Scarcity data
+  scarcityNationalFactor(ca,dt,blk,bidofrCmpnt)      'National energy scarcity factor parameters'  
+  scarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt)        'Nodal energy scarcity factor parameters'
+  scarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt)         'Nodal energy scarcity limit parameters' 
+  scarcityResrvLimit(ca,dt,isl,resC,blk,bidofrCmpnt) 'Reserve scarcity limit parameters' 
+  
+  ;
+
+* Setting scalars that are hard-coded or defined in vSPDSetting.inc
+Scalars
+  useAClossModel
+  useHVDClossModel
+  useACbranchLimits                        'Use the AC branch limits (1 = Yes)'
+  useHVDCbranchLimits                      'Use the HVDC branch limits (1 = Yes)'
+  resolveCircularBranchFlows               'Resolve circular branch flows (1 = Yes)'
+  resolveHVDCnonPhysicalLosses             'Resolve nonphysical losses on HVDC branches (1 = Yes)'
+  resolveACnonPhysicalLosses               'Resolve nonphysical losses on AC branches (1 = Yes)'
+  circularBranchFlowTolerance
+  nonPhysicalLossTolerance
+  useBranchFlowMIPtolerance
+  useReserveModel                          'Use the reserve model (1 = Yes)'
+  mixedMIPtolerance
+  LPtimeLimit                              'CPU seconds allowed for LP solves'
+  LPiterationLimit                         'Iteration limit allowed for LP solves'
+  MIPtimeLimit                             'CPU seconds allowed for MIP solves'
+  MIPiterationLimit                        'Iteration limit allowed for MIP solves'
+  MIPoptimality
+  disconnectedNodePriceCorrection          'Flag to apply price correction methods to disconnected node'
+  branchReceivingEndLossProportion         'Proportion of losses to be allocated to the receiving end of a branch' /1/
+
+* External loss model from Transpower
+  lossCoeff_A                       / 0.3101 /
+  lossCoeff_C                       / 0.14495 /
+  lossCoeff_D                       / 0.32247 /
+  lossCoeff_E                       / 0.46742 /
+  lossCoeff_F                       / 0.82247 /
+  maxFlowSegment                    / 10000 /
+  ;
+
+
+
+
+
+
+
 
 * Dynamic sets that are calculated on the fly
 Sets
+* Global
+  t(ca,dt)                               'Current trading interval to solve'
+
+* Node/bus
   node(ca,dt,n)                          'Node definition for the different trading periods'
   bus(ca,dt,b)                           'Bus definition for the different trading periods'
-  
-  ;
+;
+
+
+
+
+
+* Parameters calculated on the fly
 Parameters
-* 6 scalars - values are loaded from GDX file in vSPDsolve.gms
-  caseGdxDate(ca,*)                                 'day, month, year of trade date for each caseID'
-  gdxDate(*)                                        'day, month, year of trade date'
-  intervalDuration(ca,dt)                           'Length of the trading period in minutes (e.g. 30)'
-  caseIntervalDuration(ca)                          'Length of the trading period in minutes (e.g. 30) for each caseID'
 
-* 49 parameters - values are loaded from GDX file in vSPDsolve.gms
-* Offer data
-  offerParameter(ca,dt,o,offerPar)                     'Initial MW for each offer for the different trading periods'
-  energyOffer(ca,dt,o,blk,bidofrCmpnt)                 'Energy offers for the different trading periods'
-  fastPLSRoffer(ca,dt,o,blk,bidofrCmpnt)               'Fast (6s) PLSR offers for the different trading periods'
-  sustainedPLSRoffer(ca,dt,o,blk,bidofrCmpnt)          'Sustained (60s) PLSR offers for the different trading periods'
-  fastTWDRoffer(ca,dt,o,blk,bidofrCmpnt)               'Fast (6s) TWDR offers for the different trading periods'
-  sustainedTWDRoffer(ca,dt,o,blk,bidofrCmpnt)          'Sustained (60s) TWDR offers for the different trading periods'
-  fastILRoffer(ca,dt,o,blk,bidofrCmpnt)                'Fast (6s) ILR offers for the different trading periods'
-  sustainedILRoffer(ca,dt,o,blk,bidofrCmpnt)           'Sustained (60s) ILR offers for the different trading periods'
-
-* Bid data
-  energyBid(ca,dt,bd,blk,bidofrCmpnt)                  'Energy bids for the different trading periods'
-* Demand data
-  nodeDemand(ca,dt,n)                                  'MW demand at each node for all trading periods'
-
-* Network data
-  refNode(ca,dt,n)                                     'Reference nodes for the different trading periods'
-  HVDCBranch(ca,dt,br)                                 'HVDC branch indicator for the different trading periods'
-  branchParameter(ca,dt,br,brPar)                      'Branch resistance, reactance, fixed losses and number of loss tranches for the different time periods'
   branchCapacity(ca,dt,br,fd)                          'Branch directed capacity for the different trading periods in MW (Branch Reverse Ratings)'
-  branchOpenStatus(ca,dt,br)                           'Branch open status for the different trading periods, 1 = Open'
-  nodeBusAllocationFactor(ca,dt,n,b)                   'Allocation factor of market node quantities to bus for the different trading periods'
-  busElectricalIsland(ca,dt,b)                         'Electrical island status of each bus for the different trading periods (0 = Dead)'
+  
+
 
 * Risk/Reserve data
-  riskParameter(ca,dt,isl,resC,riskC,riskPar)          'Risk parameters for the different trading periods (From RMT)'
+  
   islandMinimumRisk(ca,dt,isl,resC,riskC)              'Minimum MW risk level for each island for each reserve class applied to risk classes: manual, manualECE, HVDCsecRisk and HVDCsecRiskECE'
+  
   HVDCSecRiskEnabled(ca,dt,isl,riskC)                  'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
   HVDCSecRiskSubtractor(ca,dt,isl)                     'Ramp up capability on the HVDC pole that is not the secondary risk'
   reserveMaximumFactor(ca,dt,o,resC)                   'Factor to adjust the maximum reserve of the different classes for the different offers'
 
-* Branch constraint data
-  branchCstrFactors(ca,dt,brCstr<,br)                   'Branch security constraint factors (sensitivities) for the current trading period'
-  branchCstrRHS(ca,dt,brCstr,CstrRHS)                  'Branch constraint sense and limit for the different trading periods'
 
-* Market node constraint data
-  mnCstrEnrgFactors(ca,dt,MnodeCstr<,o)                 'Market node energy offer constraint factors for the current trading period'
-  mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT)     'Market node reserve offer constraint factors for the current trading period'
-  mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd)            'Market node energy bid constraint factors for the different trading periods'
-  mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC)      'Market node IL reserve bid constraint factors for the different trading periods - currently not used'
-  mnCnstrRHS(ca,dt,MnodeCstr,CstrRHS)                  'Market node constraint sense and limit for the different trading periods'
+
+
 
 
 * Real Time Pricing - Inputs
-  studyMode(ca,dt)                                                     'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
-  caseStudyMode(ca)                                                    'Study mode applied in a CaseID'
   useGenInitialMW(ca,dt)                                               'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
   runEnrgShortfallTransfer(ca,dt)                                      'Flag that if set to 1 will enable shortfall transfer- post processing'
   runPriceTransfer(ca,dt)                                              'Flag that if set to 1 will enable price transfer - post processing.'
@@ -225,7 +291,7 @@ Parameters
   scarcityResrvIslandLimit(ca,dt,isl,resC,blk)                         'Reserve scarcity limits'
   scarcityResrvIslandPrice(ca,dt,isl,resC,blk)                         'Reserve scarcity prices'
 
- ;
+  ;
 
 * End of GDX declarations
 
@@ -235,41 +301,16 @@ Parameters
 * 2. Declare additional sets and parameters used throughout the model
 *===================================================================================
 
-Scalars
-  useAClossModel
-  useHVDClossModel
-  useACbranchLimits                        'Use the AC branch limits (1 = Yes)'
-  useHVDCbranchLimits                      'Use the HVDC branch limits (1 = Yes)'
-  resolveCircularBranchFlows               'Resolve circular branch flows (1 = Yes)'
-  resolveHVDCnonPhysicalLosses             'Resolve nonphysical losses on HVDC branches (1 = Yes)'
-  resolveACnonPhysicalLosses               'Resolve nonphysical losses on AC branches (1 = Yes)'
-  circularBranchFlowTolerance
-  nonPhysicalLossTolerance
-  useBranchFlowMIPtolerance
-  useReserveModel                          'Use the reserve model (1 = Yes)'
-  mixedMIPtolerance
-  LPtimeLimit                              'CPU seconds allowed for LP solves'
-  LPiterationLimit                         'Iteration limit allowed for LP solves'
-  MIPtimeLimit                             'CPU seconds allowed for MIP solves'
-  MIPiterationLimit                        'Iteration limit allowed for MIP solves'
-  MIPoptimality
-  disconnectedNodePriceCorrection          'Flag to apply price correction methods to disconnected node'
 
-  branchReceivingEndLossProportion         'Proportion of losses to be allocated to the receiving end of a branch' /1/
 
-* External loss model from Transpower
-  lossCoeff_A                       / 0.3101 /
-  lossCoeff_C                       / 0.14495 /
-  lossCoeff_D                       / 0.32247 /
-  lossCoeff_E                       / 0.46742 /
-  lossCoeff_F                       / 0.82247 /
-  maxFlowSegment                    / 10000 /
-  ;
-
+* Dynamic sets that are calculated on the fly
 Sets
 * Global
-  pole                                                   'HVDC poles' / pole1, pole2 /
-  t(ca,dt)                                                  'Current trading interval to solve'
+  t(ca,dt)                               'Current trading interval to solve'
+
+* Node/bus
+  node(ca,dt,n)                          'Node definition for the different trading periods'
+  bus(ca,dt,b)                           'Bus definition for the different trading periods'
 
 * Offer
   offer(ca,dt,o)                                            'Offers defined for the current trading period'
@@ -329,13 +370,16 @@ Sets
   bipoleConstraint(ca,dt,isl,brCstr)                                   'Subset of branch constraints that limit total HVDC sent from an island'
   monopoleConstraint(ca,dt,isl,brCstr,br)                              'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
 
-  riskGroupOffer(ca,dt,rg<,o,riskC)                                     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
+  
   islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
   ;
 
 Alias (t,t1,t2);
 
 Parameters
+  studyMode(ca,dt)                                  'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
+  intervalDuration(ca,dt)                           'Length of the trading period in minutes (e.g. 30) applied to each caseID-Period pair'
+  
 * Offers
   GenerationStart(ca,dt,o)                                  'The MW generation level associated with the offer at the start of a trading period'
   RampRateUp(ca,dt,o)                                       'The ramping up rate in MW per minute associated with the generation offer (MW/min)'
@@ -864,7 +908,7 @@ GenerationOfferDefintion(offer(t,o))..
   ;
 
 * Definition of discrete purchase mode (6.1.1.7)
-DemBidDiscrete(bid(t,bd),blk) $ discreteModeBid(bid) ..
+DemBidDiscrete(bid(t,bd),blk) $ { bidParameter(bid,'discrete') = 1 }..
   PURCHASEBLOCK(bid,blk)
 =e=
   PURCHASEBLOCKBINARY(bid,blk) * DemBidMW(bid,blk)
