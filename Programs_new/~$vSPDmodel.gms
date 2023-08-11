@@ -418,14 +418,14 @@ Parameters
 * NMIR parameters end
 
 * Real Time Pricing - Inputs
-  useGenInitialMW(ca,dt)                  'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
-  useActualLoad(ca,dt)                    'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
-  maxSolveLoops(ca,dt)                    'The maximum number of times that the Energy Shortfall Check will re-solve the model'
+  useGenInitialMW(ca,dt)                                               'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
+  useActualLoad(ca,dt)                                                 'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
+  maxSolveLoops(ca,dt)                                                 'The maximum number of times that the Energy Shortfall Check will re-solve the model'
   
-  islandMWIPS(ca,dt,isl)                  'Island total generation at the start of RTD run'
-  islandPDS(ca,dt,isl)                    'Island pre-solve deviation - used to adjust RTD node demand'
-  islandLosses(ca,dt,isl)                 'Island estimated losss - used to adjust RTD mode demand'
-  SPDLoadCalcLosses(ca,dt,isl)            'Island losses calculated by SPD in the first solve to adjust demand'
+  islandMWIPS(ca,dt,isl)                                               'Island total generation at the start of RTD run'
+  islandPDS(ca,dt,isl)                                                 'Island pre-solve deviation - used to adjust RTD node demand'
+  islandLosses(ca,dt,isl)                                              'Island estimated losss - used to adjust RTD mode demand'
+  SPDLoadCalcLosses(ca,dt,isl)                           'Island losses calculated by SPD in the first solve to adjust demand'
   
 
 

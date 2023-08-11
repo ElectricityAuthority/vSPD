@@ -106,8 +106,7 @@ Parameters
 * TN - Replacing invalid prices after SOS1
   busSOSinvalid(ca,dt,b)                                 'Buses with invalid bus prices after SOS1 solve'
   numberofbusSOSinvalid(ca,dt)                           'Number of buses with invalid bus prices after SOS1 solve --> used to check if invalid prices can be improved (numberofbusSOSinvalid reduces after each iteration)'
-* System loss calculated by SPD for RTD run
-  SPDLoadCalcLosses(ca,dt,isl)                           'Island losses calculated by SPD in the first solve to adjust demand'
+  
  ;
 
 * Extra sets and parameters used for energy shortfall check
@@ -724,16 +723,17 @@ HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <
 
 
 * Data appllied to Real Time Pricing
-*/ priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+*/  enrgScarcity, resrvScarcity /
+*SPDLoadCalcLosses
   useGenInitialMW(ca,dt)            = dtParameter(ca,dt,'useGenInitialMW') ;
   useActualLoad(ca,dt)              = dtParameter(ca,dt,'useActualLoad') ;
-  
-  islandMWIPS(ca,dt,isl)                                               'Island total generation at the start of RTD run'
-  islandPDS(ca,dt,isl)                                                 'Island pre-solve deviation - used to adjust RTD node demand'
-  islandLosses(ca,dt,isl)                                              'Island estimated losss - used to adjust RTD mode demand'
-  enrgShortfallRemovalMargin(ca,dt)                                    'This small margin is added to the shortfall removed amount in order to prevent any associated binding ACLine constraint'
-  maxSolveLoops(ca,dt)                                                 'The maximum number of times that the Energy Shortfall Check will re-solve the model'
+  maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') ;
 
+
+  islandMWIPS(ca,dt,isl)            = dtParameter(ca,dt,'MWIPS') ;
+  islandPDS(ca,dt,isl)              = dtParameter(ca,dt,'PDS') ;
+  islandLosses(ca,dt,isl)           = dtParameter(ca,dt,'Losses') ;
+  
 
 
 
@@ -1251,7 +1251,7 @@ $offtext
 *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
 *       If the adjustment would make requiredLoad negative then requiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
 *       the RTD Required Load calculation does not recalculate its requiredLoad at this node
-        ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [enrgShortfallRemovalMargin(t) $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
+        ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [ dtParameter(ca,dt,'shortfallRemovalMargin') $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
 
         requiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = requiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
         requiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (requiredLoad(t,n) < 0) } = 0 ;

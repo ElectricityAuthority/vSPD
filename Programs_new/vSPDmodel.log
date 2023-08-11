@@ -1,5 +1,5 @@
 
---- Job vSPDmodel.gms Start 08/10/23 15:56:29 36.2.0 r433180e WEX-WEI x86 64bit/MS Windows
+--- Job vSPDmodel.gms Start 08/11/23 16:18:57 36.2.0 r433180e WEX-WEI x86 64bit/MS Windows
 --- Applying:
     C:\GAMS\36\gmsprmNT.txt
 --- GAMS Parameters defined
@@ -23,7 +23,7 @@ Licensee: Small MUD-5 User License                       G220916|0002CO-GEN
 Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
 GAMS 36.2.0   Copyright (C) 1987-2021 GAMS Development. All rights reserved
 --- Starting compilation
---- vSPDmodel.gms(2139) 3 Mb
---- Starting execution: elapsed 0:00:00.028
+--- vSPDmodel.gms(2133) 3 Mb
+--- Starting execution: elapsed 0:00:00.026
 *** Status: Normal completion
---- Job vSPDmodel.gms Stop 08/10/23 15:56:29 elapsed 0:00:00.028
+--- Job vSPDmodel.gms Stop 08/11/23 16:18:57 elapsed 0:00:00.027
