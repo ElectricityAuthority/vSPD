@@ -118,7 +118,7 @@ Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB),   
 * Dynamic sets that are loaded from GDX
 Sets
 * Case/period sets
-  caseDefn(ca,cn,rundt)                 'Mapping caseid - casename - rundatetime set'
+  caseDefn(ca,cn<,rundt<)               'Mapping caseid - casename - rundatetime set'
   case2dt2tp(ca,dt,tp)                  'Mapping caseid - datetime - tradePeriod set'
 
 * Node/bus sets
@@ -238,6 +238,7 @@ Scalars
 * Dynamic sets that are calculated on the fly
 Sets
 * Global
+  case2dt(ca,dt)                         'mapping caseID-DateTime pair'
   t(ca,dt)                               'Current trading interval to solve'
 
 * Node/bus
@@ -283,12 +284,12 @@ Sets
   MNodeConstraint(ca,dt,MnodeCstr)       'Set of market node constraints defined for the current trading period'
 
 * Reserve/Risk
-  islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
+  islandRiskGroup(ca,dt,isl,rg,riskC)    'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
   
 * Reserve Sharing
-  rampingConstraint(ca,dt,brCstr)                                      'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
-  bipoleConstraint(ca,dt,isl,brCstr)                                   'Subset of branch constraints that limit total HVDC sent from an island'
-  monopoleConstraint(ca,dt,isl,brCstr,br)                              'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
+  rampingConstraint(ca,dt,brCstr)         'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
+  bipoleConstraint(ca,dt,isl,brCstr)      'Subset of branch constraints that limit total HVDC sent from an island'
+  monopoleConstraint(ca,dt,isl,brCstr,br) 'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
   ;
 
 Alias (t,t1,t2);
@@ -429,20 +430,14 @@ Parameters
   
 
 
-  energyScarcityEnabled(ca,dt)                                         'Flag to apply energy scarcity (this is different from FP scarcity situation)'
-  reserveScarcityEnabled(ca,dt)                                        'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
-  scarcityEnrgNationalFactor(ca,dt,blk)                                'National energy scarcity factors'
-  scarcityEnrgNationalPrice(ca,dt,blk)                                 'National energy scarcity prices'
-  scarcityEnrgNodeFactor(ca,dt,n,blk)                                  'Nodal energy scarcity factors'
-  scarcityEnrgNodeFactorPrice(ca,dt,n,blk)                             'Nodal energy scarcity prices vs factors'
-  scarcityEnrgNodeLimit(ca,dt,n,blk)                                   'Nodal energy scarcity limits'
-  scarcityEnrgNodeLimitPrice(ca,dt,n,blk)                              'Nodal energy scarcity prices vs limits'
-  scarcityResrvIslandLimit(ca,dt,isl,resC,blk)                         'Reserve scarcity limits'
-  scarcityResrvIslandPrice(ca,dt,isl,resC,blk)                         'Reserve scarcity prices'
+  energyScarcityEnabled(ca,dt)                 'Flag to apply energy scarcity (this is different from FP scarcity situation)'
+  reserveScarcityEnabled(ca,dt)                'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
+  scarcityEnrgLimit(ca,dt,n,blk)               'Node energy scarcity limits'
+  scarcityEnrgPrice(ca,dt,n,blk)               'Node energy scarcity prices vs limits'
+  scarcityResrvIslandLimit(ca,dt,isl,resC,blk) 'Reserve scarcity limits'
+  scarcityResrvIslandPrice(ca,dt,isl,resC,blk) 'Reserve scarcity prices'
 
-* Real Time Pricing
-  ScarcityEnrgLimit(ca,dt,n,blk)                                    'Bus energy scarcity limits'
-  ScarcityEnrgPrice(ca,dt,n,blk)                                    'Bus energy scarcity prices vs limits'
+
 
 
 * Real Time Pricing - Calculated parameters
@@ -760,7 +755,7 @@ ObjectiveFunction..
 =e=
   sum[ t, SYSTEMBENEFIT(t) - SYSTEMCOST(t) - SCARCITYCOST(t)
         - SYSTEMPENALTYCOST(t) - RESERVESHAREPENALTY(t) ]
-  + sum[(t,n,blk), ScarcityEnrgLimit(t,n,blk) * ScarcityEnrgPrice(t,n,blk)]
+  + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
   ;
 
 * Defined as the net sum of generation cost + reserve cost
@@ -822,7 +817,7 @@ TotalViolationCostDefinition..
 TotalScarcityCostDefinition(t)..
   SCARCITYCOST(t)
 =e=
-  sum[ (n,blk), ScarcityEnrgPrice(t,n,blk) * ENERGYSCARCITYBLK(t,n,blk) ]
+  sum[ (n,blk), scarcityEnrgPrice(t,n,blk) * ENERGYSCARCITYBLK(t,n,blk) ]
 
 + sum[ (isl,resC,riskC,blk) $ HVDCrisk(riskC)
      , ScarcityResrvIslandPrice(t,isl,resC,blk)

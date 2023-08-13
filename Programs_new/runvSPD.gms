@@ -116,10 +116,10 @@ loop(i_fileName,
    put_utility temp 'exec' / 'gams vSPDperiod' ;
 
 *  Solve the model for the current input file
-*   put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1 holdFixed = 0' ;
+   put_utility temp 'exec' / 'gams vSPDsolve.gms r=vSPDmodel lo=3 ide=1 Errmsg = 1 holdFixed = 0' ;
 
 *  Copy the vSPDsolve.lst file to i_fileName.lst in ..\Programs\lst\
-*   put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', i_fileName.tl:0, '.lst' ;
+   put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', i_fileName.tl:0, '.lst' ;
 
 ) ;
 rep.ap = 1 ;

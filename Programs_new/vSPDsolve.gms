@@ -317,7 +317,7 @@ $load offerNode = i_dateTimeOfferNode  offerTrader = i_dateTimeOfferTrader  prim
 $load energyOffer = i_dateTimeEnergyOffer  reserveOffer = i_dateTimeReserveOffer  offerParameter = i_dateTimeOfferParameter
 
 $load bidNode = i_dateTimeBidNode  bidTrader = i_dateTimeBidTrader
-$load energyBid = i_dateTimeEnergyBid
+$load energyBid = i_dateTimeEnergyBid bidParameter = i_dateTimeBidParameter
 
 $load mnCnstrRHS = i_dateTimeMNCnstrRHS
 $load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
@@ -342,28 +342,6 @@ $gdxin
 Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
 
 inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
-
-put_utility temp 'gdxin' / '%inputPath%\%GDXname%.gdx' ;
-
-* *RTP4 - new symbols to support Dispatch Lite - applied from 1 April 2023
-if (inputGDXGDate >= jdate(2023,4,1) or sum[sameas(cn,testCases),1] ,
-    execute_load
-    discreteModeBid             = i_dateTimeDiscreteModeBid
-    dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
-    differenceBid               = i_dateTimeDifferenceBid
-    dispatchedLoad              = i_dateTimeDispatchedLoad
-    dispatchedGeneration        = i_dateTimeDispatchedGeneration
-    ;
-else
-    discreteModeBid(ca,dt,bd)      = no   ;
-    dispatchableEnrgOffer(ca,dt,o) = yes   ;
-    differenceBid(ca,dt,bd)        = no   ;
-    dispatchedLoad(ca,dt,n)        = 0    ;
-    dispatchedGeneration(ca,dt,n)  = 0    ;
-    
-) ;
-
-
 
 *=====================================================================================
 * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
@@ -393,6 +371,7 @@ $if exist "%ovrdPath%%vSPDinputOvrdData%.gdx"  $include vSPDoverrides.gms
 * Calculate studyMode(t) and IntervalDuration(t)
 studyMode(ca,dt)        = runMode(ca,'studyMode');
 IntervalDuration(ca,dt) = runMode(ca,'intervalLength');
+case2dt(ca,dt)          = yes $ sum[ tp $ case2dt2tp(ca,dt,tp), 1] ;
 
 * Nodal data
 node(ca,dt,n) = yes $ sum[ b $ nodeBus(ca,dt,n,b), 1 ] ;
@@ -400,7 +379,7 @@ bus(ca,dt,b)  = yes $ sum[ isl $ busIsland(ca,dt,b,isl), 1 ] ;
 nodeIsland(ca,dt,n,isl) $ sum[ b $ { bus(ca,dt,b) and node(ca,dt,n) and nodeBus(ca,dt,n,b) and busIsland(ca,dt,b,isl) }, 1 ] = yes ;
 
 refNode(ca,dt,n)              = nodeParameter(ca,dt,n,'referenceNode') ;
-requiredLoad(node)            = nodeParameter(ca,dt,n,'demand') ;
+requiredLoad(node)            = nodeParameter(node,'demand') ;
 inputInitialLoad(ca,dt,n)     = nodeParameter(ca,dt,n,'initialLoad') ;
 conformingFactor(ca,dt,n)     = nodeParameter(ca,dt,n,'conformingFactor') ;
 nonConformingLoad(ca,dt,n)    = nodeParameter(ca,dt,n,'nonConformingFactor') ;
@@ -460,13 +439,14 @@ HVDCpoleBranchMap('Pole2',br) $ sum[ sameas(br,'BEN_HAY2.1'), 1] = yes ;
 HVDCpoleBranchMap('Pole2',br) $ sum[ sameas(br,'HAY_BEN2.1'), 1] = yes ;
 
 * Branch parameters (capacity, resistance, susceptance, fixedLosses, numLossTranches)
-branchCapacity(branch,'forward')  = branchParameter(ca,dt,br,'forwardCap') ;
-branchCapacity(branch,'backward') = branchParameter(ca,dt,br,'backwardCap') ;
+branchCapacity(branch,'forward')  = branchParameter(branch,'forwardCap') ;
+branchCapacity(branch,'backward') = branchParameter(branch,'backwardCap') ;
 branchResistance(branch)          = branchParameter(branch,'resistance') ;
 branchSusceptance(ACbranch)       = -100 * branchParameter(ACbranch,'susceptance');
+branchLossBlocks(branch)          = branchParameter(branch,'numLossTranches') ;
 branchFixedLoss(ACbranch)         = branchParameter(ACbranch,'fixedLosses') $ (branchLossBlocks(ACbranch) > 1) ;
 branchFixedLoss(HVDClink)         = branchParameter(HVDClink,'fixedLosses') ;
-branchLossBlocks(branch)          = branchParameter(branch,'numLossTranches') ;
+
 
 * Set resistance and fixed loss to zero if do not want to use the loss model
 branchResistance(ACbranch) $ (not useAClossModel) = 0 ;
@@ -664,7 +644,7 @@ RMTReserveLimit(ca,dt,isl,'FIR')      = islandParameter(ca,dt,isl,'RMTlimitFIR')
 RMTReserveLimit(ca,dt,isl,'SIR')      = islandParameter(ca,dt,isl,'RMTlimitSIR') ;
 
 sharedNFRFactor(ca,dt)                = reserveSharingParameter(ca,dt,'sharedNFRfactor') ;
-sharedNFRLoadOffset(ca,dt,isl)        = islandParameter(ca,dt,isl,'sharedNFRLoadOffset')
+sharedNFRLoadOffset(ca,dt,isl)        = islandParameter(ca,dt,isl,'sharedNFRLoadOffset') ;
 effectiveFactor(ca,dt,isl,resC,riskC) = riskParameter(ca,dt,isl,resC,riskC,'sharingEffectiveFactor');
 
 * Calculate HVDC parameters applied to National Reserve Sharing
@@ -723,20 +703,13 @@ HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <
 
 
 * Data appllied to Real Time Pricing
-*/  enrgScarcity, resrvScarcity /
-
   useGenInitialMW(ca,dt)            = dtParameter(ca,dt,'useGenInitialMW') ;
   useActualLoad(ca,dt)              = dtParameter(ca,dt,'useActualLoad') ;
   maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') ;
-
-
-  islandMWIPS(ca,dt,isl)            = dtParameter(ca,dt,'MWIPS') ;
-  islandPDS(ca,dt,isl)              = dtParameter(ca,dt,'PDS') ;
-  islandLosses(ca,dt,isl)           = dtParameter(ca,dt,'Losses') ;
-  SPDLoadCalcLosses(ca,dt,isl)      = dtParameter(ca,dt,'SPDLoadCalcLosses') ;
-  
-
-
+  islandMWIPS(ca,dt,isl)            = islandParameter(ca,dt,isl,'MWIPS') ;
+  islandPDS(ca,dt,isl)              = islandParameter(ca,dt,isl,'PDS') ;
+  islandLosses(ca,dt,isl)           = islandParameter(ca,dt,isl,'Losses') ;
+  SPDLoadCalcLosses(ca,dt,isl)      = islandParameter(ca,dt,isl,'SPDLoadCalcLosses') ;
 
 * For PRICERESPONSIVEIG generators, The RTD rampRateUp is capped: (4.7.2.2)
 rampRateUp(offer(ca,dt,o)) $ { (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and intermittentOffer(offer) and priceResponsive(offer) }
@@ -748,14 +721,19 @@ requiredLoad(node(ca,dt,n)) $ { sum[ (bd,blk) $ ( bidNode(ca,dt,bd,n) and (bidPa
 *-------------------------------------------------------------------------------
 
 * Initialize energy scarcity limits and prices ---------------------------------
-ScarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (requiredLoad(ca,dt,n) > 0) }                                      = scarcityEnrgNationalFactor(ca,dt,blk) * requiredLoad(ca,dt,n);
-ScarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (ScarcityEnrgLimit(ca,dt,n,blk) > 0 ) }                            = scarcityEnrgNationalPrice(ca,dt,blk) ;
+energyScarcityEnabled(ca,dt)                 = dtParameter(ca,dt,'enrgScarcity') ;
+reserveScarcityEnabled(ca,dt)                = dtParameter(ca,dt,'resrvScarcity') ;
+scarcityResrvIslandLimit(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'limitMW') ;
+scarcityResrvIslandPrice(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'price') ;
 
-ScarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeFactor(ca,dt,n,blk) and (requiredLoad(ca,dt,n) > 0) } = scarcityEnrgNodeFactor(ca,dt,n,blk) * requiredLoad(ca,dt,n);
-ScarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeFactorPrice(ca,dt,n,blk) }                         = scarcityEnrgNodeFactorPrice(ca,dt,n,blk) ;
+scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (requiredLoad(ca,dt,n) > 0) }                                      = scarcityNationalFactor(ca,dt,blk,'factor') * requiredLoad(ca,dt,n);
+scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (scarcityEnrgLimit(ca,dt,n,blk) > 0 ) }                            = scarcityNationalFactor(ca,dt,blk,'price') ;
 
-ScarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeLimit(ca,dt,n,blk) }                               = scarcityEnrgNodeLimit(ca,dt,n,blk);
-ScarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeLimitPrice(ca,dt,n,blk) }                          = scarcityEnrgNodeLimitPrice(ca,dt,n,blk) ;
+scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'factor') and (requiredLoad(ca,dt,n) > 0) } = scarcityNodeFactor(ca,dt,n,blk,'factor') * requiredLoad(ca,dt,n);
+scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'price') }                         = scarcityNodeFactor(ca,dt,n,blk,'price') ;
+
+scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'limitMW') }                               = scarcityNodeLimit(ca,dt,n,blk,'limitMW');
+scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'price') }                          = scarcityNodeLimit(ca,dt,n,blk,'price') ;
 *-------------------------------------------------------------------------------
 
 * Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.2.1)
@@ -934,15 +912,15 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = requiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
 
 *       Recalculate energy scarcity limits -------------------------------------
-        ScarcityEnrgLimit(t,n,blk) = 0 ;
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) }                                     = scarcityEnrgNationalFactor(t,blk) * requiredLoad(t,n);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (ScarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityEnrgNationalPrice(t,blk) ;
+        scarcityEnrgLimit(t,n,blk) = 0 ;
+        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) }                                     = scarcityNationalFactor(t,blk,'factor') * requiredLoad(t,n);
+        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (scarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityNationalFactor(t,blk,'price') ;
 
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) and scarcityEnrgNodeFactor(t,n,blk) } = scarcityEnrgNodeFactor(t,n,blk) * requiredLoad(t,n);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeFactorPrice(t,n,blk) }                        = scarcityEnrgNodeFactorPrice(t,n,blk) ;
+        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) and scarcityNodeFactor(t,n,blk,'factor') } = scarcityNodeFactor(t,n,blk,'factor') * requiredLoad(t,n);
+        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeFactor(t,n,blk,'price') }                        = scarcityNodeFactor(t,n,blk,'price') ;
 
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityEnrgNodeLimit(t,n,blk)  } = scarcityEnrgNodeLimit(t,n,blk);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeLimitPrice(t,n,blk) }                         = scarcityEnrgNodeLimitPrice(t,n,blk) ;
+        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityNodeLimit(t,n,blk,'limitMW')  } = scarcityNodeLimit(t,n,blk,'limitMW');
+        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeLimit(t,n,blk,'price') }                         = scarcityNodeLimit(t,n,blk,'price') ;
 *       ------------------------------------------------------------------------
 
 *       Update Free Reserve and SharedNFRmax - Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
@@ -980,7 +958,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
     PURCHASE.fx(t,bd) $ (sum[blk $ demBidBlk(t,bd,blk), 1] = 0) = 0 ;
 
 *   Constraint 6.1.1.7 - Set Upper Bound for Energy Scaricty Block
-    ENERGYSCARCITYBLK.up(t,n,blk) = ScarcityEnrgLimit(t,n,blk) ;
+    ENERGYSCARCITYBLK.up(t,n,blk) = scarcityEnrgLimit(t,n,blk) ;
     ENERGYSCARCITYBLK.fx(t,n,blk) $ (not EnergyScarcityEnabled(t)) = 0;
     ENERGYSCARCITYNODE.fx(t,n) $ (not EnergyScarcityEnabled(t)) = 0;
 *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS END ====================
@@ -1636,7 +1614,7 @@ $offtext
         o_penaltyCost_TP(t)   = SYSTEMPENALTYCOST.l(t) ;
         o_ofv_TP(t)           = o_systemBenefit_TP(t) - o_systemCost_TP(t) - o_penaltyCost_TP(t)
                               - SCARCITYCOST.l(t) - RESERVESHAREPENALTY.l(t)
-                              + sum[(n,blk), ScarcityEnrgLimit(t,n,blk) * ScarcityEnrgPrice(t,n,blk)];
+                              + sum[(n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)];
 
 
 *       Separete violation reporting at trade period level

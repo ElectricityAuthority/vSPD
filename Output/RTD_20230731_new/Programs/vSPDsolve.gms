@@ -106,8 +106,7 @@ Parameters
 * TN - Replacing invalid prices after SOS1
   busSOSinvalid(ca,dt,b)                                 'Buses with invalid bus prices after SOS1 solve'
   numberofbusSOSinvalid(ca,dt)                           'Number of buses with invalid bus prices after SOS1 solve --> used to check if invalid prices can be improved (numberofbusSOSinvalid reduces after each iteration)'
-* System loss calculated by SPD for RTD run
-  SPDLoadCalcLosses(ca,dt,isl)                           'Island losses calculated by SPD in the first solve to adjust demand'
+  
  ;
 
 * Extra sets and parameters used for energy shortfall check
@@ -240,10 +239,6 @@ Parameters
   o_surpMnodeConst_TP(ca,dt)                             'Surplus market node constraint violation for summary report'
   o_defResv_TP(ca,dt)                                    'Deficit reserve violation for summary report'
 
-* Factor to prorate the deficit and surplus at the nodal level
-  totalBusAllocation(ca,dt,b)                            'Total allocation of nodes to bus'
-  busNodeAllocationFactor(ca,dt,b,n)                     'Bus to node allocation factor'
-
 * Audit - extra output declaration
   o_lossSegmentBreakPoint(ca,dt,br,los)                            'Audit - loss segment MW'
   o_lossSegmentFactor(ca,dt,br,los)                                'Audit - loss factor of each loss segment'
@@ -301,116 +296,38 @@ $if not exist "%inputPath%\%GDXname%.gdx" $goto nextInput
 * Load trading period to be solved
 $onmulti
 $gdxin "vSPDPeriod.gdx"
-$load tp=i_tradePeriod  dt=i_dateTime  ca=i_caseID case2dt2tp = i_dateTimeTradePeriod
+$load ca=i_caseID  dt=i_dateTime  tp=i_tradePeriod  case2dt2tp = i_dateTimeTradePeriod
 $gdxin
 
 * Call the GDX routine and load the input data:
 $gdxin "%inputPath%\%GDXname%.gdx"
-* Sets
-$load 
-$load b = i_bus  n = i_node
-$load node = i_dateTimeNode  bus = i_dateTimeBus
-$load node2node = i_dateTimeNodetoNode
-$load offerTrader = i_dateTimeOfferTrader
-$load offerNode = i_dateTimeOfferNode
-$load bidTrader = i_dateTimeBidTrader
-$load bidNode = i_dateTimeBidNode
-$load nodeBus = i_dateTimeNodeBus
-$load busIsland = i_dateTimeBusIsland
-$load branchDefn = i_dateTimeBranchDefn
-$load riskGenerator = i_dateTimeRiskGenerator
-$load PrimarySecondaryOffer = i_dateTimePrimarySecondaryOffer
-$load dispatchableBid =  i_dateTimeDispatchableBid
-*$load rg = i_riskGroup
-$load riskGroupOffer = i_dateTimeRiskGroup
-$load nodeoutagebranch = i_dateTimeNodeOutageBranch
+$load gdxDate = i_gdxDate  caseDefn = i_caseDefn  runMode = i_runMode
 
-* Parameters
-$load caseGdxDate = gdxDate caseIntervalDuration = i_intervalLength
-$load offerParameter = i_dateTimeOfferParameter
-$load energyOffer = i_dateTimeEnergyOffer
-$load fastPLSRoffer = i_dateTimeFastPLSRoffer
-$load sustainedPLSRoffer =  i_dateTimeSustainedPLSRoffer
-$load fastTWDRoffer = i_dateTimeFastTWDRoffer
-$load sustainedTWDRoffer = i_dateTimeSustainedTWDRoffer
-$load fastILRoffer = i_dateTimeFastILRoffer
-$load sustainedILRoffer = i_dateTimeSustainedILRoffer
+$load dtParameter = i_dateTimeParameter  islandParameter = i_dateTimeIslandParameter
 
-$load energyBid = i_dateTimeEnergyBid
-$load nodeDemand = i_dateTimeNodeDemand
+$load n = i_node  node2node = i_dateTimeNodetoNode  nodeParameter = i_dateTimeNodeParameter
 
-$load refNode = i_dateTimeReferenceNode
-$load HVDCBranch = i_dateTimeHVDCBranch
-$load branchParameter = i_dateTimeBranchParameter
-$load branchCapacity = i_dateTimeBranchCapacity
-$load branchOpenStatus = i_dateTimeBranchOpenStatus
-$load nodeBusAllocationFactor = i_dateTimeNodeBusAllocationFactor
-$load busElectricalIsland = i_dateTimeBusElectricalIsland
+$load b = i_bus  busIsland = i_dateTimeBusIsland  busElectricalIsland = i_dateTimeBusElectricalIsland
+$load nodeBus = i_dateTimeNodeBus  nodeBusAllocationFactor = i_dateTimeNodeBusAllocationFactor
 
-$load riskParameter = i_dateTimeRiskParameter
-$load islandMinimumRisk = i_dateTimeManualRisk
-$load HVDCsecRiskEnabled = i_dateTimeHVDCsecRiskEnabled
-$load HVDCsecRiskSubtractor = i_dateTimeHVDCsecRiskSubtractor
-$load ReserveMaximumFactor = i_dateTimeReserveMaximumFactor
+$load branchDefn = i_dateTimeBranchDefn  nodeoutagebranch = i_dateTimeNodeOutageBranch  branchParameter = i_dateTimeBranchParameter 
+$load branchCstrFactors = i_dateTimeBranchConstraintFactors  branchCstrRHS = i_dateTimeBranchConstraintRHS
 
-$load branchCstrFactors = i_dateTimeBranchConstraintFactors
-$load branchCstrRHS = i_dateTimeBranchConstraintRHS
-$load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors
-$load mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
-$load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors
-$load mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
+$load offerNode = i_dateTimeOfferNode  offerTrader = i_dateTimeOfferTrader  primarySecondaryOffer = i_dateTimePrimarySecondaryOffer
+$load energyOffer = i_dateTimeEnergyOffer  reserveOffer = i_dateTimeReserveOffer  offerParameter = i_dateTimeOfferParameter
+
+$load bidNode = i_dateTimeBidNode  bidTrader = i_dateTimeBidTrader
+$load energyBid = i_dateTimeEnergyBid bidParameter = i_dateTimeBidParameter
+
 $load mnCnstrRHS = i_dateTimeMNCnstrRHS
+$load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
+$load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
 
-* National market for IR effective date 20 Oct 2016
-$load reserveRoundPower     = i_dateTimeReserveRoundPower
-$load reserveShareEnabled   = i_dateTimeReserveSharing
-$load modulationRiskClass   = i_dateTimeModulationRisk
-$load roundPower2MonoLevel  = i_dateTimeRoundPower2Mono
-$load bipole2MonoLevel      = i_dateTimeBipole2Mono
-$load monopoleMinimum       = i_dateTimeReserveSharingPoleMin
-$load HVDCControlBand       = i_dateTimeHVDCcontrolBand
-$load HVDClossScalingFactor = i_dateTimeHVDClossScalingFactor
-$load sharedNFRfactor       = i_dateTimeSharedNFRfactor
-$load sharedNFRLoadOffset   = i_dateTimeSharedNFRLoadOffset
-$load effectiveFactor       = i_dateTimeReserveEffectiveFactor
-$load RMTreserveLimitTo     = i_dateTimeRMTreserveLimit
-$load rampingConstraint     = i_dateTimeRampingConstraint
+$load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharingParameter  riskGroupOffer = i_dateTimeRiskGroup
 
-*Real Time Pricing Project
-$load caseStudyMode                   = i_studyMode
-$load useGenInitialMW             = i_dateTimeUseGenInitialMW
-$load runEnrgShortfallTransfer    = i_dateTimeRunEnrgShortfallTransfer
-$load runPriceTransfer            = i_dateTimeRunPriceTransfer
-$load replaceSurplusPrice         = i_dateTimeReplaceSurplusPrice
-$load rtdIgIncreaseLimit          = i_dateTimeRtdIgIncreaseLimit
-$load useActualLoad               = i_dateTimeUseActualLoad
-$load dontScaleNegativeLoad       = i_dateTimeDontScaleNegativeLoad
-$load inputInitialLoad            = i_dateTimeInputInitialLoad
-$load conformingFactor            = i_dateTimeConformingFactor
-$load nonConformingLoad           = i_dateTimeNonConformingLoad
-$load loadIsOverride              = i_dateTimeLoadIsOverride
-$load loadIsBad                   = i_dateTimeLoadIsBad
-$load loadIsNCL                   = i_dateTimeLoadIsNCL
-$load maxLoad                     = i_dateTimeMaxLoad
-$load instructedLoadShed          = i_dateTimeInstructedLoadShed
-$load InstructedShedActive        = i_dateTimeInstructedShedActive
-$load islandMWIPS                 = i_dateTimeIslandMWIPS
-$load islandPDS                   = i_dateTimeIslandPDS
-$load islandLosses                = i_dateTimeIslandLosses
-$load enrgShortfallRemovalMargin  = i_dateTimeEnrgShortfallRemovalMargin
-$load maxSolveLoops               = i_dateTimeMaxSolveLoops
-$load SPDLoadCalcLosses           = i_dateTimeSPDLoadCalcLosses
+$load scarcityNationalFactor = i_dateTimeScarcityNationalFactor  scarcityResrvLimit = i_dateTimeScarcityResrvLimit
+$load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit   
 
-$load energyScarcityEnabled       = i_dateTimeEnergyScarcityEnabled
-$load reserveScarcityEnabled      = i_dateTimeReserveScarcityEnabled
-$load scarcityEnrgNationalFactor  = i_dateTimeScarcityEnrgNationalFactor
-$load scarcityEnrgNationalPrice   = i_dateTimeScarcityEnrgNationalPrice
-$load scarcityEnrgNodeFactor      = i_dateTimeScarcityEnrgNodeFactor
-$load scarcityEnrgNodeFactorPrice = i_dateTimeScarcityEnrgNodeFactorPrice
-$load scarcityEnrgNodeLimit       = i_dateTimeScarcityEnrgNodeLimit
-$load scarcityEnrgNodeLimitPrice  = i_dateTimeScarcityEnrgNodeLimitPrice
-$load scarcityResrvIslandLimit    = i_dateTimeScarcityResrvIslandLimit
-$load scarcityResrvIslandPrice    = i_dateTimeScarcityResrvIslandPrice
 $gdxin
 
 *===============================================================================
@@ -424,33 +341,7 @@ $gdxin
 * Gregorian date of when symbols have been included into the GDX files
 Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
 
-gdxDate('year')  = sum[ca $ (ord(ca)=1), caseGdxDate(ca,'year')]  ;
-gdxDate('month') = sum[ca $ (ord(ca)=1), caseGdxDate(ca,'month')] ;
-gdxDate('day')   = sum[ca $ (ord(ca)=1), caseGdxDate(ca,'day')]   ;
-
 inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
-
-put_utility temp 'gdxin' / '%inputPath%\%GDXname%.gdx' ;
-
-* *RTP4 - new symbols to support Dispatch Lite - applied from 1 April 2023
-if (inputGDXGDate >= jdate(2023,4,1) or sum[sameas(cn,testCases),1] ,
-    execute_load
-    discreteModeBid             = i_dateTimeDiscreteModeBid
-    dispatchableEnrgOffer       = i_dateTimeDispatchableEnrgOffer
-    differenceBid               = i_dateTimeDifferenceBid
-    dispatchedLoad              = i_dateTimeDispatchedLoad
-    dispatchedGeneration        = i_dateTimeDispatchedGeneration
-    ;
-else
-    discreteModeBid(ca,dt,bd)      = no   ;
-    dispatchableEnrgOffer(ca,dt,o) = yes   ;
-    differenceBid(ca,dt,bd)        = no   ;
-    dispatchedLoad(ca,dt,n)        = 0    ;
-    dispatchedGeneration(ca,dt,n)  = 0    ;
-    
-) ;
-
-
 
 *=====================================================================================
 * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
@@ -477,102 +368,50 @@ $if exist "%ovrdPath%%vSPDinputOvrdData%.gdx"  $include vSPDoverrides.gms
 * 5. Initialise model mapping and inputs
 *===============================================================================
 
-* Calculate studyMode(t)
-studyMode(ca,dt) = caseStudyMode(ca);
+* Calculate studyMode(t) and IntervalDuration(t)
+studyMode(ca,dt)        = runMode(ca,'studyMode');
+IntervalDuration(ca,dt) = runMode(ca,'intervalLength');
+case2dt(ca,dt)          = yes $ sum[ tp $ case2dt2tp(ca,dt,tp), 1] ;
 
-* Calculate IntervalDuration(t)
-IntervalDuration(ca,dt) = caseIntervalDuration(ca);
-
-* Check if NMIR is enabled
-UseShareReserve(ca) = 1 $ sum[ (dt,resC), reserveShareEnabled(ca,dt,resC)] ;
-
-* Initialise genrating offer parameters ----------------------------------------
-GenerationStart(ca,dt,o) = offerParameter(ca,dt,o,'initialMW') + sum[ o1 $ primarySecondaryOffer(ca,dt,o,o1), offerParameter(ca,dt,o1,'initialMW') ] ;
-* if useGenIntitialMW = 1 --> sequential solve like PRSS, NRSS
-* GenerationStart(ca,dt,o) $ { (useGenInitialMW(ca,dt) = 1) and (ord(dt) > 1) } = 0;  ! Not neccessary because data is zero anyway
-
-RampRateUp(ca,dt,o)               = offerParameter(ca,dt,o,'rampUpRate')      ;
-RampRateDn(ca,dt,o)               = offerParameter(ca,dt,o,'rampDnRate')      ;
-ReserveGenerationMaximum(ca,dt,o) = offerParameter(ca,dt,o,'resrvGenMax')      ;
-WindOffer(ca,dt,o)                = offerParameter(ca,dt,o,'isIG')            ;
-FKband(ca,dt,o)                   = offerParameter(ca,dt,o,'FKbandMW')        ;
-PriceResponsive(ca,dt,o)          = offerParameter(ca,dt,o,'isPriceResponse') ;
-PotentialMW(ca,dt,o)              = offerParameter(ca,dt,o,'potentialMW')     ;
-
-* This is based on the 4.6.2.1 calculation
-$onText
-For generators in the PRICERESPONSIVEIG subset, if the PotentialMW(g) value is less than ReserveGenerationMaximum(g,c) then pre-processing sets the ReserveGenerationMaximum(g,c) parameter to the PotentialMWg value,
-otherwise if the PotentialMW(g) value is greater than or equal to the ReserveGenerationMaximum(g,c) then the ReserveGenerationMaximum(g,c) value is unchanged
-Tuong note: this does not seems to make sense and be used.
-$offText
-reserveMaximumFactor(ca,dt,o,resC) $ { windOffer(ca,dt,o) and priceResponsive(ca,dt,o) and( potentialMW(ca,dt,o) > 0) and (potentialMW(ca,dt,o) < ReserveGenerationMaximum(ca,dt,o)) } = ReserveGenerationMaximum(ca,dt,o) / potentialMW(ca,dt,o) ;
-*-------------------------------------------------------------------------------
-
-* Initialise offer limits and prices -------------------------------------------
-* Initialise energy offer data for the current trade period start
-EnrgOfrMW(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'limitMW')  $ dispatchableEnrgOffer(ca,dt,o) ;
-EnrgOfrPrice(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'price') $ dispatchableEnrgOffer(ca,dt,o) ;
-* Initialise reserve offer data for the current trade period start
-PLRO(resT) $ (ord(resT) = 1) = yes ;
-TWRO(resT) $ (ord(resT) = 2) = yes ;
-ILRO(resT) $ (ord(resT) = 3) = yes ;
-
-ResOfrPct(ca,dt,o,blk,resC) = (fastPLSRoffer(ca,dt,o,blk,'plsrPct') / 100)$(ord(resC)=1 ) + (sustainedPLSRoffer(ca,dt,o,blk,'plsrPct') / 100)$(ord(resC)=2);
-ResOfrMW(ca,dt,o,blk,resC,PLRO) = fastPLSRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=1)  + sustainedPLSRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=2) ;
-ResOfrMW(ca,dt,o,blk,resC,TWRO) = fastTWDRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=1)  + sustainedTWDRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=2) ;
-ResOfrMW(ca,dt,o,blk,resC,ILRO) = fastILRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=1)   + sustainedILRoffer(ca,dt,o,blk,'limitMW')$(ord(resC)=2) ;
-ResOfrPrice(ca,dt,o,blk,resC,PLRO) = fastPLSRoffer(ca,dt,o,blk,'price')$(ord(resC)=1) + sustainedPLSRoffer(ca,dt,o,blk,'price')$(ord(resC)=2) ;
-ResOfrPrice(ca,dt,o,blk,resC,TWRO) = fastTWDRoffer(ca,dt,o,blk,'price')$(ord(resC)=1) + sustainedTWDRoffer(ca,dt,o,blk,'price')$(ord(resC)=2) ;
-ResOfrPrice(ca,dt,o,blk,resC,ILRO) = fastILRoffer(ca,dt,o,blk,'price')$(ord(resC)=1)  + sustainedILRoffer(ca,dt,o,blk,'price')$(ord(resC)=2)  ;
-*-------------------------------------------------------------------------------
-
-* Define valid offers and valid offer block ------------------------------------
-* Valid offer must be mapped to a bus with electrical island <> 0
-offer(ca,dt,o) $ sum[ (n,b) $ { offerNode(ca,dt,o,n) and nodeBus(ca,dt,n,b) }, busElectricalIsland(ca,dt,b) ] = yes ;
-* IL offer with non zero total limit is always valid
-offer(ca,dt,o) $ sum[ (blk,resC,ILRO), ResOfrMW(ca,dt,o,blk,resC,ILRO)] = yes ;
-* Valid energy offer blocks are defined as those with a positive block limit
-genOfrBlk(ca,dt,o,blk) $ ( EnrgOfrMW(ca,dt,o,blk) > 0 ) = yes ;
-* Define set of positive (valid) energy offers
-posEnrgOfr(ca,dt,o) $ sum[ blk $ genOfrBlk(ca,dt,o,blk), 1 ] = yes ;
-* Only reserve offer block with a positive block limit is valid
-resOfrBlk(ca,dt,o,blk,resC,resT) $ (ResOfrMW(ca,dt,o,blk,resC,resT) > 0) = yes ;
-*-------------------------------------------------------------------------------
-
-* Initialise bid limits and prices ---------------------------------------------
-* Valid bid must be mapped to a bus with electrical island <> 0
-bid(ca,dt,bd) $ sum[ (n,b) $ { bidNode(ca,dt,bd,n) and nodeBus(ca,dt,n,b) }, busElectricalIsland(ca,dt,b) ] = yes ;
-* Bid energy data and valid bid block
-DemBidMW(bid,blk)    $ dispatchableBid(bid) = energyBid(bid,blk,'limitMW') ;
-DemBidPrice(bid,blk) $ dispatchableBid(bid) = energyBid(bid,blk,'price')   ;
-DemBidBlk(bid,blk)   $ ( DemBidMW(bid,blk) <> 0 ) = yes ;
-*-------------------------------------------------------------------------------
-
-* Initialise mappings to use in later stage ------------------------------------
+* Nodal data
+node(ca,dt,n) = yes $ sum[ b $ nodeBus(ca,dt,n,b), 1 ] ;
+bus(ca,dt,b)  = yes $ sum[ isl $ busIsland(ca,dt,b,isl), 1 ] ;
 nodeIsland(ca,dt,n,isl) $ sum[ b $ { bus(ca,dt,b) and node(ca,dt,n) and nodeBus(ca,dt,n,b) and busIsland(ca,dt,b,isl) }, 1 ] = yes ;
-offerIsland(offer(ca,dt,o),isl) $ sum[ n $ { offerNode(ca,dt,o,n) and nodeIsland(ca,dt,n,isl) }, 1 ] = yes ;
-bidIsland(bid(ca,dt,bd),isl) $ sum[ n $ { bidNode(ca,dt,bd,n) and nodeIsland(ca,dt,n,isl) }, 1 ] = yes ;
-islandRiskGenerator(ca,dt,isl,o) $ { offerIsland(ca,dt,o,isl) and riskGenerator(ca,dt,o) } = yes ;
 
-* Identification of primary and secondary units
-PrimaryOffer(ca,dt,o) = 1 ;
-SecondaryOffer(ca,dt,o) = 1 $ sum[ o1 $ primarySecondaryOffer(ca,dt,o1,o), 1 ] ;
-PrimaryOffer(ca,dt,o) $ SecondaryOffer(ca,dt,o) = 0 ;
-*-------------------------------------------------------------------------------
+refNode(ca,dt,n)              = nodeParameter(ca,dt,n,'referenceNode') ;
+requiredLoad(node)            = nodeParameter(node,'demand') ;
+inputInitialLoad(ca,dt,n)     = nodeParameter(ca,dt,n,'initialLoad') ;
+conformingFactor(ca,dt,n)     = nodeParameter(ca,dt,n,'conformingFactor') ;
+nonConformingLoad(ca,dt,n)    = nodeParameter(ca,dt,n,'nonConformingFactor') ;
+loadIsOverride(ca,dt,n)       = nodeParameter(ca,dt,n,'loadIsOverride') ;
+loadIsBad(ca,dt,n)            = nodeParameter(ca,dt,n,'loadIsBad') ;
+loadIsNCL(ca,dt,n)            = nodeParameter(ca,dt,n,'loadIsNCL') ;
+maxLoad(ca,dt,n)              = nodeParameter(ca,dt,n,'maxLoad') ;
+instructedLoadShed(ca,dt,n)   = nodeParameter(ca,dt,n,'instructedLoadShed') ;
+instructedShedActive(ca,dt,n) = nodeParameter(ca,dt,n,'instructedShedActive') ;
+dispatchedLoad(ca,dt,n)       = nodeParameter(ca,dt,n,'dispatchedLoad') ;
+dispatchedGeneration(ca,dt,n) = nodeParameter(ca,dt,n,'dispatchedGeneration') ;
 
-* Initialize AC and DC branches ------------------------------------------------
-*Branch is defined if there is a defined terminal bus, it is in servcie for that trade period and has positive capacity limit for both direction (only forward direction for HVDC).
-branch(ca,dt,br) = yes $ { (not branchOpenStatus(ca,dt,br)) and branchCapacity(ca,dt,br,'forward') and branchCapacity(ca,dt,br,'backward') and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] }  ;
-branch(ca,dt,br) $ { (not branchOpenStatus(ca,dt,br)) and (HVDCBranch(ca,dt,br)) and branchCapacity(ca,dt,br,'forward') and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] } = yes ;
+* Factor to prorate the deficit and surplus at the nodal level
+totalBusAllocation(ca,dt,b) $ bus(ca,dt,b) = sum[ n $ Node(ca,dt,n), NodeBusAllocationFactor(ca,dt,n,b)];
+busNodeAllocationFactor(ca,dt,b,n) $ (totalBusAllocation(ca,dt,b) > 0) = NodeBusAllocationFactor(ca,dt,n,b) / totalBusAllocation(ca,dt,b) ;
 
-branchBusDefn(branch,b,b1) $ branchDefn(branch,b,b1)    = yes ;
-branchFrBus(branch,frB) $ sum[ toB $ branchBusDefn(branch,frB,toB), 1 ] = yes ;
-branchToBus(branch,toB) $ sum[ frB $ branchBusDefn(branch,frB,toB), 1 ] = yes ;
+* Network data
+branch(ca,dt,br) = yes $ { (not branchParameter(ca,dt,br,'isOpen'))
+                       and branchParameter(ca,dt,br,'forwardCap') and branchParameter(ca,dt,br,'backwardCap')
+                       and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] }  ;
+branch(ca,dt,br) $ { (not branchParameter(ca,dt,br,'isOpen'))
+                 and branchParameter(ca,dt,br,'forwardCap') and (branchParameter(ca,dt,br,'HVDCbranch'))
+                 and sum[ (b,b1) $ { bus(ca,dt,b) and bus(ca,dt,b1) and branchDefn(ca,dt,br,b,b1) }, 1 ] } = yes ;
+
+branchBusDefn(branch,b,b1) $ branchDefn(branch,b,b1)                            = yes ;
+branchFrBus(branch,frB)    $ sum[ toB $ branchBusDefn(branch,frB,toB), 1 ]      = yes ;
+branchToBus(branch,toB)    $ sum[ frB $ branchBusDefn(branch,frB,toB), 1 ]      = yes ;
 branchBusConnect(branch,b) $ { branchFrBus(branch,b) or branchToBus(branch,b) } = yes ;
 
 * HVDC link and AC branch definition
-HVDClink(branch) = yes $ HVDCBranch(branch) ;
-ACbranch(branch) = yes $ [not HVDCBranch(branch)];
+HVDClink(branch) = yes $ branchParameter(branch,'HVDCbranch') ;
+ACbranch(branch) = yes $ [not branchParameter(branch,'HVDCbranch')];
 
 * Determine sending and receiving bus for each branch flow direction
 loop ((frB,toB),
@@ -581,6 +420,7 @@ loop ((frB,toB),
     ACbranchSendingBus(ACbranch,toB,fd)   $ { branchBusDefn(ACbranch,frB,toB) and (ord(fd) = 2) } = yes ;
     ACbranchReceivingBus(ACbranch,frB,fd) $ { branchBusDefn(ACbranch,frB,toB) and (ord(fd) = 2) } = yes ;
 ) ;
+
 
 HVDClinkSendingBus(HVDClink,frB)   $ sum[ branchBusDefn(HVDClink,frB,toB), 1 ] = yes ;
 HVDClinkReceivingBus(HVDClink,toB) $ sum[ branchBusDefn(HVDClink,frB,toB), 1 ] = yes ;
@@ -598,14 +438,15 @@ HVDCpoleBranchMap('Pole1',br) $ sum[ sameas(br,'HAY_BEN3.1'), 1] = yes ;
 HVDCpoleBranchMap('Pole2',br) $ sum[ sameas(br,'BEN_HAY2.1'), 1] = yes ;
 HVDCpoleBranchMap('Pole2',br) $ sum[ sameas(br,'HAY_BEN2.1'), 1] = yes ;
 
-* Initialise network data for the current trade period start
-branchResistance(branch)    = branchParameter(branch,'resistance') ;
-branchSusceptance(ACbranch) = -100 * branchParameter(ACbranch,'susceptance');
-branchLossBlocks(branch)    = branchParameter(branch,'numLossTranches') ;
+* Branch parameters (capacity, resistance, susceptance, fixedLosses, numLossTranches)
+branchCapacity(branch,'forward')  = branchParameter(branch,'forwardCap') ;
+branchCapacity(branch,'backward') = branchParameter(branch,'backwardCap') ;
+branchResistance(branch)          = branchParameter(branch,'resistance') ;
+branchSusceptance(ACbranch)       = -100 * branchParameter(ACbranch,'susceptance');
+branchLossBlocks(branch)          = branchParameter(branch,'numLossTranches') ;
+branchFixedLoss(ACbranch)         = branchParameter(ACbranch,'fixedLosses') $ (branchLossBlocks(ACbranch) > 1) ;
+branchFixedLoss(HVDClink)         = branchParameter(HVDClink,'fixedLosses') ;
 
-* Ensure fixed losses for no loss AC branches are not included
-branchFixedLoss(ACbranch) = branchParameter(ACbranch,'fixedLosses') $ (branchLossBlocks(ACbranch) > 1) ;
-branchFixedLoss(HVDClink) = branchParameter(HVDClink,'fixedLosses') ;
 
 * Set resistance and fixed loss to zero if do not want to use the loss model
 branchResistance(ACbranch) $ (not useAClossModel) = 0 ;
@@ -613,10 +454,7 @@ branchFixedLoss(ACbranch)  $ (not useAClossModel) = 0 ;
 branchResistance(HVDClink) $ (not useHVDClossModel) = 0 ;
 branchFixedLoss(HVDClink)  $ (not useHVDClossModel) = 0 ;
 
-$ontext
-Initialise loss tranches data for the current trade period start. The loss factor coefficients assume that the branch capacity is in MW and the resistance is in p.u.
-$offtext
-
+* Initialise loss tranches data for the current trade period start. The loss factor coefficients assume that the branch capacity is in MW and the resistance is in p.u.
 lossSegmentMW(branch,los,fd)     $ { (branchLossBlocks(branch) = 0) and (ord(los) = 1) } = branchCapacity(branch,fd) ;
 LossSegmentFactor(branch,los,fd) $ { (branchLossBlocks(branch) = 0) and (ord(los) = 1) } = 0 ;
 
@@ -649,10 +487,12 @@ LossSegmentFactor(HVDClink,los,fd) $ (ord(fd) = 2) = 0;
 
 * Valid loss segment for a branch is defined as a loss segment that has a non-zero LossSegmentMW or a non-zero LossSegmentFactor.
 validLossSegment(branch,los,fd) = yes $ { (ord(los) = 1) or LossSegmentMW(branch,los,fd) or LossSegmentFactor(branch,los,fd) } ;
+
 * HVDC loss model requires at least two loss segments and an additional loss block due to cumulative loss formulation
 validLossSegment(HVDClink,los,fd) $ { (branchLossBlocks(HVDClink) <= 1) and (ord(los) = 2) } = yes ;
-validLossSegment(HVDClink,los,fd) $ { (branchLossBlocks(HVDClink) > 1) and (ord(los) = (branchLossBlocks(HVDClink) + 1)) and (sum[ los1, LossSegmentMW(HVDClink,los1,fd) + LossSegmentFactor(HVDClink,los1,fd) ] > 0) } = yes ;
-
+validLossSegment(HVDClink,los,fd) $ { (branchLossBlocks(HVDClink) > 1) and (ord(los) = (branchLossBlocks(HVDClink) + 1))
+                                  and (sum[ los1, LossSegmentMW(HVDClink,los1,fd) + LossSegmentFactor(HVDClink,los1,fd) ] > 0) } = yes ;
+                                  
 * branches that have non-zero loss factors
 LossBranch(branch) $ sum[ (los,fd), LossSegmentFactor(branch,los,fd) ] = yes ;
 
@@ -669,20 +509,123 @@ HVDCBreakPointMWLoss(HVDClink,bp,fd) $ { validLossSegment(HVDClink,bp,fd) and (o
 loop ((HVDClink(branch),bp) $ (ord(bp) > 2),
     HVDCBreakPointMWLoss(branch,bp,fd) $ validLossSegment(branch,bp,fd) = LossSegmentFactor(branch,bp-1,fd) * [ LossSegmentMW(branch,bp-1,fd) - LossSegmentMW(branch,bp-2,fd) ] + HVDCBreakPointMWLoss(branch,bp-1,fd) ;
 ) ;
-*-------------------------------------------------------------------------------
 
-* Initialise branch constraint data --------------------------------------------
+
+* Initialise branch constraint data 
 branchConstraint(ca,dt,brCstr) $ sum[ branch(ca,dt,br) $ branchCstrFactors(ca,dt,brCstr,br), 1 ] = yes ;
 branchConstraintSense(branchConstraint) = branchCstrRHS(branchConstraint,'cnstrSense') ;
 branchConstraintLimit(branchConstraint) = branchCstrRHS(branchConstraint,'cnstrLimit') ;
-*-------------------------------------------------------------------------------
 
-* Calculate parameters for NMIR project ----------------------------------------
-islandRiskGroup(ca,dt,isl,rg,riskC) = yes $ sum[ o $ { offerIsland(ca,dt,o,isl) and riskGroupOffer(ca,dt,rg,o,riskC) }, 1 ] ;
-modulationRisk(ca,dt)               = smax[ riskC, modulationRiskClass(ca,dt,RiskC) ];
-reserveShareEnabledOverall(ca,dt)   = smax[ resC, reserveShareEnabled(ca,dt,resC) ];
-roPwrZoneExit(ca,dt,resC)           = [ roundPower2MonoLevel(ca,dt) - modulationRisk(ca,dt) ]$(ord(resC)=1) + bipole2MonoLevel(ca,dt)$(ord(resC)=2) ;
 
+* Offer data
+* Initialise generating offer parameters 
+generationStart(ca,dt,o)   = offerParameter(ca,dt,o,'initialMW') + sum[ o1 $ primarySecondaryOffer(ca,dt,o,o1), offerParameter(ca,dt,o1,'initialMW') ] ;
+rampRateUp(ca,dt,o)        = offerParameter(ca,dt,o,'rampUpRate')      ;
+rampRateDn(ca,dt,o)        = offerParameter(ca,dt,o,'rampDnRate')      ;
+reserveGenMax(ca,dt,o)     = offerParameter(ca,dt,o,'resrvGenMax')     ;
+intermittentOffer(ca,dt,o) = offerParameter(ca,dt,o,'isIG')            ;
+FKband(ca,dt,o)            = offerParameter(ca,dt,o,'FKbandMW')        ;
+priceResponsive(ca,dt,o)   = offerParameter(ca,dt,o,'isPriceResponse') ;
+potentialMW(ca,dt,o)       = offerParameter(ca,dt,o,'potentialMW')     ;
+
+$onText
+For generators in the PRICERESPONSIVEIG subset, if the potentialMW(g) value is less than ReserveGenerationMaximum(g,c) then pre-processing sets the ReserveGenerationMaximum(g,c) parameter to the PotentialMWg value,
+otherwise if the potentialMW(g) value is greater than or equal to the ReserveGenerationMaximum(g,c) then the ReserveGenerationMaximum(g,c) value is unchanged
+Tuong note: this does not seems to make sense and be used but This is based on the 4.6.2.1 calculation
+$offText
+reserveMaxFactor(ca,dt,o,'FIR') = offerParameter(ca,dt,o,'maxFactorFIR') ;
+reserveMaxFactor(ca,dt,o,'SIR') = offerParameter(ca,dt,o,'maxFactorSIR') ;
+reserveMaxFactor(ca,dt,o,resC) $ { intermittentOffer(ca,dt,o) and priceResponsive(ca,dt,o) and( potentialMW(ca,dt,o) > 0) and (potentialMW(ca,dt,o) < reserveGenMax(ca,dt,o)) } = reserveGenMax(ca,dt,o) / potentialMW(ca,dt,o) ;
+
+* Identification of primary and secondary units
+primaryOffer(ca,dt,o) = 1 ;
+secondaryOffer(ca,dt,o) = 1 $ sum[ o1 $ primarySecondaryOffer(ca,dt,o1,o), 1 ] ;
+primaryOffer(ca,dt,o) $ secondaryOffer(ca,dt,o) = 0 ;
+
+* Initialise energy/reserve offer data
+enrgOfrMW(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'limitMW')  $ { offerParameter(ca,dt,o,'dispatchable') = 1 } ;
+enrgOfrPrice(ca,dt,o,blk) = energyOffer(ca,dt,o,blk,'price') $ { offerParameter(ca,dt,o,'dispatchable') = 1 } ;
+
+resrvOfrPct(ca,dt,o,blk,resC)        = reserveOffer(ca,dt,o,resC,'PLRO',blk,'plsrPct') / 100 ;
+resrvOfrMW(ca,dt,o,blk,resC,resT)    = reserveOffer(ca,dt,o,resC,resT,blk,'limitMW')  ;
+resrvOfrPrice(ca,dt,o,blk,resC,resT) = reserveOffer(ca,dt,o,resC,resT,blk,'price')  ;
+
+
+* Define valid offers/block sets
+* Valid offer must be mapped to a bus with electrical island <> 0. IL offer with non zero total limit is always valid no matter what
+offer(ca,dt,o) $ sum[ (n,b) $ { offerNode(ca,dt,o,n) and nodeBus(ca,dt,n,b) }, busElectricalIsland(ca,dt,b) ] = yes ;
+offer(ca,dt,o) $ sum[ (blk,resC), resrvOfrMW(ca,dt,o,blk,resC,'ILRO')] = yes ;
+
+offerIsland(offer(ca,dt,o),isl) $ sum[ n $ { offerNode(ca,dt,o,n) and nodeIsland(ca,dt,n,isl) }, 1 ] = yes ;
+islandRiskGenerator(ca,dt,isl,o) $ { offerIsland(ca,dt,o,isl) and offerParameter(ca,dt,o,'riskGenerator') } = yes ;
+
+* Valid energy offer blocks are defined as those with a positive block limit
+genOfrBlk(ca,dt,o,blk) $ ( enrgOfrMW(ca,dt,o,blk) > 0 ) = yes ;
+
+* Define set of positive (valid) energy offers
+posEnrgOfr(ca,dt,o) $ sum[ blk $ genOfrBlk(ca,dt,o,blk), 1 ] = yes ;
+
+* Only reserve offer block with a positive block limit is valid
+resOfrBlk(ca,dt,o,blk,resC,resT) $ (resrvOfrMW(ca,dt,o,blk,resC,resT) > 0) = yes ;
+
+
+* Bid data
+bid(ca,dt,bd) $ sum[ (n,b) $ { bidNode(ca,dt,bd,n) and nodeBus(ca,dt,n,b) }, busElectricalIsland(ca,dt,b) ] = yes ;
+bidIsland(bid(ca,dt,bd),isl) $ sum[ n $ { bidNode(ca,dt,bd,n) and nodeIsland(ca,dt,n,isl) }, 1 ] = yes ;
+* Initialise bid limits and prices 
+demBidMW(bid,blk)    $ { bidParameter(bid,'dispatchable') = 1 } = energyBid(bid,blk,'limitMW') ;
+demBidPrice(bid,blk) $ { bidParameter(bid,'dispatchable') = 1 } = energyBid(bid,blk,'price')   ;
+demBidBlk(bid,blk)   $ ( DemBidMW(bid,blk) <> 0 ) = yes ;
+
+
+* Initialise market node constraint data for the current trading period
+MnodeConstraint(ca,dt,MnodeCstr) $ sum[ (offer(ca,dt,o),resT,resC) $ { mnCstrEnrgFactors(ca,dt,MnodeCstr,o) or mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT) }, 1 ] = yes;
+MnodeConstraint(ca,dt,MnodeCstr) $ sum[ (bid(ca,dt,bd),resC) $ { mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd) or mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC) }, 1 ]   = yes ;
+MnodeConstraintSense(MnodeConstraint) = mnCnstrRHS(MnodeConstraint,'cnstrSense') ;
+MnodeConstraintLimit(MnodeConstraint) = mnCnstrRHS(MnodeConstraint,'cnstrLimit') ;
+
+
+* Reserve/Risk data
+islandRiskGroup(ca,dt,isl,rg,riskC)             = yes $ sum[ o $ { offerIsland(ca,dt,o,isl) and riskGroupOffer(ca,dt,rg,o,riskC) }, 1 ] ;
+HVDCSecRiskEnabled(ca,dt,isl,'HVDCsecRisk')     = islandParameter(ca,dt,isl,'HVDCsecRisk') ; 
+HVDCSecRiskEnabled(ca,dt,isl,'HVDCsecRiskECE')  = islandParameter(ca,dt,isl,'HVDCsecRiskECE') ;
+riskAdjFactor(ca,dt,isl,resC,riskC)             = riskParameter(ca,dt,isl,resC,riskC,'adjustFactor') $ useReserveModel ;
+HVDCpoleRampUp(ca,dt,isl,resC,riskC)            = riskParameter(ca,dt,isl,resC,riskC,'HVDCRampUp') ;
+
+
+* Reserve sharing data
+rampingConstraint(branchConstraint) = branchCstrRHS(branchConstraint,'rampingCnstr') ;
+$onText
+TN on 22 May 2017:
+Usually a branch group constraint that limits the HVDC flow only involves the HVDC branch(s) in the same direction. However, during TP6 to TP9 of 18 May 2017, the constraint HAY_BEN_High_Frequency_limit involved all four
+branches in the form: HAY_BEN1.1 + HAY_BEN2.1 - BEN_HAY1.1 - BEN_HAY2.1 <= 530 MW. This method of formulating the constraint prevented the previous formulation of monopoleConstraint and bipoleConstraintfrom working properly.
+Those constraints have been reformulated (see below) in order to cope with the formulation observed on 18 May 2017.
+$offText
+monopoleConstraint(ca,dt,isl,brCstr,br) $ { HVDClink(ca,dt,br) and ( not rampingConstraint(ca,dt,brCstr) ) and ( branchConstraintSense(ca,dt,brCstr) = -1 )
+                                        and (sum[ (br1,b) $ { HVDClinkSendingBus(ca,dt,br1,b) and busIsland(ca,dt,b,isl) }, branchCstrFactors(ca,dt,brCstr,br1)] = 1)
+                                        and (sum[ b $ { HVDClinkSendingBus(ca,dt,br,b) and busIsland(ca,dt,b,isl) }, branchCstrFactors(ca,dt,brCstr,br)] = 1)
+                                          } = yes ;
+
+bipoleConstraint(ca,dt,isl,brCstr) $ { ( not rampingConstraint(ca,dt,brCstr) ) and ( branchConstraintSense(ca,dt,brCstr) = -1 )
+                                   and (sum[ (br,b) $ { HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) and busIsland(ca,dt,b,isl) }, branchCstrFactors(ca,dt,brCstr,br)  ] = 2)
+                                     } = yes ;
+
+reserveShareEnabled(ca,dt,'FIR')  = reserveSharingParameter(ca,dt,'sharingFIR') ;
+reserveShareEnabled(ca,dt,'SIR')  = reserveSharingParameter(ca,dt,'sharingSIR') ;
+reserveShareEnabledOverall(ca,dt) = smax[ resC, reserveShareEnabled(ca,dt,resC)];
+
+reserveRoundPower(ca,dt,'SIR')    = reserveSharingParameter(ca,dt,'roundPwrFIR') ;
+reserveRoundPower(ca,dt,'SIR')    = reserveSharingParameter(ca,dt,'roundPwrSIR') ;
+
+modulationRiskClass(ca,dt,'DCCE')           = reserveSharingParameter(ca,dt,'MRCE') ;
+modulationRiskClass(ca,dt,'DCECE')          = reserveSharingParameter(ca,dt,'MRECE') ;
+modulationRiskClass(ca,dt,'HVDCsecRisk')    = reserveSharingParameter(ca,dt,'MRCE') ;
+modulationRiskClass(ca,dt,'HVDCsecRiskECE') = reserveSharingParameter(ca,dt,'MRECE') ;
+modulationRisk(ca,dt)                       = smax[ riskC, modulationRiskClass(ca,dt,RiskC) ];
+
+roundPower2MonoLevel(ca,dt) = reserveSharingParameter(ca,dt,'roundPwr2Mono') ;
+bipole2MonoLevel(ca,dt)     = reserveSharingParameter(ca,dt,'biPole2Mono') ;
+roPwrZoneExit(ca,dt,resC)   = [ roundPower2MonoLevel(ca,dt) - modulationRisk(ca,dt) ]$(ord(resC)=1) + bipole2MonoLevel(ca,dt)$(ord(resC)=2) ;
 $onText
 SPD pre-processing is changed so that the roundpower settings for FIR are now the same as for SIR. Specifically: (National market refinement - effective date 28 Mar 2019 12:00 )
 -  The RoundPowerZoneExit for FIR will be set at BipoleToMonopoleTransition by SPD pre-processing. A change from the existing where the RoundPowerZoneExit for FIR is set at RoundPowerToMonopoleTransition by SPD pre-processing.
@@ -692,19 +635,20 @@ if(inputGDXGDate >= jdate(2019,03,28),
     roPwrZoneExit(ca,dt,resC) = bipole2MonoLevel(ca,dt) ;
 ) ;
 
-* Calculate HVDC constraint sets and HVDC Max Flow - NMIR (4.1.8 - NMIR06)
-$onText
-TN on 22 May 2017:
-Usually a branch group constraint that limits the HVDC flow only involves the HVDC branch(s) in the same direction. However, during TP6 to TP9 of 18 May 2017, the constraint HAY_BEN_High_Frequency_limit involved all four
-branches in the form: HAY_BEN1.1 + HAY_BEN2.1 - BEN_HAY1.1 - BEN_HAY2.1 <= 530 MW. This method of formulating the constraint prevented the previous formulation of monopoleConstraint and bipoleConstraintfrom working properly.
-Those constraints have been reformulated (see below) in order to cope with the formulation observed on 18 May 2017.
-$offText
-monopoleConstraint(ca,dt,isl,brCstr,br) $ { HVDClink(ca,dt,br) and ( not rampingConstraint(ca,dt,brCstr) ) and ( branchConstraintSense(ca,dt,brCstr) = -1 )
-                                     and (sum[ (br1,b) $ { HVDClinkSendingBus(ca,dt,br1,b) and busIsland(ca,dt,b,isl) }, branchCstrFactors(ca,dt,brCstr,br1)] = 1)
-                                     and (sum[ b $ { HVDClinkSendingBus(ca,dt,br,b) and busIsland(ca,dt,b,isl) }, branchCstrFactors(ca,dt,brCstr,br)] = 1)  } = yes ;
+monopoleMinimum(ca,dt)                = reserveSharingParameter(ca,dt,'monoPoleMin') ;
+HVDCControlBand(ca,dt,'forward')      = reserveSharingParameter(ca,dt,'forwardHVDCcontrolBand') ;
+HVDCControlBand(ca,dt,'backward')     = reserveSharingParameter(ca,dt,'backwardHVDCcontrolBand') ;        
+HVDClossScalingFactor(ca,dt)          = reserveSharingParameter(ca,dt,'lossScalingFactorHVDC') ;
 
-bipoleConstraint(ca,dt,isl,brCstr) $ { ( not rampingConstraint(ca,dt,brCstr) ) and ( branchConstraintSense(ca,dt,brCstr) = -1 )
-                                and (sum[ (br,b) $ { HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) and busIsland(ca,dt,b,isl) }, branchCstrFactors(ca,dt,brCstr,br)  ] = 2) } = yes ;
+RMTReserveLimit(ca,dt,isl,'FIR')      = islandParameter(ca,dt,isl,'RMTlimitFIR') ;
+RMTReserveLimit(ca,dt,isl,'SIR')      = islandParameter(ca,dt,isl,'RMTlimitSIR') ;
+
+sharedNFRFactor(ca,dt)                = reserveSharingParameter(ca,dt,'sharedNFRfactor') ;
+sharedNFRLoadOffset(ca,dt,isl)        = islandParameter(ca,dt,isl,'sharedNFRLoadOffset') ;
+effectiveFactor(ca,dt,isl,resC,riskC) = riskParameter(ca,dt,isl,resC,riskC,'sharingEffectiveFactor');
+
+* Calculate HVDC parameters applied to National Reserve Sharing
+numberOfPoles(ca,dt,isl)       = sum[ (b,br) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, 1 ] ;
 
 monoPoleCapacity(ca,dt,isl,br) = sum[ b $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b)}, branchCapacity(ca,dt,br,'forward') ] ;
 monoPoleCapacity(ca,dt,isl,br) $ sum[ brCstr $ monopoleConstraint(ca,dt,isl,brCstr,br), 1] = Smin[ brCstr $ monopoleConstraint(ca,dt,isl,brCstr,br), branchConstraintLimit(ca,dt,brCstr) ];
@@ -712,6 +656,7 @@ monoPoleCapacity(ca,dt,isl,br) = Min[ monoPoleCapacity(ca,dt,isl,br), branchCapa
 
 biPoleCapacity(ca,dt,isl) $ sum[ brCstr $ bipoleConstraint(ca,dt,isl,brCstr), 1]  = Smin[ brCstr $ bipoleConstraint(ca,dt,isl,brCstr) , branchConstraintLimit(ca,dt,brCstr) ];
 biPoleCapacity(ca,dt,isl) $ { sum[ brCstr $ bipoleConstraint(ca,dt,isl,brCstr), 1] = 0 } = sum[ (b,br,fd) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, branchCapacity(ca,dt,br,'forward') ] ;
+
 HVDCMax(ca,dt,isl) = Min( biPoleCapacity(ca,dt,isl), sum[ br, monoPoleCapacity(ca,dt,isl,br) ] ) ;
 
 * Initialse parameters for NMIR -------------------------------------------
@@ -720,9 +665,9 @@ $onText
 * Tuong Nguyen @ EA discovered this bug and the SO has fixed it as of 22/11/2016.
 $offText
 HVDCCapacity(ca,dt,isl) = sum[ (b,br) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, branchCapacity(ca,dt,br,'forward') ] ;
-numberOfPoles(ca,dt,isl) = sum[ (b,br) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, 1 ] ;
+
 HVDCResistance(ca,dt,isl) $ (numberOfPoles(ca,dt,isl) = 2) = prod[ (b,br) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, branchResistance(ca,dt,br) ]
-                                                     / sum[ (b,br) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, branchResistance(ca,dt,br) ] ;
+                                                            / sum[ (b,br) $ { BusIsland(ca,dt,b,isl) and HVDClink(ca,dt,br) and HVDClinkSendingBus(ca,dt,br,b) }, branchResistance(ca,dt,br) ] ;
 HVDCResistance(ca,dt,isl) $ (numberOfPoles(ca,dt,isl) = 1) = sum[ br $ monoPoleCapacity(ca,dt,isl,br), branchResistance(ca,dt,br) ] ;
 
 HVDCLossSegmentMW(ca,dt,isl,los)     $ (ord(los) = 1) = HVDCCapacity(ca,dt,isl) * lossCoeff_C ;
@@ -750,73 +695,50 @@ loop( (ca,dt,isl,bp) $ {(ord(bp) > 1) and (ord(bp) <= 7)},
 * Ideally SO should use asymmetric loss curve
 HVDCReserveBreakPointMWFlow(ca,dt,isl,rsbp) $ (ord(rsbp) <= 7) = sum[ (isl1,rsbp1) $ { ( not sameas(isl1,isl) ) and ( ord(rsbp) + ord(rsbp1) = 8) }, -HVDCSentBreakPointMWFlow(ca,dt,isl1,rsbp1) ];
 HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ (ord(rsbp) <= 7) = sum[ (isl1,rsbp1) $ { ( not sameas(isl1,isl) ) and ( ord(rsbp) + ord(rsbp1) = 8) }, HVDCSentBreakPointMWLoss(ca,dt,isl1,rsbp1) ];
-* SO decide to use symmetric loss curve instead
+* However, SO decide to use symmetric loss curve instead
 HVDCReserveBreakPointMWFlow(ca,dt,isl,rsbp) $ (ord(rsbp) <= 7) = sum[ rsbp1 $ { ord(rsbp) + ord(rsbp1) = 8 }, -HVDCSentBreakPointMWFlow(ca,dt,isl,rsbp1) ];
 HVDCReserveBreakPointMWFlow(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <= 13) } = HVDCSentBreakPointMWFlow(ca,dt,isl,rsbp-6) ;
 HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ (ord(rsbp) <= 7) = sum[ rsbp1 $ { ord(rsbp) + ord(rsbp1) = 8 }, HVDCSentBreakPointMWLoss(ca,dt,isl,rsbp1) ];
 HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <= 13) } = HVDCSentBreakPointMWLoss(ca,dt,isl,rsbp-6);
-* Initialze parameters for NMIR project end ----------------------------------
-
-* Initialise risk/reserve data for the current trade period start
-GenRisk(riskC)     $ { (ord(riskC) = 1) or (ord(riskC) = 5) } = yes ;
-HVDCrisk(riskC)    $ { (ord(riskC) = 2) or (ord(riskC) = 3) } = yes ;
-ManualRisk(riskC)  $ { (ord(riskC) = 4) or (ord(riskC) = 6) } = yes ;
-HVDCsecRisk(riskC) $ { (ord(riskC) = 7) or (ord(riskC) = 8) } = yes ;
-* Define the CE and ECE risk class set to support the different CE and ECE CVP
-ContingentEvents(riskC)        $ { (ord(riskC) = 1) or (ord(riskC) = 2) or (ord(riskC) = 4) or (ord(riskC) = 7) } = yes ;
-ExtendedContingentEvent(riskC) $ { (ord(riskC) = 3) or (ord(riskC) = 5) or (ord(riskC) = 6) or (ord(riskC) = 8) }= yes ;
-
-* Risk parameters
-IslandRiskAdjustmentFactor(ca,dt,isl,resC,riskC) $ useReserveModel = riskParameter(ca,dt,isl,resC,riskC,'adjustFactor') ;
-HVDCpoleRampUp(ca,dt,isl,resC,riskC) = riskParameter(ca,dt,isl,resC,riskC,'HVDCRampUp') ;
-
-* Initialise market node constraint data for the current trading period
-MnodeConstraint(ca,dt,MnodeCstr) $ { sum[ (offer(ca,dt,o),resT,resC) $ { mnCstrEnrgFactors(ca,dt,MnodeCstr,o) or mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT) }, 1 ]
-                               or sum[ (bid(ca,dt,bd),resC) $ { mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd) or mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC) }, 1 ] } = yes ;
-MnodeConstraintSense(MnodeConstraint) = mnCnstrRHS(MnodeConstraint,'cnstrSense') ;
-MnodeConstraintLimit(MnodeConstraint) = mnCnstrRHS(MnodeConstraint,'cnstrLimit') ;
-
-* Generation Ramp Pre_processing -----------------------------------------------
-* For PRICERESPONSIVEIG generators, The RTD RampRateUp is capped: (4.7.2.2)
-loop( (ca,dt),
-  if (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201,
-      RampRateUp(offer(ca,dt,o)) $ { windOffer(offer) and priceResponsive(offer) } = Min[ RampRateUp(offer), rtdIgIncreaseLimit(ca,dt)*60/intervalDuration(ca,dt) ];
-  ) ;
-) ;
-
-totalBusAllocation(ca,dt,b) $ bus(ca,dt,b) = sum[ n $ Node(ca,dt,n), NodeBusAllocationFactor(ca,dt,n,b)];
-busNodeAllocationFactor(ca,dt,b,n) $ (totalBusAllocation(ca,dt,b) > 0) = NodeBusAllocationFactor(ca,dt,n,b) / totalBusAllocation(ca,dt,b) ;
-
-* Need to initiate value for this parameters before it is used
-o_offerEnergy_TP(ca,dt,o) = 0;
 
 
-* Initialise demand/bid data ---------------------------------------------------
-RequiredLoad(node) = nodeDemand(node) ;
+* Data appllied to Real Time Pricing
+  useGenInitialMW(ca,dt)            = dtParameter(ca,dt,'useGenInitialMW') ;
+  useActualLoad(ca,dt)              = dtParameter(ca,dt,'useActualLoad') ;
+  maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') ;
+  islandMWIPS(ca,dt,isl)            = islandParameter(ca,dt,isl,'MWIPS') ;
+  islandPDS(ca,dt,isl)              = islandParameter(ca,dt,isl,'PDS') ;
+  islandLosses(ca,dt,isl)           = islandParameter(ca,dt,isl,'Losses') ;
+  SPDLoadCalcLosses(ca,dt,isl)      = islandParameter(ca,dt,isl,'SPDLoadCalcLosses') ;
+
+* For PRICERESPONSIVEIG generators, The RTD rampRateUp is capped: (4.7.2.2)
+rampRateUp(offer(ca,dt,o)) $ { (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and intermittentOffer(offer) and priceResponsive(offer) }
+                           = Min[ rampRateUp(offer), dtParameter(ca,dt,'igIncreaseLimitRTD')*60/intervalDuration(ca,dt) ] ;
 
 * 4.9.2 Dispatchable Pnodes
-$ontext
-If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then
-PnodeRequiredLoadpn is set to zero. The Pnode load will be determined by
-clearing the Pnode's Dispatchable Demand Bid when the LP Model is solved.
-$offtext
-RequiredLoad(node(ca,dt,n)) $ { sum[ (bd,blk) $ ( bidNode(ca,dt,bd,n) and (not differenceBid(ca,dt,bd) ) ), DemBidMW(ca,dt,bd,blk) ] > 0 } = 0;
+* If the Pnode associated with a Dispatchable Demand Bid is not a dead Pnode then PnodeRequiredLoad is set to zero. This is not applicable for "difference bid"
+requiredLoad(node(ca,dt,n)) $ { sum[ (bd,blk) $ ( bidNode(ca,dt,bd,n) and (bidParameter(ca,dt,bd,'difference') = 0 ) ), DemBidMW(ca,dt,bd,blk) ] > 0 } = 0;
 *-------------------------------------------------------------------------------
 
 * Initialize energy scarcity limits and prices ---------------------------------
-ScarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (RequiredLoad(ca,dt,n) > 0) }                                      = scarcityEnrgNationalFactor(ca,dt,blk) * RequiredLoad(ca,dt,n);
-ScarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (ScarcityEnrgLimit(ca,dt,n,blk) > 0 ) }                            = scarcityEnrgNationalPrice(ca,dt,blk) ;
+energyScarcityEnabled(ca,dt)                 = dtParameter(ca,dt,'enrgScarcity') ;
+reserveScarcityEnabled(ca,dt)                = dtParameter(ca,dt,'resrvScarcity') ;
+scarcityResrvIslandLimit(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'limitMW') ;
+scarcityResrvIslandPrice(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'price') ;
 
-ScarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeFactor(ca,dt,n,blk) and (RequiredLoad(ca,dt,n) > 0) } = scarcityEnrgNodeFactor(ca,dt,n,blk) * RequiredLoad(ca,dt,n);
-ScarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeFactorPrice(ca,dt,n,blk) }                         = scarcityEnrgNodeFactorPrice(ca,dt,n,blk) ;
+scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (requiredLoad(ca,dt,n) > 0) }                                      = scarcityNationalFactor(ca,dt,blk,'factor') * requiredLoad(ca,dt,n);
+scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (scarcityEnrgLimit(ca,dt,n,blk) > 0 ) }                            = scarcityNationalFactor(ca,dt,blk,'price') ;
 
-ScarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeLimit(ca,dt,n,blk) }                               = scarcityEnrgNodeLimit(ca,dt,n,blk);
-ScarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityEnrgNodeLimitPrice(ca,dt,n,blk) }                          = scarcityEnrgNodeLimitPrice(ca,dt,n,blk) ;
+scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'factor') and (requiredLoad(ca,dt,n) > 0) } = scarcityNodeFactor(ca,dt,n,blk,'factor') * requiredLoad(ca,dt,n);
+scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'price') }                         = scarcityNodeFactor(ca,dt,n,blk,'price') ;
+
+scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'limitMW') }                               = scarcityNodeLimit(ca,dt,n,blk,'limitMW');
+scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'price') }                          = scarcityNodeLimit(ca,dt,n,blk,'price') ;
 *-------------------------------------------------------------------------------
 
 * Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.2.1)
-sharedNFRLoad(ca,dt,isl) = sum[ nodeIsland(ca,dt,n,isl), RequiredLoad(ca,dt,n)] + sum[ (bd,blk) $ bidIsland(ca,dt,bd,isl), DemBidMW(ca,dt,bd,blk) ] - sharedNFRLoadOffset(ca,dt,isl) ;
-sharedNFRMax(ca,dt,isl) = Min{ RMTReserveLimitTo(ca,dt,isl,'FIR'), sharedNFRFactor(ca,dt)*sharedNFRLoad(ca,dt,isl) } ;
+sharedNFRLoad(ca,dt,isl) = sum[ nodeIsland(ca,dt,n,isl), requiredLoad(ca,dt,n)] + sum[ (bd,blk) $ bidIsland(ca,dt,bd,isl), DemBidMW(ca,dt,bd,blk) ] - sharedNFRLoadOffset(ca,dt,isl) ;
+sharedNFRMax(ca,dt,isl) = Min{ RMTReserveLimit(ca,dt,isl,'FIR'), sharedNFRFactor(ca,dt)*sharedNFRLoad(ca,dt,isl) } ;
 
 * Risk parameters
 FreeReserve(ca,dt,isl,resC,riskC) = riskParameter(ca,dt,isl,resC,riskC,'freeReserve') - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(ca,dt,isl1) ]${(ord(resC)=1) and ((GenRisk(riskC)) or (ManualRisk(riskC))) } ;
@@ -829,6 +751,10 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_1.gms"
 *=====================================================================================
 * 7. The vSPD solve loop
 *=====================================================================================
+
+
+* Need to initiate value for this parameters before it is used
+o_offerEnergy_TP(ca,dt,o) = 0;
 
 LoadCalcLosses(ca,dt,isl) = islandLosses(ca,dt,isl);
 DidShortfallTransfer(ca,dt,n) = 0;
@@ -971,35 +897,35 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         InitialLoad(t,n) = InputInitialLoad(t,n);
         InitialLoad(t,n) $ { (LoadIsOverride(t,n) = 0) and ( (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) ) } = EstimatedInitialLoad(t,n) ;
         InitialLoad(t,n) $ { (LoadIsOverride(t,n) = 1) and (useActualLoad(t) = 1) and (InitialLoad(t,n) > MaxLoad(t,n)) } = MaxLoad(t,n) ;
-        InitialLoad(t,n) $ DidShortfallTransfer(t,n) = RequiredLoad(t,n);
+        InitialLoad(t,n) $ DidShortfallTransfer(t,n) = requiredLoad(t,n);
 
 *       Flag if load is scalable [4.10.6.4]
-*       If True [1] then the Pnode InitialLoad will be scaled in order to calculate RequiredLoad, if False then Pnode InitialLoad will be directly assigned to RequiredLoad
+*       If True [1] then the Pnode InitialLoad will be scaled in order to calculate requiredLoad, if False then Pnode InitialLoad will be directly assigned to requiredLoad
         LoadIsScalable(t,n) = 1 $ { (LoadIsNCL(t,n) = 0) and (LoadIsOverride(t,n) = 0) and (InitialLoad(t,n) >= 0) and (ShortfallDisabledScaling(t,n) = 0) and (DidShortfallTransfer(t,n) = 0) } ;
 
-*       Calculate Island-level scaling factor [4.10.6.3] --> applied to InitialLoad in order to calculate RequiredLoad
+*       Calculate Island-level scaling factor [4.10.6.3] --> applied to InitialLoad in order to calculate requiredLoad
         LoadScalingFactor(t,isl) = ( TargetTotalLoad(t,isl) - sum[n $ {nodeIsland(t,n,isl) and (LoadIsScalable(t,n) = 0)}, InitialLoad(t,n)] ) / sum[n $ {nodeIsland(t,n,isl) and (LoadIsScalable(t,n) = 1)}, InitialLoad(t,n)] ;
 
-*       Calculate RequiredLoad [4.10.6.1]
-        RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n) = 1) } = InitialLoad(t,n) * sum[ isl $ nodeisland(t,n,isl), LoadScalingFactor(t,isl) ];
-        RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n) = 0) } = InitialLoad(t,n);
-        RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = RequiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
+*       Calculate requiredLoad [4.10.6.1]
+        requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n) = 1) } = InitialLoad(t,n) * sum[ isl $ nodeisland(t,n,isl), LoadScalingFactor(t,isl) ];
+        requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n) = 0) } = InitialLoad(t,n);
+        requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = requiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
 
 *       Recalculate energy scarcity limits -------------------------------------
-        ScarcityEnrgLimit(t,n,blk) = 0 ;
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) }                                     = scarcityEnrgNationalFactor(t,blk) * RequiredLoad(t,n);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (ScarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityEnrgNationalPrice(t,blk) ;
+        scarcityEnrgLimit(t,n,blk) = 0 ;
+        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) }                                     = scarcityNationalFactor(t,blk,'factor') * requiredLoad(t,n);
+        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (scarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityNationalFactor(t,blk,'price') ;
 
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) and scarcityEnrgNodeFactor(t,n,blk) } = scarcityEnrgNodeFactor(t,n,blk) * RequiredLoad(t,n);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeFactorPrice(t,n,blk) }                        = scarcityEnrgNodeFactorPrice(t,n,blk) ;
+        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) and scarcityNodeFactor(t,n,blk,'factor') } = scarcityNodeFactor(t,n,blk,'factor') * requiredLoad(t,n);
+        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeFactor(t,n,blk,'price') }                        = scarcityNodeFactor(t,n,blk,'price') ;
 
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityEnrgNodeLimit(t,n,blk)  } = scarcityEnrgNodeLimit(t,n,blk);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeLimitPrice(t,n,blk) }                         = scarcityEnrgNodeLimitPrice(t,n,blk) ;
+        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityNodeLimit(t,n,blk,'limitMW')  } = scarcityNodeLimit(t,n,blk,'limitMW');
+        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeLimit(t,n,blk,'price') }                         = scarcityNodeLimit(t,n,blk,'price') ;
 *       ------------------------------------------------------------------------
 
 *       Update Free Reserve and SharedNFRmax - Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
-        sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), RequiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
-        sharedNFRMax(t,isl) = Min{ RMTReserveLimitTo(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
+        sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), requiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
+        sharedNFRMax(t,isl) = Min{ RMTReserveLimit(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
         FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
                                      - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) and (inputGDXGDate >= jdate(2016,10,20)) } ;
     ) ;
@@ -1014,12 +940,12 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 
 *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS ========================
 *   Constraint 6.1.1.1 - Offer blocks
-    GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = EnrgOfrMW(genOfrBlk) ;
+    GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = enrgOfrMW(genOfrBlk) ;
     GENERATIONBLOCK.fx(t,o,blk) $ (not genOfrBlk(t,o,blk)) = 0 ;
 *   Constraint 6.1.1.3 - Fix the invalid generation to Zero
     GENERATION.fx(offer(t,o)) $ (not posEnrgOfr(offer)) = 0 ;
 *   Constraint 6.1.1.4 - Set Upper Bound for intermittent generation
-    GENERATION.up(offer(t,o)) $ { windOffer(offer) and priceResponsive(offer) } = min[ potentialMW(offer), ReserveGenerationMaximum(offer) ] ;
+    GENERATION.up(offer(t,o)) $ { intermittentOffer(offer) and priceResponsive(offer) } = min[ potentialMW(offer), reserveGenMax(offer) ] ;
 
 *   Dead node pre-processing - zero cleared qunatities 4.3.1
     GENERATION.fx(offer(t,o)) $ sum[n $ offernode(t,o,n),IsNodeDead(t,n)] = 0 ;
@@ -1032,7 +958,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
     PURCHASE.fx(t,bd) $ (sum[blk $ demBidBlk(t,bd,blk), 1] = 0) = 0 ;
 
 *   Constraint 6.1.1.7 - Set Upper Bound for Energy Scaricty Block
-    ENERGYSCARCITYBLK.up(t,n,blk) = ScarcityEnrgLimit(t,n,blk) ;
+    ENERGYSCARCITYBLK.up(t,n,blk) = scarcityEnrgLimit(t,n,blk) ;
     ENERGYSCARCITYBLK.fx(t,n,blk) $ (not EnergyScarcityEnabled(t)) = 0;
     ENERGYSCARCITYNODE.fx(t,n) $ (not EnergyScarcityEnabled(t)) = 0;
 *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS END ====================
@@ -1064,7 +990,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *   Ensure that all the invalid reserve blocks are set to zero for offers and purchasers.
     RESERVEBLOCK.fx(offer(t,o),blk,resC,resT) $ (not resOfrBlk(offer,blk,resC,resT)) = 0 ;
 *   Constraint 6.5.3.2 - Reserve block maximum for offers and purchasers.
-    RESERVEBLOCK.up(resOfrBlk(t,o,blk,resC,resT)) = ResOfrMW(resOfrBlk) ;
+    RESERVEBLOCK.up(resOfrBlk(t,o,blk,resC,resT)) = resrvOfrMW(resOfrBlk) ;
 *   Fix the reserve variable for invalid reserve offers. These are offers that are either not connected to the grid or have no reserve quantity offered.
     RESERVE.fx(t,o,resC,resT) $ (not sum[ blk $ resOfrBlk(t,o,blk,resC,resT), 1 ] ) = 0 ;
 *   NMIR project variables
@@ -1272,13 +1198,13 @@ $ontext
         Each Pnode that has a scheduled load of zero and is in the set of DeadPnodes is added to the set of DisconnectedPnodes.
 $offtext
     busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
-    busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
+    busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * requiredLoad(t,n) ] ;
     busDisconnected(bus(t,b)) $ { ( [busElectricalIsland(bus) = 0] and [busLoad(bus) = 0] )
                                or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busLoad(t,b1) ] = 0 )
                                or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busGeneration(t,b1) ] = 0 ) } = 1 ;
 
 *   Energy Shortfall Check (7.2)
-    if( smax[t,runEnrgShortfallTransfer(t)] = 1,
+    if( smax[t, dtParameter(t,'enrgShortfallTransfer')] = 1,
 
 *       Check for dead nodes
         IsNodeDead(t,n) = 1 $ ( sum[b $ { NodeBus(t,n,b) and (busDisconnected(t,b)=0) }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
@@ -1300,20 +1226,20 @@ $offtext
         EligibleShortfallRemoval(t,n) = 1 $ [EnergyShortFallCheck(t,n)  and { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) }] ;
 
 *       d. Shortfall Removal:
-*       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the RequiredLoad in order to remove the shortfall.
+*       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the requiredLoad in order to remove the shortfall.
 *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
-*       If the adjustment would make RequiredLoad negative then RequiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
-*       the RTD Required Load calculation does not recalculate its RequiredLoad at this node
-        ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [enrgShortfallRemovalMargin(t) $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
+*       If the adjustment would make requiredLoad negative then requiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
+*       the RTD Required Load calculation does not recalculate its requiredLoad at this node
+        ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [ dtParameter(ca,dt,'shortfallRemovalMargin') $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
 
-        RequiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = RequiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
-        RequiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (RequiredLoad(t,n) < 0) } = 0 ;
+        requiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = requiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
+        requiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (requiredLoad(t,n) < 0) } = 0 ;
         DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
 
 $ontext
 e. Shortfall Transfer:
-If the previous step adjusts RequiredLoad then the processing will search for a transfer target Pnode to receive the Shortfall Adjustment quantity (the search process is described below).
-If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node and the DidShortfallTransfer of the transfer target Pnode flag is set to True.
+If the previous step adjusts requiredLoad then the processing will search for a transfer target Pnode to receive the Shortfall Adjustment quantity (the search process is described below).
+If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node and the DidShortfallTransfer of the transfer target Pnode flag is set to True.
 k. Shortfall Transfer Target:
 In the Shortfall Transfer step, the search for a transfer target node proceeds as follows.
 The first choice candidate for price transfer source is the PnodeTransferPnode of the target Pnode. If the candidate is ineligible then the new candidate will be the PnodeTransferPnode of the candidate,
@@ -1334,8 +1260,8 @@ $offtext
                 and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
                   } = 1;
 
-*           If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node
-            RequiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= RequiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+*           If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
+            requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
 
 *           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
             ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
@@ -1392,7 +1318,7 @@ $ontext
 $offtext
 
         busGeneration(bus(t,b)) = sum[ (o,n) $ { offerNode(t,o,n) and NodeBus(t,n,b) } , NodeBusAllocationFactor(t,n,b) * GENERATION.l(t,o) ] ;
-        busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ] ;
+        busLoad(bus(t,b))       = sum[ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * requiredLoad(t,n) ] ;
         busPrice(bus(t,b))      = ACnodeNetInjectionDefinition2.m(t,b) ;
 
         busDisconnected(bus(t,b)) $ { (busLoad(bus) = 0) and (busElectricalIsland(bus) = 0) } = 1 ;
@@ -1436,7 +1362,7 @@ $offtext
 *   Reporting at trading period start
 *       Node level output
         o_nodeGeneration_TP(t,n) $ Node(t,n) = sum[ o $ offerNode(t,o,n), GENERATION.l(t,o) ] ;
-        o_nodeLoad_TP(t,n)       $ Node(t,n) = RequiredLoad(t,n) + sum[ bd $ bidNode(t,bd,n), PURCHASE.l(t,bd) ];
+        o_nodeLoad_TP(t,n)       $ Node(t,n) = requiredLoad(t,n) + sum[ bd $ bidNode(t,bd,n), PURCHASE.l(t,bd) ];
         o_nodePrice_TP(t,n)      $ Node(t,n) = sum[ b $ NodeBus(t,n,b), NodeBusAllocationFactor(t,n,b) * busPrice(t,b) ] ;
 
 $ontext
@@ -1455,7 +1381,7 @@ $ontext
         If an eligible price transfer source is found then the energy price of the dead Pnode and its associated ACNode are assigned the energy price of the transfer Pnode. If no eligible price is found then the dead Pnode
         and its associated ACNode are assigned a price of zero.
 $offtext
-        if (runPriceTransfer(t) and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
+        if ( dtParameter(t,'priceTransfer') and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
             o_nodeDead_TP(t,n) = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b)) }, NodeBusAllocationFactor(t,n,b) ] = 0 )} ;
             o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
             o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { [ ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = Smin[b1 $ NodeBus(t,n1,b1), busElectricalIsland(t,b1)] )
@@ -1688,7 +1614,7 @@ $offtext
         o_penaltyCost_TP(t)   = SYSTEMPENALTYCOST.l(t) ;
         o_ofv_TP(t)           = o_systemBenefit_TP(t) - o_systemCost_TP(t) - o_penaltyCost_TP(t)
                               - SCARCITYCOST.l(t) - RESERVESHAREPENALTY.l(t)
-                              + sum[(n,blk), ScarcityEnrgLimit(t,n,blk) * ScarcityEnrgPrice(t,n,blk)];
+                              + sum[(n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)];
 
 
 *       Separete violation reporting at trade period level

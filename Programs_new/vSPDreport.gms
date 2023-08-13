@@ -164,7 +164,7 @@ loop( (ca,dt,tp,isl,resC,ManualRisk) $ { case2dt2tp(ca,dt,tp) and (o_ManualRiskP
     else
          put 'ECE','MANUAL', 'MANUAL';
     );
-    put IslandMinimumRisk(ca,dt,isl,resC,ManualRisk) , 0, 0
+    put riskParameter(ca,dt,isl,resC,ManualRisk,'minRisk') , 0, 0
         FreeReserve(ca,dt,isl,resC,ManualRisk)
         o_TotalIslandReserve(ca,dt,isl,resC,ManualRisk)
         o_ManualRiskShortfall_TP(ca,dt,isl,resC,ManualRisk)
