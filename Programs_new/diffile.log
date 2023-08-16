@@ -1,0 +1,46 @@
+GDXDIFF          42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+File1 : C:\Users\nguyent\Downloads\301012023071200325.gdx
+File2 : C:\Users\nguyent\Documents\RTD\tempOut.gdx
+Summary of differences:
+                              bus   Symbol not found in file 2
+                          gdxDate   Symbol not found in file 2
+                            i_bus   Symbol not found in file 1
+                       i_caseDefn   Keys are different
+                i_dateTimeBidNode   Keys are different
+           i_dateTimeBidParameter   Keys are different
+              i_dateTimeBidTrader   Keys are different
+i_dateTimeBranchConstraintFactors   Keys are different
+    i_dateTimeBranchConstraintRHS   Keys are different
+             i_dateTimeBranchDefn   Keys are different
+        i_dateTimeBranchParameter   Keys are different
+    i_dateTimeBusElectricalIsland   Keys are different
+              i_dateTimeBusIsland   Keys are different
+              i_dateTimeEnergyBid   Keys are different
+            i_dateTimeEnergyOffer   Keys are different
+        i_dateTimeIslandParameter   Keys are different
+     i_dateTimeMNCnstrEnrgFactors   Keys are different
+    i_dateTimeMNCnstrResrvFactors   Keys are different
+             i_dateTimeMNCnstrRHS   Keys are different
+                i_dateTimeNodeBus   Keys are different
+i_dateTimeNodeBusAllocationFactor   Keys are different
+       i_dateTimeNodeOutageBranch   Keys are different
+          i_dateTimeNodeParameter   Keys are different
+             i_dateTimeNodetoNode   Keys are different
+              i_dateTimeOfferNode   Keys are different
+         i_dateTimeOfferParameter   Keys are different
+            i_dateTimeOfferTrader   Keys are different
+              i_dateTimeParameter   Keys are different
+           i_dateTimeReserveOffer   Keys are different
+         i_dateTimeReserveSharing   Symbol not found in file 2
+i_dateTimeReserveSharingParameter   Symbol not found in file 1
+              i_dateTimeRiskGroup   Keys are different
+          i_dateTimeRiskParameter   Keys are different
+ i_dateTimeScarcityNationalFactor   Keys are different
+     i_dateTimeScarcityResrvLimit   Keys are different
+         i_dateTimeTradePeriodMap   Keys are different
+                        i_gdxdate   Symbol not found in file 1
+                           i_node   Symbol not found in file 1
+                        i_runMode   Keys are different
+                             node   Symbol not found in file 2
+Output: C:\vSPD\vSPD\Programs_new\diffile.gdx
+GDXDiff finished

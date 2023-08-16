@@ -707,7 +707,7 @@ HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <
   useActualLoad(ca,dt)              = dtParameter(ca,dt,'useActualLoad') ;
   maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') ;
   islandMWIPS(ca,dt,isl)            = islandParameter(ca,dt,isl,'MWIPS') ;
-  islandPDS(ca,dt,isl)              = islandParameter(ca,dt,isl,'PDS') ;
+  islandPDS(ca,dt,isl)              = islandParameter(ca,dt,isl,'PSD') ;
   islandLosses(ca,dt,isl)           = islandParameter(ca,dt,isl,'Losses') ;
   SPDLoadCalcLosses(ca,dt,isl)      = islandParameter(ca,dt,isl,'SPDLoadCalcLosses') ;
 
