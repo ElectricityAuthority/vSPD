@@ -1,10 +1,10 @@
 Run: 'RTD_20230731_new'
 
-runvSPD started at: 08/14/23 09:37:26
-vSPDsetup started at: 08/14/23 09:37:26
-vSPDreportSetup started at: 08/14/23 09:37:27
+runvSPD started at: 08/17/23 15:29:36
+vSPDsetup started at: 08/17/23 15:29:36
+vSPDreportSetup started at: 08/17/23 15:29:37
 
-Case "RTD_20230731_new" started at: 08/14/23 09:37:27
+Case "RTD_20230731_new" started at: 08/17/23 15:29:37
 The caseID: 311012023070030562 (31-JUL-2023 12:30) is 1st solved successfully.
 Objective function value: 102165915.8893
 Violations cost         : 0.1673
@@ -47,7 +47,7 @@ Violations cost         : 0.1935
 The caseID: 311012023070055571 (31-JUL-2023 12:55) is 1st solved successfully.
 Objective function value: 101417402.5634
 Violations cost         : 0.1941
-Case: RTD_20230731_new is complete in        15.52(secs)
-Case: RTD_20230731_new is finished in        15.77(secs)
+Case: RTD_20230731_new is complete in        16.00(secs)
+Case: RTD_20230731_new is finished in        16.31(secs)
 
-Total execute time:        16.09(secs)
+Total execute time:        16.89(secs)

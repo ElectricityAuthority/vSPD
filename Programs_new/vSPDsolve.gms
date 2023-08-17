@@ -323,7 +323,7 @@ $load mnCnstrRHS = i_dateTimeMNCnstrRHS
 $load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
 $load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
 
-$load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharingParameter  riskGroupOffer = i_dateTimeRiskGroup
+$load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharing riskGroupOffer = i_dateTimeRiskGroup
 
 $load scarcityNationalFactor = i_dateTimeScarcityNationalFactor  scarcityResrvLimit = i_dateTimeScarcityResrvLimit
 $load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit   

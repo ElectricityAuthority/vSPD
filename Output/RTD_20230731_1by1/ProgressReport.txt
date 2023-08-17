@@ -1,0 +1,73 @@
+Run: 'RTD_20230731_1by1'
+
+runvSPD started at: 08/17/23 15:40:21
+vSPDsetup started at: 08/17/23 15:40:21
+vSPDreportSetup started at: 08/17/23 15:40:21
+
+Case "RTD_202307311230_311012023070030562_20230731122901" started at: 08/17/23 15:40:21
+The caseID: 311012023070030562 (31-JUL-2023 12:30) is 1st solved successfully.
+Objective function value: 102165915.8893
+Violations cost         : 0.1673
+Recalculate RTD Island Loss for next solve
+The caseID: 311012023070030562 (31-JUL-2023 12:30) is 1st solved successfully.
+Objective function value: 102108674.2190
+Violations cost         : 0.1690
+Case: RTD_202307311230_311012023070030562_20230731122901 is complete in         2.95(secs)
+Case: RTD_202307311230_311012023070030562_20230731122901 is finished in         3.02(secs)
+
+Case "RTD_202307311235_311012023070035567_20230731123402" started at: 08/17/23 15:40:25
+The caseID: 311012023070035567 (31-JUL-2023 12:35) is 1st solved successfully.
+Objective function value: 101908061.5402
+Violations cost         : 0.1805
+Recalculate RTD Island Loss for next solve
+The caseID: 311012023070035567 (31-JUL-2023 12:35) is 1st solved successfully.
+Objective function value: 101955328.3254
+Violations cost         : 0.1790
+Case: RTD_202307311235_311012023070035567_20230731123402 is complete in         2.94(secs)
+Case: RTD_202307311235_311012023070035567_20230731123402 is finished in         2.99(secs)
+
+Case "RTD_202307311240_311012023070040568_20230731123901" started at: 08/17/23 15:40:28
+The caseID: 311012023070040568 (31-JUL-2023 12:40) is 1st solved successfully.
+Objective function value: 101807730.6452
+Violations cost         : 0.1929
+Recalculate RTD Island Loss for next solve
+The caseID: 311012023070040568 (31-JUL-2023 12:40) is 1st solved successfully.
+Objective function value: 101827710.4245
+Violations cost         : 0.1936
+Case: RTD_202307311240_311012023070040568_20230731123901 is complete in         2.86(secs)
+Case: RTD_202307311240_311012023070040568_20230731123901 is finished in         2.91(secs)
+
+Case "RTD_202307311245_311012023070045569_20230731124401" started at: 08/17/23 15:40:31
+The caseID: 311012023070045569 (31-JUL-2023 12:45) is 1st solved successfully.
+Objective function value: 101754597.2633
+Violations cost         : 0.1978
+Recalculate RTD Island Loss for next solve
+The caseID: 311012023070045569 (31-JUL-2023 12:45) is 1st solved successfully.
+Objective function value: 101760208.4847
+Violations cost         : 0.1980
+Case: RTD_202307311245_311012023070045569_20230731124401 is complete in         2.72(secs)
+Case: RTD_202307311245_311012023070045569_20230731124401 is finished in         2.78(secs)
+
+Case "RTD_202307311250_311012023070050570_20230731124901" started at: 08/17/23 15:40:34
+The caseID: 311012023070050570 (31-JUL-2023 12:50) is 1st solved successfully.
+Objective function value: 101809845.0726
+Violations cost         : 0.1943
+Recalculate RTD Island Loss for next solve
+The caseID: 311012023070050570 (31-JUL-2023 12:50) is 1st solved successfully.
+Objective function value: 101835105.0650
+Violations cost         : 0.1935
+Case: RTD_202307311250_311012023070050570_20230731124901 is complete in         2.77(secs)
+Case: RTD_202307311250_311012023070050570_20230731124901 is finished in         2.81(secs)
+
+Case "RTD_202307311255_311012023070055571_20230731125401" started at: 08/17/23 15:40:37
+The caseID: 311012023070055571 (31-JUL-2023 12:55) is 1st solved successfully.
+Objective function value: 101396758.2481
+Violations cost         : 0.1947
+Recalculate RTD Island Loss for next solve
+The caseID: 311012023070055571 (31-JUL-2023 12:55) is 1st solved successfully.
+Objective function value: 101417402.5634
+Violations cost         : 0.1941
+Case: RTD_202307311255_311012023070055571_20230731125401 is complete in         2.77(secs)
+Case: RTD_202307311255_311012023070055571_20230731125401 is finished in         2.82(secs)
+
+Total execute time:        18.45(secs)
