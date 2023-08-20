@@ -1,4 +1,4 @@
-$call gdxmerge RTD/20230731/*.gdx output = 'tempGDX'
+$call gdxmerge PRSS/20230730/PRSS_202307302330_301302023071130317_20230730233306.gdx PRSS/20230731/*.gdx RTD/20230731/*.gdx output = 'tempGDX'
 
 *$ontext
 Sets
@@ -60,18 +60,25 @@ Alias (i_caseID,ca,ca1),  (i_dateTime,dt,dt1,dt2),       (i_tradePeriod,tp,tp1,t
       (gdxName,gn,gn1),   (caseName,cn,cn1),  (i_bid,bd,bd2,bd1),            (i_trader,trdr)
       
   ;
+  
+$onMulti
+
+Parameter priceCaseFilesPublishedSecs(ca<,tp<)          'Time Weight Seconds apply to case file for final pricing calculation ' 
+/
+$include pricing_case_files_20230731.csv
+/;
 
 * Declare sets and parameters that are loaded/exported from/to merged/output file
 Parameter gdxDate(gn<,*)                                'day, month, year of trade date of gdx file' ;
 Parameter i_gdxDate(*)                                  'day, month, year of trade date of gdx file';
 
-Set caseDefn(gn,ca<,cn<,rundt<)                         'caseID-caseName-runDateTime mapping' ;
+Set caseDefn(gn,ca,cn<,rundt<)                          'caseID-caseName-runDateTime mapping' ;
 Set i_caseDefn(ca,cn,rundt)                             'caseID-caseName-runDateTime mapping' ;
 
 Parameter runMode(gn,ca,casePar)                        'Study mode and interval length applied to each caseID' ;
 Parameter i_runMode(ca,casePar)                         'Study mode and interval length applied to each caseID' ;
 
-Set dateTimeTradePeriodMap(gn,ca,dt<,tp<)               'Interval - Trading period mapping' ;
+Set dateTimeTradePeriodMap(gn,ca,dt<,tp)                'Interval - Trading period mapping' ;
 Set i_dateTimeTradePeriodMap(ca,dt,tp)                  'Interval - Trading period mapping' ;
 
 Parameter dateTimeParameter(gn,ca,dt,dtPar)             'Parameters applied to each caseID-dateTime pair' ;
@@ -185,7 +192,6 @@ Parameter i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt)          'Nodal e
 
 
 *Load the input data form merged GDX file
-$onMulti
 
 $gdxin "tempGDX.gdx"
 $load gdxDate = i_gdxDate  caseDefn = i_caseDefn runMode = i_runMode
@@ -207,9 +213,9 @@ $load dateTimeScarcityResrvLimit = i_dateTimeScarcityResrvLimit
 $load dateTimeScarcityNodeFactor = i_dateTimeScarcityNodeFactor
 $load dateTimeScarcityNodeLimit = i_dateTimeScarcityNodeLimit
 $gdxin
-
 $offMulti
 
+*$ontext
 * Process data to export
 i_gdxdate('day')   = smin[ gn, gdxDate(gn,'day') ] ;
 i_gdxdate('month') = smin[ gn, gdxDate(gn,'month') ] ;
@@ -219,80 +225,80 @@ i_caseDefn(ca,cn,rundt) = yes $ sum[gn $ caseDefn(gn,ca,cn,rundt), 1] ;
 
 i_runMode(ca,casePar) = sum[ gn, runMode(gn,ca,casePar)] ;
 
-i_dateTimeTradePeriodMap(ca,dt,tp)  =  yes $ sum[gn $ dateTimeTradePeriodMap(gn,ca,dt,tp), 1] ;
+i_dateTimeTradePeriodMap(ca,dt,tp)  =  yes $ sum[gn $ { dateTimeTradePeriodMap(gn,ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, 1] ;
 
-i_dateTimeParameter(ca,dt,dtPar) = sum [ gn, dateTimeParameter(gn,ca,dt,dtPar)] ; 
+i_dateTimeParameter(ca,dt,dtPar) = sum [ (gn,tp) $ { i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeParameter(gn,ca,dt,dtPar)] ; 
 
-i_dateTimeIslandParameter(ca,dt,isl,islPar) = sum[ gn, dateTimeIslandParameter(gn,ca,dt,isl,islPar)] ;
+i_dateTimeIslandParameter(ca,dt,isl,islPar) = sum[ (gn,tp) $ { i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeIslandParameter(gn,ca,dt,isl,islPar)] ;
 
-i_dateTimeNodetoNode(ca,dt,n,n1) = yes $ sum[gn $ dateTimeNodeToNode(gn,ca,dt,n,n1), 1];;
+i_dateTimeNodetoNode(ca,dt,n,n1) = yes $ sum[(gn,tp) $ { i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeNodeToNode(gn,ca,dt,n,n1) }, 1] ;
 
-i_dateTimeNodeParameter(ca,dt,n,nodePar) = sum[ gn, dateTimeNodeParameter(gn,ca,dt,n,nodePar)] ;
+i_dateTimeNodeParameter(ca,dt,n,nodePar) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeNodeParameter(gn,ca,dt,n,nodePar)] ;
 
-i_dateTimeBusIsland(ca,dt,b,isl) = yes $ sum[ gn $ dateTimeBusIsland(gn,ca,dt,b,isl), 1] ;
+i_dateTimeBusIsland(ca,dt,b,isl) = yes $ sum[ (gn,tp) $ { i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeBusIsland(gn,ca,dt,b,isl) }, 1] ;
 
-i_dateTimeBusElectricalIsland(ca,dt,b) = sum[ gn, dateTimeBusElectricalIsland(gn,ca,dt,b)] ;
+i_dateTimeBusElectricalIsland(ca,dt,b) = sum[ (gn,tp) $ { i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeBusElectricalIsland(gn,ca,dt,b)] ;
+ 
+i_dateTimeNodeBus(ca,dt,n,b) = yes $ sum[ (gn,tp) $ { i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeNodeBus(gn,ca,dt,n,b) }, 1] ;
 
-i_dateTimeNodeBus(ca,dt,n,b) = yes $ sum[gn $ dateTimeNodeBus(gn,ca,dt,n,b), 1] ;
+i_dateTimeNodeBusAllocationFactor(ca,dt,n,b) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeNodeBusAllocationFactor(gn,ca,dt,n,b)] ;
 
-i_dateTimeNodeBusAllocationFactor(ca,dt,n,b) = sum[ gn, dateTimeNodeBusAllocationFactor(gn,ca,dt,n,b)] ;
+i_dateTimeBranchDefn(ca,dt,br,b1,b2) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeBranchDefn(gn,ca,dt,br,b1,b2) }, 1] ;
 
-i_dateTimeBranchDefn(ca,dt,br,b1,b2) = yes $ sum[ gn $ dateTimeBranchDefn(gn,ca,dt,br,b1,b2), 1] ;
+i_dateTimeNodeOutageBranch(ca,dt,n,br) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeNodeOutageBranch(gn,ca,dt,n,br) }, 1] ;
 
-i_dateTimeNodeOutageBranch(ca,dt,n,br) = yes $ sum[ gn $ dateTimeNodeOutageBranch(gn,ca,dt,n,br), 1] ;
+i_dateTimeBranchParameter(ca,dt,br,brPar) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeBranchParameter(gn,ca,dt,br,brPar)] ;
 
-i_dateTimeBranchParameter(ca,dt,br,brPar) = sum[ gn, dateTimeBranchParameter(gn,ca,dt,br,brPar)] ;
+i_dateTimeBranchConstraintRHS(ca,dt,brCstr,CstrRHS) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeBranchConstraintRHS(gn,ca,dt,brCstr,CstrRHS)] ;
 
-i_dateTimeBranchConstraintRHS(ca,dt,brCstr,CstrRHS) = sum[ gn, dateTimeBranchConstraintRHS(gn,ca,dt,brCstr,CstrRHS)] ;
+i_dateTimeBranchConstraintFactors(ca,dt,brCstr,br) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeBranchConstraintFactors(gn,ca,dt,brCstr,br)] ;
 
-i_dateTimeBranchConstraintFactors(ca,dt,brCstr,br) = sum[ gn, dateTimeBranchConstraintFactors(gn,ca,dt,brCstr,br)] ;
+i_dateTimeOfferNode(ca,dt,o,n) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeOfferNode(gn,ca,dt,o,n) }, 1 ] ;
 
-i_dateTimeOfferNode(ca,dt,o,n) = yes $ sum[ gn $ dateTimeOfferNode(gn,ca,dt,o,n), 1 ] ;
+i_dateTimeOfferTrader(ca,dt,o,trdr) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeOfferTrader(gn,ca,dt,o,trdr) }, 1] ;
 
-i_dateTimeOfferTrader(ca,dt,o,trdr) = yes $ sum[ gn $ dateTimeOfferTrader(gn,ca,dt,o,trdr), 1] ;
+i_dateTimePrimarySecondaryOffer(ca,dt,o,o1) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimePrimarySecondaryOffer(gn,ca,dt,o,o1) }, 1] ;
 
-i_dateTimePrimarySecondaryOffer(ca,dt,o,o1) = yes $ sum[gn $ dateTimePrimarySecondaryOffer(gn,ca,dt,o,o1), 1] ;
+i_dateTimeOfferParameter(ca,dt,o,offerPar) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeOfferParameter(gn,ca,dt,o,offerPar)] ;
 
-i_dateTimeOfferParameter(ca,dt,o,offerPar) = sum[gn, dateTimeOfferParameter(gn,ca,dt,o,offerPar)] ;
+i_dateTimeRiskGroup(ca,dt,rg,o,riskC) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeRiskGroup(gn,ca,dt,rg,o,riskC) }, 1] ;
 
-i_dateTimeRiskGroup(ca,dt,rg,o,riskC) = yes $ sum[ gn $ dateTimeRiskGroup(gn,ca,dt,rg,o,riskC), 1] ;
+i_dateTimeEnergyOffer(ca,dt,o,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeEnergyOffer(gn,ca,dt,o,blk,bidofrCmpnt)] ;
 
-i_dateTimeEnergyOffer(ca,dt,o,blk,bidofrCmpnt) = sum[ gn, dateTimeEnergyOffer(gn,ca,dt,o,blk,bidofrCmpnt)] ;
-
-i_dateTimeReserveOffer(ca,dt,o,resC,resT,blk,bidofrCmpnt) = sum[ gn, dateTimeReserveOffer(gn,ca,dt,o,resC,resT,blk,bidofrCmpnt)] ;
+i_dateTimeReserveOffer(ca,dt,o,resC,resT,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeReserveOffer(gn,ca,dt,o,resC,resT,blk,bidofrCmpnt)] ;
 
 i_dateTimeBidNode(ca,dt,bd,n) = yes $ sum [gn $ dateTimeBidNode(gn,ca,dt,bd,n), 1] ;
 
-i_dateTimeBidTrader(ca,dt,bd,trdr) = yes $ sum[ gn $ dateTimeBidTrader(gn,ca,dt,bd,trdr), 1] ;
+i_dateTimeBidTrader(ca,dt,bd,trdr) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeBidTrader(gn,ca,dt,bd,trdr) }, 1] ;
 
-i_dateTimeBidParameter(ca,dt,bd,bidPar) = sum[ gn, dateTimeBidParameter(gn,ca,dt,bd,bidPar)] ;
+i_dateTimeBidParameter(ca,dt,bd,bidPar) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeBidParameter(gn,ca,dt,bd,bidPar)] ;
 
-i_dateTimeEnergyBid(ca,dt,bd,blk,bidofrCmpnt) = sum[ gn, dateTimeEnergyBid(gn,ca,dt,bd,blk,bidofrCmpnt)] ;
+i_dateTimeEnergyBid(ca,dt,bd,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeEnergyBid(gn,ca,dt,bd,blk,bidofrCmpnt)] ;
 
-i_dateTimeMNCnstrRHS(ca,dt,MnodeCstr,CstrRHS) = sum[ gn, dateTimeMNCnstrRHS(gn,ca,dt,MnodeCstr,CstrRHS)] ;
+i_dateTimeMNCnstrRHS(ca,dt,MnodeCstr,CstrRHS) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeMNCnstrRHS(gn,ca,dt,MnodeCstr,CstrRHS)] ;
 
-i_dateTimeMNCnstrEnrgFactors(ca,dt,MnodeCstr,o) = sum[ gn, dateTimeMNCnstrEnrgFactors(gn,ca,dt,MnodeCstr,o)] ;
+i_dateTimeMNCnstrEnrgFactors(ca,dt,MnodeCstr,o) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeMNCnstrEnrgFactors(gn,ca,dt,MnodeCstr,o)] ;
 
-i_dateTimeMNCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT) = sum[ gn, dateTimeMNCnstrResrvFactors(gn,ca,dt,MnodeCstr,o,resC,resT)] ;
+i_dateTimeMNCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeMNCnstrResrvFactors(gn,ca,dt,MnodeCstr,o,resC,resT)] ;
 
-i_dateTimeMNCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd) = sum[ gn, dateTimeMNCnstrEnrgBidFactors(gn,ca,dt,MnodeCstr,bd)] ;
+i_dateTimeMNCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeMNCnstrEnrgBidFactors(gn,ca,dt,MnodeCstr,bd)] ;
 
-i_dateTimeMNCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC) = sum[ gn, dateTimeMNCnstrResrvBidFactors(gn,ca,dt,MnodeCstr,bd,resC)] ;
+i_dateTimeMNCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeMNCnstrResrvBidFactors(gn,ca,dt,MnodeCstr,bd,resC)] ;
 
-i_dateTimeRiskParameter(ca,dt,isl,resC,riskC,riskPar) = sum[ gn, dateTimeRiskParameter(gn,ca,dt,isl,resC,riskC,riskPar)] ;
+i_dateTimeRiskParameter(ca,dt,isl,resC,riskC,riskPar) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeRiskParameter(gn,ca,dt,isl,resC,riskC,riskPar)] ;
 
-i_dateTimeReserveSharing(ca,dt,resPar) = sum[ gn, dateTimeReserveSharing(gn,ca,dt,resPar)] ;
+i_dateTimeReserveSharing(ca,dt,resPar) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeReserveSharing(gn,ca,dt,resPar)] ;
 
-i_dateTimeScarcityNationalFactor(ca,dt,blk,bidofrCmpnt) = sum[ gn, dateTimeScarcityNationalFactor(gn,ca,dt,blk,bidofrCmpnt)] ;
+i_dateTimeScarcityNationalFactor(ca,dt,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNationalFactor(gn,ca,dt,blk,bidofrCmpnt)] ;
 
-i_dateTimeScarcityResrvLimit(ca,dt,isl,resC,blk,bidofrCmpnt) = sum[ gn, dateTimeScarcityResrvLimit(gn,ca,dt,isl,resC,blk,bidofrCmpnt)] ;
+i_dateTimeScarcityResrvLimit(ca,dt,isl,resC,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityResrvLimit(gn,ca,dt,isl,resC,blk,bidofrCmpnt)] ;
 
-i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt) = sum[ gn, dateTimeScarcityNodeFactor(gn,ca,dt,n,blk,bidofrCmpnt)] ;
+i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNodeFactor(gn,ca,dt,n,blk,bidofrCmpnt)] ;
   
-i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt) = sum[ gn, dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)] ;
+i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)] ;
   
     
-execute_unload 'tempOut1.gdx'
+execute_unload 'GDX_20230731_new.gdx'
     i_gdxDate, i_caseDefn, i_runMode
     i_dateTimeTradePeriodMap, i_dateTimeParameter, i_dateTimeIslandParameter
     i_node,i_dateTimeNodetoNode, i_dateTimeNodeParameter
@@ -308,8 +314,8 @@ execute_unload 'tempOut1.gdx'
     i_dateTimeRiskParameter, i_dateTimeReserveSharing
     i_dateTimeScarcityNationalFactor, i_dateTimeScarcityResrvLimit
     i_dateTimeScarcityNodeFactor, i_dateTimeScarcityNodeLimit
+    priceCaseFilesPublishedSecs = i_priceCaseFilesPublishedSecs
 ;
 
-
-*execute_unload 'tempAll.gdx';
 *$offtext
+*execute_unload 'tempAll.gdx';
