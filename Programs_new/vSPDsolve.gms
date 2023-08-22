@@ -614,7 +614,7 @@ reserveShareEnabled(ca,dt,'FIR')  = reserveSharingParameter(ca,dt,'sharingFIR') 
 reserveShareEnabled(ca,dt,'SIR')  = reserveSharingParameter(ca,dt,'sharingSIR') ;
 reserveShareEnabledOverall(ca,dt) = smax[ resC, reserveShareEnabled(ca,dt,resC)];
 
-reserveRoundPower(ca,dt,'SIR')    = reserveSharingParameter(ca,dt,'roundPwrFIR') ;
+reserveRoundPower(ca,dt,'FIR')    = reserveSharingParameter(ca,dt,'roundPwrFIR') ;
 reserveRoundPower(ca,dt,'SIR')    = reserveSharingParameter(ca,dt,'roundPwrSIR') ;
 
 modulationRiskClass(ca,dt,'DCCE')           = reserveSharingParameter(ca,dt,'MRCE') ;

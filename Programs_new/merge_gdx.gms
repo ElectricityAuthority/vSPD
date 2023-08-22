@@ -16,7 +16,7 @@ Sets
                                                                           useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
   bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct, factor /
   
-  offerPar(*)         'The various parameters required for each offer'  / initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW,
+  offerPar(*)         'The various parameters required for each offer'  / solvedInitialMW, initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW,
                                                                           riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR /                                                                         
   bidPar(*)           'The various parameters required for each offer'  / dispatchable, discrete, difference /
   
