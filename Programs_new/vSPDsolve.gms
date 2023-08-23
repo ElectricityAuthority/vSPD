@@ -518,8 +518,11 @@ branchConstraintLimit(branchConstraint) = branchCstrRHS(branchConstraint,'cnstrL
 
 
 * Offer data
-* Initialise generating offer parameters 
-generationStart(ca,dt,o)   = offerParameter(ca,dt,o,'initialMW') + sum[ o1 $ primarySecondaryOffer(ca,dt,o,o1), offerParameter(ca,dt,o1,'initialMW') ] ;
+* Initialise generating offer parameters
+generationStart(ca,dt,o) $ {     (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) or (dailymode=0) } = offerParameter(ca,dt,o,'initialMW') ;
+generationStart(ca,dt,o) $ { not((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) or (dailymode=0))} = offerParameter(ca,dt,o,'solvedInitialMW') ;
+generationStart(ca,dt,o) = generationStart(ca,dt,o) + sum[ o1 $ primarySecondaryOffer(ca,dt,o,o1), offerParameter(ca,dt,o1,'initialMW') ] ;  
+
 rampRateUp(ca,dt,o)        = offerParameter(ca,dt,o,'rampUpRate')      ;
 rampRateDn(ca,dt,o)        = offerParameter(ca,dt,o,'rampDnRate')      ;
 reserveGenMax(ca,dt,o)     = offerParameter(ca,dt,o,'resrvGenMax')     ;
@@ -865,7 +868,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
     generationStart(offer(t(ca,dt),o)) $ { sum[ o1, generationStart(ca,dt,o1)] = 0 } = sum[ dt1 $ (ord(dt1) = ord(dt)-1), o_offerEnergy_TP(ca,dt1,o) ] ;
 
 *   4.10 Real Time Pricing - First RTD load calculation --------------------------
-    if (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201,
+    if ( {studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201} and (dailymode = 0),
 *       Calculate first target total load [4.10.6.5]
 *       Island-level MW load forecast. For the fist loop, uses islandLosses(t,isl)
         TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n) ];
@@ -911,6 +914,9 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n) = 0) } = InitialLoad(t,n);
         requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = requiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
 
+    ) ;
+
+
 *       Recalculate energy scarcity limits -------------------------------------
         scarcityEnrgLimit(t,n,blk) = 0 ;
         scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) }                                     = scarcityNationalFactor(t,blk,'factor') * requiredLoad(t,n);
@@ -928,7 +934,8 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         sharedNFRMax(t,isl) = Min{ RMTReserveLimit(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
         FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
                                      - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) and (inputGDXGDate >= jdate(2016,10,20)) } ;
-    ) ;
+
+
 
 
 *   7c. Updating the variable bounds before model solve ------------------------
@@ -1280,8 +1287,8 @@ $offtext
     ) ;
 *   Energy Shortfall Check End
 
-    unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1)} = yes ;
-    if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1],
+    unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1) and (dailymode = 0)} = yes ;
+    if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1] and (dailymode = 0),
         putclose rep 'Recalculate RTD Island Loss for next solve'/;
         LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
