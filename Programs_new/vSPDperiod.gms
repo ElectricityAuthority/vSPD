@@ -35,8 +35,12 @@ scase2dt2tp(ca,dt,tp)   'Mapping solved caseID to datetime and to trading period
 ;
 alias (tp,tp1), (dt,dt1), (ca,ca1);
 
+Parameter casePublishedSecs(ca,tp) 'Time Weight Seconds apply to case file for final pricing calculation' ;
+
+
 $gdxin "%inputPath%\%GDXname%.gdx"
 $load case2dt2tp = i_dateTimeTradePeriodMap
+$load casePublishedSecs = i_priceCaseFilesPublishedSecs
 $gdxin
 
 *===============================================================================
@@ -72,7 +76,7 @@ sca(ca) $ { ( sum[dt $ sdt(dt), 1] = 0 ) and sum[ (dt,stp(tp)) $ case2dt2tp(ca,d
 sca(ca) $ { ( sum[tp $ stp(tp), 1] = 0 ) and sum[ (sdt(dt),tp) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
 sca(ca) $ { ( sum[ca1 $ sca(ca1), 1] = 0 ) and sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
 
-scase2dt2tp(sca(ca),sdt(dt),stp(tp)) = yes $ case2dt2tp(ca,dt,tp) ;
+scase2dt2tp(sca(ca),sdt(dt),stp(tp)) = yes $ {case2dt2tp(ca,dt,tp) and casePublishedSecs(ca,tp)} ;
 
 sca(ca) = yes $ sum[ (sdt(dt),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
 sdt(dt) = yes $ sum[ (sca(ca),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
