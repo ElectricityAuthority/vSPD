@@ -1,4 +1,5 @@
-$call gdxmerge PRSS/20230730/PRSS_202307302330_301302023071130317_20230730233306.gdx PRSS/20230731/*.gdx RTD/20230731/*.gdx output = 'tempGDX'
+$include vSPDsettings.inc
+$call gdxmerge "%inputPath%\published_pricing_cases\*.gdx" output = 'tempGDX'
 
 *$ontext
 Sets
@@ -65,7 +66,7 @@ $onMulti
 
 Parameter priceCaseFilesPublishedSecs(ca<,tp<)          'Time Weight Seconds apply to case file for final pricing calculation ' 
 /
-$include pricing_case_files_20230731.csv
+$include "%inputPath%\published_pricing_cases\pricing_case_files.csv"
 /;
 
 * Declare sets and parameters that are loaded/exported from/to merged/output file
@@ -298,7 +299,7 @@ i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTi
 i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)] ;
   
     
-execute_unload 'GDX_20230731_new.gdx'
+execute_unload "%inputPath%\%inputDailyName%.gdx"
     i_gdxDate, i_caseDefn, i_runMode
     i_dateTimeTradePeriodMap, i_dateTimeParameter, i_dateTimeIslandParameter
     i_node,i_dateTimeNodetoNode, i_dateTimeNodeParameter
