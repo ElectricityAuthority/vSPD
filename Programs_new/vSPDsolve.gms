@@ -78,6 +78,8 @@ Sets
   ;
 
 Parameters
+  casefileseconds(ca,tp)                                 "Number of seconds a caseID's prices are used a a trading period is"  
+
 * Flag to apply corresponding vSPD model
   VSPDModel(ca,dt)                                       '0=VSPD, 1=vSPD_BranchFlowMIP, 2=VSPD (last solve)'
 
@@ -207,6 +209,7 @@ Parameters
   o_nodeGeneration_TP(ca,dt,n)                           'Ouput MW generation at each node for the different time periods'
   o_nodeLoad_TP(ca,dt,n)                                 'Ouput MW load at each node for the different time periods'
   o_nodePrice_TP(ca,dt,n)                                'Output $/MW price at each node for the different time periods'
+  o_PublisedPrice_TP(tp,n)                               'Output $/MW price at each node for the different trading periods'
   o_nodeDeficit_TP(ca,dt,n)                              'Output node deficit violation for each trade period'
   o_nodeSurplus_TP(ca,dt,n)                              'Output node surplus violation for each trade period'
   o_nodeDead_TP(ca,dt,n)                                 'Define if a Node  (Pnode) is dead'
@@ -326,7 +329,9 @@ $load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  mnCnstrResrvBidFa
 $load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharing riskGroupOffer = i_dateTimeRiskGroup
 
 $load scarcityNationalFactor = i_dateTimeScarcityNationalFactor  scarcityResrvLimit = i_dateTimeScarcityResrvLimit
-$load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit   
+$load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit
+
+$load casefileseconds = i_priceCaseFilesPublishedSecs
 
 $gdxin
 
@@ -1689,8 +1694,11 @@ o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,d
 *   Island output
 o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,dt,n,isl) } , o_nodePrice_TP(ca,dt,n) ] ;
 
-
 $endif.PriceRelatedOutputs
+
+* Publishe prices
+o_PublisedPrice_TP(tp,n) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_nodePrice_TP(ca,dt,n) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+
 *   Calculating price-relating outputs end -------------------------------------
 
 *=====================================================================================
