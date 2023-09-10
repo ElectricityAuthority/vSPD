@@ -1,5 +1,5 @@
-$include vSPDsettings.inc
-$call gdxmerge "%inputPath%\published_pricing_cases\*.gdx" output = 'tempGDX'
+$include mergeGDXsettings.inc
+$call gdxmerge "%inputPath%\%yyyymmdd%\*.gdx" output = 'tempGDX'
 
 *$ontext
 Sets
@@ -66,7 +66,7 @@ $onMulti
 
 Parameter priceCaseFilesPublishedSecs(ca<,tp<)          'Time Weight Seconds apply to case file for final pricing calculation ' 
 /
-$include "%inputPath%\published_pricing_cases\pricing_case_files.csv"
+$include 'pricing_case_files.inc'
 /;
 
 * Declare sets and parameters that are loaded/exported from/to merged/output file
@@ -218,9 +218,9 @@ $offMulti
 
 *$ontext
 * Process data to export
-i_gdxdate('day')   = smin[ gn, gdxDate(gn,'day') ] ;
-i_gdxdate('month') = smin[ gn, gdxDate(gn,'month') ] ;
-i_gdxdate('year')  = smin[ gn, gdxDate(gn,'year') ] ;
+i_gdxdate('day')   = smin[ (gn,ca) $ {runMode(gn,ca,'studyMode') = 101} , gdxDate(gn,'day') ] ;
+i_gdxdate('month') = smin[ (gn,ca) $ {runMode(gn,ca,'studyMode') = 101} , gdxDate(gn,'month') ] ;
+i_gdxdate('year')  = smin[ (gn,ca) $ {runMode(gn,ca,'studyMode') = 101} , gdxDate(gn,'year') ] ;
 
 i_caseDefn(ca,cn,rundt) = yes $ sum[gn $ caseDefn(gn,ca,cn,rundt), 1] ;
 
@@ -299,7 +299,7 @@ i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTi
 i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)] ;
   
     
-execute_unload "%inputPath%\%inputDailyName%.gdx"
+execute_unload "%inputPath%\Pricing_%yyyymmdd%.gdx"
     i_gdxDate, i_caseDefn, i_runMode
     i_dateTimeTradePeriodMap, i_dateTimeParameter, i_dateTimeIslandParameter
     i_node,i_dateTimeNodetoNode, i_dateTimeNodeParameter
