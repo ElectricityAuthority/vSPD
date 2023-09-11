@@ -209,7 +209,6 @@ Parameters
   o_nodeGeneration_TP(ca,dt,n)                           'Ouput MW generation at each node for the different time periods'
   o_nodeLoad_TP(ca,dt,n)                                 'Ouput MW load at each node for the different time periods'
   o_nodePrice_TP(ca,dt,n)                                'Output $/MW price at each node for the different time periods'
-  o_PublisedPrice_TP(tp,n)                               'Output $/MW price at each node for the different trading periods'
   o_nodeDeficit_TP(ca,dt,n)                              'Output node deficit violation for each trade period'
   o_nodeSurplus_TP(ca,dt,n)                              'Output node surplus violation for each trade period'
   o_nodeDead_TP(ca,dt,n)                                 'Define if a Node  (Pnode) is dead'
@@ -242,6 +241,11 @@ Parameters
   o_surpMnodeConst_TP(ca,dt)                             'Surplus market node constraint violation for summary report'
   o_defResv_TP(ca,dt)                                    'Deficit reserve violation for summary report'
 
+* Published prices
+  o_PublisedPrice_TP(tp,n)                               'Output $/MW price at each node for the different trading periods'
+  o_PublisedFIRPrice_TP(tp,isl)                          'Output $/MW FIR price at each island for the different trading periods'
+  o_PublisedSIRPrice_TP(tp,isl)                          'Output $/MW SIR price at each island for the different trading periods'
+  
 * Audit - extra output declaration
   o_lossSegmentBreakPoint(ca,dt,br,los)                            'Audit - loss segment MW'
   o_lossSegmentFactor(ca,dt,br,los)                                'Audit - loss factor of each loss segment'
@@ -1697,7 +1701,10 @@ o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,d
 $endif.PriceRelatedOutputs
 
 * Publishe prices
-o_PublisedPrice_TP(tp,n) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_nodePrice_TP(ca,dt,n) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+o_PublisedPrice_TP(tp,n)      = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_nodePrice_TP(ca,dt,n) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+o_PublisedFIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_FIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+o_PublisedSIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_SIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+
 
 *   Calculating price-relating outputs end -------------------------------------
 

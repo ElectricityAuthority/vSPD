@@ -67,21 +67,34 @@ BusResults_TP.ap = 1 ;
 BusResults_TP.nd = 3
 put BusResults_TP ;
 loop( (ca,dt,tp,b) $ { case2dt2tp(ca,dt,tp) and  bus(ca,dt,b) },
-    put ca.tl, dt.tl, tp.tl, b.tl, o_busGeneration_TP(ca,dt,b), o_busLoad_TP(ca,dt,b)
-        o_busPrice_TP(ca,dt,b), o_busDeficit_TP(ca,dt,b), o_busSurplus_TP(ca,dt,b) / ;
+    put ca.tl, dt.tl, tp.tl, b.tl, o_busGeneration_TP(ca,dt,b), o_busLoad_TP(ca,dt,b),o_busPrice_TP(ca,dt,b), o_busDeficit_TP(ca,dt,b), o_busSurplus_TP(ca,dt,b) / ;
 ) ;
 
 * Trading period node result
 File NodeResults_TP  /"%outputPath%\%runName%\%runName%_NodeResults_TP.csv" / ;
-NodeResults_TP.pc = 5 ;
-NodeResults_TP.lw = 0 ;
-NodeResults_TP.pw = 9999 ;
-NodeResults_TP.ap = 1 ;
-NodeResults_TP.nd = 4 ;
+NodeResults_TP.pc = 5 ; NodeResults_TP.lw = 0 ; NodeResults_TP.pw = 9999 ;
+NodeResults_TP.ap = 1 ; NodeResults_TP.nd = 4 ;
 put NodeResults_TP ;
 loop( (ca,dt,tp,n) $ { case2dt2tp(ca,dt,tp) and node(ca,dt,n) },
-    put ca.tl, dt.tl, tp.tl, n.tl, o_nodeGeneration_TP(ca,dt,n), o_nodeLoad_TP(ca,dt,n)
-        o_nodePrice_TP(ca,dt,n), o_nodeDeficit_TP(ca,dt,n), o_nodeSurplus_TP(ca,dt,n) / ;
+    put ca.tl, dt.tl, tp.tl, n.tl, o_nodeGeneration_TP(ca,dt,n), o_nodeLoad_TP(ca,dt,n),o_nodePrice_TP(ca,dt,n), o_nodeDeficit_TP(ca,dt,n), o_nodeSurplus_TP(ca,dt,n) / ;
+) ;
+
+* Published energy prices
+File PublishedEnergyPrices_TP  /"%outputPath%\%runName%\%runName%_PublishedEnergyPrices_TP.csv"/;
+PublishedEnergyPrices_TP.pc = 5; PublishedEnergyPrices_TP.lw = 0; PublishedEnergyPrices_TP.pw = 9999;
+PublishedEnergyPrices_TP.ap = 1; PublishedEnergyPrices_TP.nd = 5; PublishedEnergyPrices_TP.nw = 20;
+put PublishedEnergyPrices_TP ;
+loop( (tp,n),
+    put tp.tl, n.tl, o_PublisedPrice_TP(tp,n) / ;
+) ;
+
+* Published reserve prices
+File PublishedReservePrices_TP  /"%outputPath%\%runName%\%runName%_PublishedReservePrices_TP.csv"/;
+PublishedReservePrices_TP.pc = 5; PublishedReservePrices_TP.lw = 0; PublishedReservePrices_TP.pw = 9999;
+PublishedReservePrices_TP.ap = 1; PublishedReservePrices_TP.nd = 5; PublishedReservePrices_TP.nw = 20;
+put PublishedReservePrices_TP ;
+loop( (tp,isl),
+    put tp.tl, isl.tl, o_PublisedFIRPrice_TP(tp,isl), o_PublisedSIRPrice_TP(tp,isl) / ;
 ) ;
 
 * Trading period offer result
