@@ -27,3 +27,6 @@ File DWPublishedEnergyPrices /"%outputPath%\%runName%\%runName%_DWPublishedEnerg
 DWPublishedEnergyPrices.pc = 5 ; DWPublishedEnergyPrices.lw = 0 ; DWPublishedEnergyPrices.pw = 9999 ;
 put DWPublishedEnergyPrices 'TradingPeriod','Pnodename','vSPDDollarsPerMegawattHour';
 
+File DWPublishedReservePrices /"%outputPath%\%runName%\%runName%_DWPublishedEnergyPrices.csv"/;
+DWPublishedReservePrices.pc = 5 ; DWPublishedReservePrices.lw = 0 ; DWPublishedReservePrices.pw = 9999 ;
+put DWPublishedEnergyPrices 'TradingPeriod','Island','vSPDDollarsPerMegawattHour';

@@ -39,13 +39,20 @@ loop( (ca,dt,tp,isl) $ case2dt2tp(ca,dt,tp),
         o_SirCleared_TP(ca,dt,isl), o_SIRPrice_TP(ca,dt,isl) / ;
 ) ;
 
-
-
-* Data warehouse energy result
+* Data warehouse published energy result
 File DWPublishedEnergyPrices  /"%outputPath%\%runName%\%runName%_DWPublishedEnergyPrices.csv"/;
 DWPublishedEnergyPrices.pc = 5; DWPublishedEnergyPrices.lw = 0; DWPublishedEnergyPrices.pw = 9999;
 DWPublishedEnergyPrices.ap = 1; DWPublishedEnergyPrices.nd = 5; DWPublishedEnergyPrices.nw = 20;
-put DWEnergyResults ;
+put DWPublishedEnergyPrices ;
 loop( (tp,n),
     put tp.tl, n.tl, o_PublisedPrice_TP(tp,n) / ;
+) ;
+
+* Data warehouse published reserve prices
+File  DWPublishedReservePrices  /"%outputPath%\%runName%\%runName%_ DWPublishedReservePrices.csv"/;
+ DWPublishedReservePrices.pc = 5;  DWPublishedReservePrices.lw = 0;  DWPublishedReservePrices.pw = 9999;
+ DWPublishedReservePrices.ap = 1;  DWPublishedReservePrices.nd = 5;  DWPublishedReservePrices.nw = 20;
+put  DWPublishedReservePrices ;
+loop( (tp,isl),
+    put tp.tl, isl.tl, o_PublisedFIRPrice_TP(tp,isl), o_PublisedSIRPrice_TP(tp,isl) / ;
 ) ;
