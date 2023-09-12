@@ -49,7 +49,7 @@ loop( (tp,n),
 ) ;
 
 * Data warehouse published reserve prices
-File  DWPublishedReservePrices  /"%outputPath%\%runName%\%runName%_ DWPublishedReservePrices.csv"/;
+File  DWPublishedReservePrices  /"%outputPath%\%runName%\%runName%_DWPublishedReservePrices.csv"/;
  DWPublishedReservePrices.pc = 5;  DWPublishedReservePrices.lw = 0;  DWPublishedReservePrices.pw = 9999;
  DWPublishedReservePrices.ap = 1;  DWPublishedReservePrices.nd = 5;  DWPublishedReservePrices.nw = 20;
 put  DWPublishedReservePrices ;
