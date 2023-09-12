@@ -46,23 +46,55 @@ Sets
   los(*)              'Loss segments available for loss modelling'              / ls1*ls13 /
   fd(*)               'Directional flow definition used in the SPD formulation' / forward, backward /
   resC(*)             'Definition of fast and sustained instantaneous reserve'  / FIR, SIR /
-  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, DCCE, DCECE, manual, genRiskECE, manualECE, HVDCsecRisk, HVDCsecRiskECE /
+  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE /
   resT(*)             'Definition of reserve types (PLSR, TWDR, ILR)'           / PLRO, TWRO, ILRO /
+  
+* Risk/Reserve subset 
+  GenRisk(riskC)      'Subset containing generator risks'                       / genRisk, genRiskECE /
+  ManualRisk(riskC)   'Subset containting manual risks'                         / manual, manualECE /
+  HVDCrisk(riskC)     'Subset containing DCCE and DCECE risks'                  / DCCE, DCECE /
+  HVDCSecRisk(riskC)  'Subset containing DCCE and DCECE secondary risk'         / HVDCsecRisk, HVDCsecRiskECE /
 
-  bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct /
-  offerPar(*)         'The various parameters required for each offer'  / initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW  /
-  riskPar(*)          'Different risk parameters'                       / freeReserve, adjustFactor, HVDCRampUp /
-  brPar(*)            'Branch parameter specified'                      / resistance, susceptance, fixedLosses, numLossTranches /
-  CstrRHS(*)          'Constraint RHS definition'                       / cnstrSense, cnstrLimit /
+  PLRO(resT)          'PLSR reserve type'                                       / PLRO /
+  TWRO(resT)          'TWDR reserve type'                                       / TWRO /
+  ILRO(resT)          'ILR reserve type'                                        / ILRO /
+  
+* Definition of CE and ECE events to support different CE and ECE CVPs
+  ContingentEvents(riskC)          'Subset of Risk Classes containing contigent event risks'           / genRisk, DCCE, manual, HVDCsecRisk /
+  ExtendedContingentEvent(riskC)   'Subset of Risk Classes containing extended contigent event risk'   / genRiskECE, DCECE, manualECE, HVDCsecRiskECE /
 
-  z(*)                'Defined reverse reserve sharing zone for HVDC sent flow: RP -> round power zone, NR -> no reverse zone, RZ -> reverse zone' /RP, NR, RZ/
+  casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
+
+  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+
+  islPar(*)           'The various parameters applied for each island'  / HVDCsecRisk, HVDCsecRiskECE, HVDCSecSubtractor, sharedNFRLoadOffset, RMTlimitFIR, RMTlimitSIR, MWIPS, PSD, Losses, SPDLoadCalcLosses/
+
+  bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct, factor /
+
+  offerPar(*)         'The various parameters required for each offer'  / solvedInitialMW, initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW, riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR /
+
+  bidPar(*)           'The various parameters required for each offer'  / dispatchable, discrete, difference /
+
+  nodePar(*)          'The various parameters applied for each  node'   / referenceNode, demand, initialLoad, conformingFactor, nonConformingFactor, loadIsOverride, loadIsBad, loadIsNCL, maxLoad, instructedLoadShed, instructedShedActive, dispatchedLoad, dispatchedGeneration /
+
+  brPar(*)            'Branch parameter specified'                      / forwardCap, backwardCap, resistance, susceptance, fixedLosses, numLossTranches, HVDCbranch, isOpen /
+
+  resPar(*)           'Parameters applied to reserve class'             / sharingFIR, sharingSIR, roundPwrFIR, roundPwrSIR, roundPwr2Mono, biPole2Mono, monoPoleMin, MRCE, MRECE, lossScalingFactorHVDC, sharedNFRfactor,forwardHVDCcontrolBand, backwardHVDCcontrolBand /
+
+  riskPar(*)          'Different risk parameters'                       / freeReserve, adjustFactor, HVDCRampUp, minRisk, sharingEffectiveFactor /
+
+  CstrRHS(*)          'Constraint RHS definition'                       / cnstrSense, cnstrLimit, rampingCnstr /
+
+  z(*)                'RP: round power, NR: no reverse, RZ: reverse'    /RP, NR, RZ/
+
+  pole(*)             'HVDC poles'                                      / pole1, pole2 /
 
   testcases(*)        'Test Cases for RTP 4'                            /'MSS_21012023030850151_0X','MSS_21302023030830146_0X','MSS_21322023030800133_0X','MSS_61012023030935374_0X'/
   ;
 
-* Dynamic sets that are defined by /loaded from gdx inputs
+* Primary sets that are defined by /loaded from gdx inputs
 Sets
-  caseName(*)         'Case name used to create the GDX file'
+  cn(*)               'Case name used to create the GDX file'
   ca(*)               'Case ID associated with data'
   dt(*)               'Date and time for the trade periods'
   tp(*)               'Trade periods for which input data is defined'
@@ -79,139 +111,90 @@ Sets
   ;
 
 * Aliases
-Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB)
-      (n,n1,n2),          (o,o1,o2),        (bd,bd2,bd1),     (br,br1)
-      (fd,fd1,rd,rd1),    (z,z1,rrz,rrz1),  (rg,rg1),         (blk,blk1,blk2)
-      (los,los1,bp,bp1,rsbp,rsbp1)
+Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB),      (n,n1,n2),          (o,o1,o2),        (bd,bd2,bd1)
+      (br,br1),           (fd,fd1,rd,rd1),  (z,z1,rrz,rrz1),  (rg,rg1),            (blk,blk1,blk2),    (los,los1,bp,bp1,rsbp,rsbp1)
   ;
 
+* Dynamic sets that are loaded from GDX
 Sets
-* 16 multi-dimensional sets, subsets, and mapping sets - membership is populated via loading from GDX file in vSPDsolve.gms
-  case2name(ca,caseName)                 'Mapping caseID to CaseNanme'
-  case2dt(ca,dt)                         'Mapping caseID to datetime'
-  case2rundt(ca,rundt)                   'Mapping caseID to rundatetime'
-  dt2tp(dt,tp)                           'Mapping of dateTime set to the tradePeriod set'
-  node(ca,dt,n<)                         'Node definition for the different trading periods'
-  bus(ca,dt,b<)                          'Bus definition for the different trading periods'
-  node2node(ca,dt,n,n1)                  'Node to node mapping used for price and energy shortfall transfer'
-  offerNode(ca,dt,o<,n)                  'Offers and the corresponding offer node for the different trading periods'
-  offerTrader(ca,dt,o<,trdr<)            'Offers and the corresponding trader for the different trading periods'
-  bidNode(ca,dt,bd<,n)                   'Bids and the corresponding node for the different trading periods'
-  bidTrader(ca,dt,bd<,trdr<)             'Bids and the corresponding trader for the different trading periods'
-  busIsland(ca,dt,b,isl)                 'Bus island mapping for the different trade periods'
-  nodeBus(ca,dt,n,b)                     'Node bus mapping for the different trading periods'
-  branchDefn(ca,dt,br<,frB,toB)           'Branch definition for the different trading periods'
-  riskGenerator(ca,dt,o)                 'Set of generators (offers) that can set the risk in the different trading periods'
-  primarySecondaryOffer(ca,dt,o,o1)      'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
-  dispatchableBid(ca,dt,bd)              'Set of dispatchable bids - effective date 20 May 2014'
-  discreteModeBid(ca,dt,bd)              'Set of dispatchable discrete bids - Start From RTP phase 4 to support Dispatch Lite'
-  differenceBid(ca,dt,bd)                'Set of difference bids - applied to PRSS mostly'
-  dispatchableEnrgOffer(ca,dt,o)         'Set of dispatchable energy offer - Start From RTP phase 4 to support Dispatch Lite'
-  nodeoutagebranch(ca,dt,n,br)           'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
+* Case/period sets
+  caseDefn(ca,cn<,rundt<)               'Mapping caseid - casename - rundatetime set'
+  case2dt2tp(ca,dt,tp)                  'Mapping caseid - datetime - tradePeriod set'
+
+* Node/bus sets
+  node2node(ca,dt,n,n1)                 'Node to node mapping used for price and energy shortfall transfer'
+  busIsland(ca,dt,b,isl)                'Bus island mapping for the different trade periods'
+  nodeBus(ca,dt,n,b)                    'Node bus mapping for the different trading periods'
+
+* Branch sets
+  branchDefn(ca,dt,br<,frB,toB)         'Branch definition for the different trading periods'
+  nodeoutagebranch(ca,dt,n,br)          'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
+
+* Offer sets
+  offerNode(ca,dt,o<,n)                 'Offers and the corresponding offer node for the different trading periods'
+  offerTrader(ca,dt,o,trdr<)            'Offers and the corresponding trader for the different trading periods'
+  primarySecondaryOffer(ca,dt,o,o1)     'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
+
+* Bid sets
+  bidNode(ca,dt,bd<,n)                  'Bids and the corresponding node for the different trading periods'
+  bidTrader(ca,dt,bd,trdr<)             'Bids and the corresponding trader for the different trading periods'
+
+* Risk sets
+  riskGroupOffer(ca,dt,rg<,o,riskC)     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
   ;
 
 
+* Parameters loaded from GDX file in vSPDsolve.gms
 Parameters
-* 6 scalars - values are loaded from GDX file in vSPDsolve.gms
-  caseGdxDate(ca,*)                                 'day, month, year of trade date for each caseID'
-  gdxDate(*)                                        'day, month, year of trade date'
-  intervalDuration(ca,dt)                           'Length of the trading period in minutes (e.g. 30)'
-  caseIntervalDuration(ca)                          'Length of the trading period in minutes (e.g. 30) for each caseID'
+* Case-Period data
+  gdxDate(*)                                        'day, month, year of trade date applied to daily GDX'
+  runMode(ca,casePar)                               'Study mode and interval length applied to each caseID'
+  dtParameter(ca,dt,dtPar)                          'Parameters applied to each caseID-datetime pair'
 
-* 49 parameters - values are loaded from GDX file in vSPDsolve.gms
+* Island data
+  islandParameter(ca,dt,isl,islPar)                 'Island parameters for the different trading periods'
+
+* Nodal data
+  nodeParameter(ca,dt,n,nodePar)                    'Nodal input data for all trading periods'
+
+* Bus data
+  busElectricalIsland(ca,dt,b)                      'Electrical island status of each bus for the different trading periods (0 = Dead)'
+  nodeBusAllocationFactor(ca,dt,n,b)                'Allocation factor of market node quantities to bus for the different trading periods'
+
+* Branch and branch constraint data
+  branchParameter(ca,dt,br,brPar)                   'Branch parameters for the different time periods'
+  branchCstrFactors(ca,dt,brCstr<,br)               'Branch security constraint factors (sensitivities) for the current trading period'
+  branchCstrRHS(ca,dt,brCstr,CstrRHS)               'Branch constraint sense and limit for the different trading periods'
+
 * Offer data
-  offerParameter(ca,dt,o,offerPar)                     'Initial MW for each offer for the different trading periods'
-  energyOffer(ca,dt,o,blk,bidofrCmpnt)                 'Energy offers for the different trading periods'
-  fastPLSRoffer(ca,dt,o,blk,bidofrCmpnt)               'Fast (6s) PLSR offers for the different trading periods'
-  sustainedPLSRoffer(ca,dt,o,blk,bidofrCmpnt)          'Sustained (60s) PLSR offers for the different trading periods'
-  fastTWDRoffer(ca,dt,o,blk,bidofrCmpnt)               'Fast (6s) TWDR offers for the different trading periods'
-  sustainedTWDRoffer(ca,dt,o,blk,bidofrCmpnt)          'Sustained (60s) TWDR offers for the different trading periods'
-  fastILRoffer(ca,dt,o,blk,bidofrCmpnt)                'Fast (6s) ILR offers for the different trading periods'
-  sustainedILRoffer(ca,dt,o,blk,bidofrCmpnt)           'Sustained (60s) ILR offers for the different trading periods'
+  energyOffer(ca,dt,o,blk,bidofrCmpnt)              'Energy offers for the different trading periods'
+  reserveOffer(ca,dt,o,resC,resT,blk,bidofrCmpnt)   'Reserve offers for the different trading periods'
+  offerParameter(ca,dt,o,offerPar)                  'Initial MW for each offer for the different trading periods'
 
 * Bid data
-  energyBid(ca,dt,bd,blk,bidofrCmpnt)                  'Energy bids for the different trading periods'
-* Demand data
-  nodeDemand(ca,dt,n)                                  'MW demand at each node for all trading periods'
-
-* Network data
-  refNode(ca,dt,n)                                     'Reference nodes for the different trading periods'
-  HVDCBranch(ca,dt,br)                                 'HVDC branch indicator for the different trading periods'
-  branchParameter(ca,dt,br,brPar)                      'Branch resistance, reactance, fixed losses and number of loss tranches for the different time periods'
-  branchCapacity(ca,dt,br,fd)                          'Branch directed capacity for the different trading periods in MW (Branch Reverse Ratings)'
-  branchOpenStatus(ca,dt,br)                           'Branch open status for the different trading periods, 1 = Open'
-  nodeBusAllocationFactor(ca,dt,n,b)                   'Allocation factor of market node quantities to bus for the different trading periods'
-  busElectricalIsland(ca,dt,b)                         'Electrical island status of each bus for the different trading periods (0 = Dead)'
-
-* Risk/Reserve data
-  riskParameter(ca,dt,isl,resC,riskC,riskPar)          'Risk parameters for the different trading periods (From RMT)'
-  islandMinimumRisk(ca,dt,isl,resC,riskC)              'Minimum MW risk level for each island for each reserve class applied to risk classes: manual, manualECE, HVDCsecRisk and HVDCsecRiskECE'
-  HVDCSecRiskEnabled(ca,dt,isl,riskC)                  'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
-  HVDCSecRiskSubtractor(ca,dt,isl)                     'Ramp up capability on the HVDC pole that is not the secondary risk'
-  reserveMaximumFactor(ca,dt,o,resC)                   'Factor to adjust the maximum reserve of the different classes for the different offers'
-
-* Branch constraint data
-  branchCstrFactors(ca,dt,brCstr<,br)                   'Branch security constraint factors (sensitivities) for the current trading period'
-  branchCstrRHS(ca,dt,brCstr,CstrRHS)                  'Branch constraint sense and limit for the different trading periods'
+  energyBid(ca,dt,bd,blk,bidofrCmpnt)               'Energy bids for the different trading periods'
+  bidParameter(ca,dt,bd,bidPar)                     'Parameters applied to each bid for the different trading periods'
 
 * Market node constraint data
-  mnCstrEnrgFactors(ca,dt,MnodeCstr<,o)                 'Market node energy offer constraint factors for the current trading period'
-  mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT)     'Market node reserve offer constraint factors for the current trading period'
-  mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd)            'Market node energy bid constraint factors for the different trading periods'
-  mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC)      'Market node IL reserve bid constraint factors for the different trading periods - currently not used'
-  mnCnstrRHS(ca,dt,MnodeCstr,CstrRHS)                  'Market node constraint sense and limit for the different trading periods'
+  mnCnstrRHS(ca,dt,MnodeCstr<,CstrRHS)              'Market node constraint sense and limit for the different trading periods'
+  mnCstrEnrgFactors(ca,dt,MnodeCstr,o)              'Market node energy offer constraint factors for the current trading period'
+  mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT)  'Market node reserve offer constraint factors for the current trading period'
+  mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd)         'Market node energy bid constraint factors for the different trading periods'
+  mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC)   'Market node IL reserve bid constraint factors for the different trading periods - currently not used'
 
+* Risk and reserve/sharing data
+  riskParameter(ca,dt,isl,resC,riskC,riskPar)       'Risk parameters for the different trading periods'
+  reserveSharingParameter(ca,dt,resPar)             'Reserve (sharing) parameters for the different trading periods'
 
-* Real Time Pricing - Inputs
-  studyMode(ca,dt)                                                     'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
-  caseStudyMode(ca)                                                    'Study mode applied in a CaseID'
-  useGenInitialMW(ca,dt)                                               'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
-  runEnrgShortfallTransfer(ca,dt)                                      'Flag that if set to 1 will enable shortfall transfer- post processing'
-  runPriceTransfer(ca,dt)                                              'Flag that if set to 1 will enable price transfer - post processing.'
-  replaceSurplusPrice(ca,dt)                                           'Flag that if set to 1 will enable sutplus price replacement - post processing'
-  rtdIgIncreaseLimit(ca,dt)                                            'For price responsive Intermittent Generation (IG) the 5-minute ramp-up is capped using this parameter'
-  useActualLoad(ca,dt)                                                 'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
-  dontScaleNegativeLoad(ca,dt)                                         'Flag that if set to 1 --> negative load will be fixed in RTD load calculation'
-  inputInitialLoad(ca,dt,n)                                            'This value represents actual load MW for RTD schedule input'
-  conformingFactor(ca,dt,n)                                            'Initial estimated load for conforming load'
-  nonConformingLoad(ca,dt,n)                                           'Initial estimated load for non-conforming load'
-  loadIsOverride(ca,dt,n)                                              'Flag if set to 1 --> InputInitialLoad will be fixed as node demand'
-  loadIsBad(ca,dt,n)                                                   'Flag if set to 1 --> InitialLoad will be replaced by Estimated Initial Load'
-  loadIsNCL(ca,dt,n)                                                   'Flag if set to 1 --> non-conforming load --> will be fixed in RTD load calculation'
-  dispatchedLoad(ca,dt,n)                                              'Initial dispatched lite demand'
-  dispatchedGeneration(ca,dt,n)                                        'Initial dispatched lite generation'
+* Scarcity data
+  scarcityNationalFactor(ca,dt,blk,bidofrCmpnt)      'National energy scarcity factor parameters'
+  scarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt)        'Nodal energy scarcity factor parameters'
+  scarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt)         'Nodal energy scarcity limit parameters'
+  scarcityResrvLimit(ca,dt,isl,resC,blk,bidofrCmpnt) 'Reserve scarcity limit parameters'
 
-  maxLoad(ca,dt,n)                                                     'Pnode maximum load'
-  instructedLoadShed(ca,dt,n)                                          'Instructed load shedding applied to RTDP and should be ignore by all other schedules'
-  instructedShedActive(ca,dt,n)                                        'Flag if Instructed load shedding is active; applied to RTDP and should be ignore by all other schedules'
-  islandMWIPS(ca,dt,isl)                                               'Island total generation at the start of RTD run'
-  islandPDS(ca,dt,isl)                                                 'Island pre-solve deviation - used to adjust RTD node demand'
-  islandLosses(ca,dt,isl)                                              'Island estimated losss - used to adjust RTD mode demand'
-  enrgShortfallRemovalMargin(ca,dt)                                    'This small margin is added to the shortfall removed amount in order to prevent any associated binding ACLine constraint'
-  maxSolveLoops(ca,dt)                                                 'The maximum number of times that the Energy Shortfall Check will re-solve the model'
+  ;
 
-
-  energyScarcityEnabled(ca,dt)                                         'Flag to apply energy scarcity (this is different from FP scarcity situation)'
-  reserveScarcityEnabled(ca,dt)                                        'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
-  scarcityEnrgNationalFactor(ca,dt,blk)                                'National energy scarcity factors'
-  scarcityEnrgNationalPrice(ca,dt,blk)                                 'National energy scarcity prices'
-  scarcityEnrgNodeFactor(ca,dt,n,blk)                                  'Nodal energy scarcity factors'
-  scarcityEnrgNodeFactorPrice(ca,dt,n,blk)                             'Nodal energy scarcity prices vs factors'
-  scarcityEnrgNodeLimit(ca,dt,n,blk)                                   'Nodal energy scarcity limits'
-  scarcityEnrgNodeLimitPrice(ca,dt,n,blk)                              'Nodal energy scarcity prices vs limits'
-  scarcityResrvIslandLimit(ca,dt,isl,resC,blk)                         'Reserve scarcity limits'
-  scarcityResrvIslandPrice(ca,dt,isl,resC,blk)                         'Reserve scarcity prices'
-
- ;
-
-* End of GDX declarations
-
-
-
-*===================================================================================
-* 2. Declare additional sets and parameters used throughout the model
-*===================================================================================
-
+* Setting scalars that are hard-coded or defined in vSPDSetting.inc
 Scalars
   useAClossModel
   useHVDClossModel
@@ -231,8 +214,8 @@ Scalars
   MIPiterationLimit                        'Iteration limit allowed for MIP solves'
   MIPoptimality
   disconnectedNodePriceCorrection          'Flag to apply price correction methods to disconnected node'
-
   branchReceivingEndLossProportion         'Proportion of losses to be allocated to the receiving end of a branch' /1/
+  BigM                                     'Big M value to be applied for single active segment HVDC loss model' /10000/
 
 * External loss model from Transpower
   lossCoeff_A                       / 0.3101 /
@@ -241,184 +224,220 @@ Scalars
   lossCoeff_E                       / 0.46742 /
   lossCoeff_F                       / 0.82247 /
   maxFlowSegment                    / 10000 /
+
   ;
 
+* End of GDX declarations
+
+
+
+*===================================================================================
+* 2. Declare additional sets and parameters used throughout the model
+*===================================================================================
+
+* Dynamic sets that are calculated on the fly
 Sets
 * Global
-  pole                                                   'HVDC poles' / pole1, pole2 /
-  t(ca,dt)                                                  'Current trading interval to solve'
+  case2dt(ca,dt)                         'mapping caseID-DateTime pair'
+  t(ca,dt)                               'Current trading interval to solve'
 
-* Offer
-  offer(ca,dt,o)                                            'Offers defined for the current trading period'
-  genOfrBlk(ca,dt,o,blk)                                    'Valid trade blocks for the respective generation offers'
-  resOfrBlk(ca,dt,o,blk,resC,resT)                          'Valid trade blocks for the respective reserve offers by class and type'
-  posEnrgOfr(ca,dt,o)                                       'Postive energy offers defined for the current trading period'
-
-* Bid
-  Bid(ca,dt,bd)                                             'Bids defined for the current trading period'
-  DemBidBlk(ca,dt,bd,blk)                                   'Valid trade blocks for the respective purchase bids'
+* Node/bus
+  node(ca,dt,n)                          'Node definition for the different trading periods'
+  bus(ca,dt,b)                           'Bus definition for the different trading periods'
+  nodeIsland(ca,dt,n,isl)                'Mapping node to island'
 
 * Network
-  branch(ca,dt,br)                                                     'Branches defined for the current trading period'
-  branchBusDefn(ca,dt,br,frB,toB)                                      'Branch bus connectivity for the current trading period'
-  branchFrBus(ca,dt,br,frB)                                            'Define branch from bus connectivity for the current trading period'
-  branchToBus(ca,dt,br,frB)                                            'Define branch to bus connectivity for the current trading period'
-  branchBusConnect(ca,dt,br,b)                                         'Indication if a branch is connected to a bus for the current trading period'
-  ACBranchSendingBus(ca,dt,br,b,fd)                                    'Sending (From) bus of AC branch in forward and backward direction'
-  ACBranchReceivingBus(ca,dt,br,b,fd)                                  'Receiving (To) bus of AC branch in forward and backward direction'
-  HVDClinkSendingBus(ca,dt,br,b)                                       'Sending (From) bus of HVDC link'
-  HVDClinkReceivingBus(ca,dt,br,toB)                                   'Receiving (To) bus of HVDC link'
-  HVDClinkBus(ca,dt,br,b)                                              'Sending or Receiving bus of HVDC link'
-  HVDClink(ca,dt,br)                                                   'HVDC links (branches) defined for the current trading period'
-*  HVDCpoles(ca,dt,br)                                                  'DC transmission between Benmore and Hayward'
+  branch(ca,dt,br)                       'Branches defined for the current trading period'
+  branchBusDefn(ca,dt,br,frB,toB)        'Branch bus connectivity for the current trading period'
+  branchFrBus(ca,dt,br,frB)              'Define branch from bus connectivity for the current trading period'
+  branchToBus(ca,dt,br,frB)              'Define branch to bus connectivity for the current trading period'
+  branchBusConnect(ca,dt,br,b)           'Indication if a branch is connected to a bus for the current trading period'
+  HVDClink(ca,dt,br)                     'HVDC links (branches) defined for the current trading period'
+  ACBranch(ca,dt,br)                     'AC branches defined for the current trading period'
+  ACBranchSendingBus(ca,dt,br,b,fd)      'Sending (From) bus of AC branch in forward and backward direction'
+  ACBranchReceivingBus(ca,dt,br,b,fd)    'Receiving (To) bus of AC branch in forward and backward direction'
+  HVDClinkSendingBus(ca,dt,br,b)         'Sending (From) bus of HVDC link'
+  HVDClinkReceivingBus(ca,dt,br,toB)     'Receiving (To) bus of HVDC link'
+  HVDClinkBus(ca,dt,br,b)                'Sending or Receiving bus of HVDC link'
+  HVDCpoleDirection(ca,dt,br,fd)         'Direction defintion for HVDC poles S->N : forward and N->S : backward'
+  HVDCpoleBranchMap(pole,br)             'Mapping of HVDC  branch to pole number'
+  validLossSegment(ca,dt,br,los,fd)      'Valid loss segments for a branch'
+  lossBranch(ca,dt,br)                   'Subset of branches that have non-zero loss factors'
 
-  HVDCpoleDirection(ca,dt,br,fd)                                       'Direction defintion for HVDC poles S->N : forward and N->S : backward'
-  ACBranch(ca,dt,br)                                                   'AC branches defined for the current trading period'
-  validLossSegment(ca,dt,br,los,fd)                                    'Valid loss segments for a branch'
-  lossBranch(ca,dt,br)                                                 'Subset of branches that have non-zero loss factors'
-* Mapping set of branches to HVDC pole
-  HVDCpoleBranchMap(pole,br)                                        'Mapping of HVDC  branch to pole number'
-* Risk/Reserve
-  islandRiskGenerator(ca,dt,isl,o)                          'Mapping of risk generator to island in the current trading period'
-
-  GenRisk(riskC)                                                    'Subset containing generator risks'
-  ManualRisk(riskC)                                                 'Subset containting manual risks'
-  HVDCrisk(riskC)                                                   'Subset containing DCCE and DCECE risks'
-  HVDCSecRisk(riskC)                                                'Subset containing secondary risk of the DCCE and DCECE events'
-
-  PLRO(resT)                                             'PLSR reserve type'
-  TWRO(resT)                                             'TWDR reserve type'
-  ILRO(resT)                                             'ILR reserve type'
-
-  nodeIsland(ca,dt,n,isl)                                   'Mapping node to island'
-  offerIsland(ca,dt,o,isl)                                  'Mapping of reserve offer to island for the current trading period'
-  bidIsland(ca,dt,bd,isl)                                   'Mapping of purchase bid ILR to island for the current trading period'
-
-* Definition of CE and ECE events to support different CE and ECE CVPs
-  ContingentEvents(riskC)                                           'Subset of Risk Classes containing contigent event risks'
-  ExtendedContingentEvent(riskC)                                    'Subset of Risk Classes containing extended contigent event risk'
 * Branch constraint
-  BranchConstraint(ca,dt,brCstr)                                       'Set of valid branch constraints defined for the current trading period'
-* Market node constraint
-  MNodeConstraint(ca,dt,MnodeCstr)                                     'Set of market node constraints defined for the current trading period'
-* NMIR update
-  rampingConstraint(ca,dt,brCstr)                                      'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
-  bipoleConstraint(ca,dt,isl,brCstr)                                   'Subset of branch constraints that limit total HVDC sent from an island'
-  monopoleConstraint(ca,dt,isl,brCstr,br)                              'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
+  BranchConstraint(ca,dt,brCstr)         'Set of valid branch constraints defined for the current trading period'
 
-  riskGroupOffer(ca,dt,rg<,o,riskC)                                     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
-  islandRiskGroup(ca,dt,isl,rg,riskC)                                  'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
+* Offer
+  offer(ca,dt,o)                         'Offers defined for the current trading period'
+  offerIsland(ca,dt,o,isl)               'Mapping of reserve offer to island for the current trading period'
+  islandRiskGenerator(ca,dt,isl,o)       'Mapping of risk generator to island in the current trading period'
+  genOfrBlk(ca,dt,o,blk)                 'Valid trade blocks for the respective generation offers'
+  posEnrgOfr(ca,dt,o)                    'Postive energy offers defined for the current trading period'
+  resOfrBlk(ca,dt,o,blk,resC,resT)       'Valid trade blocks for the respective reserve offers by class and type'
+
+* Bid
+  Bid(ca,dt,bd)                          'Bids defined for the current trading period'
+  bidIsland(ca,dt,bd,isl)                'Mapping of purchase bid ILR to island for the current trading period'
+  DemBidBlk(ca,dt,bd,blk)                'Valid trade blocks for the respective purchase bids'
+
+* Market node constraint
+  MNodeConstraint(ca,dt,MnodeCstr)       'Set of market node constraints defined for the current trading period'
+
+* Reserve/Risk
+  islandRiskGroup(ca,dt,isl,rg,riskC)    'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
+  
+* Reserve Sharing
+  rampingConstraint(ca,dt,brCstr)         'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
+  bipoleConstraint(ca,dt,isl,brCstr)      'Subset of branch constraints that limit total HVDC sent from an island'
+  monopoleConstraint(ca,dt,isl,brCstr,br) 'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
   ;
 
 Alias (t,t1,t2);
 
+* Initialise risk/reserve data for the current trade period start
+
+
+
+* Parameters initialised on the fly
 Parameters
-* Offers
-  GenerationStart(ca,dt,o)                                  'The MW generation level associated with the offer at the start of a trading period'
-  RampRateUp(ca,dt,o)                                       'The ramping up rate in MW per minute associated with the generation offer (MW/min)'
-  RampRateDn(ca,dt,o)                                       'The ramping down rate in MW per minute associated with the generation offer (MW/min)'
-  ReserveGenerationMaximum(ca,dt,o)                         'Maximum generation and reserve capability for the current trading period (MW)'
-  WindOffer(ca,dt,o)                                        'Flag to indicate if offer is from wind generator (1 = Yes)'
-  FKBand(ca,dt,o)                                           'Frequency keeper band MW which is set when the risk setter is selected as the frequency keeper'
-  PriceResponsive(ca,dt,o)                                  'Flag to indicate if wind offer is price responsive (1 = Yes)'
-  PotentialMW(ca,dt,o)                                      'Potential max output of Wind offer'
+  studyMode(ca,dt)                        'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
+  intervalDuration(ca,dt)                 'Length of the trading period in minutes (e.g. 30) applied to each caseID-Period pair'
 
-* Energy offer
-  EnrgOfrMW(ca,dt,o,blk)                                    'Generation offer block (MW)'
-  EnrgOfrPrice(ca,dt,o,blk)                                 'Generation offer price ($/MW)'
+* Nodal data
+  refNode(ca,dt,n)                        'Reference nodes for the different trading periods'
+  requiredLoad(ca,dt,n)                   'Nodal demand for the current trading period in MW'
+  inputInitialLoad(ca,dt,n)               'This value represents actual load MW for RTD schedule input'
+  conformingFactor(ca,dt,n)               'Initial estimated load for conforming load'
+  nonConformingLoad(ca,dt,n)              'Initial estimated load for non-conforming load'
+  loadIsOverride(ca,dt,n)                 'Flag if set to 1 --> InputInitialLoad will be fixed as node demand'
+  loadIsBad(ca,dt,n)                      'Flag if set to 1 --> InitialLoad will be replaced by Estimated Initial Load'
+  loadIsNCL(ca,dt,n)                      'Flag if set to 1 --> non-conforming load --> will be fixed in RTD load calculation'
+  maxLoad(ca,dt,n)                        'Pnode maximum load'
+  instructedLoadShed(ca,dt,n)             'Instructed load shedding applied to RTDP and should be ignore by all other schedules'
+  instructedShedActive(ca,dt,n)           'Flag if Instructed load shedding is active; applied to RTDP and should be ignore by all other schedules'
+  dispatchedLoad(ca,dt,n)                 'Initial dispatched lite demand'
+  dispatchedGeneration(ca,dt,n)           'Initial dispatched lite generation'
+* Factor to prorate the deficit and surplus at the nodal level
+  totalBusAllocation(ca,dt,b)             'Total allocation of nodes to bus'
+  busNodeAllocationFactor(ca,dt,b,n)      'Bus to node allocation factor'
 
-* Primary-secondary offer parameters
-  PrimaryOffer(ca,dt,o)                                     'Flag to indicate if offer is a primary offer (1 = Yes)'
-  SecondaryOffer(ca,dt,o)                                   'Flag to indicate if offer is a secondary offer (1 = Yes)'
-
-
-  GenerationMaximum(ca,dt,o)                                           'Maximum generation level associated with the generation offer (MW)'
-  GenerationMinimum(ca,dt,o)                                           'Minimum generation level associated with the generation offer (MW)'
-  GenerationEndUp(ca,dt,o)                                             'MW generation level associated with the offer at the end of the trading period assuming ramp rate up'
-  GenerationEndDown(ca,dt,o)                                           'MW generation level associated with the offer at the end of the trading period assuming ramp rate down'
-  RampTimeUp(ca,dt,o)                                                  'Minimum of the trading period length and time to ramp up to maximum (Minutes)'
-  RampTimeDown(ca,dt,o)                                                'Minimum of the trading period length and time to ramp down to minimum (Minutes)'
-
-* Reserve offer
-  ResOfrPct(ca,dt,o,blk,resC)                          'The percentage of the MW block available for PLSR of class FIR or SIR'
-  ResOfrPrice(ca,dt,o,blk,resC,resT)                   'The price of the reserve of the different reserve classes and types ($/MW)'
-  ResOfrMW(ca,dt,o,blk,resC,resT)                      'The maximum MW offered reserve for the different reserve classes and types (MW)'
-* Demand
-  RequiredLoad(ca,dt,n)                                             'Nodal demand for the current trading period in MW'
-* Bid
-  DemBidMW(ca,dt,bd,blk)                               'Demand bid block in MW'
-  DemBidPrice(ca,dt,bd,blk)                            'Purchase bid price in $/MW'
-  DemBidILRMW(ca,dt,bd,blk,resC)                               'Purchase bid ILR block in MW for the different reserve classes'
-  DemBidILRPrice(ca,dt,bd,blk,resC)                            'Purchase bid ILR price in $/MW for the different reserve classes'
 * Network
-  branchResistance(ca,dt,br)                                           'Resistance of the a branch for the current trading period in per unit'
-  branchSusceptance(ca,dt,br)                                          'Susceptance (inverse of reactance) of a branch for the current trading period in per unit'
-  branchFixedLoss(ca,dt,br)                                            'Fixed loss of the a branch for the current trading period in MW'
-  branchLossBlocks(ca,dt,br)                                           'Number of blocks in the loss curve for the a branch in the current trading period'
-  lossSegmentMW(ca,dt,br,los,fd)                                       'MW capacity of each loss segment'
-  lossSegmentFactor(ca,dt,br,los,fd)                                   'Loss factor of each loss segment'
-  ACBranchLossMW(ca,dt,br,los,fd)                                      'MW element of the loss segment curve in MW'
-  ACBranchLossFactor(ca,dt,br,los,fd)                                  'Loss factor element of the loss segment curve'
-  HVDCBreakPointMWFlow(ca,dt,br,bp,fd)                                 'Value of power flow on the HVDC at the break point'
-  HVDCBreakPointMWLoss(ca,dt,br,bp,fd)                                 'Value of variable losses on the HVDC at the break point'
-
-* Risk/Reserve
-  IslandRiskAdjustmentFactor(ca,dt,isl,resC,riskC)                     'Risk adjustment factor for each island, reserve class and risk class'
-  FreeReserve(ca,dt,isl,resC,riskC)                                    'MW free reserve for each island, reserve class and risk class'
-  HVDCpoleRampUp(ca,dt,isl,resC,riskC)                                 'HVDC pole MW ramp up capability for each island, reserve class and risk class'
-
-* NMIR parameters
-* The follwing are new input for NMIR
-  reserveRoundPower(ca,dt,resC)                                        'Database flag that disables round power under certain circumstances'
-  reserveShareEnabled(ca,dt,resC)                                      'Database flag if reserve class resC is sharable'
-  modulationRiskClass(ca,dt,riskC)                                     'HVDC energy modulation due to frequency keeping action'
-  roundPower2MonoLevel(ca,dt)                                          'HVDC sent value above which one pole is stopped and therefore FIR cannot use round power'
-  bipole2MonoLevel(ca,dt)                                              'HVDC sent value below which one pole is available to start in the opposite direction and therefore SIR can use round power'
-  MonopoleMinimum(ca,dt)                                               'The lowest level that the sent HVDC sent can ramp down to when round power is not available.'
-  HVDCControlBand(ca,dt,rd)                                            'Modulation limit of the HVDC control system apply to each HVDC direction'
-  HVDClossScalingFactor(ca,dt)                                         'Losses used for full voltage mode are adjusted by a factor of (700/500)^2 for reduced voltage operation'
-  sharedNFRFactor(ca,dt)                                               'Factor that is applied to [sharedNFRLoad - sharedNFRLoadOffset] as part of the calculation of sharedNFRMax'
-  sharedNFRLoadOffset(ca,dt,isl)                                       'Island load that does not provide load damping, e.g., Tiwai smelter load in the South Island. Subtracted from the sharedNFRLoad in the calculation of sharedNFRMax.'
-  effectiveFactor(ca,dt,isl,resC,riskC)                                'Estimate of the effectiveness of the shared reserve once it has been received in the risk island.'
-  RMTReserveLimitTo(ca,dt,isl,resC)                                    'The shared reserve limit used by RMT when it calculated the NFRs. Applied as a cap to the value that is calculated for SharedNFRMax.'
-* The follwing are calculated parameters for NMIR
-  reserveShareEnabledOverall(ca,dt)                                    'An internal parameter based on the FIR and SIR enabled, and used as a switch in various places'
-  modulationRisk(ca,dt)                                                'Max of HVDC energy modulation due to frequency keeping action'
-  roPwrZoneExit(ca,dt,resC)                                            'Above this point there is no guarantee that HVDC sent can be reduced below MonopoleMinimum.'
-  sharedNFRLoad(ca,dt,isl)                                             'Island load, calculated in pre-processing from the required load and the bids. Used as an input to the calculation of SharedNFRMax.'
-  sharedNFRMax(ca,dt,isl)                                              'Amount of island free reserve that can be shared through HVDC'
-  numberOfPoles(ca,dt,isl)                                             'Number of HVDC poles avaialbe to send energy from an island'
-  monoPoleCapacity(ca,dt,isl,br)                                       'Maximum capacity of monopole defined by min of branch capacity and monopole constraint RHS'
-  biPoleCapacity(ca,dt,isl)                                            'Maximum capacity of bipole defined by bipole constraint RHS'
-  HVDCMax(ca,dt,isl)                                                   'Max HVDC flow based on available poles and branch group constraints RHS'
-  HVDCCapacity(ca,dt,isl)                                              'Total sent capacity of HVDC based on available poles'
-  HVDCResistance(ca,dt,isl)                                            'Estimated resistance of HVDC flow sent from an island'
-  HVDClossSegmentMW(ca,dt,isl,los)                                     'MW capacity of each loss segment applied to aggregated HVDC capacity'
-  HVDClossSegmentFactor(ca,dt,isl,los)                                 'Loss factor of each loss segment applied to to aggregated HVDC loss'
-  HVDCSentBreakPointMWFlow(ca,dt,isl,los)                              'Value of total HVDC sent power flow at the break point               --> lambda segment loss model'
-  HVDCSentBreakPointMWLoss(ca,dt,isl,los)                              'Value of ariable losses of the total HVDC sent at the break point    --> lambda segment loss model'
-  HVDCReserveBreakPointMWFlow(ca,dt,isl,los)                           'Value of total HVDC sent power flow + reserve at the break point     --> lambda segment loss model'
-  HVDCReserveBreakPointMWLoss(ca,dt,isl,los)                           'Value of post-contingent variable HVDC losses at the break point     --> lambda segment loss model'
-* The follwing are flag and scalar for testing
-  UseShareReserve(ca)                                                  'Flag to indicate if the reserve share is applied for CaseID'
-  BigM                                                                 'Big M value to be applied for single active segment HVDC loss model' /10000/
-* NMIR parameters end
+  branchCapacity(ca,dt,br,fd)             'Branch directed capacity for the different trading periods in MW (Branch Reverse Ratings)'
+  branchResistance(ca,dt,br)              'Resistance of the a branch for the current trading period in per unit'
+  branchSusceptance(ca,dt,br)             'Susceptance (inverse of reactance) of a branch for the current trading period in per unit'
+  branchFixedLoss(ca,dt,br)               'Fixed loss of the a branch for the current trading period in MW'
+  branchLossBlocks(ca,dt,br)              'Number of blocks in the loss curve for the a branch in the current trading period'
+  lossSegmentMW(ca,dt,br,los,fd)          'MW capacity of each loss segment'
+  lossSegmentFactor(ca,dt,br,los,fd)      'Loss factor of each loss segment'
+  ACBranchLossMW(ca,dt,br,los,fd)         'MW element of the loss segment curve in MW'
+  ACBranchLossFactor(ca,dt,br,los,fd)     'Loss factor element of the loss segment curve'
+  HVDCBreakPointMWFlow(ca,dt,br,bp,fd)    'Value of power flow on the HVDC at the break point'
+  HVDCBreakPointMWLoss(ca,dt,br,bp,fd)    'Value of variable losses on the HVDC at the break point'
 
 * Branch constraint
-  BranchConstraintSense(ca,dt,brCstr)                                  'Branch security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
-  BranchConstraintLimit(ca,dt,brCstr)                                  'Branch security constraint limit for the current trading period'
+  BranchConstraintSense(ca,dt,brCstr)     'Branch security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
+  BranchConstraintLimit(ca,dt,brCstr)     'Branch security constraint limit for the current trading period'
+
+* Offers parameters
+  generationStart(ca,dt,o)                'The MW generation level associated with the offer at the start of a trading period'
+  rampRateUp(ca,dt,o)                     'The ramping up rate in MW per minute associated with the generation offer (MW/min)'
+  rampRateDn(ca,dt,o)                     'The ramping down rate in MW per minute associated with the generation offer (MW/min)'
+  reserveGenMax(ca,dt,o)                  'Maximum generation and reserve capability for the current trading period (MW)'
+  intermittentOffer(ca,dt,o)              'Flag to indicate if offer is from intermittent generator (1 = Yes)'
+  FKBand(ca,dt,o)                         'Frequency keeper band MW which is set when the risk setter is selected as the frequency keeper'
+  priceResponsive(ca,dt,o)                'Flag to indicate if wind offer is price responsive (1 = Yes)'
+  potentialMW(ca,dt,o)                    'Potential max output of Wind offer'
+  reserveMaxFactor(ca,dt,o,resC)          'Factor to adjust the maximum reserve of the different classes for the different offers'
+
+* Primary-secondary offer parameters
+  primaryOffer(ca,dt,o)                   'Flag to indicate if offer is a primary offer (1 = Yes)'
+  secondaryOffer(ca,dt,o)                 'Flag to indicate if offer is a secondary offer (1 = Yes)'
+
+* Energy offer
+  enrgOfrMW(ca,dt,o,blk)                  'Generation offer block (MW)'
+  enrgOfrPrice(ca,dt,o,blk)               'Generation offer price ($/MW)'
+
+* Reserve offer
+  resrvOfrPct(ca,dt,o,blk,resC)           'The percentage of the MW block available for PLSR of class FIR or SIR'
+  resrvOfrPrice(ca,dt,o,blk,resC,resT)    'The price of the reserve of the different reserve classes and types ($/MW)'
+  resrvOfrMW(ca,dt,o,blk,resC,resT)       'The maximum MW offered reserve for the different reserve classes and types (MW)'
+
+* Bid
+  demBidMW(ca,dt,bd,blk)                  'Demand bid block in MW'
+  demBidPrice(ca,dt,bd,blk)               'Purchase bid price in $/MW'
+  demBidILRMW(ca,dt,bd,blk,resC)          'Purchase bid ILR block in MW for the different reserve classes - place holder'
+  demBidILRPrice(ca,dt,bd,blk,resC)       'Purchase bid ILR price in $/MW for the different reserve classes - place holder'
+
 
 * Market node constraint
-  MNodeConstraintSense(ca,dt,MnodeCstr)                                'Market node constraint sense for the current trading period'
-  MNodeConstraintLimit(ca,dt,MnodeCstr)                                'Market node constraint limit for the current trading period'
+  MNodeConstraintSense(ca,dt,MnodeCstr)   'Market node constraint sense for the current trading period'
+  MNodeConstraintLimit(ca,dt,MnodeCstr)   'Market node constraint limit for the current trading period'
 
 
-* Post-processing
-  useBranchFlowMIP(ca,dt)                             'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
+* Risk/Reserve
+  HVDCSecRiskEnabled(ca,dt,isl,riskC)     'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
+  riskAdjFactor(ca,dt,isl,resC,riskC)     'Risk adjustment factor for each island, reserve class and risk class'
+  HVDCpoleRampUp(ca,dt,isl,resC,riskC)    'HVDC pole MW ramp up capability for each island, reserve class and risk class'
+ 
 
-* Real Time Pricing
-  ScarcityEnrgLimit(ca,dt,n,blk)                                    'Bus energy scarcity limits'
-  ScarcityEnrgPrice(ca,dt,n,blk)                                    'Bus energy scarcity prices vs limits'
+* Reserve Sharing parameters
+  reserveShareEnabled(ca,dt,resC)         'Database flag if reserve class resC is sharable'
+  reserveShareEnabledOverall(ca,dt)       'An internal parameter based on the FIR and SIR enabled, and used as a switch in various places'
+  reserveRoundPower(ca,dt,resC)           'Database flag that disables round power under certain circumstances'
+  modulationRiskClass(ca,dt,riskC)        'HVDC energy modulation due to frequency keeping action'
+  modulationRisk(ca,dt)                   'Max of HVDC energy modulation due to frequency keeping action'
+
+  roundPower2MonoLevel(ca,dt)             'HVDC sent value above which one pole is stopped and therefore FIR cannot use round power'
+  bipole2MonoLevel(ca,dt)                 'HVDC sent value below which one pole is available to start in the opposite direction and therefore SIR can use round power'
+  roPwrZoneExit(ca,dt,resC)               'Above this point there is no guarantee that HVDC sent can be reduced below MonopoleMinimum.'
+  
+  monopoleMinimum(ca,dt)                  'The lowest level that the sent HVDC sent can ramp down to when round power is not available.'
+  HVDCControlBand(ca,dt,rd)               'Modulation limit of the HVDC control system apply to each HVDC direction'
+  HVDClossScalingFactor(ca,dt)            'Losses used for full voltage mode are adjusted by a factor of (700/500)^2 for reduced voltage operation'
+  RMTReserveLimit(ca,dt,isl,resC)         'The shared reserve limit used by RMT when it calculated the NFRs. Applied as a cap to the value that is calculated for SharedNFRMax.'
+  sharedNFRFactor(ca,dt)                  'Factor that is applied to [sharedNFRLoad - sharedNFRLoadOffset] as part of the calculation of sharedNFRMax'
+  sharedNFRLoadOffset(ca,dt,isl)          'Island load that does not provide load damping, e.g., Tiwai smelter load in the South Island. Subtracted from the sharedNFRLoad in the calculation of sharedNFRMax.'
+  effectiveFactor(ca,dt,isl,resC,riskC)   'Estimate of the effectiveness of the shared reserve once it has been received in the risk island.'
+
+* HVDC data for Reserve Sharing
+  numberOfPoles(ca,dt,isl)                    'Number of HVDC poles avaialbe to send energy from an island'
+  monoPoleCapacity(ca,dt,isl,br)              'Maximum capacity of monopole defined by min of branch capacity and monopole constraint RHS'
+  biPoleCapacity(ca,dt,isl)                   'Maximum capacity of bipole defined by bipole constraint RHS'
+  HVDCMax(ca,dt,isl)                          'Max HVDC flow based on available poles and branch group constraints RHS'
+  HVDCCapacity(ca,dt,isl)                     'Total sent capacity of HVDC based on available poles'
+  HVDCResistance(ca,dt,isl)                   'Estimated resistance of HVDC flow sent from an island'
+  HVDClossSegmentMW(ca,dt,isl,los)            'MW capacity of each loss segment applied to aggregated HVDC capacity'
+  HVDClossSegmentFactor(ca,dt,isl,los)        'Loss factor of each loss segment applied to to aggregated HVDC loss'
+  HVDCSentBreakPointMWFlow(ca,dt,isl,los)     'Value of total HVDC sent power flow at the break point               --> lambda segment loss model'
+  HVDCSentBreakPointMWLoss(ca,dt,isl,los)     'Value of ariable losses of the total HVDC sent at the break point    --> lambda segment loss model'
+  HVDCReserveBreakPointMWFlow(ca,dt,isl,los)  'Value of total HVDC sent power flow + reserve at the break point     --> lambda segment loss model'
+  HVDCReserveBreakPointMWLoss(ca,dt,isl,los)  'Value of post-contingent variable HVDC losses at the break point     --> lambda segment loss model'
+  
+  sharedNFRLoad(ca,dt,isl)                'Island load, calculated in pre-processing from the required load and the bids. Used as an input to the calculation of SharedNFRMax.'
+  sharedNFRMax(ca,dt,isl)                 'Amount of island free reserve that can be shared through HVDC'
+  FreeReserve(ca,dt,isl,resC,riskC)       'MW free reserve for each island, reserve class and risk class'
+* NMIR parameters end
+
+* Real Time Pricing - Inputs
+  useGenInitialMW(ca,dt)                  'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
+  useActualLoad(ca,dt)                    'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
+  maxSolveLoops(ca,dt)                    'The maximum number of times that the Energy Shortfall Check will re-solve the model'
+  
+  islandMWIPS(ca,dt,isl)                  'Island total generation at the start of RTD run'
+  islandPDS(ca,dt,isl)                    'Island pre-solve deviation - used to adjust RTD node demand'
+  islandLosses(ca,dt,isl)                 'Island estimated losss - used to adjust RTD mode demand'
+  SPDLoadCalcLosses(ca,dt,isl)            'Island losses calculated by SPD in the first solve to adjust demand'
+  
+
+
+  energyScarcityEnabled(ca,dt)                 'Flag to apply energy scarcity (this is different from FP scarcity situation)'
+  reserveScarcityEnabled(ca,dt)                'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
+  scarcityEnrgLimit(ca,dt,n,blk)               'Node energy scarcity limits'
+  scarcityEnrgPrice(ca,dt,n,blk)               'Node energy scarcity prices vs limits'
+  scarcityResrvIslandLimit(ca,dt,isl,resC,blk) 'Reserve scarcity limits'
+  scarcityResrvIslandPrice(ca,dt,isl,resC,blk) 'Reserve scarcity prices'
+
+
 
 
 * Real Time Pricing - Calculated parameters
@@ -432,6 +451,9 @@ Parameters
   EstLoadIsScalable(ca,dt,n)                          'Binary value. If True then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad'
   EstNonScalableLoad(ca,dt,n)                         'For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero'
   EstScalableLoad(ca,dt,n)                            'For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero'
+
+* Post-processing
+  useBranchFlowMIP(ca,dt)                             'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
 
 
   ;
@@ -733,7 +755,7 @@ ObjectiveFunction..
 =e=
   sum[ t, SYSTEMBENEFIT(t) - SYSTEMCOST(t) - SCARCITYCOST(t)
         - SYSTEMPENALTYCOST(t) - RESERVESHAREPENALTY(t) ]
-  + sum[(t,n,blk), ScarcityEnrgLimit(t,n,blk) * ScarcityEnrgPrice(t,n,blk)]
+  + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
   ;
 
 * Defined as the net sum of generation cost + reserve cost
@@ -742,10 +764,10 @@ SystemCostDefinition(t)..
 =e=
   sum[ genOfrBlk(t,o,blk)
      , GENERATIONBLOCK(genOfrBlk)
-     * EnrgOfrPrice(genOfrBlk) ]
+     * enrgOfrPrice(genOfrBlk) ]
 + sum[ resOfrBlk(t,o,blk,resC,resT)
      , RESERVEBLOCK(resOfrBlk)
-     * ResOfrPrice(resOfrBlk) ]
+     * resrvOfrPrice(resOfrBlk) ]
   ;
 
 * Defined as the net sum of dispatchable load benefit
@@ -754,7 +776,7 @@ SystemBenefitDefinition(t)..
 =e=
   sum[ demBidBlk(t,bd,blk)
      , PURCHASEBLOCK(demBidBlk)
-     * DemBidPrice(demBidBlk) ]
+     * demBidPrice(demBidBlk) ]
   ;
 
 * Defined as the sum of the individual violation costs
@@ -795,7 +817,7 @@ TotalViolationCostDefinition..
 TotalScarcityCostDefinition(t)..
   SCARCITYCOST(t)
 =e=
-  sum[ (n,blk), ScarcityEnrgPrice(t,n,blk) * ENERGYSCARCITYBLK(t,n,blk) ]
+  sum[ (n,blk), scarcityEnrgPrice(t,n,blk) * ENERGYSCARCITYBLK(t,n,blk) ]
 
 + sum[ (isl,resC,riskC,blk) $ HVDCrisk(riskC)
      , ScarcityResrvIslandPrice(t,isl,resC,blk)
@@ -841,10 +863,10 @@ GenerationOfferDefintion(offer(t,o))..
   ;
 
 * Definition of discrete purchase mode (6.1.1.7)
-DemBidDiscrete(bid(t,bd),blk) $ discreteModeBid(bid) ..
+DemBidDiscrete(bid(t,bd),blk) $ { bidParameter(bid,'discrete') = 1 }..
   PURCHASEBLOCK(bid,blk)
 =e=
-  PURCHASEBLOCKBINARY(bid,blk) * DemBidMW(bid,blk)
+  PURCHASEBLOCKBINARY(bid,blk) * demBidMW(bid,blk)
   ;
 
 * Definition of purchase provided by a bid (6.1.1.8)
@@ -869,19 +891,19 @@ EnergyScarcityDefinition(t,n)..
 * Note: The CoefficientForRampRate in SPD formulation  = intervalDuration / 60
 
 * Maximum movement of the generator downwards due to up ramp rate (6.2.1.1)
-GenerationRampUp(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
+GenerationRampUp(t,o) $ { posEnrgOfr(t,o) and primaryOffer(t,o) }..
   sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
 + GENERATION(t,o) - DEFICITRAMPRATE(t,o)
 =l=
-  generationStart(t,o) + (RampRateUp(t,o) * intervalDuration(t) / 60)
+  generationStart(t,o) + (rampRateUp(t,o) * intervalDuration(t) / 60)
   ;
 
 * Maximum movement of the generator downwards due to down ramp rate (6.2.1.2)
-GenerationRampDown(t,o) $ { posEnrgOfr(t,o) and PrimaryOffer(t,o) }..
+GenerationRampDown(t,o) $ { posEnrgOfr(t,o) and primaryOffer(t,o) }..
   sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
 + GENERATION(t,o) + SURPLUSRAMPRATE(t,o)
 =g=
-  generationStart(t,o) - (RampRateDn(t,o) * intervalDuration(t) / 60)
+  generationStart(t,o) - (rampRateDn(t,o) * intervalDuration(t) / 60)
   ;
 
 *======= RAMPING CONSTRAINTS END================================================
@@ -1023,7 +1045,7 @@ ACnodeNetInjectionDefinition2(bus(t,b))..
 - sum[ BidNode(t,bd,n) $ NodeBus(t,n,b)
      , NodeBusAllocationFactor(t,n,b) * PURCHASE(t,bd) ]
 - sum[ NodeBus(t,n,b)
-     , NodeBusAllocationFactor(t,n,b) * RequiredLoad(t,n) ]
+     , NodeBusAllocationFactor(t,n,b) * requiredLoad(t,n) ]
 + sum[ HVDClinkReceivingBus(HVDClink(t,br),b), HVDCLINKFLOW(HVDClink)   ]
 - sum[ HVDClinkReceivingBus(HVDClink(t,br),b), HVDCLINKLOSSES(HVDClink) ]
 - sum[ HVDClinkSendingBus(HVDClink(t,br),b)  , HVDCLINKFLOW(HVDClink)   ]
@@ -1166,7 +1188,7 @@ HVDCRecCalculation(t,isl)..
 HVDCIslandRiskCalculation(t,isl,resC,HVDCrisk)..
   ISLANDRISK(t,isl,resC,HVDCrisk)
 =e=
-  IslandRiskAdjustmentFactor(t,isl,resC,HVDCrisk)
+  riskAdjFactor(t,isl,resC,HVDCrisk)
   * [ HVDCREC(t,isl)
     - RISKOFFSET(t,isl,resC,HVDCrisk)
     + modulationRiskClass(t,HVDCrisk)
@@ -1180,7 +1202,7 @@ GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
   $ islandRiskGenerator(t,isl,o) ..
   GENISLANDRISK(t,isl,o,resC,GenRisk)
 =e=
-  IslandRiskAdjustmentFactor(t,isl,resC,GenRisk)
+  riskAdjFactor(t,isl,resC,GenRisk)
   * [ GENERATION(t,o)
     - FreeReserve(t,isl,resC,GenRisk)
     + FKBand(t,o)
@@ -1205,8 +1227,8 @@ GenIslandRiskCalculation(t,isl,o,resC,GenRisk)
 ManualIslandRiskCalculation(t,isl,resC,ManualRisk)..
   ISLANDRISK(t,isl,resC,ManualRisk)
 =e=
-  IslandRiskAdjustmentFactor(t,isl,resC,ManualRisk)
-  * [ IslandMinimumRisk(t,isl,resC,ManualRisk)
+  riskAdjFactor(t,isl,resC,ManualRisk)
+  * [ riskParameter(t,isl,resC,ManualRisk,'minRisk')
     - FreeReserve(t,isl,resC,ManualRisk)
     ]
 * NMIR update
@@ -1226,11 +1248,11 @@ HVDCIslandSecRiskCalculation_GEN_1(t,isl,o,resC,HVDCSecRisk)
       HVDCSecRiskEnabled(t,isl,HVDCSecRisk) }..
   HVDCGENISLANDRISK(t,isl,o,resC,HVDCSecRisk)
 =e=
-  IslandRiskAdjustmentFactor(t,isl,resC,HVDCSecRisk)
+  riskAdjFactor(t,isl,resC,HVDCSecRisk)
   * [ GENERATION(t,o)
     - FreeReserve(t,isl,resC,HVDCSecRisk)
     + HVDCREC(t,isl)
-    - HVDCSecRiskSubtractor(t,isl)
+    - islandParameter(t,isl,'HVDCSecSubtractor')
     + FKBand(t,o)
     + sum[ resT, RESERVE(t,o,resC,resT) ]
     + sum[ o1 $ PrimarySecondaryOffer(t,o,o1)
@@ -1257,11 +1279,11 @@ HVDCIslandSecRiskCalculation_Manu_1(t,isl,resC,HVDCSecRisk)
   $ HVDCSecRiskEnabled(t,isl,HVDCSecRisk)..
   HVDCMANISLANDRISK(t,isl,resC,HVDCSecRisk)
 =e=
-  IslandRiskAdjustmentFactor(t,isl,resC,HVDCSecRisk)
-  * [ IslandMinimumRisk(t,isl,resC,HVDCSecRisk)
+  riskAdjFactor(t,isl,resC,HVDCSecRisk)
+  * [ riskParameter(t,isl,resC,HVDCSecRisk,'minRisk')
     - FreeReserve(t,isl,resC,HVDCSecRisk)
     + HVDCREC(t,isl)
-    - HVDCSecRiskSubtractor(t,isl)
+    - islandParameter(t,isl,'HVDCSecSubtractor')
     + modulationRiskClass(t,HVDCSecRisk)
     ]
 * Scarcity reserve (only applied for CE risk)
@@ -1283,7 +1305,7 @@ GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
   $ islandRiskGroup(t,isl,rg,GenRisk)..
   GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
 =e=
-  IslandRiskAdjustmentFactor(t,isl,resC,GenRisk)
+  riskAdjFactor(t,isl,resC,GenRisk)
   * [ sum[ o $ { offerIsland(t,o,isl)
              and riskGroupOffer(t,rg,o,GenRisk)
                } , GENERATION(t,o) + FKBand(t,o)
@@ -1387,7 +1409,7 @@ ReverseReserveLimitInReserveZone(t,isl,resC,rd,z)
   RESERVESHARERECEIVED(t,isl,resC,rd)
 =l=
   HVDCSENT(t,isl)
-- (MonopoleMinimum(t) + modulationRisk(t))
+- (monopoleMinimum(t) + modulationRisk(t))
 + BigM * [ 1 - INZONE(t,isl,resC,z) ]
   ;
 
@@ -1576,12 +1598,12 @@ PLSRReserveProportionMaximum(offer(t,o),blk,resC,PLRO)
   $ resOfrBlk(offer,blk,resC,PLRO)..
   RESERVEBLOCK(Offer,blk,resC,PLRO)
 =l=
-  ResOfrPct(Offer,blk,resC) * GENERATION(Offer)
+  resrvOfrPct(Offer,blk,resC) * GENERATION(Offer)
   ;
 
 * 6.5.3.3: Cleared IL reserve is constrained by cleared dispatchable demand'
 ReserveInterruptibleOfferLimit(t,o,bd,resC,ILRO(resT))
-  $ { sameas(o,bd) and offer(t,o) and bid(t,bd) and (sum[blk,DemBidMW(t,bd,blk)] >= 0) } ..
+  $ { sameas(o,bd) and offer(t,o) and bid(t,bd) and (sum[blk,demBidMW(t,bd,blk)] >= 0) } ..
   RESERVE(t,o,resC,resT)
 =l=
   PURCHASE(t,bd);
@@ -1597,10 +1619,10 @@ ReserveOfferDefinition(offer(t,o),resC,resT)..
 * 6.5.3.5 Definition of maximum energy and reserves from each generator
 EnergyAndReserveMaximum(offer(t,o),resC)..
   GENERATION(offer)
-+ reserveMaximumFactor(offer,resC)
++ reserveMaxFactor(offer,resC)
   * sum[ resT $ (not ILRO(resT)), RESERVE(offer,resC,resT) ]
 =l=
-  ReserveGenerationMaximum(offer)
+  reserveGenMax(offer)
   ;
 
 *======= RESERVE EQUATIONS END =================================================

@@ -25,8 +25,8 @@ SummaryResults_TP.pc = 5 ;    SummaryResults_TP.lw = 0 ;
 SummaryResults_TP.pw = 9999 ; SummaryResults_TP.ap = 1 ;
 SummaryResults_TP.nd = 5 ;    SummaryResults_TP.nw = 20 ;
 put SummaryResults_TP ;
-loop( (ca,dt,rundt) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
-    put ca.tl,dt.tl,rundt.tl, o_solveOK_TP(ca,dt), o_ofv_TP(ca,dt)
+loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
+    put ca.tl, dt.tl, tp.tl, o_solveOK_TP(ca,dt), o_ofv_TP(ca,dt)
         o_systemCost_TP(ca,dt), o_systemBenefit_TP(ca,dt)
         o_penaltyCost_TP(ca,dt), o_DefGenViolation_TP(ca,dt)
         o_SurpGenViolation_TP(ca,dt),o_DefResv_TP(ca,dt),o_SurpBranchFlow_TP(ca,dt)
@@ -41,8 +41,8 @@ IslandResults_TP.pc = 5 ;     IslandResults_TP.lw = 0 ;
 IslandResults_TP.pw = 9999 ;  IslandResults_TP.ap = 1 ;
 IslandResults_TP.nd = 5 ;
 put IslandResults_TP ;
-loop( (ca,dt,rundt,isl) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
-    put ca.tl,dt.tl,rundt.tl, isl.tl, o_islandGen_TP(ca,dt,isl), o_islandLoad_TP(ca,dt,isl)
+loop( (ca,dt,tp,isl) $ case2dt2tp(ca,dt,tp),
+    put ca.tl, dt.tl, tp.tl, isl.tl, o_islandGen_TP(ca,dt,isl), o_islandLoad_TP(ca,dt,isl)
         o_islandClrBid_TP(ca,dt,isl), o_islandBranchLoss_TP(ca,dt,isl)
         o_HVDCFlow_TP(ca,dt,isl), o_HVDCLoss_TP(ca,dt,isl)
         o_islandRefPrice_TP(ca,dt,isl), o_FIRReqd_TP(ca,dt,isl)
@@ -66,22 +66,35 @@ BusResults_TP.pw = 9999 ;
 BusResults_TP.ap = 1 ;
 BusResults_TP.nd = 3
 put BusResults_TP ;
-loop( (ca,dt,rundt,b) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and  bus(ca,dt,b)},
-    put ca.tl,dt.tl,rundt.tl, b.tl, o_busGeneration_TP(ca,dt,b), o_busLoad_TP(ca,dt,b)
-        o_busPrice_TP(ca,dt,b), o_busDeficit_TP(ca,dt,b), o_busSurplus_TP(ca,dt,b) / ;
+loop( (ca,dt,tp,b) $ { case2dt2tp(ca,dt,tp) and  bus(ca,dt,b) },
+    put ca.tl, dt.tl, tp.tl, b.tl, o_busGeneration_TP(ca,dt,b), o_busLoad_TP(ca,dt,b),o_busPrice_TP(ca,dt,b), o_busDeficit_TP(ca,dt,b), o_busSurplus_TP(ca,dt,b) / ;
 ) ;
 
 * Trading period node result
 File NodeResults_TP  /"%outputPath%\%runName%\%runName%_NodeResults_TP.csv" / ;
-NodeResults_TP.pc = 5 ;
-NodeResults_TP.lw = 0 ;
-NodeResults_TP.pw = 9999 ;
-NodeResults_TP.ap = 1 ;
-NodeResults_TP.nd = 4 ;
+NodeResults_TP.pc = 5 ; NodeResults_TP.lw = 0 ; NodeResults_TP.pw = 9999 ;
+NodeResults_TP.ap = 1 ; NodeResults_TP.nd = 4 ;
 put NodeResults_TP ;
-loop( (ca,dt,rundt,n) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and node(ca,dt,n)},
-    put ca.tl,dt.tl,rundt.tl, n.tl, o_nodeGeneration_TP(ca,dt,n), o_nodeLoad_TP(ca,dt,n)
-        o_nodePrice_TP(ca,dt,n), o_nodeDeficit_TP(ca,dt,n), o_nodeSurplus_TP(ca,dt,n) / ;
+loop( (ca,dt,tp,n) $ { case2dt2tp(ca,dt,tp) and node(ca,dt,n) },
+    put ca.tl, dt.tl, tp.tl, n.tl, o_nodeGeneration_TP(ca,dt,n), o_nodeLoad_TP(ca,dt,n),o_nodePrice_TP(ca,dt,n), o_nodeDeficit_TP(ca,dt,n), o_nodeSurplus_TP(ca,dt,n) / ;
+) ;
+
+* Published energy prices
+File PublishedEnergyPrices_TP  /"%outputPath%\%runName%\%runName%_PublishedEnergyPrices_TP.csv"/;
+PublishedEnergyPrices_TP.pc = 5; PublishedEnergyPrices_TP.lw = 0; PublishedEnergyPrices_TP.pw = 9999;
+PublishedEnergyPrices_TP.ap = 1; PublishedEnergyPrices_TP.nd = 5; PublishedEnergyPrices_TP.nw = 20;
+put PublishedEnergyPrices_TP ;
+loop( (tp,n),
+    put tp.tl, n.tl, o_PublisedPrice_TP(tp,n) / ;
+) ;
+
+* Published reserve prices
+File PublishedReservePrices_TP  /"%outputPath%\%runName%\%runName%_PublishedReservePrices_TP.csv"/;
+PublishedReservePrices_TP.pc = 5; PublishedReservePrices_TP.lw = 0; PublishedReservePrices_TP.pw = 9999;
+PublishedReservePrices_TP.ap = 1; PublishedReservePrices_TP.nd = 5; PublishedReservePrices_TP.nw = 20;
+put PublishedReservePrices_TP ;
+loop( (tp,isl),
+    put tp.tl, isl.tl, o_PublisedFIRPrice_TP(tp,isl), o_PublisedSIRPrice_TP(tp,isl) / ;
 ) ;
 
 * Trading period offer result
@@ -90,8 +103,8 @@ OfferResults_TP.pc = 5 ;      OfferResults_TP.lw = 0 ;
 OfferResults_TP.pw = 9999 ;   OfferResults_TP.ap = 1 ;
 OfferResults_TP.nd = 4 ;
 put OfferResults_TP ;
-loop( (ca,dt,rundt,o,trdr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and offer(ca,dt,o) and OfferTrader(ca,dt,o,trdr) },
-    put ca.tl,dt.tl, rundt.tl, o.tl, trdr.tl
+loop( (ca,dt,tp,o,trdr) $ {case2dt2tp(ca,dt,tp) and offer(ca,dt,o) and OfferTrader(ca,dt,o,trdr) },
+    put ca.tl,dt.tl, tp.tl, o.tl, trdr.tl
         o_offerEnergy_TP(ca,dt,o), o_offerFIR_TP(ca,dt,o), o_offerSIR_TP(ca,dt,o) / ;
 ) ;
 
@@ -101,8 +114,8 @@ BidResults_TP.pc = 5 ;     BidResults_TP.lw = 0 ;
 BidResults_TP.pw = 9999 ;  BidResults_TP.ap = 1 ;
 BidResults_TP.nd = 4 ;
 put BidResults_TP ;
-loop( (ca,dt,rundt,bd,trdr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and bid(ca,dt,bd) and BidTrader(ca,dt,bd,trdr) },
-    put ca.tl,dt.tl,rundt.tl, bd.tl, trdr.tl
+loop( (ca,dt,tp,bd,trdr) $ { case2dt2tp(ca,dt,tp) and bid(ca,dt,bd) and BidTrader(ca,dt,bd,trdr) },
+    put ca.tl, dt.tl, tp.tl, bd.tl, trdr.tl
         o_bidTotalMW_TP(ca,dt,bd), o_bidEnergy_TP(ca,dt,bd) / ;
 ) ;
 
@@ -113,8 +126,8 @@ ReserveResults_TP.pc = 5 ;    ReserveResults_TP.lw = 0 ;
 ReserveResults_TP.pw = 9999 ; ReserveResults_TP.ap = 1 ;
 ReserveResults_TP.nd = 3 ;
 put ReserveResults_TP ;
-loop( (ca,dt,rundt,isl) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
-    put ca.tl,dt.tl,rundt.tl, isl.tl, o_FIRReqd_TP(ca,dt,isl), o_SIRReqd_TP(ca,dt,isl)
+loop( (ca,dt,tp,isl) $ case2dt2tp(ca,dt,tp),
+    put ca.tl, dt.tl, tp.tl, isl.tl, o_FIRReqd_TP(ca,dt,isl), o_SIRReqd_TP(ca,dt,isl)
         o_FIRPrice_TP(ca,dt,isl), o_SIRPrice_TP(ca,dt,isl)
         o_FIRViolation_TP(ca,dt,isl), o_SIRViolation_TP(ca,dt,isl) / ;
 ) ;
@@ -126,9 +139,8 @@ riskResults_TP.pc = 5;        riskResults_TP.lw = 0;
 riskResults_TP.pw = 9999;     riskResults_TP.ap = 1 ;
 riskResults_TP.nd = 4 ;
 put riskResults_TP ;
-loop( (ca,dt,rundt,isl,o,resC,GenRisk)
-    $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk) <> 0)},
-    put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+loop( (ca,dt,tp,isl,o,resC,GenRisk) $ { case2dt2tp(ca,dt,tp) and (o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk) <> 0) },
+    put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl ;
     if (ContingentEvents(GenRisk),
          put 'CE', 'GEN' ;
     else
@@ -143,9 +155,8 @@ loop( (ca,dt,rundt,isl,o,resC,GenRisk)
         o_GenRiskPrice_TP(ca,dt,isl,o,resC,GenRisk)  / ;
 );
 
-loop( (ca,dt,rundt,isl,resC,HVDCRisk)
-    $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk)  <> 0)},
-    put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+loop( (ca,dt,tp,isl,resC,HVDCRisk) $ { case2dt2tp(ca,dt,tp) and (o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk) <> 0) },
+    put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl ;
     if (ContingentEvents(HVDCRisk),
          put 'CE', 'HVDC', 'HVDC';
     else
@@ -159,15 +170,14 @@ loop( (ca,dt,rundt,isl,resC,HVDCRisk)
         o_HVDCRiskPrice_TP(ca,dt,isl,resC,HVDCrisk)  / ;
 );
 
-loop( (ca,dt,rundt,isl,resC,ManualRisk)
-    $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk)  <> 0)},
-    put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+loop( (ca,dt,tp,isl,resC,ManualRisk) $ { case2dt2tp(ca,dt,tp) and (o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk) <> 0) },
+    put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl ;
     if (ContingentEvents(ManualRisk),
          put 'CE', 'MANUAL', 'MANUAL';
     else
          put 'ECE','MANUAL', 'MANUAL';
     );
-    put IslandMinimumRisk(ca,dt,isl,resC,ManualRisk) , 0, 0
+    put riskParameter(ca,dt,isl,resC,ManualRisk,'minRisk') , 0, 0
         FreeReserve(ca,dt,isl,resC,ManualRisk)
         o_TotalIslandReserve(ca,dt,isl,resC,ManualRisk)
         o_ManualRiskShortfall_TP(ca,dt,isl,resC,ManualRisk)
@@ -175,9 +185,8 @@ loop( (ca,dt,rundt,isl,resC,ManualRisk)
         o_ManualRiskPrice_TP(ca,dt,isl,resC,ManualRisk)    / ;
 );
 
-loop( (ca,dt,rundt,isl,rg,resC,GenRisk)
-    $ {case2dt(ca,dt) and case2rundt(ca,rundt) and (o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk) <> 0)},
-    put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl ;
+loop( (ca,dt,tp,isl,rg,resC,GenRisk) $ { case2dt2tp(ca,dt,tp) and (o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk) <> 0) },
+    put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl ;
     if (ContingentEvents(GenRisk),
          put 'CE', 'RISKGROUP';
     else
@@ -198,8 +207,8 @@ BranchResults_TP.pc = 5 ;     BranchResults_TP.lw = 0 ;
 BranchResults_TP.pw = 9999 ;  BranchResults_TP.ap = 1 ;
 BranchResults_TP.nd = 5 ;
 put BranchResults_TP ;
-loop( (ca,dt,rundt,br,frB,toB) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and branchDefn(ca,dt,br,frB,toB)},
-    put ca.tl,dt.tl, rundt.tl, br.tl, frB.tl, toB.tl, o_branchFlow_TP(ca,dt,br)
+loop( (ca,dt,tp,br,frB,toB) $ { case2dt2tp(ca,dt,tp) and branchDefn(ca,dt,br,frB,toB) },
+    put ca.tl, dt.tl, tp.tl, br.tl, frB.tl, toB.tl, o_branchFlow_TP(ca,dt,br)
         o_branchCapacity_TP(ca,dt,br), o_branchDynamicLoss_TP(ca,dt,br)
         o_branchFixedLoss_TP(ca,dt,br), o_branchFromBusPrice_TP(ca,dt,br)
         o_branchToBusPrice_TP(ca,dt,br), o_branchMarginalPrice_TP(ca,dt,br)
@@ -214,8 +223,8 @@ BrCstrResults_TP.pc = 5 ;      BrCstrResults_TP.lw = 0 ;
 BrCstrResults_TP.pw = 9999 ;   BrCstrResults_TP.ap = 1 ;
 BrCstrResults_TP.nd = 5 ;
 put BrCstrResults_TP ;
-loop( (ca,dt,rundt,brCstr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and branchConstraint(ca,dt,brCstr)},
-    put ca.tl,dt.tl,rundt.tl, brCstr.tl, o_brConstraintLHS_TP(ca,dt,brCstr)
+loop( (ca,dt,tp,brCstr) $ { case2dt2tp(ca,dt,tp) and branchConstraint(ca,dt,brCstr) },
+    put ca.tl, dt.tl, tp.tl, brCstr.tl, o_brConstraintLHS_TP(ca,dt,brCstr)
         o_brConstraintSense_TP(ca,dt,brCstr), o_brConstraintRHS_TP(ca,dt,brCstr)
         o_brConstraintPrice_TP(ca,dt,brCstr) / ;
 ) ;
@@ -228,8 +237,8 @@ MnodeCstrResults_TP.pc = 5 ;    MnodeCstrResults_TP.lw = 0 ;
 MnodeCstrResults_TP.pw = 9999 ; MnodeCstrResults_TP.ap = 1 ;
 MnodeCstrResults_TP.nd = 5 ;
 put MnodeCstrResults_TP ;
-loop( (ca,dt,rundt,MnodeCstr) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and MnodeConstraint(ca,dt,MnodeCstr)},
-    put ca.tl,dt.tl,rundt.tl, MnodeCstr.tl, o_MnodeConstraintLHS_TP(ca,dt,MnodeCstr)
+loop( (ca,dt,tp,MnodeCstr) $ { case2dt2tp(ca,dt,tp) and MnodeConstraint(ca,dt,MnodeCstr) },
+    put ca.tl, dt.tl, tp.tl, MnodeCstr.tl, o_MnodeConstraintLHS_TP(ca,dt,MnodeCstr)
         o_MnodeConstraintSense_TP(ca,dt,MnodeCstr)
         o_MnodeConstraintRHS_TP(ca,dt,MnodeCstr)
         o_MnodeConstraintPrice_TP(ca,dt,MnodeCstr) / ;
@@ -257,8 +266,8 @@ branchLoss_Audit.pw = 9999 ;
 BranchLoss_Audit.ap = 1 ;
 BranchLoss_Audit.nd = 9 ;
 put BranchLoss_Audit ;
-loop( (ca,dt,rundt,br) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and branch(ca,dt,br)},
-    put ca.tl,dt.tl,rundt.tl, br.tl ;
+loop( (ca,dt,tp,br) $ { case2dt2tp(ca,dt,tp) and branch(ca,dt,br) },
+    put ca.tl, dt.tl, tp.tl, br.tl ;
     loop(los $ o_LossSegmentBreakPoint(ca,dt,br,los),
         put o_LossSegmentBreakPoint(ca,dt,br,los)
             o_LossSegmentFactor(ca,dt,br,los) ;
@@ -274,8 +283,8 @@ busResults_Audit.pw = 9999 ;
 BusResults_Audit.ap = 1 ;
 BusResults_Audit.nd = 5 ;
 put BusResults_Audit ;
-loop( (ca,dt,rundt,b,isl) $ { case2dt(ca,dt) and case2rundt(ca,rundt) and  o_bus(ca,dt,b) and busIsland(ca,dt,b,isl) },
-    put ca.tl,dt.tl,rundt.tl, isl.tl, b.tl, o_ACBusAngle(ca,dt,b)
+loop( (ca,dt,tp,b,isl) $ { case2dt2tp(ca,dt,tp) and  o_bus(ca,dt,b) and busIsland(ca,dt,b,isl) },
+    put ca.tl, dt.tl, tp.tl, isl.tl, b.tl, o_ACBusAngle(ca,dt,b)
         o_busPrice_TP(ca,dt,b), o_busLoad_TP(ca,dt,b)
         o_ILBus_FIR_TP(ca,dt,b), o_ILBus_SIR_TP(ca,dt,b) / ;
 ) ;
@@ -289,8 +298,8 @@ MNodeResults_Audit.pw = 9999 ;
 MNodeResults_Audit.ap = 1 ;
 MNodeResults_Audit.nd = 5 ;
 put MNodeResults_Audit ;
-loop( (ca,dt,rundt,o,isl) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and offer(ca,dt,o) and offerIsland(ca,dt,o,isl) },
-    put ca.tl,dt.tl,rundt.tl, isl.tl, o.tl, o_offerEnergy_TP(ca,dt,o)
+loop( (ca,dt,tp,o,isl) $ { case2dt2tp(ca,dt,tp) and offer(ca,dt,o) and offerIsland(ca,dt,o,isl) },
+    put ca.tl, dt.tl, tp.tl, isl.tl, o.tl, o_offerEnergy_TP(ca,dt,o)
         o_PLRO_FIR_TP(ca,dt,o), o_PLRO_SIR_TP(ca,dt,o)
         o_TWRO_FIR_TP(ca,dt,o), o_TWRO_SIR_TP(ca,dt,o) / ;
 ) ;
@@ -304,8 +313,8 @@ brchResults_Audit.pw = 9999 ;
 brchResults_Audit.ap = 1 ;
 brchResults_Audit.nd = 9 ;
 put brchResults_Audit ;
-loop( (ca,dt,rundt,br) $ {case2dt(ca,dt) and case2rundt(ca,rundt) and branch(ca,dt,br)},
-    put ca.tl,dt.tl,rundt.tl, br.tl, o_branchFlow_TP(ca,dt,br)
+loop( (ca,dt,tp,br) $ {case2dt2tp(ca,dt,tp) and branch(ca,dt,br)},
+    put ca.tl, dt.tl, tp.tl, br.tl, o_branchFlow_TP(ca,dt,br)
         o_branchDynamicLoss_TP(ca,dt,br), o_branchFixedLoss_TP(ca,dt,br)
         [o_branchDynamicLoss_TP(ca,dt,br) + o_branchFixedLoss_TP(ca,dt,br)] ;
     if ( o_branchMarginalPrice_TP(ca,dt,br) <> 0,  put 'Y' ;
@@ -328,13 +337,13 @@ riskResults_Audit.pw = 9999 ;
 RiskResults_Audit.ap = 1 ;
 RiskResults_Audit.nd = 5 ;
 put RiskResults_Audit ;
-loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
+loop( (ca,dt,tp,isl,resC) $case2dt2tp(ca,dt,tp),
     loop( (o,GenRisk) $ { ( o_generationRiskLevel(ca,dt,isl,o,resC,GenRisk) > 0 )
                       and ( abs[ o_GenerationRiskLevel(ca,dt,isl,o,resC,GenRisk)
                                - o_ReserveReqd_TP(ca,dt,isl,resC)
                                ] <= ZeroTolerance )
                          },
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, o.tl, GenRisk.tl
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, o.tl, GenRisk.tl
             o_GenerationRiskLevel(ca,dt,isl,o,resC,GenRisk)
             o_ResCleared_TP(ca,dt,isl,resC), o_EffectiveRes_TP(ca,dt,isl,resC,GenRisk)
             o_ResViolation_TP(ca,dt,isl,resC)
@@ -347,7 +356,7 @@ loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
                              - o_ReserveReqd_TP(ca,dt,isl,resC)
                             ] <= ZeroTolerance )
                      },
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, 'HVDC', HVDCrisk.tl
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, 'HVDC', HVDCrisk.tl
             o_HVDCriskLevel(ca,dt,isl,resC,HVDCrisk), o_ResCleared_TP(ca,dt,isl,resC)
             o_EffectiveRes_TP(ca,dt,isl,resC,HVDCRisk)
             o_ResViolation_TP(ca,dt,isl,resC)
@@ -359,7 +368,7 @@ loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
                               - o_ReserveReqd_TP(ca,dt,isl,resC)
                               ] <= ZeroTolerance )
                        },
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, 'Manual', manualRisk.tl
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, 'Manual', manualRisk.tl
             o_manuRiskLevel(ca,dt,isl,resC,manualRisk),o_ResCleared_TP(ca,dt,isl,resC)
             o_EffectiveRes_TP(ca,dt,isl,resC,manualRisk)
             o_ResViolation_TP(ca,dt,isl,resC)
@@ -372,7 +381,7 @@ loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
                              - o_ReserveReqd_TP(ca,dt,isl,resC)
                              ] <= ZeroTolerance )
                       },
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, o.tl, riskC.tl
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, o.tl, riskC.tl
             o_GenHVDCRiskLevel(ca,dt,isl,o, resC,riskC)
             o_ResCleared_TP(ca,dt,isl,resC), o_EffectiveRes_TP(ca,dt,isl,resC,riskC)
             o_ResViolation_TP(ca,dt,isl,resC)
@@ -385,7 +394,7 @@ loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
                              - o_ReserveReqd_TP(ca,dt,isl,resC)
                              ] <= ZeroTolerance )
                       },
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, 'Manual', riskC.tl
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, 'Manual', riskC.tl
             o_manuHVDCriskLevel(ca,dt,isl,resC,riskC)
             o_ResCleared_TP(ca,dt,isl,resC), o_EffectiveRes_TP(ca,dt,isl,resC,riskC)
             o_ResViolation_TP(ca,dt,isl,resC)
@@ -398,7 +407,7 @@ loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
                              - o_ReserveReqd_TP(ca,dt,isl,resC)
                              ] <= ZeroTolerance )
                       },
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, rg.tl, riskC.tl
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, rg.tl, riskC.tl
             o_generationRiskGroupLevel(ca,dt,isl,rg,resC,RiskC)
             o_ResCleared_TP(ca,dt,isl,resC), o_EffectiveRes_TP(ca,dt,isl,resC,riskC)
             o_ResViolation_TP(ca,dt,isl,resC)
@@ -407,7 +416,7 @@ loop( (ca,dt,rundt,isl,resC) ${case2dt(ca,dt) and case2rundt(ca,rundt)},
 
 *   Ensure still reporting for conditions with zero FIR and/or SIR required
     if( (o_ReserveReqd_TP(ca,dt,isl,resC) = 0) ,
-        put ca.tl,dt.tl,rundt.tl, isl.tl, resC.tl, ' ', ' ', ' '
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, ' ', ' ', ' '
             o_ResCleared_TP(ca,dt,isl,resC), o_ResViolation_TP(ca,dt,isl,resC)
             o_ResPrice_TP(ca,dt,isl,resC) / ;
     ) ;
@@ -422,8 +431,8 @@ objResults_Audit.ap = 1 ;
 objResults_Audit.nd = 5 ;
 objResults_Audit.nw = 20 ;
 put objResults_Audit
-loop( (ca,dt,rundt) $ {case2dt(ca,dt) and case2rundt(ca,rundt)},
-    put ca.tl,dt.tl,rundt.tl, o_ofv_TP(ca,dt) /
+loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
+    put ca.tl, dt.tl, tp.tl, o_ofv_TP(ca,dt) /
 ) ;
 
 

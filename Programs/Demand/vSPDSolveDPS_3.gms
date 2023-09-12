@@ -44,14 +44,14 @@ $onend
         o_drsRefPrice(t,drs,isl) = sum[ n $ { refNode(t,n) and nodeIsland(t,n,isl) }, o_nodePrice_TP(t,n) ] ;
 
 *       Total island generation revenue for each demand scenario
-        o_drsGenRevenue(t,drs,isl) = sum[ n $ nodeIsland(t,n,isl), (intervalDuration / 60) * o_nodeGeneration_TP(t,n) * o_nodePrice_TP(t,n) ] ;
+        o_drsGenRevenue(t,drs,isl) = sum[ n $ nodeIsland(t,n,isl), (intervalDuration(t) / 60) * o_nodeGeneration_TP(t,n) * o_nodePrice_TP(t,n) ] ;
 
 *       Total island negative load revenue for each demand scenario
-        o_drsNegLoadRevenue(t,drs,isl) = (intervalDuration/60) * sum[ n $ { nodeIsland(t,n,isl) and (RequiredLoad(t,n) < 0) }, - RequiredLoad(t,n) * o_nodePrice_TP(t,n) ] ;
+        o_drsNegLoadRevenue(t,drs,isl) = (intervalDuration(t)/60) * sum[ n $ { nodeIsland(t,n,isl) and (RequiredLoad(t,n) < 0) }, - RequiredLoad(t,n) * o_nodePrice_TP(t,n) ] ;
 
 *       Total island gwap (including negative load) for each demand scenario'
-        o_drsGWAP(t,drs,isl) $ intervalDuration
-          = (60 / intervalDuration)
+        o_drsGWAP(t,drs,isl) $ intervalDuration(t)
+          = (60 / intervalDuration(t))
           * [ o_drsGenRevenue(t,drs,isl) + o_drsNegLoadRevenue(t,drs,isl) ]
           / [ o_drsGen(t,drs,isl) + o_drsNegDemand(t,drs,isl) ] ;
 

@@ -25,40 +25,22 @@ Sets
 ca                      'Set of caseID'
 tp                      'Set of trading periods'
 dt                      'Set of datetime'
-rundt                   'Set of Rundatetime'
-caseName                'Set of CaseName'
+case2dt2tp(ca<,dt<,tp<) 'Mapping caseID to datetime and to trading periods'
 
-case2dt2tp(ca<,dt<,tp<) 'Mapping caseID to datetime and to tp'
-case2rundt(ca,rundt<)   'Mapping caseID to rundatetime'
-case2Name(ca,caseName<) 'Mapping caseID to case name'
-
-
-dt2tp(dt,tp)            'Mapping datetime to trading periods'
 
 sca(ca)                 'caseID to be solved'
 stp(tp)                 'Trading periods to be solved'
 sdt(dt)                 'Date time to be solved'
-srt(rundt)              'RunDateTime of cases to be solved'
-scn(caseName)           'Name of cases to be solved'
-
-
-sdt2tp(dt,tp)           'Mapping solved datetime to trading periods'
-scase2dt(ca,dt)         ''
-scase2Name(ca,caseName) ''
-scase2rundt(ca,rundt)   ''
-
+scase2dt2tp(ca,dt,tp)   'Mapping solved caseID to datetime and to trading periods'
 ;
 alias (tp,tp1), (dt,dt1), (ca,ca1);
 
-Parameter
-gdxDate(*,*)                        'day, month, year of trade date'
-;
+Parameter casePublishedSecs(ca,tp) 'Time Weight Seconds apply to case file for final pricing calculation' ;
+
 
 $gdxin "%inputPath%\%GDXname%.gdx"
-$load gdxDate
 $load case2dt2tp = i_dateTimeTradePeriodMap
-$load case2rundt = i_runDateTime
-$load case2Name = caseName
+$load casePublishedSecs = i_priceCaseFilesPublishedSecs
 $gdxin
 
 *===============================================================================
@@ -72,45 +54,40 @@ $include vSPDtpsToSolve.inc
 sca(ca)       = no ;
 stp(tp)       = no ;
 sdt(dt)       = no ;
-srt(rundt)    = no ;
-scn(caseName) = no;
 
 stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
 sdt(dt) $ sum[ tmp, diag(dt,tmp)] = yes ;
 sca(ca) $ sum[ tmp, diag(ca,tmp)] = yes ;
 
 stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
-$if %opMode% == 'DWH' stp(tp) = yes;
+sdt(dt) $ sum[ tmp, diag(tmp,'All')] = yes ;
+sca(ca) $ sum[ tmp, diag(tmp,'All')] = yes ;
 
 
-sdt(dt) $ sum[ (ca,stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
-sdt(dt) $ sum[ (sca(ca),tp) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+sdt(dt) $ { ( sum[dt1 $ sdt(dt1), 1] = 0 ) and (sum[ca $ sca(ca), 1] = 0 ) and sum[ (ca,stp(tp)) $ { case2dt2tp(ca,dt,tp)}, 1 ] } = yes ;
+sdt(dt) $ { ( sum[dt1 $ sdt(dt1), 1] = 0 ) and (sum[tp $ stp(tp), 1] = 0 ) and sum[ (sca(ca),tp) $ { case2dt2tp(ca,dt,tp)}, 1 ] } = yes ; 
+sdt(dt) $ { ( sum[dt1 $ sdt(dt1), 1] = 0 ) and sum[ (sca(ca),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
 
-stp(tp) $ sum[ (ca,sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
-stp(tp) $ sum[ (sca(ca),dt) $ case2dt2tp(ca,dt,tp), 1 ] = yes ;
+stp(tp) $ { ( sum[tp1 $ stp(tp1), 1] = 0 ) and ( sum[ca $ sca(ca), 1] = 0 ) and sum[ (ca,sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+stp(tp) $ { ( sum[tp1 $ stp(tp1), 1] = 0 ) and ( sum[dt $ sdt(dt), 1] = 0 ) and sum[ (sca(ca),dt) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ; 
+stp(tp) $ { ( sum[tp1 $ stp(tp1), 1] = 0 ) and sum[ (sca(ca),sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
 
-sca(ca) $ {not(sum[ (ca1,tmp), diag(ca1,tmp)]) and sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ]} = yes ;
+sca(ca) $ { ( sum[dt $ sdt(dt), 1] = 0 ) and sum[ (dt,stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ; 
+sca(ca) $ { ( sum[tp $ stp(tp), 1] = 0 ) and sum[ (sdt(dt),tp) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+sca(ca) $ { ( sum[ca1 $ sca(ca1), 1] = 0 ) and sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
 
-sdt2tp(sdt(dt),stp(tp)) = yes $ sum[ca $ case2dt2tp(ca,dt,tp),1] ;
-scase2dt(ca,dt) = yes $ sum[(sca(ca),sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp),1] ;
-scn(caseName) $ sum[sca(ca) $ case2Name(ca,caseName), 1]  = yes ;
-scase2Name(ca,caseName) = yes $ sum[ (sca(ca),scn(caseName)) $ case2Name(ca,caseName), 1 ] ;
+scase2dt2tp(sca(ca),sdt(dt),stp(tp)) = yes $ {case2dt2tp(ca,dt,tp) and casePublishedSecs(ca,tp)} ;
 
-srt(rundt) $ sum[sca(ca) $ case2rundt(ca,rundt), 1]  = yes ;
-scase2rundt(ca,rundt) = yes $ sum[ (sca(ca),srt(rundt)) $ case2rundt(ca,rundt), 1] ; 
-
+sca(ca) = yes $ sum[ (sdt(dt),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
+sdt(dt) = yes $ sum[ (sca(ca),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
+stp(tp) = yes $ sum[ (sca(ca),sdt(dt)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
 
 
 execute_unload '%programPath%\vSPDperiod.gdx'
   sca    = i_caseID
   stp    = i_tradePeriod
   sdt    = i_dateTime
-  srt    = i_runDateTime
-  scn    = i_caseName
-  sdt2tp      = i_DateTimeTradePeriod
-  scase2dt    = i_caseDateTime
-  scase2Name  = i_caseIdName
-  scase2rundt = i_case2rundt 
+  scase2dt2tp  = i_DateTimeTradePeriod
   ;
 
 $endif

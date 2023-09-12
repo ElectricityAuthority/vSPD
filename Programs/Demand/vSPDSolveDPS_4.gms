@@ -19,8 +19,8 @@ Files DPSNodeResults   /"%OutputPath%%runName%\%runName%_NodePriceSensitivity.cs
   DPSNodeResults.pc = 5; DPSNodeResults.lw = 0; DPSNodeResults.pw = 9999;
   DPSNodeResults.ap = 1; DPSNodeResults.nd = 3;
   put DPSNodeResults;
-  loop( (dt, drs, pricing_nodes(n)),
-    put dt.tl, drs.tl, n.tl, o_drsnodeprice(dt,drs,n);
+  loop( (ca,dt,drs,pricing_nodes(n)),
+    put dt.tl, drs.tl, n.tl, o_drsnodeprice(ca,dt,drs,n);
     put /;
   ) ;
 
@@ -30,9 +30,9 @@ Files DPSIslandResults   /"%OutputPath%%runName%\%runName%_IslandSensitivity.csv
   DPSIslandResults.pc = 5; DPSIslandResults.lw = 0; DPSIslandResults.pw = 9999;
   DPSIslandResults.ap = 1; DPSIslandResults.nd = 3;
   put DPSIslandResults;
-  loop( (dt, drs, isl),
+  loop( (ca,dt,drs,isl),
     put dt.tl, drs.tl, isl.tl;
-    put o_drsPosDemand(dt,drs,isl), o_drsRefPrice(dt,drs,isl) ;
+    put o_drsPosDemand(ca,dt,drs,isl), o_drsRefPrice(ca,dt,drs,isl) ;
     put /;
   ) ;
 *$offtext

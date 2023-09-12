@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTD_20230731_TP26
+$setglobal runName                       daily_check_20221202
 
 $setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%..\Input\'
@@ -12,12 +12,9 @@ $setglobal ovrdPath                      '%system.fp%..\Override\'
 
 $setglobal vSPDinputOvrdData             ''   !Name of override file 
 
-
 *+++ Model +++
 Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
-Scalar disconnectedNodePriceCorrection   / 1 / ;
-Scalar tradePeriodReports                / 1 / ;   ! Specify 1 for reports at trading period level, 0 otherwise
-
+Scalar dailymode                         / 1 / ;   ! Solving quickly by using RTD pre-calculated demand or PRSS solved initial MW
 
 *+++ Network +++
 Scalar useACLossModel                    / 1 /    ;
@@ -31,12 +28,10 @@ Scalar circularBranchFlowTolerance       / 1e-4 / ;
 Scalar nonPhysicalLossTolerance          / 1e-6 / ;
 Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
 
-
 *+++ Constraints +++
 Scalar useReserveModel                   / 1 /    ;
 Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
 Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
-
 
 *+++ Solver +++
 Scalar LPtimeLimit                       / 3600 / ;
@@ -49,4 +44,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+$setglobal opMode                          DWH      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis

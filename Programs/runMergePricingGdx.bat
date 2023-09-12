@@ -1,5 +1,4 @@
-*C:\GAMS\36\gams merge_gdx.gms
-C:\GAMS\36\gams runvSPD.gms
+C:\GAMS\36\gams merge_gdx.gms
 
 del "*.lst"
 del "*.lxi"
@@ -9,5 +8,3 @@ del "*.txt"
 del "*.gdx"
 del "temp.*"
 del /S "*.~*"
-
-*pause
