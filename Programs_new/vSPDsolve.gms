@@ -289,6 +289,7 @@ Scalars
   modelSolved                   'Flag to indicate if the model solved successfully (1 = Yes)'                                           / 0 /
   LPmodelSolved                 'Flag to indicate if the final LP model (when MIP fails) is solved successfully (1 = Yes)'              / 0 /
   exitLoop                      'Flag to exit solve loop'                                                                               / 0 /
+  SPDlossTolerance              'Tolerance to check loadlosss calculation'                                                              / 0.00005 /
   ;
 
 
@@ -351,6 +352,10 @@ $gdxin
 Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
 
 inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
+
+if (inputGDXGDate <= jdate(2023,4,27),
+  SPDlossTolerance = 0.005 ;
+);
 
 *=====================================================================================
 * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
@@ -530,6 +535,9 @@ branchConstraintLimit(branchConstraint) = branchCstrRHS(branchConstraint,'cnstrL
 * Initialise generating offer parameters
 generationStart(ca,dt,o) $ {     (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) or (dailymode=0) } = offerParameter(ca,dt,o,'initialMW') ;
 generationStart(ca,dt,o) $ { not((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) or (dailymode=0))} = offerParameter(ca,dt,o,'solvedInitialMW') ;
+* If we run pricing gdx, we need to use "solvedInitialMW" as initialMW for predispatch schedule
+generationStart(ca,dt,o) $ { not((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201)) and sum[dt1, offerParameter(ca,dt1,o,'initialMW') = 0] } = offerParameter(ca,dt,o,'solvedInitialMW') ;
+
 generationStart(ca,dt,o) = generationStart(ca,dt,o) + sum[ o1 $ primarySecondaryOffer(ca,dt,o,o1), offerParameter(ca,dt,o1,'initialMW') ] ;  
 
 rampRateUp(ca,dt,o)        = offerParameter(ca,dt,o,'rampUpRate')      ;
@@ -1307,7 +1315,7 @@ $offtext
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
 *        LoopCount(t) = LoopCount(t) + 1 ;
-        loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > 0.00005 )},
+        loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )},
             putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
 *            putclose rep 'Using SPDLoadCalcLosses instead. /' ;
             LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
