@@ -745,22 +745,6 @@ reserveScarcityEnabled(ca,dt)                = dtParameter(ca,dt,'resrvScarcity'
 scarcityResrvIslandLimit(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'limitMW') ;
 scarcityResrvIslandPrice(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'price') ;
 
-scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (requiredLoad(ca,dt,n) > 0) }                                      = scarcityNationalFactor(ca,dt,blk,'factor') * requiredLoad(ca,dt,n);
-scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (scarcityEnrgLimit(ca,dt,n,blk) > 0 ) }                            = scarcityNationalFactor(ca,dt,blk,'price') ;
-
-scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'factor') and (requiredLoad(ca,dt,n) > 0) } = scarcityNodeFactor(ca,dt,n,blk,'factor') * requiredLoad(ca,dt,n);
-scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'price') }                         = scarcityNodeFactor(ca,dt,n,blk,'price') ;
-
-scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'limitMW') }                               = scarcityNodeLimit(ca,dt,n,blk,'limitMW');
-scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'price') }                          = scarcityNodeLimit(ca,dt,n,blk,'price') ;
-*-------------------------------------------------------------------------------
-
-* Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.2.1)
-sharedNFRLoad(ca,dt,isl) = sum[ nodeIsland(ca,dt,n,isl), requiredLoad(ca,dt,n)] + sum[ (bd,blk) $ bidIsland(ca,dt,bd,isl), DemBidMW(ca,dt,bd,blk) ] - sharedNFRLoadOffset(ca,dt,isl) ;
-sharedNFRMax(ca,dt,isl) = Min{ RMTReserveLimit(ca,dt,isl,'FIR'), sharedNFRFactor(ca,dt)*sharedNFRLoad(ca,dt,isl) } ;
-
-* Risk parameters
-FreeReserve(ca,dt,isl,resC,riskC) = riskParameter(ca,dt,isl,resC,riskC,'freeReserve') - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(ca,dt,isl1) ]${(ord(resC)=1) and ((GenRisk(riskC)) or (ManualRisk(riskC))) } ;
 
 * TN - Pivot or demand analysis begin
 $Ifi %opMode%=='PVT' $include "Pivot\vSPDSolvePivot_1.gms"
@@ -935,25 +919,25 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
     ) ;
 
 
-*       Recalculate energy scarcity limits -------------------------------------
-        scarcityEnrgLimit(t,n,blk) = 0 ;
-        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) }                                     = scarcityNationalFactor(t,blk,'factor') * requiredLoad(t,n);
-        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (scarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityNationalFactor(t,blk,'price') ;
+*   Recalculate energy scarcity limits -------------------------------------
+    scarcityEnrgLimit(t,n,blk) = 0 ;
+    scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) }                                     = scarcityNationalFactor(t,blk,'factor') * requiredLoad(t,n);
+    scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (scarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityNationalFactor(t,blk,'price') ;
 
-        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) and scarcityNodeFactor(t,n,blk,'factor') } = scarcityNodeFactor(t,n,blk,'factor') * requiredLoad(t,n);
-        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeFactor(t,n,blk,'price') }                        = scarcityNodeFactor(t,n,blk,'price') ;
+    scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (requiredLoad(t,n) > 0) and scarcityNodeFactor(t,n,blk,'factor') } = scarcityNodeFactor(t,n,blk,'factor') * requiredLoad(t,n);
+    scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeFactor(t,n,blk,'price') }                        = scarcityNodeFactor(t,n,blk,'price') ;
 
-        scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityNodeLimit(t,n,blk,'limitMW')  } = scarcityNodeLimit(t,n,blk,'limitMW');
-        scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeLimit(t,n,blk,'price') }                         = scarcityNodeLimit(t,n,blk,'price') ;
+    scarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityNodeLimit(t,n,blk,'limitMW')  } = scarcityNodeLimit(t,n,blk,'limitMW');
+    scarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityNodeLimit(t,n,blk,'price') }                         = scarcityNodeLimit(t,n,blk,'price') ;
 *       ------------------------------------------------------------------------
 
-*       Update Free Reserve and SharedNFRmax - Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
-        sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), requiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
-        sharedNFRMax(t,isl) = Min{ RMTReserveLimit(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
-        FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
-                                     - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) and (inputGDXGDate >= jdate(2016,10,20)) } ;
+*   Update Free Reserve and SharedNFRmax - Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
+    sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), requiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
+    sharedNFRLoad(ca,dt,isl) $ { (studyMode(ca,dt) = 130) and (inputGDXGDate <= jdate(2023,04,27)) } = sum[ nodeIsland(ca,dt,n,isl), requiredLoad(ca,dt,n) + nonConformingLoad(ca,dt,n)] - sharedNFRLoadOffset(ca,dt,isl) ;
 
-
+    sharedNFRMax(t,isl) = Min{ RMTReserveLimit(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
+    FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
+                                  - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) } ;
 
 
 *   7c. Updating the variable bounds before model solve ------------------------
