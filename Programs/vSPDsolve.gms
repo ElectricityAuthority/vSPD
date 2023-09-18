@@ -1677,25 +1677,31 @@ $endif.SummaryReport
 * 8b. Calculating price-relating outputs --------------------------------------
 
 $iftheni.PriceRelatedOutputs %opMode%=='DWH'
+* Publishe prices
+  o_PublisedPrice_TP(tp,n)      = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_nodePrice_TP(ca,dt,n) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+  o_PublisedFIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_FIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+  o_PublisedSIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_SIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
 $elseifi.PriceRelatedOutputs %opMode%=='DPS'
 $elseifi.PriceRelatedOutputs %opMode%=='PVT'
 $elseifi.PriceRelatedOutputs %opMode%=='FTR' $include "FTRental\vSPDSolveFTR_3a.gms"
 $else.PriceRelatedOutputs
 
 * branch output update
-o_branchFromBusPrice_TP(ca,dt,br) $ branch(ca,dt,br) = sum[ b $ branchFrBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
-o_branchToBusPrice_TP(ca,dt,br) $ branch(ca,dt,br)   = sum[ b $ branchToBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
-o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) >= 0) } = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*[o_branchFlow_TP(ca,dt,br) - o_branchTotalLoss_TP(ca,dt,br)] - o_branchFromBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) ] ;
-o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) < 0) }  = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) - o_branchFromBusPrice_TP(ca,dt,br)*[o_branchTotalLoss_TP(ca,dt,br) + o_branchFlow_TP(ca,dt,br)] ] ;
+  o_branchFromBusPrice_TP(ca,dt,br) $ branch(ca,dt,br) = sum[ b $ branchFrBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
+  o_branchToBusPrice_TP(ca,dt,br) $ branch(ca,dt,br)   = sum[ b $ branchToBus(ca,dt,br,b), o_busPrice_TP(ca,dt,b) ] ;
+  o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) >= 0) } = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*[o_branchFlow_TP(ca,dt,br) - o_branchTotalLoss_TP(ca,dt,br)] - o_branchFromBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) ] ;
+  o_branchTotalRentals_TP(ca,dt,br) $ { branch(ca,dt,br) and (o_branchFlow_TP(ca,dt,br) < 0) }  = (intervalDuration(ca,dt)/60) * [ o_branchToBusPrice_TP(ca,dt,br)*o_branchFlow_TP(ca,dt,br) - o_branchFromBusPrice_TP(ca,dt,br)*[o_branchTotalLoss_TP(ca,dt,br) + o_branchFlow_TP(ca,dt,br)] ] ;
 *   Island output
-o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,dt,n,isl) } , o_nodePrice_TP(ca,dt,n) ] ;
+  o_islandRefPrice_TP(ca,dt,isl) = sum[ n $ { refNode(ca,dt,n) and nodeIsland(ca,dt,n,isl) } , o_nodePrice_TP(ca,dt,n) ] ;
+
+
+* Publishe prices
+  o_PublisedPrice_TP(tp,n)      = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_nodePrice_TP(ca,dt,n) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+  o_PublisedFIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_FIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
+  o_PublisedSIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_SIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
 
 $endif.PriceRelatedOutputs
 
-* Publishe prices
-o_PublisedPrice_TP(tp,n)      = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_nodePrice_TP(ca,dt,n) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
-o_PublisedFIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_FIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
-o_PublisedSIRPrice_TP(tp,isl) = sum[(ca,dt) $ case2dt2tp(ca,dt,tp), o_SIRprice_TP(ca,dt,isl) * casefileseconds(ca,tp)] / sum[(ca,dt) $ case2dt2tp(ca,dt,tp), casefileseconds(ca,tp)];
 
 
 *   Calculating price-relating outputs end -------------------------------------
