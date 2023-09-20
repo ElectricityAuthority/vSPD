@@ -1099,9 +1099,6 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             );
 *           Post-Solve - Circulating flow check end
 
-*           Use this to not resolve circular flow in the first run - Tuong
-            useBranchFlowMIP(t) $ (LoopCount(t)=1) = 0 ;
-
 *           A period is unsolved if MILP model is required
             unsolvedDT(t) = yes $ UseBranchFlowMIP(t) ;
 
