@@ -755,7 +755,7 @@ ObjectiveFunction..
 =e=
   sum[ t, SYSTEMBENEFIT(t) - SYSTEMCOST(t) - SCARCITYCOST(t)
         - SYSTEMPENALTYCOST(t) - RESERVESHAREPENALTY(t) ]
-  + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
+*  + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
   ;
 
 * Defined as the net sum of generation cost + reserve cost
