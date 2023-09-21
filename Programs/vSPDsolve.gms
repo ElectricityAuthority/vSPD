@@ -1089,7 +1089,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *               Set UseBranchFlowMIP = 1 if the number of circular branch flow or non-physical loss branches exceeds the specified tolerance
                 useBranchFlowMIP(t) $ { ( sum[ br $ { ACbranch(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
                                         + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveCircularBranchFlows * circularBranchFlowExist(t,br)]
-*                                        + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveHVDCnonPhysicalLosses * NonPhysicalLossExist(t,br) ]
+                                        + sum[ br $ { HVDClink(t,br) and LossBranch(t,br) }, resolveHVDCnonPhysicalLosses * NonPhysicalLossExist(t,br) ]
                                         + sum[ pole, resolveCircularBranchFlows * poleCircularBranchFlowExist(t,pole)]
                                         ) > UseBranchFlowMIPTolerance
                                       } = 1 ;
