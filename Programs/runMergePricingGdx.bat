@@ -1,4 +1,4 @@
-C:\GAMS\36\gams merge_gdx.gms
+gams merge_gdx.gms
 
 del "*.lst"
 del "*.lxi"
