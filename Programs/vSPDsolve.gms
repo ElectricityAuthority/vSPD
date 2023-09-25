@@ -1,4 +1,4 @@
-$onText
+there $onText
 *=====================================================================================
 Name:                 vSPDsolve.gms
 Function:             Establish base case and override data, prepare data, and solve the model
@@ -1145,7 +1145,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
                 unsolvedDT(t) = no;
                 putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully for branch integer.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
-                             'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
+                             'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /;
 * Test
                VSPDModel(t) = 0
             ) ;
