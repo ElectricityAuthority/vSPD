@@ -1,4 +1,4 @@
-there $onText
+$onText
 *=====================================================================================
 Name:                 vSPDsolve.gms
 Function:             Establish base case and override data, prepare data, and solve the model
