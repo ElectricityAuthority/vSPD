@@ -1,4 +1,5 @@
-*sos1reform = -1
-*sos2reform = -1
 epopt = 1e-9
 epint = 0
+eprhs = 0
+epgap = 0
+epagap = 0
