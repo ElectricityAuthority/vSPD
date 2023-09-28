@@ -103,6 +103,7 @@ Parameters
   busLoad(ca,dt,b)                                       'MW load at each bus for the study trade periods'
   busPrice(ca,dt,b)                                      '$/MW price at each bus for the study trade periods'
   busDisconnected(ca,dt,b)                               'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
+  busClearedPrice(ca,dt,b)                               'Highest cleared price of offer at bus'
 * Unmmaped bus defificit temporary parameters
   temp_busDeficit_TP(ca,dt,b)                             'Bus deficit violation for each trade period'
 * TN - Replacing invalid prices after SOS1
@@ -1344,13 +1345,16 @@ $offtext
 
 *       6f0. Replacing invalid prices after SOS1 (7.1.3)----------------------------
         if ( SOS1_solve(ca,dt),
+*           Calculate highest bus cleared offere price        
+            busClearedPrice(ca,dt,b) = smax[ (o,n,blk) $ { offernode(ca,dt,o,n) and nodebus(ca,dt,n,b) and (GENERATIONBLOCK.l(ca,dt,o,blk) > 0) },enrgOfrPrice(ca,dt,o,blk) ];
             busSOSinvalid(ca,dt,b)
-                = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty ) ]
+                = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or (busPrice(ca,dt,b) = busClearedPrice(ca,dt,b) )
+                       or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty ) ]
                     and bus(ca,dt,b)  and [ not busDisconnected(ca,dt,b) ]  and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
                     and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
                     and [ sum[ br     $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) } , 1 ] > 0 ]
                       };
-
+*display busClearedPrice,busSOSinvalid;
             numberofbusSOSinvalid(ca,dt) = 2*sum[b, busSOSinvalid(ca,dt,b)];
 
             While ( sum[b, busSOSinvalid(ca,dt,b)] < numberofbusSOSinvalid(ca,dt) ,
