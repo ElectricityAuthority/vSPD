@@ -1348,8 +1348,8 @@ $offtext
 *           Calculate highest bus cleared offere price        
             busClearedPrice(ca,dt,b) = smax[ (o,n,blk) $ { offernode(ca,dt,o,n) and nodebus(ca,dt,n,b) and (GENERATIONBLOCK.l(ca,dt,o,blk) > 0) },enrgOfrPrice(ca,dt,o,blk) ];
             busSOSinvalid(ca,dt,b)
-                = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or (busPrice(ca,dt,b) = busClearedPrice(ca,dt,b) )
-                       or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty ) ]
+                = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty )
+                        or (busPrice(ca,dt,b)=busClearedPrice(ca,dt,b) ) or (busPrice(ca,dt,b)=busClearedPrice(ca,dt,b) + 0.0005 ) or (busPrice(ca,dt,b)=busClearedPrice(ca,dt,b) - 0.0005 )   ]
                     and bus(ca,dt,b)  and [ not busDisconnected(ca,dt,b) ]  and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
                     and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
                     and [ sum[ br     $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) } , 1 ] > 0 ]
