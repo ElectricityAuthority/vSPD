@@ -1261,6 +1261,10 @@ $offtext
 
         while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
 
+* If target node is dead --> move it up to one level
+            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes;
+            nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no;
+            
 * This is the approach SPD is using (a deficit node is ineligible as target node )
             nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, EnergyShortfallMW(t,n1)] = yes;
             nodeTonode(t,n,n1) $ EnergyShortfallMW(t,n1) = no;
