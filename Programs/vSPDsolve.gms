@@ -1312,6 +1312,10 @@ $offtext
 
         nodeTonode(t,n,n1) = node2node(t,n,n1)
         while( sum[n, ShortfallAdjustmentMW(dt,n)],
+        
+*           If target node is dead --> move up to next node
+            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes;
+            nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no;
 
 *           Check if shortfall from node n is eligibly transfered to node n1
             ShortfallTransferFromTo(nodeTonode(t,n,n1))
