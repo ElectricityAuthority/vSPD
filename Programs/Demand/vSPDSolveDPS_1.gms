@@ -32,6 +32,9 @@ Parameters
 
 * Begin a loop through each pivot scenario and produce pivot data
 Loop[ drs,
+  putclose rep '==============================================================================='/;
+  putclose rep 'Demand price sensitivity scenario: ' drs.tl /;
+  putclose rep '==============================================================================='/;
 * apply demand scale for current demand scenario
   RequiredLoad(node) = nodeParameter(node,'demand') ;
   RequiredLoad(node) $ ( nodeParameter(node,'demand') > 0 ) = demandscale(drs) * nodeParameter(node,'demand') ;
