@@ -41,7 +41,7 @@ $include vSPDsettings.inc
 $include vSPDcase.inc
 
 * Update the ProgressReport.txt file
-File rep "Write to a report" /"ProgressReport.txt"/;  rep.lw = 0;  rep.ap = 1;
+File rep "Write to a report" /"ProgressReport.txt"/;  rep.lw = 0;  rep.ap = 1; rep.nd = 4; rep.nw=8;
 putclose rep / 'Case "%GDXname%" started at: ' system.date " " system.time /;
 
 * Set the solver for the LP and MIP
@@ -1244,6 +1244,10 @@ $offtext
         requiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = requiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
         requiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (requiredLoad(t,n) < 0) } = 0 ;
         DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
+        
+        loop( (t,n) $ EnergyShortfallMW(t,n),
+            putclose rep 'Energy shortfall at node' n.tl,': ', EnergyShortfallMW(t,n)' MW. Eligible for shortfall removal: ' EligibleShortfallRemoval(t,n):<1:0 /;
+        ) ;
 
 $ontext
 e. Shortfall Transfer:
@@ -1262,16 +1266,16 @@ $offtext
         while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
 
 * If target node is dead --> move it up to one level
-            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes;
-            nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no;
-            
+            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes ;
+            nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no ;
+
 * This is the approach SPD is using (a deficit node is ineligible as target node )
-            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, EnergyShortfallMW(t,n1)] = yes;
-            nodeTonode(t,n,n1) $ EnergyShortfallMW(t,n1) = no;
+            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = yes;
+            nodeTonode(t,n,n1) $ sum[n2 $ { nodeTonode(t,n,n2) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = no;
             
 *           Check if shortfall from node n is eligibly transfered to node n1
             ShortfallTransferFromTo(nodeTonode(t,n,n1))
-                $ { (ShortfallAdjustmentMW(t,n) > 0) and (ShortfallAdjustmentMW(t,n1) = 0) and (CheckedNodeCandidate(t,n1) = 0)
+                $ { (ShortfallAdjustmentMW(t,n) > 0)
                 and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
                 and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
                   } = 1;
@@ -1280,21 +1284,24 @@ $offtext
 *            nodeTonode(t,n,n2) $ sum[n1 $ nodeTonode(t,n1,n2), ShortfallTransferFromTo(t,n,n1)] = yes;
 *            nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1) = no;
 
-            
+            loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
+               putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
+            ) ;           
+
 *           If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
             requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
             PotentialModellingInconsistency(t,n1) $ {(IsNodeDead(t,n1)=0) and sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] } = 1;
-            
+
 *           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
             ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-            
+
 *           and the DidShortfallTransfer of the transfer target node is set to 1
             DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
 
 *           Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
             ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
             ShortfallTransferFromTo(t,n,n1) = 0;
-            
+         
         ) ;
 
 *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
