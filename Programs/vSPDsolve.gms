@@ -1316,10 +1316,14 @@ $offtext
 *           If target node is dead --> move up to next node
             nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes;
             nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no;
+            
+*           This is the approach SPD is using (a deficit node is ineligible as target node )
+            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = yes;
+            nodeTonode(t,n,n1) $ sum[n2 $ { nodeTonode(t,n,n2) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = no;
 
 *           Check if shortfall from node n is eligibly transfered to node n1
             ShortfallTransferFromTo(nodeTonode(t,n,n1))
-                $ { (ShortfallAdjustmentMW(t,n) > 0) and (ShortfallAdjustmentMW(t,n1) = 0) and (CheckedNodeCandidate(t,n1) = 0)
+                $ { (ShortfallAdjustmentMW(t,n) > 0)
                 and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
                 and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
                   } = 1;
