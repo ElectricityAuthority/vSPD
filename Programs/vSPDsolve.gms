@@ -820,6 +820,7 @@ if ( (studyMode = 101 or studyMode = 201),
 put_utility temp 'gdxin' / '%inputPath%\%GDXname%.gdx' ;
 execute_load SPDLoadCalcLosses = i_dateTimeSPDLoadCalcLosses ;
 put_utility temp 'gdxin' ;
+) ;
 
 LoadCalcLosses(dt,isl) = islandLosses(dt,isl);
 DidShortfallTransfer(dt,n) = 0;
@@ -827,16 +828,15 @@ ShortfallDisabledScaling(dt,n) = 0;
 CheckedNodeCandidate(dt,n) = 0;
 PotentialModellingInconsistency(dt,n)= 1 $ { sum[ branch(dt,br) $ nodeoutagebranch(dt,n,br), 1] < sum[ br $ nodeoutagebranch(dt,n,br), 1] } ;
 
-) ;
-
 unsolvedDT(dt) = yes;
 VSPDModel(dt) = 0 ;
 LoopCount(dt) = 1;
 IsNodeDead(dt,n) = 0;
+nodeTonode(dt,n,n1) = node2node(dt,n,n1) ;
 While ( sum[ dt $ unsolvedDT(dt), 1 ],
 
   loop[ dt $ {unsolvedDT(dt) and (LoopCount(dt) < maxSolveLoops(dt)) },
-
+  repeat(  
 *   7a. Reset all sets, parameters and variables -------------------------------
     option clear = t ;
 *   Generation variables
@@ -978,25 +978,25 @@ While ( sum[ dt $ unsolvedDT(dt), 1 ],
         RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0) and (LoadIsScalable(t,n) = 0) } = InitialLoad(t,n);
         RequiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = RequiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
 
-*       Recalculate energy scarcity limits -------------------------------------
-        ScarcityEnrgLimit(t,n,blk) = 0 ;
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) }                                     = scarcityEnrgNationalFactor(t,blk) * RequiredLoad(t,n);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (ScarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityEnrgNationalPrice(t,blk) ;
-
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) and scarcityEnrgNodeFactor(t,n,blk) } = scarcityEnrgNodeFactor(t,n,blk) * RequiredLoad(t,n);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeFactorPrice(t,n,blk) }                        = scarcityEnrgNodeFactorPrice(t,n,blk) ;
-
-        ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityEnrgNodeLimit(t,n,blk)  } = scarcityEnrgNodeLimit(t,n,blk);
-        ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeLimitPrice(t,n,blk) }                         = scarcityEnrgNodeLimitPrice(t,n,blk) ;
-*       ------------------------------------------------------------------------
-
-*       Update Free Reserve and SharedNFRmax - Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
-        sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), RequiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
-        sharedNFRMax(t,isl) = Min{ RMTReserveLimitTo(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
-        FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
-                                     - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) and (inputGDXGDate >= jdate(2016,10,20)) } ;
     ) ;
 
+*   Recalculate energy scarcity limits -------------------------------------
+    ScarcityEnrgLimit(t,n,blk) = 0 ;
+    ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) }                                     = scarcityEnrgNationalFactor(t,blk) * RequiredLoad(t,n);
+    ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and (ScarcityEnrgLimit(t,n,blk) > 0 ) }                           = scarcityEnrgNationalPrice(t,blk) ;
+
+    ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and (RequiredLoad(t,n) > 0) and scarcityEnrgNodeFactor(t,n,blk) } = scarcityEnrgNodeFactor(t,n,blk) * RequiredLoad(t,n);
+    ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeFactorPrice(t,n,blk) }                        = scarcityEnrgNodeFactorPrice(t,n,blk) ;
+
+    ScarcityEnrgLimit(t,n,blk) $ { energyScarcityEnabled(t) and                             scarcityEnrgNodeLimit(t,n,blk)  } = scarcityEnrgNodeLimit(t,n,blk);
+    ScarcityEnrgPrice(t,n,blk) $ { energyScarcityEnabled(t) and scarcityEnrgNodeLimitPrice(t,n,blk) }                         = scarcityEnrgNodeLimitPrice(t,n,blk) ;
+*   ------------------------------------------------------------------------
+
+*   Update Free Reserve and SharedNFRmax - Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.1.2)
+    sharedNFRLoad(t,isl) = sum[ nodeIsland(t,n,isl), RequiredLoad(t,n)] + sum[ (bd,blk) $ bidIsland(t,bd,isl), DemBidMW(t,bd,blk) ] - sharedNFRLoadOffset(t,isl) ;
+    sharedNFRMax(t,isl) = Min{ RMTReserveLimitTo(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
+    FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
+                                 - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) and (inputGDXGDate >= jdate(2016,10,20)) } ;
 
 *   7c. Updating the variable bounds before model solve ------------------------
 
@@ -1295,6 +1295,10 @@ $offtext
         RequiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = RequiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
         RequiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (RequiredLoad(t,n) < 0) } = 0 ;
         DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
+        
+        loop( (t,n) $ EnergyShortfallMW(t,n),
+            putclose rep 'Energy shortfall at node' n.tl,': ', EnergyShortfallMW(t,n)' MW. Eligible for shortfall removal: ' EligibleShortfallRemoval(t,n):<1:0 /;
+        ) ;
 
 $ontext
 e. Shortfall Transfer:
@@ -1310,7 +1314,6 @@ of the candidate node is not the same as the ElectricalIslandpn of the node with
 $offtext
         unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
 
-        nodeTonode(t,n,n1) = node2node(t,n,n1)
         while( sum[n, ShortfallAdjustmentMW(dt,n)],
         
 *           If target node is dead --> move up to next node
@@ -1327,6 +1330,10 @@ $offtext
                 and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
                 and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
                   } = 1;
+            
+            loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
+               putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
+            ) ;
 
 *           If a transfer target node is found then the ShortfallAdjustmentMW is added to the RequiredLoad of the transfer target node
             RequiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= RequiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
@@ -1702,7 +1709,7 @@ $offtext
 
 
 $endif.PeriodReport
-
+  until {not unsolvedDT(dt)} );
 * End of the solve vSPD loop
   ] ;
 * End of the While loop
