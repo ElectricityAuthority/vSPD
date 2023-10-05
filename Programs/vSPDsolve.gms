@@ -1709,7 +1709,7 @@ $offtext
 
 
 $endif.PeriodReport
-  until {not unsolvedDT(dt)} );
+  until { (not unsolvedDT(dt)) or (LoopCount(dt)=maxSolveLoops(dt)) } );
 * End of the solve vSPD loop
   ] ;
 * End of the While loop
