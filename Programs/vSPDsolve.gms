@@ -775,7 +775,7 @@ nodeTonode(ca,dt,n,n1) = node2node(ca,dt,n,n1) ;
 While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 
   loop[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt) and (LoopCount(ca,dt) <= maxSolveLoops(ca,dt)) },
-
+  repeat(
 *   7a. Reset all sets, parameters and variables -------------------------------
     option clear = t ;
 *   Generation variables
@@ -1671,7 +1671,7 @@ $offtext
 
 
 $endif.PeriodReport
-
+  until { (not unsolvedDT(ca,dt)) or (LoopCount(ca,dt)=maxSolveLoops(ca,dt)) } );   
 * End of the solve vSPD loop
   ] ;
 * End of the While loop
