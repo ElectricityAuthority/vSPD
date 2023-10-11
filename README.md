@@ -24,7 +24,9 @@ including 31 October 2022.
 Version 4.0.0, also available on the [EMI vSPD page,](https://www.emi.ea.govt.nz/Wholesale/Tools/vSPD) is
 the first version of vSPD to work with [GDX files](https://www.emi.ea.govt.nz/Wholesale/Datasets/DispatchAndPricing/GDX/) pertaining to all days since 
 1 November 2022.
+Version 5.0.0, available on the [EMI vSPD page,](https://www.emi.ea.govt.nz/Wholesale/Tools/vSPD) is
+the new revamped vSPD to work with [daily pricing GDX files](https://www.emi.ea.govt.nz/Wholesale/Datasets/DispatchAndPricing/GDX/Pricing) pertaining to all days since 1 November 2022. This vSPD version used the new GDX files that have new data structure. 
 
-Both versions, v3.1.0 and v4.0.0, are also available from the [releases page](https://github.com/ElectricityAuthority/vSPD/releases) of this GitHub repository.
+All versions, v3.1.0, v4.0.0 and v5.0.0, are also available from the [releases page](https://github.com/ElectricityAuthority/vSPD/releases) of this GitHub repository.
 
 Contact: emi@ea.govt.nz
