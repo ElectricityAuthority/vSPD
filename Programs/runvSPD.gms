@@ -130,20 +130,20 @@ putclose rep / "Total execute time: " timeExec "(secs)" /;
 * Clean up
 *=====================================================================================
 $label cleanUp
-execute 'erase "vSPDcase.inc"' ;
+*execute 'erase "vSPDcase.inc"' ;
 $ifthen %opMode%=='DWH'
 execute 'move /y ProgressReport.txt "%outputPath%%runName%\%runName%_RunLog.txt"';
 $else
 execute 'move /y ProgressReport.txt "%outputPath%%runName%"';
 $endif
-execute 'if exist *.lst   erase /q *.lst '
-execute 'if exist *.~gm   erase /q *.~gm '
-execute 'if exist *.lxi   erase /q *.lxi '
-execute 'if exist *.log   erase /q *.log '
-execute 'if exist *.put   erase /q *.put '
-execute 'if exist *.txt   erase /q *.txt '
-execute 'if exist *.gdx   erase /q *.gdx '
-execute 'if exist temp.*  erase /q temp.*'
+*execute 'if exist *.lst   erase /q *.lst '
+*execute 'if exist *.~gm   erase /q *.~gm '
+*execute 'if exist *.lxi   erase /q *.lxi '
+*execute 'if exist *.log   erase /q *.log '
+*execute 'if exist *.put   erase /q *.put '
+*execute 'if exist *.txt   erase /q *.txt '
+**execute 'if exist *.gdx   erase /q *.gdx '
+*execute 'if exist temp.*  erase /q temp.*'
 
 
 
