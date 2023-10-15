@@ -15,15 +15,15 @@ $include "%system.fp%Scenarios.gms"
 * Define output required for pivotal test
 
 Parameters
-  o_drsnodeprice(dt,drs,n)                 'Price at each reference pricng node for each demand scenario'
-  o_drsGen(dt,drs,isl)                     'Total island scheduled generation for each demand scenario'
-  o_drsPosDemand(dt,drs,isl)               'Total island non-negative demand for each demand scenario'
-  o_drsNegDemand(dt,drs,isl)               'Total island negative demand for each demand scenario'
-  o_drsBid(dt,drs,isl)                     'Total island cleared bid for each demand scenario'
-  o_drsRefPrice(dt,drs,isl)                'Total island reference price for each demand scenario'
-  o_drsGenRevenue(dt,drs,isl)              'Total island generation revenue for each demand scenario'
-  o_drsNegLoadRevenue(dt,drs,isl)          'Total island negative load revenue for each demand scenario'
-  o_drsGWAP(dt,drs,isl)                    'Total island gwap (including negative load) for each demand scenario'
+  o_drsnodeprice(ca,dt,drs,n)                 'Price at each reference pricng node for each demand scenario'
+  o_drsGen(ca,dt,drs,isl)                     'Total island scheduled generation for each demand scenario'
+  o_drsPosDemand(ca,dt,drs,isl)               'Total island non-negative demand for each demand scenario'
+  o_drsNegDemand(ca,dt,drs,isl)               'Total island negative demand for each demand scenario'
+  o_drsBid(ca,dt,drs,isl)                     'Total island cleared bid for each demand scenario'
+  o_drsRefPrice(ca,dt,drs,isl)                'Total island reference price for each demand scenario'
+  o_drsGenRevenue(ca,dt,drs,isl)              'Total island generation revenue for each demand scenario'
+  o_drsNegLoadRevenue(ca,dt,drs,isl)          'Total island negative load revenue for each demand scenario'
+  o_drsGWAP(ca,dt,drs,isl)                    'Total island gwap (including negative load) for each demand scenario'
 ;
 
 * Reset island reference node for demand sensitivity analysis
@@ -32,27 +32,31 @@ Parameters
 
 * Begin a loop through each pivot scenario and produce pivot data
 Loop[ drs,
+  putclose rep '==============================================================================='/;
+  putclose rep 'Demand price sensitivity scenario: ' drs.tl /;
+  putclose rep '==============================================================================='/;
 * apply demand scale for current demand scenario
-  RequiredLoad(node) = nodeDemand(node) ;
-  RequiredLoad(node) $ ( nodeDemand(node) > 0 ) = demandscale(drs) * nodeDemand(node) ;
+  RequiredLoad(node) = nodeParameter(node,'demand') ;
+  RequiredLoad(node) $ ( nodeParameter(node,'demand') > 0 ) = demandscale(drs) * nodeParameter(node,'demand') ;
 
 * Initialize energy scarcity limits and prices ---------------------------------
-  ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and (RequiredLoad(dt,n) > 0) }                                      = scarcityEnrgNationalFactor(dt,blk) * RequiredLoad(dt,n);
-  ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and (ScarcityEnrgLimit(dt,n,blk) > 0 ) }                            = scarcityEnrgNationalPrice(dt,blk) ;
+  scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (requiredLoad(ca,dt,n) > 0) }                                      = scarcityNationalFactor(ca,dt,blk,'factor') * requiredLoad(ca,dt,n);
+  scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and (scarcityEnrgLimit(ca,dt,n,blk) > 0 ) }                            = scarcityNationalFactor(ca,dt,blk,'price') ;
 
-  ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeFactor(dt,n,blk) and (RequiredLoad(dt,n) > 0) } = scarcityEnrgNodeFactor(dt,n,blk) * RequiredLoad(dt,n);
-  ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeFactorPrice(dt,n,blk) }                         = scarcityEnrgNodeFactorPrice(dt,n,blk) ;
+  scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'factor') and (requiredLoad(ca,dt,n) > 0) } = scarcityNodeFactor(ca,dt,n,blk,'factor') * requiredLoad(ca,dt,n);
+  scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeFactor(ca,dt,n,blk,'price') }                         = scarcityNodeFactor(ca,dt,n,blk,'price') ;
 
-  ScarcityEnrgLimit(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeLimit(dt,n,blk) }                               = scarcityEnrgNodeLimit(dt,n,blk);
-  ScarcityEnrgPrice(dt,n,blk) $ { energyScarcityEnabled(dt) and scarcityEnrgNodeLimitPrice(dt,n,blk) }                          = scarcityEnrgNodeLimitPrice(dt,n,blk) ;
+  scarcityEnrgLimit(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'limitMW') }                               = scarcityNodeLimit(ca,dt,n,blk,'limitMW');
+  scarcityEnrgPrice(ca,dt,n,blk) $ { energyScarcityEnabled(ca,dt) and scarcityNodeLimit(ca,dt,n,blk,'price') }                          = scarcityNodeLimit(ca,dt,n,blk,'price') ;
+
 *-------------------------------------------------------------------------------
 
 * Pre-processing: Shared Net Free Reserve (NFR) calculation - NMIR (4.5.2.1)
-  sharedNFRLoad(dt,isl) = sum[ nodeIsland(dt,n,isl), RequiredLoad(dt,n)] + sum[ (bd,blk) $ bidIsland(dt,bd,isl), DemBidMW(dt,bd,blk) ] - sharedNFRLoadOffset(dt,isl) ;
-  sharedNFRMax(dt,isl) = Min{ RMTReserveLimitTo(dt,isl,'FIR'), sharedNFRFactor(dt)*sharedNFRLoad(dt,isl) } ;
+  sharedNFRLoad(ca,dt,isl) = sum[ nodeIsland(ca,dt,n,isl), requiredLoad(ca,dt,n)] + sum[ (bd,blk) $ bidIsland(ca,dt,bd,isl), DemBidMW(ca,dt,bd,blk) ] - sharedNFRLoadOffset(ca,dt,isl) ;
+  sharedNFRMax(ca,dt,isl) = Min{ RMTReserveLimit(ca,dt,isl,'FIR'), sharedNFRFactor(ca,dt)*sharedNFRLoad(ca,dt,isl) } ;
 
 * Risk parameters
-  FreeReserve(dt,isl,resC,riskC) = riskParameter(dt,isl,resC,riskC,'freeReserve') - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(dt,isl1) ]${(ord(resC)=1) and ((GenRisk(riskC)) or (ManualRisk(riskC))) } ;
+  FreeReserve(ca,dt,isl,resC,riskC) = riskParameter(ca,dt,isl,resC,riskC,'freeReserve') - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(ca,dt,isl1) ]${(ord(resC)=1) and ((GenRisk(riskC)) or (ManualRisk(riskC))) } ;
 
 
 
