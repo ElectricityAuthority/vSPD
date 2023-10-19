@@ -1218,7 +1218,7 @@ $offtext
 *       Check for dead nodes
         IsNodeDead(t,n) = 1 $ ( sum[b $ { NodeBus(t,n,b) and (busDisconnected(t,b)=0) }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
         IsNodeDead(t,n) $ ( sum[b $ NodeBus(t,n,b), busElectricalIsland(t,b) ] = 0 ) = 1 ;
-        NodeElectricalIsland(t,n) = smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] ;
+        NodeElectricalIsland(t,n) = smin[b $ NodeBusAllocationFactor(t,n,b), busElectricalIsland(t,b)] ;
         InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
 
 *       Check if a pnode has energy shortfall
