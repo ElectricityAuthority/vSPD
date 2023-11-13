@@ -44,4 +44,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+$setglobal opMode                          SPD      ! SPD for normal SPD run
