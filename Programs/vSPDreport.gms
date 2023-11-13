@@ -439,6 +439,6 @@ loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
 execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
 $endif.AuditReport
 *===============================================================================
-execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
+*execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
 
 
