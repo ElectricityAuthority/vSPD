@@ -239,6 +239,7 @@ Scalars
 Sets
 * Global
   case2dt(ca,dt)                         'mapping caseID-DateTime pair'
+  tp2dt(tp,dt)                           'mapping period to first datetime in a period '
   t(ca,dt)                               'Current trading interval to solve'
 
 * Node/bus

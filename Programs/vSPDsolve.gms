@@ -387,6 +387,7 @@ $if exist "%ovrdPath%%vSPDinputOvrdData%.gdx"  $include vSPDoverrides.gms
 studyMode(ca,dt)        = runMode(ca,'studyMode');
 IntervalDuration(ca,dt) = runMode(ca,'intervalLength');
 case2dt(ca,dt)          = yes $ sum[ tp $ case2dt2tp(ca,dt,tp), 1] ;
+tp2dt(tp,dt) = yes $ [ord(dt) = smin[case2dt2tp(ca,dt1,tp), ord(dt1)] ];
 
 * Nodal data
 node(ca,dt,n) = yes $ sum[ b $ nodeBus(ca,dt,n,b), 1 ] ;

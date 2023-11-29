@@ -84,7 +84,7 @@ File PublishedEnergyPrices_TP  /"%outputPath%\%runName%\%runName%_PublishedEnerg
 PublishedEnergyPrices_TP.pc = 5; PublishedEnergyPrices_TP.lw = 0; PublishedEnergyPrices_TP.pw = 9999;
 PublishedEnergyPrices_TP.ap = 1; PublishedEnergyPrices_TP.nd = 5; PublishedEnergyPrices_TP.nw = 20;
 put PublishedEnergyPrices_TP ;
-loop( (dt,tp,n) $ sum[case2dt2tp(ca,dt,tp) $ (ord(ca)=1), 1] ,
+loop( (dt,tp,n) $ tp2dt(tp,dt) ,
     put dt.tl,tp.tl, n.tl, o_PublisedPrice_TP(tp,n) / ;
 ) ;
 
@@ -93,7 +93,7 @@ File PublishedReservePrices_TP  /"%outputPath%\%runName%\%runName%_PublishedRese
 PublishedReservePrices_TP.pc = 5; PublishedReservePrices_TP.lw = 0; PublishedReservePrices_TP.pw = 9999;
 PublishedReservePrices_TP.ap = 1; PublishedReservePrices_TP.nd = 5; PublishedReservePrices_TP.nw = 20;
 put PublishedReservePrices_TP ;
-loop( (dt,tp,isl) $ sum[case2dt2tp(ca,dt,tp) $ (ord(ca)=1), 1] ,
+loop( (dt,tp,isl) $ tp2dt(tp,dt) ,
     put dt.tl, tp.tl, isl.tl, o_PublisedFIRPrice_TP(tp,isl), o_PublisedSIRPrice_TP(tp,isl) / ;
 ) ;
 
