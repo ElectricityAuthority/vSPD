@@ -22,6 +22,12 @@
         },
         {
             "codecMib": 106,
+            "file": "runvSPD.lst",
+            "name": "runvSPD.lst",
+            "type": "lst"
+        },
+        {
+            "codecMib": 106,
             "file": "vSPDmodel.gms",
             "name": "vSPDmodel.gms",
             "type": "gms"
@@ -55,6 +61,12 @@
             "file": "vSPDsolve.gms",
             "name": "vSPDsolve.gms",
             "type": "gms"
+        },
+        {
+            "codecMib": 106,
+            "file": "vSPDsolve.lst",
+            "name": "vSPDsolve.lst",
+            "type": "lst"
         },
         {
             "codecMib": 106,
