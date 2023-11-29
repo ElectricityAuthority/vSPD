@@ -84,8 +84,8 @@ File PublishedEnergyPrices_TP  /"%outputPath%\%runName%\%runName%_PublishedEnerg
 PublishedEnergyPrices_TP.pc = 5; PublishedEnergyPrices_TP.lw = 0; PublishedEnergyPrices_TP.pw = 9999;
 PublishedEnergyPrices_TP.ap = 1; PublishedEnergyPrices_TP.nd = 5; PublishedEnergyPrices_TP.nw = 20;
 put PublishedEnergyPrices_TP ;
-loop( (tp,n),
-    put tp.tl, n.tl, o_PublisedPrice_TP(tp,n) / ;
+loop( (dt,tp,n) $ tp2dt(tp,dt) ,
+    put dt.tl,tp.tl, n.tl, o_PublisedPrice_TP(tp,n) / ;
 ) ;
 
 * Published reserve prices
@@ -93,8 +93,8 @@ File PublishedReservePrices_TP  /"%outputPath%\%runName%\%runName%_PublishedRese
 PublishedReservePrices_TP.pc = 5; PublishedReservePrices_TP.lw = 0; PublishedReservePrices_TP.pw = 9999;
 PublishedReservePrices_TP.ap = 1; PublishedReservePrices_TP.nd = 5; PublishedReservePrices_TP.nw = 20;
 put PublishedReservePrices_TP ;
-loop( (tp,isl),
-    put tp.tl, isl.tl, o_PublisedFIRPrice_TP(tp,isl), o_PublisedSIRPrice_TP(tp,isl) / ;
+loop( (dt,tp,isl) $ tp2dt(tp,dt) ,
+    put dt.tl, tp.tl, isl.tl, o_PublisedFIRPrice_TP(tp,isl), o_PublisedSIRPrice_TP(tp,isl) / ;
 ) ;
 
 * Trading period offer result
@@ -439,6 +439,6 @@ loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
 execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
 $endif.AuditReport
 *===============================================================================
-execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
+*execute_unload '%outputPath%\%runName%\%GDXname%_AllData.gdx' ;
 
 

@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       daily_202221105_0140_RTD
+$setglobal runName                       Testing
 
 $setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%..\Input\'
@@ -14,7 +14,7 @@ $setglobal vSPDinputOvrdData             ''   !Name of override file
 
 *+++ Model +++
 Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
-Scalar dailymode                         / 0 / ;   ! Solving quickly by using RTD pre-calculated demand or PRSS solved initial MW
+Scalar dailymode                         / 1 / ;   ! Solving quickly by using RTD pre-calculated demand or PRSS solved initial MW
 
 *+++ Network +++
 Scalar useACLossModel                    / 1 /    ;
@@ -44,4 +44,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          SPD      ! DWH for data warehouse; AUD for audit; FTR for FTR Rental; SPD for normal SPD run; PVT for pivot analysis; DPS for demand~price sensitivity analysis
+$setglobal opMode                          SPD      ! SPD for normal SPD run;

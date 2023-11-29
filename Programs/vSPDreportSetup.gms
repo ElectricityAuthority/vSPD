@@ -39,11 +39,11 @@ put nodeResults_TP 'CaseID','DateTime','Period', 'Node','Generation (MW)','Load 
     
 File PublishedEnergyPrices_TP /"%outputPath%\%runName%\%runName%_PublishedEnergyPrices_TP.csv"/;
 PublishedEnergyPrices_TP.pc = 5 ; PublishedEnergyPrices_TP.lw = 0 ; PublishedEnergyPrices_TP.pw = 9999 ;
-put PublishedEnergyPrices_TP 'TradingPeriod','Pnodename','vSPDDollarsPerMegawattHour';
+put PublishedEnergyPrices_TP 'DateTime','TradingPeriod','Pnodename','vSPDDollarsPerMegawattHour';
 
 File PublishedReservePrices_TP /"%outputPath%\%runName%\%runName%_PublishedReservePrices_TP.csv"/;
 PublishedReservePrices_TP.pc = 5 ; PublishedReservePrices_TP.lw = 0 ; PublishedReservePrices_TP.pw = 9999 ;
-put PublishedReservePrices_TP 'TradingPeriod','Island','vSPDFIRDollarsPerMegawattHour','vSPDSIRDollarsPerMegawattHour';
+put PublishedReservePrices_TP 'DateTime','TradingPeriod','Island','vSPDFIRDollarsPerMegawattHour','vSPDSIRDollarsPerMegawattHour';
 
 File offerResults_TP     / "%outputPath%\%runName%\%runName%_OfferResults_TP.csv" /;
 offerResults_TP.pc = 5; offerResults_TP.lw = 0; offerResults_TP.pw = 9999;
