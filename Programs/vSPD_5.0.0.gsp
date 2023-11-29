@@ -4,6 +4,12 @@
     "nodes": [
         {
             "codecMib": 106,
+            "file": "../Input/Pricing_20231128.gdx",
+            "name": "Pricing_20231128.gdx",
+            "type": "gdx"
+        },
+        {
+            "codecMib": 106,
             "file": "merge_gdx.gms",
             "name": "merge_gdx.gms",
             "type": "gms"
@@ -48,6 +54,12 @@
             "codecMib": 106,
             "file": "vSPDsolve.gms",
             "name": "vSPDsolve.gms",
+            "type": "gms"
+        },
+        {
+            "codecMib": 106,
+            "file": "vSPDtpsToSolve.inc",
+            "name": "vSPDtpsToSolve.inc",
             "type": "gms"
         }
     ],

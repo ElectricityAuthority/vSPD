@@ -1,0 +1,47 @@
+Run: 'Test'
+
+runvSPD started at: 11/29/23 16:53:47
+vSPDsetup started at: 11/29/23 16:53:47
+vSPDreportSetup started at: 11/29/23 16:53:47
+
+Case "Pricing_20231128" started at: 11/29/23 16:53:47
+The caseID: 271012023111530682 (28-NOV-2023 04:30) is 1st solved successfully.
+Objective function value: 683744.2629
+Violations cost         : 0.1193
+The caseID: 271012023111535685 (28-NOV-2023 04:35) is 1st solved successfully.
+Objective function value: 683435.4163
+Violations cost         : 0.1062
+The caseID: 271012023111540686 (28-NOV-2023 04:40) is 1st solved successfully.
+Objective function value: 678264.4706
+Violations cost         : 0.1116
+The caseID: 271012023111545687 (28-NOV-2023 04:45) is 1st solved successfully.
+Objective function value: 677325.7661
+Violations cost         : 0.1134
+The caseID: 271012023111550688 (28-NOV-2023 04:50) is 1st solved successfully.
+Objective function value: 670465.2821
+Violations cost         : 0.1307
+The caseID: 271012023111555689 (28-NOV-2023 04:55) is 1st solved successfully.
+Objective function value: 668464.3061
+Violations cost         : 0.1165
+The caseID: 271012023111600690 (28-NOV-2023 05:00) is 1st solved successfully.
+Objective function value: 673703.6167
+Violations cost         : 0.1584
+The caseID: 271012023111605693 (28-NOV-2023 05:05) is 1st solved successfully.
+Objective function value: 668325.0862
+Violations cost         : 0.1124
+The caseID: 271012023111610694 (28-NOV-2023 05:10) is 1st solved successfully.
+Objective function value: 662801.3998
+Violations cost         : 0.1086
+The caseID: 271012023111615695 (28-NOV-2023 05:15) is 1st solved successfully.
+Objective function value: 652739.5179
+Violations cost         : 0.1165
+The caseID: 271012023111620696 (28-NOV-2023 05:20) is 1st solved successfully.
+Objective function value: 654969.8219
+Violations cost         : 0.1234
+The caseID: 271012023111625697 (28-NOV-2023 05:25) is 1st solved successfully.
+Objective function value: 647921.6170
+Violations cost         : 0.1451
+Case: Pricing_20231128 is complete in  18.7500(secs)
+Case: Pricing_20231128 is finished in  18.9180(secs)
+
+Total execute time:        19.30(secs)
