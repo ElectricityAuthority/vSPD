@@ -233,9 +233,9 @@ temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ isl $ nodeIsland(ca,dt,n,isl), o
 if (1=1,
 
 * Calculate scaling factor for demand scale overrdies applied to all time and a node
-temp_NodeDemandScale(case2dt(ca,dt),n) $ ovrd_Demand_AllTime_Node('All',n,'All','scale') = ovrd_Demand_AllTime_Node('All',n,'All','scale') ;
-temp_NodeDemandScale(case2dt(ca,dt),n) $ {ovrd_Demand_AllTime_Node('All',n,'Nonconform','scale') and      nodeParameter(ca,dt,n,'loadIsNCL') } = ovrd_Demand_AllTime_Node('All',n,'Nonconform','scale');
-temp_NodeDemandScale(case2dt(ca,dt),n) $ {ovrd_Demand_AllTime_Node('All',n,'Conforming','scale') and (not nodeParameter(ca,dt,n,'loadIsNCL'))} = ovrd_Demand_AllTime_Node('All',n,'Conforming','scale');
+temp_NodeDemandScale(case2dt(ca,dt),n) $ {ovrd_Demand_AllTime_Node('All',n,'All','scale') and nodeParameter(ca,dt,n,'demand')                                                    } = ovrd_Demand_AllTime_Node('All',n,'All','scale') ;                                         
+temp_NodeDemandScale(case2dt(ca,dt),n) $ {ovrd_Demand_AllTime_Node('All',n,'Nonconform','scale') and nodeParameter(ca,dt,n,'demand') and      nodeParameter(ca,dt,n,'loadIsNCL') } = ovrd_Demand_AllTime_Node('All',n,'Nonconform','scale');
+temp_NodeDemandScale(case2dt(ca,dt),n) $ {ovrd_Demand_AllTime_Node('All',n,'Conforming','scale') and nodeParameter(ca,dt,n,'demand') and (not nodeParameter(ca,dt,n,'loadIsNCL'))} = ovrd_Demand_AllTime_Node('All',n,'Conforming','scale');
 
 
 * Calculate scaling factor for demand increment overrdies applied to all time and a node
@@ -396,15 +396,14 @@ temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ {case2dt2tp(ca,dt,tp),nodeIsland
 
 * Overrides applied to a trading period time for node
 if (1=1,
-
 * Calculate scaling factor for demand scale overrides
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'All','scale')] }
-    = sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'All','scale')];
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Nonconform','scale')] and nodeParameter(ca,dt,n,'loadIsNCL') }
-    = sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Nonconform','scale')] ;
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Conforming','scale')] and (not nodeParameter(ca,dt,n,'loadIsNCL')) }
-    = sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Conforming','scale')] ;
-
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'All','scale')] and nodeParameter(ca,dt,n,'demand') }
+    = sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'All','scale')];                                        
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Nonconform','scale')]  and nodeParameter(ca,dt,n,'demand') and nodeParameter(ca,dt,n,'loadIsNCL') }
+    = sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Nonconform','scale')] ;                                         
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Conforming','scale')]  and nodeParameter(ca,dt,n,'demand') and (not nodeParameter(ca,dt,n,'loadIsNCL')) }
+    = sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'Conforming','scale')] ;                                         
+ 
 * Calculate scaling factor for demand increment overrides
 temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'All','increment')] }
     = [ sum[ case2dt2tp(ca,dt,tp), ovrd_Demand_Period_Node(tp,n,'All','increment') ]                                                                      $ (nodeParameter(ca,dt,n,'demand') = 0) ]
@@ -556,9 +555,9 @@ temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ isl $ nodeIsland(ca,dt,n,isl), o
 if (1=1,
 
 * Calculate scaling factor for demand scale overrides
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'All','scale') }                                                     = ovrd_Demand_DateTime_Node(dt,n,'All','scale') ;
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'Nonconform','scale') and nodeParameter(ca,dt,n,'loadIsNCL') }       = ovrd_Demand_DateTime_Node(dt,n,'Nonconform','scale') ;
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'Conforming','scale') and (not nodeParameter(ca,dt,n,'loadIsNCL')) } = ovrd_Demand_DateTime_Node(dt,n,'Conforming','scale') ;
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'All','scale')  and nodeParameter(ca,dt,n,'demand') }                                                     = ovrd_Demand_DateTime_Node(dt,n,'All','scale') ;
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'Nonconform','scale')  and nodeParameter(ca,dt,n,'demand') and nodeParameter(ca,dt,n,'loadIsNCL') }       = ovrd_Demand_DateTime_Node(dt,n,'Nonconform','scale') ;                                         
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'Conforming','scale')  and nodeParameter(ca,dt,n,'demand') and (not nodeParameter(ca,dt,n,'loadIsNCL')) } = ovrd_Demand_DateTime_Node(dt,n,'Conforming','scale') ;
 
 * Calculate scaling factor for demand increment overrides
 temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_DateTime_Node(dt,n,'All','increment') }
@@ -711,9 +710,9 @@ temp_NodeDemandScale(case2dt(ca,dt),n) $ { sum[ isl $ nodeIsland(ca,dt,n,isl), o
 if (1=1,
 
 * Calculate scaling factor for demand scale overrides
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'All','scale') }                                                     = ovrd_Demand_CaseID_Node(ca,n,'All','scale') ;
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'Nonconform','scale') and nodeParameter(ca,dt,n,'loadIsNCL') }       = ovrd_Demand_CaseID_Node(ca,n,'Nonconform','scale') ;
-temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'Conforming','scale') and (not nodeParameter(ca,dt,n,'loadIsNCL')) } = ovrd_Demand_CaseID_Node(ca,n,'Conforming','scale') ;
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'All','scale') and nodeParameter(ca,dt,n,'demand') }                                                     = ovrd_Demand_CaseID_Node(ca,n,'All','scale') ;
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'Nonconform','scale') and nodeParameter(ca,dt,n,'demand') and nodeParameter(ca,dt,n,'loadIsNCL') }       = ovrd_Demand_CaseID_Node(ca,n,'Nonconform','scale') ;                                         
+temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'Conforming','scale') and nodeParameter(ca,dt,n,'demand') and (not nodeParameter(ca,dt,n,'loadIsNCL')) } = ovrd_Demand_CaseID_Node(ca,n,'Conforming','scale') ;
 
 * Calculate scaling factor for demand increment overrides
 temp_NodeDemandScale(case2dt(ca,dt),n) $ { ovrd_Demand_CaseID_Node(ca,n,'All','increment') }
