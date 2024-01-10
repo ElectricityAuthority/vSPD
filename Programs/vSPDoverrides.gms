@@ -72,28 +72,55 @@ import random
 # The loading and cleasing fucntions
 #_______________________________________________________________________________________________________________
 
-def load_cleans_overrides(gams,parameter):
+def load_cleans_overrides(gams, parameter):
+    # Retrieve the GAMS dataset associated with the specified parameter
     my_dataset = gams.get(parameter)
+    
+    # Convert the GAMS dataset to a Pandas DataFrame
     my_dataset_pd = pd.DataFrame(my_dataset)
+    
+    # Check if the DataFrame is empty
     if my_dataset_pd.empty:
-       return my_dataset_pd
+        return my_dataset_pd
     else:
-        my_dataset_lst = list(my_dataset_pd.iloc[:,0])
-        my_dataset_2 =  pd.DataFrame(my_dataset_lst)
-        my_dataset_3 =  pd.concat([my_dataset_2,my_dataset_pd.iloc[:,1]], axis=1)
+        # Extract the values from the first column of the DataFrame
+        my_dataset_l = list(my_dataset_pd.iloc[:, 0])
+        
+        # Create a new DataFrame from the list of values
+        my_dataset_2 = pd.DataFrame(my_dataset_l)
+        
+        # Concatenate the new DataFrame with the second column of the original DataFrame
+        my_dataset_3 = pd.concat([my_dataset_2, my_dataset_pd.iloc[:, 1]], axis=1)
+        
+        # Return the resulting DataFrame
         return my_dataset_3
+        
 
 def load_and_cleans(gams, raw_dataset):
+    # Retrieve the GAMS dataset associated with the specified raw_dataset
     my_dataset = gams.get(raw_dataset)
+    
+    # Convert the GAMS dataset to a Pandas DataFrame
     my_dataset_pd = pd.DataFrame(my_dataset)
-    my_dataset_lst = list(my_dataset_pd.iloc[:,0])
-    my_dataset_2 =  pd.DataFrame(my_dataset_lst)
-    my_dataset_3 =  pd.concat([my_dataset_2,my_dataset_pd.iloc[:,1]], axis=1)
+    
+    # Extract the values from the first column of the DataFrame and convert them to a list
+    my_dataset_l = list(my_dataset_pd.iloc[:, 0])
+    
+    # Create a new DataFrame from the list of values
+    my_dataset_2 = pd.DataFrame(my_dataset_l)
+    
+    # Concatenate the new DataFrame with the second column of the original DataFrame
+    my_dataset_3 = pd.concat([my_dataset_2, my_dataset_pd.iloc[:, 1]], axis=1)
+    
+    # Check if the resulting DataFrame has 5 columns
     if my_dataset_3.shape[1] == 5:
-        new_columns_pa =  ['CaseID', 'Datetime', 'node', 'Parameters', 'Data']
+        # If it has 5 columns, assign new column names
+        new_columns_pa = ['CaseID', 'Datetime', 'node', 'Parameters', 'Data']
         my_dataset_3.columns = new_columns_pa
+    
+    # Return the resulting DataFrame
     return my_dataset_3
-
+    
 #_______________________________________________________________________________________________________________
 # Loading and cleasing the overrides as well as data
 #_______________________________________________________________________________________________________________
@@ -127,74 +154,70 @@ reserveOffer          = load_and_cleans(gams, 'reserveOffer')
 #(There are other parameters which are needed for the process of overriding like list of all nodes or all caseIDs
 #they are loaded, prepared and manipulated in this section)
 #_______________________________________________________________________________________________________________
-my_nodes = gams.get('n')
-list_of_all_nodes = list(my_nodes)
 
-my_time_period = gams.get('case2dt2tp')
-my_node_bus = gams.get('nodeBus')
-my_bus_island = gams.get('busIsland')
+case2dt2tp  = pd.DataFrame(gams.get('case2dt2tp'))
+case2dt     = case2dt2tp.iloc[:, :2]
+dt2tp       = case2dt2tp.iloc[:, 1:]    
+dt2tp.drop_duplicates(subset=dt2tp.columns[0], inplace = True)
 
-my_dataframe = gams.get("nodeParameter")
-my_override_rules = gams.get('demand_overrides')
-
-time_period = pd.DataFrame(my_time_period)
-node_bus = pd.DataFrame(my_node_bus)
-bus_island = pd.DataFrame(my_bus_island)
-time_period_caseid = time_period.iloc[:, :2]
-time_period = time_period.iloc[:, 1:]
-time_period.drop_duplicates(subset=time_period.columns[0], inplace = True)
-
+node_bus    = pd.DataFrame(gams.get('nodeBus'))
 node_bus.drop_duplicates(subset=node_bus.columns[2], inplace = True)
+node_bus    = node_bus.iloc[:,2:]
+node_bus.columns = ['node', 'bus']
+
+bus_island  = pd.DataFrame(gams.get('busIsland'))
 bus_island.drop_duplicates(subset=bus_island.columns[2], inplace = True)
-node_bus = node_bus.iloc[:,2:]
-bus_island = bus_island.iloc[:,2:]
-node_new_columns = ['node', 'bus']
-island_new_columns = ['bus', 'island']
-node_bus.columns = node_new_columns
-bus_island.columns = island_new_columns
+bus_island  = bus_island.iloc[:,2:]
+bus_island.columns = ['bus', 'island']
+
 node_island = node_bus.merge(bus_island, on ='bus', how='left')
 node_island.drop('bus', axis = 1, inplace = True)
 
+node_list   = list(gams.get('n'))
 
 #_______________________________________________________________________________________________________________
 # Sorting overrides except for demand
 #_______________________________________________________________________________________________________________
 
 def sort_parameter_ovr(override_dst):
+    # Check if the DataFrame override_dst is empty
     if override_dst.empty:
-       return override_dst
+        # If it is empty, return the original empty DataFrame
+        return override_dst
     else:
+        # Create a new column 'Time' based on conditions applied to the first column of override_dst
         override_dst['Time'] = override_dst.iloc[:,0].apply(
         lambda column: (
             4 if column == "All" else
             3 if str(column).startswith('TP') else
             1 if "-" not in column else
             2))
-        override_dst.sort_values(
-        by=['Time'],
-        ascending=[False],
-        inplace=True)
-        override_dst.drop(
-        columns=['Time'],
-        inplace=True)
+            
+        # Sort the DataFrame by the 'Time' column in descending order
+        override_dst.sort_values(by=['Time'], ascending=[False], inplace=True)
+        
+        # Drop the 'Time' column from the DataFrame
+        override_dst.drop(columns=['Time'], inplace=True)
+        
+        # Return the modified DataFrame
         return override_dst
 
 #_______________________________________________________________________________________________________________
 # Preparing information for each node, datetime and timeperiod
 #_______________________________________________________________________________________________________________
 
-def location_dict1(island):
+def get_island_nodes(island):
     loc_nod = {
         'NI' : node_island.iloc[:, 0][node_island.iloc[:,1] == 'NI'].tolist(),
         'SI' : node_island.iloc[:, 0][node_island.iloc[:,1] == 'SI'].tolist()
     }
     return loc_nod.get(island)
 
-def get_tp_times3(tp_code):
-    output_tp = time_period.iloc[:, 0][time_period.iloc[:, 1] == tp_code].tolist()
+def get_period_datetime(tp_code):
+    output_tp = dt2tp.iloc[:, 0][dt2tp.iloc[:, 1] == tp_code].tolist()
     return output_tp
 
-time_period_dict = dict(zip(time_period.iloc[:, 0], time_period.iloc[:, 1]))
+time_period_dict = dict(zip(dt2tp.iloc[:, 0], dt2tp.iloc[:, 1]))
 def tp_of_datetime(datetime):
     return time_period_dict.get(datetime, None)
 
@@ -273,23 +296,24 @@ class DataFrameSorter:
 # Demand override preparations
 #_______________________________________________________________________________________________________________
 
-dic_override = {
-'When' : ['All'],
-'Where': ['All'],
-'Load_Type' : ['All'],
-'How': ['scale'],
-'value' : ['1']
+no_demand_override = {
+    'When' : ['All'],
+    'Where': ['All'],
+    'Load_Type' : ['All'],
+    'How': ['scale'],
+    'value' : ['1']
 }
-override_rules1 = pd.DataFrame(my_override_rules)
-if override_rules1.empty:
-    dataset_rules3 = pd.DataFrame(dic_override)
+
+demand_overrides = pd.DataFrame(gams.get('demand_overrides'))
+if demand_overrides.empty:
+    dataset_rules3 = pd.DataFrame(no_demand_override)
 else:
-    dataset_rules_lst = list(override_rules1.iloc[:,0])
-    dataset_rules2 =  pd.DataFrame(dataset_rules_lst)
-    dataset_rules3 =  pd.concat([dataset_rules2,override_rules1.iloc[:,1]], axis=1)
+    dataset_rules1 = list(demand_overrides.iloc[:,0])
+    dataset_rules2 = pd.DataFrame(dataset_rules1)
+    dataset_rules3 = pd.concat([dataset_rules2,demand_overrides.iloc[:,1]], axis=1)
+    
 gdx2 = dataset_rules3.copy()
-gdx_new_name = [ 'When' ,   'Where' ,  'Load_Type'      ,  'How'  ,'value']
-gdx2.columns=gdx_new_name
+gdx2.columns = ['When', 'Where', 'Load_Type', 'How', 'value']
 gdx1 = DataFrameSorter(gdx2)
 gdx1.sort_dataframe()
 gdx = gdx1.sorted_dataframe
@@ -298,33 +322,31 @@ gdx = gdx1.sorted_dataframe
 # Demand data preparations
 #_______________________________________________________________________________________________________________
 
-dataset_p = pd.DataFrame(my_dataframe)
-dataset_p_lst = list(dataset_p.iloc[:,0])
+nodeparameter = gams.get("nodeParameter")
 
-dataset_p_2 =  pd.DataFrame(dataset_p_lst)
+dataset_p   = pd.DataFrame(nodeparameter)
+dataset_p_l = list(dataset_p.iloc[:,0])
+dataset_p_2 =  pd.DataFrame(dataset_p_l)
 dataset_p_3 =  pd.concat([dataset_p_2,dataset_p.iloc[:,1]], axis=1)
-new_columns =  ['CaseID', 'Datetime', 'node', 'Parameters', 'Data']
-dataset_p_3.columns = new_columns
+dataset_p_3.columns = ['CaseID', 'Datetime', 'node', 'Parameters', 'Data']
 dataset = dataset_p_3.copy()
 
-demand_data = dataset[dataset['Parameters'] == 'demand']
-loadNCL_data = dataset[dataset['Parameters'] == 'loadIsNCL']
-load_test_i = dataset[dataset['Parameters'] == 'loadIsNCL'].index.values
-load_test_i_2 = dataset.iloc[:, 0:3][dataset['Parameters'] == 'loadIsNCL']
-load_test_i_2_list = load_test_i_2.values.tolist()
-dataset_final = dataset[(dataset['CaseID'].isin(load_test_i_2['CaseID'])) & (dataset['Datetime'].isin(load_test_i_2['Datetime'])) & (dataset['node'].isin(load_test_i_2['node']))]
-dataset_final_demand = dataset_final[dataset_final['Parameters'] == 'demand']
-load_test_i_f = dataset_final_demand.index.values
+# Get non-conforming load flag for each demand nods
+ncl_nodes = dataset.iloc[:, 0:3][dataset['Parameters'] == 'loadIsNCL']
+demand_ncl = dataset[(dataset['CaseID'].isin(ncl_nodes['CaseID'])) & (dataset['Datetime'].isin(ncl_nodes['Datetime'])) & (dataset['node'].isin(ncl_nodes['node']))]
+demand_ncl = demand_ncl[demand_ncl['Parameters'] == 'demand']
+ncl_index  = demand_ncl.index.values
 second_last_col = len(dataset.columns) - 1
 dataset.insert(loc=second_last_col, column='loadNCL', value='non')
-dataset.loc[load_test_i_f, 'loadNCL'] = 1
-dataset.loc[~dataset.index.isin(load_test_i_f), 'loadNCL'] = 0
+dataset.loc[ncl_index, 'loadNCL'] = 1
+dataset.loc[~dataset.index.isin(ncl_index), 'loadNCL'] = 0
 
 demand_df1 = dataset.copy()
 demand = demand_df1
+
 set_of_nodes = dataset['node'].unique()
 for g in range(gdx.shape[0]):
-    if (len(gdx.iat[g,1]) == 7) and (gdx.iat[g,1] in list_of_all_nodes) and (gdx.iat[g,1] not in set_of_nodes):
+    if (len(gdx.iat[g,1]) == 7) and (gdx.iat[g,1] in node_list) and (gdx.iat[g,1] not in set_of_nodes):
         demand_node_refrence = demand_df1.iat[0,2]
         demand_added_node = demand_df1[(demand_df1['node'] == demand_node_refrence) ]
         demand_added_node['Data'][demand_added_node['Parameters'] == 'demand'] = 0
@@ -332,14 +354,15 @@ for g in range(gdx.shape[0]):
         demand = pd.concat([demand_df1, demand_added_node], axis = 0,  ignore_index=True)
     else:
         demand_added_node = pd.DataFrame()
+        
 demand_df = demand.copy()
 
-#_______________________________________________________________________________________________________________
+#_to be continued______________________________________________________________________________________________________________
 # filtering demand data and preparaton for applying override
 #_______________________________________________________________________________________________________________
 
 
-def filter_function_com_f(when_p, where_p, how_p, demand, get_tp_times3, location_dict1):
+def filter_function_com_f(when_p, where_p, how_p, demand, get_period_datetime, get_island_nodes):
     if len(where_p) == 7:
       demand = demand[demand['Parameters'] == 'demand']
     else:
@@ -348,9 +371,9 @@ def filter_function_com_f(when_p, where_p, how_p, demand, get_tp_times3, locatio
     if when_p == 'All':
         pass
     elif when_p.startswith('TP'):
-        tp_value =  get_tp_times3(when_p)
+        tp_value =  get_period_datetime(when_p)
         if tp_value is None:
-            raise ValueError(f'TP code "{when_p}" not found in get_tp_times3')
+            raise ValueError(f'TP code "{when_p}" not found in get_period_datetime')
         demand = demand[demand['Datetime'].isin(tp_value)]
     elif "-" in when_p:
         demand = demand[demand['Datetime'] == when_p]
@@ -363,9 +386,9 @@ def filter_function_com_f(when_p, where_p, how_p, demand, get_tp_times3, locatio
     if where_p == 'All':
         pass
     elif len(where_p) == 2:
-        location = location_dict1(where_p)
+        location = get_island_nodes(where_p)
         if location is None:
-            raise ValueError(f'Location code "{where_p}" not found in location_dict1')
+            raise ValueError(f'Location code "{where_p}" not found in get_island_nodes')
         demand = demand[demand['node'].isin(location)]
     else:
         demand = demand[demand['node'] == where_p]
@@ -451,7 +474,7 @@ def apply_overide(gdx, demand):
     if gdx.empty:
         return demand
     for i in range (gdx.shape[0]):
-        filter_info = tuple((gdx.iat[i, 0], gdx.iat[i, 1], gdx.iat[i, 2], demand, get_tp_times3,  location_dict1 ))
+        filter_info = tuple((gdx.iat[i, 0], gdx.iat[i, 1], gdx.iat[i, 2], demand, get_period_datetime,  get_island_nodes ))
         result = filter_function_com_f(*filter_info)
         if gdx.iat[i, 3].lower()  == 'scale':
             demand.iloc[result, :] = apply_scale(demand_df.iloc[result, :], gdx.iat[i, 1], gdx.iat[i, -1])
@@ -473,12 +496,12 @@ def apply_overide_parameters(parameter, rules):
     else:
         for index, row in rules.iterrows():
               parameter1 = parameter.copy()
-              time_origin = time_period_caseid.copy()
+              time_origin = case2dt.copy()
               constant = row.iloc[-1]
               if row.iloc[0] == 'All':
                 pass
               elif row.iloc[0].startswith('TP'):
-                tp_value_fourcolumns =  get_tp_times3(row.iloc[0])
+                tp_value_fourcolumns =  get_period_datetime(row.iloc[0])
                 parameter1 = parameter1[parameter1.iloc[:, 1].isin(tp_value_fourcolumns)]
                 time_origin = time_origin[time_origin.iloc[:, 1].isin(tp_value_fourcolumns)]
               elif "-" in row.iloc[0]:
