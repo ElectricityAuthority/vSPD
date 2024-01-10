@@ -332,7 +332,7 @@ dataset_p_3.columns = ['CaseID', 'Datetime', 'node', 'Parameters', 'Data']
 dataset = dataset_p_3.copy()
 
 # Get non-conforming load flag for each demand nods
-ncl_nodes = dataset.iloc[:, 0:3][dataset['Parameters'] == 'loadIsNCL']
+ncl_nodes  = dataset.iloc[:, 0:3][dataset['Parameters'] == 'loadIsNCL']
 demand_ncl = dataset[(dataset['CaseID'].isin(ncl_nodes['CaseID'])) & (dataset['Datetime'].isin(ncl_nodes['Datetime'])) & (dataset['node'].isin(ncl_nodes['node']))]
 demand_ncl = demand_ncl[demand_ncl['Parameters'] == 'demand']
 ncl_index  = demand_ncl.index.values
@@ -357,17 +357,15 @@ for g in range(gdx.shape[0]):
         
 demand_df = demand.copy()
 
-#_to be continued______________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________
 # filtering demand data and preparaton for applying override
 #_______________________________________________________________________________________________________________
 
 
-def filter_function_com_f(when_p, where_p, how_p, demand, get_period_datetime, get_island_nodes):
-    if len(where_p) == 7:
-      demand = demand[demand['Parameters'] == 'demand']
-    else:
-       demand = demand[demand['Parameters'] == 'demand']
-       #demand = demand[demand['Data'] > 0]
+def filtering_demand_data(when_p, where_p, how_p, demand, get_period_datetime, get_island_nodes):
+    
+    demand = demand[demand['Parameters'] == 'demand']
+           
     if when_p == 'All':
         pass
     elif when_p.startswith('TP'):
@@ -379,7 +377,6 @@ def filter_function_com_f(when_p, where_p, how_p, demand, get_period_datetime, g
         demand = demand[demand['Datetime'] == when_p]
     else:
         demand = demand[demand['CaseID'] == when_p]
-
 
 
     # Filter demand based on the specified where_p condition
@@ -411,7 +408,7 @@ def filter_function_com_f(when_p, where_p, how_p, demand, get_period_datetime, g
 # Applying 'value' to demand data
 #_______________________________________________________________________________________________________________
 
-def apply_value2(demand,where,constant_value):
+def apply_value(demand,where,constant_value):
     if len(where) == 7:
         demand['Data'] = float(constant_value)
     else:
@@ -434,7 +431,7 @@ def apply_value2(demand,where,constant_value):
 # Applying 'Increment' to demand data
 #_______________________________________________________________________________________________________________
 
-def apply_increment6(demand, where ,increment_value):
+def apply_increment(demand, where ,increment_value):
     if len(where) == 7:
         demand['Data'] += float(increment_value)
     else:
@@ -470,62 +467,68 @@ def apply_scale(demand, where, scale_value):
 # Applying overrides to demand data
 #_______________________________________________________________________________________________________________
 
-def apply_overide(gdx, demand):
+def apply_demand_overides(gdx, demand):
     if gdx.empty:
         return demand
     for i in range (gdx.shape[0]):
         filter_info = tuple((gdx.iat[i, 0], gdx.iat[i, 1], gdx.iat[i, 2], demand, get_period_datetime,  get_island_nodes ))
-        result = filter_function_com_f(*filter_info)
-        if gdx.iat[i, 3].lower()  == 'scale':
+        result = filtering_demand_data(*filter_info)
+        if gdx.iat[i, 3].lower()   == 'scale':
             demand.iloc[result, :] = apply_scale(demand_df.iloc[result, :], gdx.iat[i, 1], gdx.iat[i, -1])
             result = []
-        elif gdx.iat[i, 3].lower()  == 'value':
-            demand.iloc[result, :] =  apply_value2(demand_df.iloc[result, :],gdx.iat[i, 1] ,gdx.iat[i, -1])
+        elif gdx.iat[i, 3].lower() == 'value':
+            demand.iloc[result, :] =  apply_value(demand_df.iloc[result, :],gdx.iat[i, 1] ,gdx.iat[i, -1])
             result = []
-        elif gdx.iat[i, 3].lower()  == 'increment':
-            demand.iloc[result, :] =  apply_increment6(demand_df.iloc[result, :], gdx.iat[i, 1] ,gdx.iat[i, -1])
+        elif gdx.iat[i, 3].lower() == 'increment':
+            demand.iloc[result, :] =  apply_increment(demand_df.iloc[result, :], gdx.iat[i, 1] ,gdx.iat[i, -1])
 
     return demand
+    
 #_______________________________________________________________________________________________________________
 # Applying overrides to other parameters
 #_______________________________________________________________________________________________________________
 
-def apply_overide_parameters(parameter, rules):
+def apply_parameter_overides(parameter, rules):
     if rules.empty:
        return parameter
     else:
         for index, row in rules.iterrows():
-              parameter1 = parameter.copy()
-              time_origin = case2dt.copy()
-              constant = row.iloc[-1]
-              if row.iloc[0] == 'All':
+            parameter1 = parameter.copy()
+            time_origin = case2dt.copy()
+            constant = row.iloc[-1]
+            
+            if row.iloc[0] == 'All':
                 pass
-              elif row.iloc[0].startswith('TP'):
+            elif row.iloc[0].startswith('TP'):
                 tp_value_fourcolumns =  get_period_datetime(row.iloc[0])
                 parameter1 = parameter1[parameter1.iloc[:, 1].isin(tp_value_fourcolumns)]
                 time_origin = time_origin[time_origin.iloc[:, 1].isin(tp_value_fourcolumns)]
-              elif "-" in row.iloc[0]:
+            elif "-" in row.iloc[0]:
                 parameter1 = parameter1[parameter1.iloc[:, 1] == row.iloc[0]]
                 time_origin = time_origin[time_origin.iloc[:, 1] == row.iloc[0]]
-              else:
+            else:
                 parameter1 = parameter1[parameter1.iloc[:, 0] == row.iloc[0]]
                 time_origin = time_origin[time_origin.iloc[:, 0] == row.iloc[0]]
-              for i in range(2,(parameter1.shape[1])):
-                  col_name_origin = '{}'.format(i)
-                  time_origin.insert(loc=i, column=col_name_origin, value='0')
-              if rules.shape[1] == 4:
+                
+            for i in range(2,(parameter1.shape[1])):
+                col_name_origin = '{}'.format(i)
+                time_origin.insert(loc=i, column=col_name_origin, value='0')
+                
+            if rules.shape[1] == 4:
                 parameter1 = parameter1[parameter1.iloc[:, 2] == row.iloc[1]]
                 parameter1 = parameter1[parameter1.iloc[:, 3] == row.iloc[2]]
                 time_origin.iloc[:, 2] = row.iloc[1]
                 time_origin.iloc[:, 3] = row.iloc[2]
-              if rules.shape[1] == 5:
+                
+            if rules.shape[1] == 5:
                 parameter1 = parameter1[parameter1.iloc[:, 2] == row.iloc[1]]
                 parameter1 = parameter1[parameter1.iloc[:, 3] == row.iloc[3]]
                 parameter1 = parameter1[parameter1.iloc[:, 4] == row.iloc[2]]
                 time_origin.iloc[:, 2] = row.iloc[1]
                 time_origin.iloc[:, 3] = row.iloc[3]
                 time_origin.iloc[:, 4] = row.iloc[2]
-              if rules.shape[1] == 6:
+            
+            if rules.shape[1] == 6:
                 parameter1 = parameter1[parameter1.iloc[:, 2] == row.iloc[1]]
                 parameter1 = parameter1[parameter1.iloc[:, 3] == row.iloc[2]]
                 parameter1 = parameter1[parameter1.iloc[:, 4] == row.iloc[3]]
@@ -534,7 +537,8 @@ def apply_overide_parameters(parameter, rules):
                 time_origin.iloc[:, 3] = row.iloc[2]
                 time_origin.iloc[:, 4] = row.iloc[3]
                 time_origin.iloc[:, 5] = row.iloc[4]
-              if rules.shape[1] == 7:
+            
+            if rules.shape[1] == 7:
                 parameter1 = parameter1[parameter1.iloc[:, 2] == row.iloc[1]]
                 parameter1 = parameter1[parameter1.iloc[:, 3] == row.iloc[2]]
                 parameter1 = parameter1[parameter1.iloc[:, 4] == row.iloc[3]]
@@ -545,59 +549,62 @@ def apply_overide_parameters(parameter, rules):
                 time_origin.iloc[:, 4] = row.iloc[3]
                 time_origin.iloc[:, 5] = row.iloc[5]
                 time_origin.iloc[:, 6] = row.iloc[4]
-              index_parameter = parameter1.index.tolist()
-              if (parameter1.shape[0] <= time_origin.shape[0]):
-                 parameter_appand = time_origin.copy()
-                 parameter_appand.iloc[:, -1] = constant
-                 parameter.drop(index = index_parameter, inplace = True)
-                 parameter_appand.columns = parameter.columns
-                 parameter = pd.concat([parameter, parameter_appand ], ignore_index=True )
-              else:
-                 parameter.iloc[index_parameter, -1] = constant
-        return parameter
+                
+            index_parameter = parameter1.index.tolist()
+            if (parameter1.shape[0] <= time_origin.shape[0]):
+                parameter_appand = time_origin.copy()
+                parameter_appand.iloc[:, -1] = constant
+                parameter.drop(index = index_parameter, inplace = True)
+                parameter_appand.columns = parameter.columns
+                parameter = pd.concat([parameter, parameter_appand ], ignore_index=True )
+            else:
+                parameter.iloc[index_parameter, -1] = constant
+                 
+    return parameter
+    
 #_______________________________________________________________________________________________________________
 # Triggers to apply overrides
 #_______________________________________________________________________________________________________________
 
-CstrEnrgFct_ovrd = marketnodecnstrfactoroverrides_dst[(marketnodecnstrfactoroverrides_dst.iloc[:,3] == 'NA') & (marketnodecnstrfactoroverrides_dst.iloc[:,4] == 'NA')]
+CstrEnrgFct_ovrd    = marketnodecnstrfactoroverrides_dst[(marketnodecnstrfactoroverrides_dst.iloc[:,3] == 'NA') & (marketnodecnstrfactoroverrides_dst.iloc[:,4] == 'NA')]
 CstrReserveFct_ovrd = marketnodecnstrfactoroverrides_dst[(marketnodecnstrfactoroverrides_dst.iloc[:,3] != 'NA') & (marketnodecnstrfactoroverrides_dst.iloc[:,4] != 'NA')]
-columns_to_remove = CstrEnrgFct_ovrd.iloc[:,3:5].columns.ravel()
-CstrEnrgFct_ovrd_F = CstrEnrgFct_ovrd.drop(columns_to_remove,axis=1)
+columns_to_remove   = CstrEnrgFct_ovrd.iloc[:,3:5].columns.ravel()
+CstrEnrgFct_ovrd    = CstrEnrgFct_ovrd.drop(columns_to_remove,axis=1)
 
-mncnstrEnrgFactor_overided = apply_overide_parameters(MncnstrEnrgFactor,sort_parameter_ovr(CstrEnrgFct_ovrd_F))
-mncnstrResrvFactor_overided =  apply_overide_parameters(MncnstrResrvFactor,sort_parameter_ovr(CstrReserveFct_ovrd))
-mncnstrRHS_overided = apply_overide_parameters(mncnstrRHS,sort_parameter_ovr(marketnodeconstraintoverrides_dst))
-datetimeBranchConstraintFactors_overided = apply_overide_parameters(datetimeBranchConstraintFactors,sort_parameter_ovr(branchcnstrfactoroverrides_dst))
-datetimeBranchConstraintRHS_overided = apply_overide_parameters(datetimeBranchConstraintRHS,sort_parameter_ovr(branchconstraintoverrides_dst))
-datetimeOfferParameter_overided = apply_overide_parameters(datetimeOfferParameter,sort_parameter_ovr(offerparameteroverrides_dst))
-datetimeBranchParameter_overided = apply_overide_parameters(datetimeBranchParameter,sort_parameter_ovr(branchparameteroverrides_dst))
-datetimeBidParameter_overided = apply_overide_parameters(datetimeBidParameter,sort_parameter_ovr(bidparameteroverrides_dst))
-datetimeEnergyBid_overided = apply_overide_parameters(datetimeEnergyBid,sort_parameter_ovr(energybidoverrides_dst))
-datetimeEnergyOffer_overided = apply_overide_parameters(datetimeEnergyOffer,sort_parameter_ovr(energyofferoverrides_dst))
-datetimeReserveOffer_overided = apply_overide_parameters(datetimeReserveOffer,sort_parameter_ovr(reserveofferoverrides_dst))
-demand_overided = apply_overide(gdx, demand)
-
+mncnstrEnrgFactor_ovrd   = apply_parameter_overides(MncnstrEnrgFactor,sort_parameter_ovr(CstrEnrgFct_ovrd))
+mncnstrResrvFactor_ovrd  = apply_parameter_overides(MncnstrResrvFactor,sort_parameter_ovr(CstrReserveFct_ovrd))
+mncnstrRHS_ovrd          = apply_parameter_overides(mncnstrRHS,sort_parameter_ovr(marketnodeconstraintoverrides_dst))
+BrConstraintFactors_ovrd = apply_parameter_overides(datetimeBranchConstraintFactors,sort_parameter_ovr(branchcnstrfactoroverrides_dst))
+BrConstraintRHS_ovrd     = apply_parameter_overides(datetimeBranchConstraintRHS,sort_parameter_ovr(branchconstraintoverrides_dst))
+offerParameter_ovrd      = apply_parameter_overides(datetimeOfferParameter,sort_parameter_ovr(offerparameteroverrides_dst))
+branchParameter_ovrd     = apply_parameter_overides(datetimeBranchParameter,sort_parameter_ovr(branchparameteroverrides_dst))
+bidParameter_ovrd        = apply_parameter_overides(datetimeBidParameter,sort_parameter_ovr(bidparameteroverrides_dst))
+energyBid_ovrd           = apply_parameter_overides(datetimeEnergyBid,sort_parameter_ovr(energybidoverrides_dst))
+energyOffer_ovrd         = apply_parameter_overides(datetimeEnergyOffer,sort_parameter_ovr(energyofferoverrides_dst))
+reserveOffer_ovrd        = apply_parameter_overides(datetimeReserveOffer,sort_parameter_ovr(reserveofferoverrides_dst))
+demand_ovrd              = apply_demand_overides(gdx, demand)
+demand_ovrd.drop(['loadNCL'], axis=1, inplace = True)
 #_______________________________________________________________________________________________________________
 # Preparation of all parameter to upload to GAMS
 #_______________________________________________________________________________________________________________
 
-mncnstrResrvFactor_overided.name = 'mncnstrResrvFactor_overided'
-mncnstrEnrgFactor_overided.name = 'mncnstrEnrgFactor_overided'
-mncnstrRHS_overided.name = 'mncnstrRHS_overided'
-datetimeBranchConstraintFactors_overided.name = 'datetimeBranchConstraintFactors_overided'
-datetimeBranchConstraintRHS_overided.name = 'datetimeBranchConstraintRHS_overided'
-datetimeOfferParameter_overided.name = 'datetimeOfferParameter_overided'
-datetimeBranchParameter_overided.name = 'datetimeBranchParameter_overided'
-datetimeBidParameter_overided.name = 'datetimeBidParameter_overided'
-datetimeEnergyBid_overided.name = 'datetimeEnergyBid_overided'
-datetimeEnergyOffer_overided.name = 'datetimeEnergyOffer_overided'
-datetimeReserveOffer_overided.name = 'datetimeReserveOffer_overided'
-demand_overided.name = 'demand_overided'
-demand_overided.drop(['loadNCL'], axis=1, inplace = True)
+mncnstrResrvFactor_ovrd.name  = 'mnCnstrResrvFactors'
+mncnstrEnrgFactor_ovrd.name   = 'mnCstrEnrgFactors' 
+mncnstrRHS_ovrd.name          = 'mnCnstrRHS' 
+BrConstraintFactors_ovrd.name = 'branchCstrFactors'  
+BrConstraintRHS_ovrd.name     = 'branchCstrRHS' 
+offerParameter_ovrd.name      = 'offerParameter'
+branchParameter_ovrd.name     = 'branchParameter'
+bidParameter_ovrd.name        = 'bidParameter'
+energyBid_ovrd.name           = 'energyBid'
+energyOffer_ovrd.name         = 'energyOffer'
+reserveOffer_ovrd.name        = 'reserveOffer'
+demand_ovrd.name              = ''nodeParameter''
 
-gams_parameters_list = [ mncnstrRHS_overided, datetimeBranchConstraintFactors_overided,datetimeBranchConstraintRHS_overided,datetimeOfferParameter_overided,
-  datetimeBranchParameter_overided,datetimeBidParameter_overided, datetimeEnergyBid_overided, datetimeEnergyOffer_overided, demand_overided, datetimeReserveOffer_overided, mncnstrEnrgFactor_overided, mncnstrResrvFactor_overided]
-#506
+
+gams_parameters_list = [ mncnstrRHS_ovrd, BrConstraintFactors_ovrd,BrConstraintRHS_ovrd,offerParameter_ovrd,branchParameter_ovrd,
+bidParameter_ovrd, energyBid_ovrd, energyOffer_ovrd, demand_ovrd, reserveOffer_ovrd, mncnstrEnrgFactor_ovrd, mncnstrResrvFactor_ovrd]
+
 for item in gams_parameters_list:
     gams_param = {}
     for index, row in item.iterrows():
@@ -616,7 +623,7 @@ for item in gams_parameters_list:
         gams_param.setdefault(str(item.name), []).append((key_tuple, value_tuple))
     gams.set(str(item.name), gams_param[str(item.name)])
     
-$offEmbeddedCode demand_overided datetimeReserveOffer_overided datetimeEnergyOffer_overided energyBid_overided  mncnstrRHS_overided datetimeBranchConstraintFactors_overided branchCstrRHS_overided offerParameter_overided branchParameter_overided bidParameter_overided mncnstrEnrgFactor_overided mncnstrResrvFactor_overided
+$offEmbeddedCode nodeParameter reserveOffer energyOffer energyBid mnCnstrRHS branchCstrFactors branchCstrRHS offerParameter branchParameter bidParameter mnCstrEnrgFactors mnCnstrResrvFactors
 
 
 * End of file
