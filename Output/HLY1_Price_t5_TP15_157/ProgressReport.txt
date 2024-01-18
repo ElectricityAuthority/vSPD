@@ -1,0 +1,47 @@
+Run: 'HLY1_Price_t5_TP15_157'
+
+runvSPD started at: 01/12/24 11:23:38
+vSPDsetup started at: 01/12/24 11:23:38
+vSPDreportSetup started at: 01/12/24 11:23:39
+
+Case "Pricing_20240108" started at: 01/12/24 11:23:39
+The caseID: 71012024011800806 (08-JAN-2024 07:00) is 1st solved successfully.
+Objective function value: 648419.9068
+Violations cost         : 0.3004
+The caseID: 71012024011805812 (08-JAN-2024 07:05) is 1st solved successfully.
+Objective function value: 630182.1655
+Violations cost         : 0.1880
+The caseID: 71012024011810814 (08-JAN-2024 07:10) is 1st solved successfully.
+Objective function value: 622547.3288
+Violations cost         : 0.1730
+The caseID: 71012024011815816 (08-JAN-2024 07:15) is 1st solved successfully.
+Objective function value: 613169.5067
+Violations cost         : 0.2142
+The caseID: 71012024011820818 (08-JAN-2024 07:20) is 1st solved successfully.
+Objective function value: 602545.3080
+Violations cost         : 0.2280
+The caseID: 71012024011825819 (08-JAN-2024 07:25) is 1st solved successfully.
+Objective function value: 601827.3957
+Violations cost         : 0.2409
+The caseID: 71012024011830820 (08-JAN-2024 07:30) is 1st solved successfully.
+Objective function value: 629958.8104
+Violations cost         : 0.3069
+The caseID: 71012024011835824 (08-JAN-2024 07:35) is 1st solved successfully.
+Objective function value: 628833.5230
+Violations cost         : 0.1966
+The caseID: 71012024011840825 (08-JAN-2024 07:40) is 1st solved successfully.
+Objective function value: 623676.8409
+Violations cost         : 0.1761
+The caseID: 71012024011845827 (08-JAN-2024 07:45) is 1st solved successfully.
+Objective function value: 606344.3919
+Violations cost         : 0.2081
+The caseID: 71012024011850828 (08-JAN-2024 07:50) is 1st solved successfully.
+Objective function value: 603010.4002
+Violations cost         : 0.1903
+The caseID: 71012024011855829 (08-JAN-2024 07:55) is 1st solved successfully.
+Objective function value: 596112.5385
+Violations cost         : 0.1962
+Case: Pricing_20240108 is complete in  26.8910(secs)
+Case: Pricing_20240108 is finished in  43.0350(secs)
+
+Total execute time:        43.81(secs)

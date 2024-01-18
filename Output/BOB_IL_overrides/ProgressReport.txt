@@ -1,0 +1,869 @@
+Run: 'BOB_IL_overrides'
+
+runvSPD started at: 01/12/24 12:26:39
+vSPDsetup started at: 01/12/24 12:26:39
+vSPDreportSetup started at: 01/12/24 12:26:40
+
+Case "Pricing_20240108" started at: 01/12/24 12:26:40
+The caseID: 71012024011100667 (08-JAN-2024 00:00) is 1st solved successfully.
+Objective function value: 652075.7690
+Violations cost         : 0.3079
+The caseID: 71012024011105670 (08-JAN-2024 00:05) is 1st solved successfully.
+Objective function value: 657711.5976
+Violations cost         : 0.1385
+The caseID: 71012024011110671 (08-JAN-2024 00:10) is 1st solved successfully.
+Objective function value: 659129.8389
+Violations cost         : 0.1334
+The caseID: 71012024011115674 (08-JAN-2024 00:15) is 1st solved successfully.
+Objective function value: 660283.1726
+Violations cost         : 0.1328
+The caseID: 71012024011120675 (08-JAN-2024 00:20) is 1st solved successfully.
+Objective function value: 663371.1837
+Violations cost         : 0.1580
+The caseID: 71012024011125676 (08-JAN-2024 00:25) is 1st solved successfully.
+Objective function value: 668729.4294
+Violations cost         : 0.1660
+The caseID: 71012024011130678 (08-JAN-2024 00:30) is 1st solved successfully.
+Objective function value: 638554.9392
+Violations cost         : 0.2763
+The caseID: 71012024011135681 (08-JAN-2024 00:35) is 1st solved successfully.
+Objective function value: 644139.5718
+Violations cost         : 0.1811
+The caseID: 71012024011140683 (08-JAN-2024 00:40) is 1st solved successfully.
+Objective function value: 646063.0201
+Violations cost         : 0.1677
+The caseID: 71012024011145684 (08-JAN-2024 00:45) is 1st solved successfully.
+Objective function value: 649604.2384
+Violations cost         : 0.1687
+The caseID: 71012024011150685 (08-JAN-2024 00:50) is 1st solved successfully.
+Objective function value: 648552.8606
+Violations cost         : 0.1670
+The caseID: 71012024011155686 (08-JAN-2024 00:55) is 1st solved successfully.
+Objective function value: 653518.8698
+Violations cost         : 0.1789
+The caseID: 71302024011130680 (08-JAN-2024 01:00) is 1st solved successfully.
+Objective function value: 577543783.0751
+Violations cost         : 0.0000
+The caseID: 71012024011200687 (08-JAN-2024 01:00) is 1st solved successfully.
+Objective function value: 641112.4907
+Violations cost         : 0.2254
+The caseID: 71012024011205691 (08-JAN-2024 01:05) is 1st solved successfully.
+Objective function value: 637718.7037
+Violations cost         : 0.1760
+The caseID: 71012024011210692 (08-JAN-2024 01:10) is 1st solved successfully.
+Objective function value: 639003.1508
+Violations cost         : 0.1854
+The caseID: 71012024011220694 (08-JAN-2024 01:20) is 1st solved successfully.
+Objective function value: 646252.3633
+Violations cost         : 0.1972
+The caseID: 71012024011225696 (08-JAN-2024 01:25) is 1st solved successfully.
+Objective function value: 650873.4022
+Violations cost         : 0.1967
+The caseID: 71012024011230698 (08-JAN-2024 01:30) is 1st solved successfully.
+Objective function value: 647554.5059
+Violations cost         : 0.1990
+The caseID: 71012024011235703 (08-JAN-2024 01:35) is 1st solved successfully.
+Objective function value: 650543.4761
+Violations cost         : 0.2022
+The caseID: 71012024011240704 (08-JAN-2024 01:40) is 1st solved successfully.
+Objective function value: 649029.1195
+Violations cost         : 0.2005
+The caseID: 71012024011245705 (08-JAN-2024 01:45) is 1st solved successfully.
+Objective function value: 650914.2943
+Violations cost         : 0.1987
+The caseID: 71012024011250707 (08-JAN-2024 01:50) is 1st solved successfully.
+Objective function value: 648427.7592
+Violations cost         : 0.1996
+The caseID: 71012024011255708 (08-JAN-2024 01:55) is 1st solved successfully.
+Objective function value: 650102.4919
+Violations cost         : 0.1971
+The caseID: 71012024011300710 (08-JAN-2024 02:00) is 1st solved successfully.
+Objective function value: -3878131.1336
+Violations cost         : 4524833.5500
+The caseID: 71012024011305714 (08-JAN-2024 02:05) is 1st solved successfully.
+Objective function value: 648432.7809
+Violations cost         : 0.1958
+The caseID: 71012024011310717 (08-JAN-2024 02:10) is 1st solved successfully.
+Objective function value: 647611.5614
+Violations cost         : 0.1909
+The caseID: 71012024011315720 (08-JAN-2024 02:15) is 1st solved successfully.
+Objective function value: 645674.4186
+Violations cost         : 0.1995
+The caseID: 71012024011320722 (08-JAN-2024 02:20) is 1st solved successfully.
+Objective function value: 652821.8897
+Violations cost         : 0.2067
+The caseID: 71012024011325724 (08-JAN-2024 02:25) is 1st solved successfully.
+Objective function value: 650454.0437
+Violations cost         : 0.1970
+The caseID: 71012024011330725 (08-JAN-2024 02:30) is 1st solved successfully.
+Objective function value: 645343.9192
+Violations cost         : 0.2199
+The caseID: 71012024011335729 (08-JAN-2024 02:35) is 1st solved successfully.
+Objective function value: 643836.5484
+Violations cost         : 0.2020
+The caseID: 71012024011340731 (08-JAN-2024 02:40) is 1st solved successfully.
+Objective function value: 649229.4487
+Violations cost         : 0.2068
+The caseID: 71012024011345732 (08-JAN-2024 02:45) is 1st solved successfully.
+Objective function value: 647739.1090
+Violations cost         : 0.2000
+The caseID: 71012024011350733 (08-JAN-2024 02:50) is 1st solved successfully.
+Objective function value: 651026.1215
+Violations cost         : 0.2037
+The caseID: 71012024011355734 (08-JAN-2024 02:55) is 1st solved successfully.
+Objective function value: 650527.5102
+Violations cost         : 0.1868
+The caseID: 71012024011400735 (08-JAN-2024 03:00) is 1st solved successfully.
+Objective function value: 646855.7342
+Violations cost         : 0.1895
+The caseID: 71012024011405738 (08-JAN-2024 03:05) is 1st solved successfully.
+Objective function value: 648037.0746
+Violations cost         : 0.1759
+The caseID: 71012024011410739 (08-JAN-2024 03:10) is 1st solved successfully.
+Objective function value: 645911.0747
+Violations cost         : 0.1812
+The caseID: 71012024011415740 (08-JAN-2024 03:15) is 1st solved successfully.
+Objective function value: 647937.3611
+Violations cost         : 0.1778
+The caseID: 71012024011420741 (08-JAN-2024 03:20) is 1st solved successfully.
+Objective function value: 649429.9119
+Violations cost         : 0.1769
+The caseID: 71012024011425742 (08-JAN-2024 03:25) is 1st solved successfully.
+Objective function value: 649284.4514
+Violations cost         : 0.1737
+The caseID: 71012024011430743 (08-JAN-2024 03:30) is 1st solved successfully.
+Objective function value: 649387.9429
+Violations cost         : 0.2822
+The caseID: 71012024011435746 (08-JAN-2024 03:35) is 1st solved successfully.
+Objective function value: 654189.7375
+Violations cost         : 0.2414
+The caseID: 71012024011440747 (08-JAN-2024 03:40) is 1st solved successfully.
+Objective function value: 656192.4590
+Violations cost         : 0.1752
+The caseID: 71012024011445748 (08-JAN-2024 03:45) is 1st solved successfully.
+Objective function value: 655836.8766
+Violations cost         : 0.1699
+The caseID: 71012024011450750 (08-JAN-2024 03:50) is 1st solved successfully.
+Objective function value: 654700.6474
+Violations cost         : 0.1777
+The caseID: 71012024011455751 (08-JAN-2024 03:55) is 1st solved successfully.
+Objective function value: 655462.4259
+Violations cost         : 0.1791
+The caseID: 71012024011500752 (08-JAN-2024 04:00) is 1st solved successfully.
+Objective function value: 639531.0830
+Violations cost         : 0.2105
+The caseID: 71012024011505755 (08-JAN-2024 04:05) is 1st solved successfully.
+Objective function value: 637646.4204
+Violations cost         : 0.2109
+The caseID: 71012024011510758 (08-JAN-2024 04:10) is 1st solved successfully.
+Objective function value: 649011.5189
+Violations cost         : 0.1983
+The caseID: 71012024011515761 (08-JAN-2024 04:15) is 1st solved successfully.
+Objective function value: 644156.1617
+Violations cost         : 0.1891
+The caseID: 71012024011520762 (08-JAN-2024 04:20) is 1st solved successfully.
+Objective function value: 643855.7562
+Violations cost         : 0.1833
+The caseID: 71012024011525763 (08-JAN-2024 04:25) is 1st solved successfully.
+Objective function value: 643650.2176
+Violations cost         : 0.1764
+The caseID: 71012024011530764 (08-JAN-2024 04:30) is 1st solved successfully.
+Objective function value: 654329.8211
+Violations cost         : 0.2144
+The caseID: 71012024011535767 (08-JAN-2024 04:35) is 1st solved successfully.
+Objective function value: 652933.4612
+Violations cost         : 0.1941
+The caseID: 71012024011540768 (08-JAN-2024 04:40) is 1st solved successfully.
+Objective function value: 650997.1045
+Violations cost         : 0.1967
+The caseID: 71012024011545769 (08-JAN-2024 04:45) is 1st solved successfully.
+Objective function value: 648504.5745
+Violations cost         : 0.2000
+The caseID: 71012024011550770 (08-JAN-2024 04:50) is 1st solved successfully.
+Objective function value: 639318.1955
+Violations cost         : 0.1962
+The caseID: 71012024011555771 (08-JAN-2024 04:55) is 1st solved successfully.
+Objective function value: 637089.9989
+Violations cost         : 0.1939
+The caseID: 71012024011600772 (08-JAN-2024 05:00) is 1st solved successfully.
+Objective function value: 657998.7295
+Violations cost         : 0.2267
+The caseID: 71012024011605775 (08-JAN-2024 05:05) is 1st solved successfully.
+Objective function value: 649861.8267
+Violations cost         : 0.1653
+The caseID: 71012024011610776 (08-JAN-2024 05:10) is 1st solved successfully.
+Objective function value: 641285.3618
+Violations cost         : 0.1726
+The caseID: 71012024011615777 (08-JAN-2024 05:15) is 1st solved successfully.
+Objective function value: 636002.6022
+Violations cost         : 0.1711
+The caseID: 71012024011620778 (08-JAN-2024 05:20) is 1st solved successfully.
+Objective function value: 629806.3496
+Violations cost         : 0.1769
+The caseID: 71012024011625779 (08-JAN-2024 05:25) is 1st solved successfully.
+Objective function value: 626904.8091
+Violations cost         : 0.1693
+The caseID: 71012024011630780 (08-JAN-2024 05:30) is 1st solved successfully.
+Objective function value: 656469.8429
+Violations cost         : 0.1977
+The caseID: 71012024011635783 (08-JAN-2024 05:35) is 1st solved successfully.
+Objective function value: 652948.0734
+Violations cost         : 0.1541
+The caseID: 71012024011640784 (08-JAN-2024 05:40) is 1st solved successfully.
+Objective function value: 648109.2204
+Violations cost         : 0.1593
+The caseID: 71012024011645785 (08-JAN-2024 05:45) is 1st solved successfully.
+Objective function value: 642958.4940
+Violations cost         : 0.1591
+The caseID: 71012024011650786 (08-JAN-2024 05:50) is 1st solved successfully.
+Objective function value: 633047.0487
+Violations cost         : 0.1621
+The caseID: 71012024011655787 (08-JAN-2024 05:55) is 1st solved successfully.
+Objective function value: 623991.7391
+Violations cost         : 0.1385
+The caseID: 71012024011700788 (08-JAN-2024 06:00) is 1st solved successfully.
+Objective function value: 663672.8963
+Violations cost         : 0.2167
+The caseID: 71012024011705791 (08-JAN-2024 06:05) is 1st solved successfully.
+Objective function value: 652050.2245
+Violations cost         : 0.1419
+The caseID: 71012024011710792 (08-JAN-2024 06:10) is 1st solved successfully.
+Objective function value: 637234.8587
+Violations cost         : 0.1632
+The caseID: 71012024011715795 (08-JAN-2024 06:15) is 1st solved successfully.
+Objective function value: 627500.5708
+Violations cost         : 0.1590
+The caseID: 71012024011720796 (08-JAN-2024 06:20) is 1st solved successfully.
+Objective function value: 620565.5778
+Violations cost         : 0.1487
+The caseID: 71012024011725797 (08-JAN-2024 06:25) is 1st solved successfully.
+Objective function value: 609507.0165
+Violations cost         : 0.1490
+The caseID: 71012024011730798 (08-JAN-2024 06:30) is 1st solved successfully.
+Objective function value: 654096.2467
+Violations cost         : 0.2288
+The caseID: 71012024011735801 (08-JAN-2024 06:35) is 1st solved successfully.
+Objective function value: 649198.1466
+Violations cost         : 0.1923
+The caseID: 71012024011740802 (08-JAN-2024 06:40) is 1st solved successfully.
+Objective function value: 648890.9067
+Violations cost         : 0.1894
+The caseID: 71012024011745803 (08-JAN-2024 06:45) is 1st solved successfully.
+Objective function value: 642409.3615
+Violations cost         : 0.1716
+The caseID: 71012024011750804 (08-JAN-2024 06:50) is 1st solved successfully.
+Objective function value: 632869.3518
+Violations cost         : 0.1730
+The caseID: 71012024011755805 (08-JAN-2024 06:55) is 1st solved successfully.
+Objective function value: 624139.0235
+Violations cost         : 0.1713
+The caseID: 71012024011800806 (08-JAN-2024 07:00) is 1st solved successfully.
+Objective function value: 648422.6325
+Violations cost         : 0.3004
+The caseID: 71012024011805812 (08-JAN-2024 07:05) is 1st solved successfully.
+Objective function value: 629893.5442
+Violations cost         : 0.1782
+The caseID: 71012024011810814 (08-JAN-2024 07:10) is 1st solved successfully.
+Objective function value: 621787.9942
+Violations cost         : 0.1709
+The caseID: 71012024011815816 (08-JAN-2024 07:15) is 1st solved successfully.
+Objective function value: 611519.6299
+Violations cost         : 0.2107
+The caseID: 71012024011820818 (08-JAN-2024 07:20) is 1st solved successfully.
+Objective function value: 600667.6925
+Violations cost         : 0.2266
+The caseID: 71012024011825819 (08-JAN-2024 07:25) is 1st solved successfully.
+Objective function value: 599934.9365
+Violations cost         : 0.2240
+The caseID: 71012024011830820 (08-JAN-2024 07:30) is 1st solved successfully.
+Objective function value: 629951.9610
+Violations cost         : 0.3069
+The caseID: 71012024011835824 (08-JAN-2024 07:35) is 1st solved successfully.
+Objective function value: 628828.2949
+Violations cost         : 0.1966
+The caseID: 71012024011840825 (08-JAN-2024 07:40) is 1st solved successfully.
+Objective function value: 623669.6157
+Violations cost         : 0.1761
+The caseID: 71012024011845827 (08-JAN-2024 07:45) is 1st solved successfully.
+Objective function value: 606335.8933
+Violations cost         : 0.2081
+The caseID: 71012024011850828 (08-JAN-2024 07:50) is 1st solved successfully.
+Objective function value: 603003.8232
+Violations cost         : 0.1903
+The caseID: 71012024011855829 (08-JAN-2024 07:55) is 1st solved successfully.
+Objective function value: 596103.4728
+Violations cost         : 0.1962
+The caseID: 71012024011900830 (08-JAN-2024 08:00) is 1st solved successfully.
+Objective function value: 625241.9609
+Violations cost         : 0.2268
+The caseID: 71012024011905834 (08-JAN-2024 08:05) is 1st solved successfully.
+Objective function value: 624453.2551
+Violations cost         : 0.1801
+The caseID: 71012024011910836 (08-JAN-2024 08:10) is 1st solved successfully.
+Objective function value: 619461.8521
+Violations cost         : 0.1594
+The caseID: 71012024011915839 (08-JAN-2024 08:15) is 1st solved successfully.
+Objective function value: 616842.4749
+Violations cost         : 0.1577
+The caseID: 71012024011920840 (08-JAN-2024 08:20) is 1st solved successfully.
+Objective function value: 615582.5828
+Violations cost         : 0.1635
+The caseID: 71012024011925841 (08-JAN-2024 08:25) is 1st solved successfully.
+Objective function value: 609919.0067
+Violations cost         : 0.1774
+The caseID: 71012024011930842 (08-JAN-2024 08:30) is 1st solved successfully.
+Objective function value: 619797.4037
+Violations cost         : 0.2041
+The caseID: 71012024011935845 (08-JAN-2024 08:35) is 1st solved successfully.
+Objective function value: 619367.8629
+Violations cost         : 0.1647
+The caseID: 71012024011940846 (08-JAN-2024 08:40) is 1st solved successfully.
+Objective function value: 612945.1187
+Violations cost         : 0.1118
+The caseID: 71012024011950848 (08-JAN-2024 08:50) is 1st solved successfully.
+Objective function value: 609419.6754
+Violations cost         : 0.1043
+The caseID: 71012024011955849 (08-JAN-2024 08:55) is 1st solved successfully.
+Objective function value: 607829.4003
+Violations cost         : 0.1065
+The caseID: 71012024012000850 (08-JAN-2024 09:00) is 1st solved successfully.
+Objective function value: 616193.4092
+Violations cost         : 0.1676
+The caseID: 71012024012005853 (08-JAN-2024 09:05) is 1st solved successfully.
+Objective function value: 610856.8977
+Violations cost         : 0.0866
+The caseID: 71012024012010854 (08-JAN-2024 09:10) is 1st solved successfully.
+Objective function value: 610685.5648
+Violations cost         : 0.1154
+The caseID: 71012024012015855 (08-JAN-2024 09:15) is 1st solved successfully.
+Objective function value: 612508.1009
+Violations cost         : 0.1127
+The caseID: 71012024012020856 (08-JAN-2024 09:20) is 1st solved successfully.
+Objective function value: 614154.7895
+Violations cost         : 0.1205
+The caseID: 71012024012025857 (08-JAN-2024 09:25) is 1st solved successfully.
+Objective function value: 613619.5610
+Violations cost         : 0.1209
+The caseID: 71012024012030858 (08-JAN-2024 09:30) is 1st solved successfully.
+Objective function value: 625826.0735
+Violations cost         : 0.1380
+The caseID: 71012024012035861 (08-JAN-2024 09:35) is 1st solved successfully.
+Objective function value: 635840.5390
+Violations cost         : 0.1337
+The caseID: 71012024012040863 (08-JAN-2024 09:40) is 1st solved successfully.
+Objective function value: 632255.5329
+Violations cost         : 0.0874
+The caseID: 71012024012040865 (08-JAN-2024 09:40) is 1st solved successfully.
+Objective function value: 629488.3898
+Violations cost         : 0.0937
+The caseID: 71012024012050867 (08-JAN-2024 09:50) is 1st solved successfully.
+Objective function value: 626947.8210
+Violations cost         : 0.0861
+The caseID: 71012024012055868 (08-JAN-2024 09:55) is 1st solved successfully.
+Objective function value: 626117.1678
+Violations cost         : 0.0779
+The caseID: 71302024012030860 (08-JAN-2024 10:00) is 1st solved successfully.
+Objective function value: 577789251.9577
+Violations cost         : 0.0000
+The caseID: 71012024012100869 (08-JAN-2024 10:00) is 1st solved successfully.
+Objective function value: 619064.4729
+Violations cost         : 0.0740
+The caseID: 71012024012105872 (08-JAN-2024 10:05) is 1st solved successfully.
+Objective function value: 619470.8835
+Violations cost         : 0.1028
+The caseID: 71012024012110873 (08-JAN-2024 10:10) is 1st solved successfully.
+Objective function value: 624219.9886
+Violations cost         : 0.1065
+The caseID: 71012024012115877 (08-JAN-2024 10:15) is 1st solved successfully.
+Objective function value: 626198.0754
+Violations cost         : 0.1106
+The caseID: 71012024012120878 (08-JAN-2024 10:20) is 1st solved successfully.
+Objective function value: 629706.0553
+Violations cost         : 0.1291
+The caseID: 71012024012125879 (08-JAN-2024 10:25) is 1st solved successfully.
+Objective function value: 627623.2077
+Violations cost         : 0.1079
+The caseID: 71302024012100871 (08-JAN-2024 10:30) is 1st solved successfully.
+Objective function value: 577771177.4719
+Violations cost         : 0.0000
+The caseID: 71012024012130880 (08-JAN-2024 10:30) is 1st solved successfully.
+Objective function value: 620629.8317
+Violations cost         : 0.0725
+The caseID: 71012024012135883 (08-JAN-2024 10:35) is 1st solved successfully.
+Objective function value: 625622.7637
+Violations cost         : 0.0938
+The caseID: 71012024012140884 (08-JAN-2024 10:40) is 1st solved successfully.
+Objective function value: 625937.9820
+Violations cost         : 0.0854
+The caseID: 71012024012145885 (08-JAN-2024 10:45) is 1st solved successfully.
+Objective function value: 625960.2289
+Violations cost         : 0.0828
+The caseID: 71012024012150886 (08-JAN-2024 10:50) is 1st solved successfully.
+Objective function value: 628272.9450
+Violations cost         : 0.0903
+The caseID: 71012024012155887 (08-JAN-2024 10:55) is 1st solved successfully.
+Objective function value: 629409.4035
+Violations cost         : 0.0943
+The caseID: 71302024012130882 (08-JAN-2024 11:00) is 1st solved successfully.
+Objective function value: 577796019.2776
+Violations cost         : 0.0000
+The caseID: 71012024012200889 (08-JAN-2024 11:00) is 1st solved successfully.
+Objective function value: 627075.4668
+Violations cost         : 0.0782
+The caseID: 71012024012205892 (08-JAN-2024 11:05) is 1st solved successfully.
+Objective function value: 620883.2796
+Violations cost         : 0.0743
+The caseID: 71012024012210893 (08-JAN-2024 11:10) is 1st solved successfully.
+Objective function value: 625184.6413
+Violations cost         : 0.1141
+The caseID: 71012024012215894 (08-JAN-2024 11:15) is 1st solved successfully.
+Objective function value: 628745.2432
+Violations cost         : 0.1238
+The caseID: 71012024012220895 (08-JAN-2024 11:20) is 1st solved successfully.
+Objective function value: 629248.4986
+Violations cost         : 0.0996
+The caseID: 71012024012225896 (08-JAN-2024 11:25) is 1st solved successfully.
+Objective function value: 630684.5068
+Violations cost         : 0.0881
+The caseID: 71012024012230897 (08-JAN-2024 11:30) is 1st solved successfully.
+Objective function value: 624310.2694
+Violations cost         : 0.0735
+The caseID: 71012024012235900 (08-JAN-2024 11:35) is 1st solved successfully.
+Objective function value: 631297.4047
+Violations cost         : 0.0942
+The caseID: 71012024012240902 (08-JAN-2024 11:40) is 1st solved successfully.
+Objective function value: 633349.4849
+Violations cost         : 0.1019
+The caseID: 71012024012245903 (08-JAN-2024 11:45) is 1st solved successfully.
+Objective function value: 635652.1073
+Violations cost         : 0.0832
+The caseID: 71012024012250905 (08-JAN-2024 11:50) is 1st solved successfully.
+Objective function value: 635014.5661
+Violations cost         : 0.0802
+The caseID: 71012024012255906 (08-JAN-2024 11:55) is 1st solved successfully.
+Objective function value: 638678.9156
+Violations cost         : 0.0718
+The caseID: 71012024012300908 (08-JAN-2024 12:00) is 1st solved successfully.
+Objective function value: 623615.4107
+Violations cost         : 0.1200
+The caseID: 71012024012310914 (08-JAN-2024 12:10) is 1st solved successfully.
+Objective function value: 625785.9306
+Violations cost         : 0.0952
+The caseID: 71012024012315917 (08-JAN-2024 12:15) is 1st solved successfully.
+Objective function value: 627178.5530
+Violations cost         : 0.0895
+The caseID: 71012024012320919 (08-JAN-2024 12:20) is 1st solved successfully.
+Objective function value: 629081.3170
+Violations cost         : 0.0847
+The caseID: 71012024012325921 (08-JAN-2024 12:25) is 1st solved successfully.
+Objective function value: 631303.1214
+Violations cost         : 0.0902
+The caseID: 71012024012330922 (08-JAN-2024 12:30) is 1st solved successfully.
+Objective function value: 616992.3707
+Violations cost         : 0.0728
+The caseID: 71012024012335926 (08-JAN-2024 12:35) is 1st solved successfully.
+Objective function value: 619714.0388
+Violations cost         : 0.0611
+The caseID: 71012024012340928 (08-JAN-2024 12:40) is 1st solved successfully.
+Objective function value: 621330.5896
+Violations cost         : 0.0631
+The caseID: 71012024012345930 (08-JAN-2024 12:45) is 1st solved successfully.
+Objective function value: 622594.7524
+Violations cost         : 0.0700
+The caseID: 71012024012350931 (08-JAN-2024 12:50) is 1st solved successfully.
+Objective function value: 623050.6530
+Violations cost         : 0.0747
+The caseID: 71012024012355932 (08-JAN-2024 12:55) is 1st solved successfully.
+Objective function value: 626704.5820
+Violations cost         : 0.0845
+The caseID: 81012024010000934 (08-JAN-2024 13:00) is 1st solved successfully.
+Objective function value: 625033.9760
+Violations cost         : 0.0986
+The caseID: 81012024010005938 (08-JAN-2024 13:05) is 1st solved successfully.
+Objective function value: 627420.9823
+Violations cost         : 0.0905
+The caseID: 81012024010010939 (08-JAN-2024 13:10) is 1st solved successfully.
+Objective function value: 624221.3344
+Violations cost         : 0.0858
+The caseID: 81012024010015940 (08-JAN-2024 13:15) is 1st solved successfully.
+Objective function value: 633749.1178
+Violations cost         : 0.0911
+The caseID: 81012024010020941 (08-JAN-2024 13:20) is 1st solved successfully.
+Objective function value: 634130.1204
+Violations cost         : 0.0868
+The caseID: 81012024010025942 (08-JAN-2024 13:25) is 1st solved successfully.
+Objective function value: 640558.4791
+Violations cost         : 0.1051
+The caseID: 81012024010030943 (08-JAN-2024 13:30) is 1st solved successfully.
+Objective function value: 641226.7728
+Violations cost         : 0.1084
+The caseID: 81012024010035947 (08-JAN-2024 13:35) is 1st solved successfully.
+Objective function value: 642212.2604
+Violations cost         : 0.1158
+The caseID: 81012024010040948 (08-JAN-2024 13:40) is 1st solved successfully.
+Objective function value: 645163.4672
+Violations cost         : 0.1239
+The caseID: 81012024010045949 (08-JAN-2024 13:45) is 1st solved successfully.
+Objective function value: 639918.3021
+Violations cost         : 0.1306
+The caseID: 81012024010050950 (08-JAN-2024 13:50) is 1st solved successfully.
+Objective function value: 636134.4259
+Violations cost         : 0.0983
+The caseID: 81012024010055951 (08-JAN-2024 13:55) is 1st solved successfully.
+Objective function value: 635404.4138
+Violations cost         : 0.0958
+The caseID: 81012024010100952 (08-JAN-2024 14:00) is 1st solved successfully.
+Objective function value: 641612.9691
+Violations cost         : 0.1041
+The caseID: 81012024010105955 (08-JAN-2024 14:05) is 1st solved successfully.
+Objective function value: 640171.9897
+Violations cost         : 0.1026
+The caseID: 81012024010110956 (08-JAN-2024 14:10) is 1st solved successfully.
+Objective function value: 644307.7256
+Violations cost         : 0.1193
+The caseID: 81012024010115959 (08-JAN-2024 14:15) is 1st solved successfully.
+Objective function value: 646035.9735
+Violations cost         : 0.1267
+The caseID: 81012024010120960 (08-JAN-2024 14:20) is 1st solved successfully.
+Objective function value: 647911.1134
+Violations cost         : 0.1218
+The caseID: 81012024010130962 (08-JAN-2024 14:30) is 1st solved successfully.
+Objective function value: 641543.6907
+Violations cost         : 0.1195
+The caseID: 81012024010135965 (08-JAN-2024 14:35) is 1st solved successfully.
+Objective function value: 644157.5500
+Violations cost         : 0.1141
+The caseID: 81012024010140966 (08-JAN-2024 14:40) is 1st solved successfully.
+Objective function value: 644799.5344
+Violations cost         : 0.1080
+The caseID: 81012024010145967 (08-JAN-2024 14:45) is 1st solved successfully.
+Objective function value: 640578.0657
+Violations cost         : 0.1156
+The caseID: 81012024010155969 (08-JAN-2024 14:55) is 1st solved successfully.
+Objective function value: 637912.9626
+Violations cost         : 0.1105
+The caseID: 81012024010200970 (08-JAN-2024 15:00) is 1st solved successfully.
+Objective function value: 643620.9076
+Violations cost         : 0.1264
+The caseID: 81012024010210974 (08-JAN-2024 15:10) is 1st solved successfully.
+Objective function value: 641394.5875
+Violations cost         : 0.1389
+The caseID: 81012024010215975 (08-JAN-2024 15:15) is 1st solved successfully.
+Objective function value: 639096.8035
+Violations cost         : 0.1406
+The caseID: 81012024010225977 (08-JAN-2024 15:25) is 1st solved successfully.
+Objective function value: 637711.6958
+Violations cost         : 0.1553
+The caseID: 81012024010230978 (08-JAN-2024 15:30) is 1st solved successfully.
+Objective function value: 620532.7139
+Violations cost         : 0.1178
+The caseID: 81012024010235982 (08-JAN-2024 15:35) is 1st solved successfully.
+Objective function value: 622111.3978
+Violations cost         : 0.1161
+The caseID: 81012024010240983 (08-JAN-2024 15:40) is 1st solved successfully.
+Objective function value: 621243.4229
+Violations cost         : 0.0927
+The caseID: 81012024010245984 (08-JAN-2024 15:45) is 1st solved successfully.
+Objective function value: 616667.9742
+Violations cost         : 0.0923
+The caseID: 81012024010250985 (08-JAN-2024 15:50) is 1st solved successfully.
+Objective function value: 618452.2678
+Violations cost         : 0.0825
+The caseID: 81012024010255986 (08-JAN-2024 15:55) is 1st solved successfully.
+Objective function value: 617733.9503
+Violations cost         : 0.1222
+The caseID: 81302024010230981 (08-JAN-2024 16:00) is 1st solved successfully.
+Objective function value: 578121440.0119
+Violations cost         : 0.0000
+The caseID: 81012024010300987 (08-JAN-2024 16:00) is 1st solved successfully.
+Objective function value: 617290.2275
+Violations cost         : 0.1355
+The caseID: 81012024010305991 (08-JAN-2024 16:05) is 1st solved successfully.
+Objective function value: 614730.8876
+Violations cost         : 0.1325
+The caseID: 81012024010310992 (08-JAN-2024 16:10) is 1st solved successfully.
+Objective function value: 617593.4409
+Violations cost         : 0.1446
+The caseID: 81012024010315996 (08-JAN-2024 16:15) is 1st solved successfully.
+Objective function value: 619347.9423
+Violations cost         : 0.1514
+The caseID: 81012024010320999 (08-JAN-2024 16:20) is 1st solved successfully.
+Objective function value: 616144.8962
+Violations cost         : 0.1394
+The caseID: 81012024010325001 (08-JAN-2024 16:25) is 1st solved successfully.
+Objective function value: 616082.9186
+Violations cost         : 0.1392
+The caseID: 81012024010330002 (08-JAN-2024 16:30) is 1st solved successfully.
+Objective function value: 619511.3476
+Violations cost         : 0.1702
+The caseID: 81012024010335005 (08-JAN-2024 16:35) is 1st solved successfully.
+Objective function value: 625324.2063
+Violations cost         : 0.1483
+The caseID: 81012024010340006 (08-JAN-2024 16:40) is 1st solved successfully.
+Objective function value: 618146.2134
+Violations cost         : 0.1402
+The caseID: 81012024010345007 (08-JAN-2024 16:45) is 1st solved successfully.
+Objective function value: 620299.3826
+Violations cost         : 0.1337
+The caseID: 81012024010350008 (08-JAN-2024 16:50) is 1st solved successfully.
+Objective function value: 625163.6347
+Violations cost         : 0.1265
+The caseID: 81012024010355009 (08-JAN-2024 16:55) is 1st solved successfully.
+Objective function value: 617129.5715
+Violations cost         : 0.1266
+The caseID: 81302024010330004 (08-JAN-2024 17:00) is 1st solved successfully.
+Objective function value: 578101603.2626
+Violations cost         : 0.0000
+The caseID: 81012024010400010 (08-JAN-2024 17:00) is 1st solved successfully.
+Objective function value: 607541.2407
+Violations cost         : 0.1615
+The caseID: 81012024010405014 (08-JAN-2024 17:05) is 1st solved successfully.
+Objective function value: 613643.6558
+Violations cost         : 0.1258
+The caseID: 81012024010410015 (08-JAN-2024 17:10) is 1st solved successfully.
+Objective function value: 618711.1253
+Violations cost         : 0.1279
+The caseID: 81012024010415016 (08-JAN-2024 17:15) is 1st solved successfully.
+Objective function value: 617516.1772
+Violations cost         : 0.1218
+The caseID: 81012024010420017 (08-JAN-2024 17:20) is 1st solved successfully.
+Objective function value: 615421.3482
+Violations cost         : 0.1113
+The caseID: 81012024010425018 (08-JAN-2024 17:25) is 1st solved successfully.
+Objective function value: 616297.8753
+Violations cost         : 0.1142
+The caseID: 81012024010430019 (08-JAN-2024 17:30) is 1st solved successfully.
+Objective function value: 631628.6438
+Violations cost         : 0.2362
+The caseID: 81012024010435023 (08-JAN-2024 17:35) is 1st solved successfully.
+Objective function value: 624905.6256
+Violations cost         : 0.1791
+The caseID: 81012024010440025 (08-JAN-2024 17:40) is 1st solved successfully.
+Objective function value: 612745.4961
+Violations cost         : 0.1212
+The caseID: 81012024010445027 (08-JAN-2024 17:45) is 1st solved successfully.
+Objective function value: 621654.5938
+Violations cost         : 0.1220
+The caseID: 81012024010450029 (08-JAN-2024 17:50) is 1st solved successfully.
+Objective function value: 621509.0161
+Violations cost         : 0.1304
+The caseID: 81012024010455030 (08-JAN-2024 17:55) is 1st solved successfully.
+Objective function value: 616225.5972
+Violations cost         : 0.1426
+The caseID: 81302024010430022 (08-JAN-2024 18:00) is 1st solved successfully.
+Objective function value: 578082021.1766
+Violations cost         : 0.0000
+The caseID: 81012024010500032 (08-JAN-2024 18:00) is 1st solved successfully.
+Objective function value: 605090.8095
+Violations cost         : 0.1340
+The caseID: 81012024010505035 (08-JAN-2024 18:05) is 1st solved successfully.
+Objective function value: 615460.3423
+Violations cost         : 0.1783
+The caseID: 81012024010510036 (08-JAN-2024 18:10) is 1st solved successfully.
+Objective function value: 612010.9667
+Violations cost         : 0.1718
+The caseID: 81012024010515039 (08-JAN-2024 18:15) is 1st solved successfully.
+Objective function value: 617990.6935
+Violations cost         : 0.1644
+The caseID: 81012024010520040 (08-JAN-2024 18:20) is 1st solved successfully.
+Objective function value: 620026.8569
+Violations cost         : 0.1763
+The caseID: 81012024010525041 (08-JAN-2024 18:25) is 1st solved successfully.
+Objective function value: 621564.5026
+Violations cost         : 0.1673
+The caseID: 81012024010530042 (08-JAN-2024 18:30) is 1st solved successfully.
+Objective function value: 599840.7949
+Violations cost         : 0.1868
+The caseID: 81012024010535045 (08-JAN-2024 18:35) is 1st solved successfully.
+Objective function value: 606937.3277
+Violations cost         : 0.1557
+The caseID: 81012024010540046 (08-JAN-2024 18:40) is 1st solved successfully.
+Objective function value: 603913.1047
+Violations cost         : 0.1502
+The caseID: 81012024010545047 (08-JAN-2024 18:45) is 1st solved successfully.
+Objective function value: 609477.2249
+Violations cost         : 0.1571
+The caseID: 81012024010555049 (08-JAN-2024 18:55) is 1st solved successfully.
+Objective function value: 606298.2796
+Violations cost         : 0.1455
+The caseID: 81302024010530044 (08-JAN-2024 19:00) is 1st solved successfully.
+Objective function value: 577966208.1143
+Violations cost         : 0.0000
+The caseID: 81012024010600050 (08-JAN-2024 19:00) is 1st solved successfully.
+Objective function value: 589995.2615
+Violations cost         : 0.1902
+The caseID: 81012024010605053 (08-JAN-2024 19:05) is 1st solved successfully.
+Objective function value: 593660.2664
+Violations cost         : 0.2095
+The caseID: 81012024010610054 (08-JAN-2024 19:10) is 1st solved successfully.
+Objective function value: 594255.7374
+Violations cost         : 0.1970
+The caseID: 81012024010615055 (08-JAN-2024 19:15) is 1st solved successfully.
+Objective function value: 600676.2892
+Violations cost         : 0.2070
+The caseID: 81012024010620056 (08-JAN-2024 19:20) is 1st solved successfully.
+Objective function value: 604875.8182
+Violations cost         : 0.2098
+The caseID: 81012024010625057 (08-JAN-2024 19:25) is 1st solved successfully.
+Objective function value: 610047.3173
+Violations cost         : 0.1948
+The caseID: 81302024010600052 (08-JAN-2024 19:30) is 1st solved successfully.
+Objective function value: 577915424.6613
+Violations cost         : 0.0000
+The caseID: 81012024010630058 (08-JAN-2024 19:30) is 1st solved successfully.
+Objective function value: 597178.7930
+Violations cost         : 0.2147
+The caseID: 81012024010635061 (08-JAN-2024 19:35) is 1st solved successfully.
+Objective function value: 602603.0933
+Violations cost         : 0.2118
+The caseID: 81012024010640062 (08-JAN-2024 19:40) is 1st solved successfully.
+Objective function value: 609960.1091
+Violations cost         : 0.1911
+The caseID: 81012024010650064 (08-JAN-2024 19:50) is 1st solved successfully.
+Objective function value: 617711.5069
+Violations cost         : 0.1765
+The caseID: 81012024010655065 (08-JAN-2024 19:55) is 1st solved successfully.
+Objective function value: 620131.9188
+Violations cost         : 0.1731
+The caseID: 81302024010630060 (08-JAN-2024 20:00) is 1st solved successfully.
+Objective function value: 577916794.7451
+Violations cost         : 0.0000
+The caseID: 81012024010700066 (08-JAN-2024 20:00) is 1st solved successfully.
+Objective function value: 603919.8519
+Violations cost         : 0.1957
+The caseID: 81012024010705069 (08-JAN-2024 20:05) is 1st solved successfully.
+Objective function value: 609613.0642
+Violations cost         : 0.1831
+The caseID: 81012024010710070 (08-JAN-2024 20:10) is 1st solved successfully.
+Objective function value: 616937.8271
+Violations cost         : 0.1839
+The caseID: 81012024010715073 (08-JAN-2024 20:15) is 1st solved successfully.
+Objective function value: 614739.3789
+Violations cost         : 0.1988
+The caseID: 81012024010720074 (08-JAN-2024 20:20) is 1st solved successfully.
+Objective function value: 610216.3514
+Violations cost         : 0.1958
+The caseID: 81012024010725075 (08-JAN-2024 20:25) is 1st solved successfully.
+Objective function value: 608417.7207
+Violations cost         : 0.1865
+The caseID: 81012024010730076 (08-JAN-2024 20:30) is 1st solved successfully.
+Objective function value: 604207.0152
+Violations cost         : 0.1761
+The caseID: 81012024010735079 (08-JAN-2024 20:35) is 1st solved successfully.
+Objective function value: 608309.5226
+Violations cost         : 0.1616
+The caseID: 81012024010740080 (08-JAN-2024 20:40) is 1st solved successfully.
+Objective function value: 608244.8080
+Violations cost         : 0.1598
+The caseID: 81012024010745081 (08-JAN-2024 20:45) is 1st solved successfully.
+Objective function value: 607359.2933
+Violations cost         : 0.1624
+The caseID: 81012024010750082 (08-JAN-2024 20:50) is 1st solved successfully.
+Objective function value: 598943.8481
+Violations cost         : 0.1696
+The caseID: 81012024010755083 (08-JAN-2024 20:55) is 1st solved successfully.
+Objective function value: 601021.7434
+Violations cost         : 0.1606
+The caseID: 81302024010730078 (08-JAN-2024 21:00) is 1st solved successfully.
+Objective function value: 577923907.4876
+Violations cost         : 0.0000
+The caseID: 81012024010800084 (08-JAN-2024 21:00) is 1st solved successfully.
+Objective function value: 583350.8785
+Violations cost         : 0.1754
+The caseID: 81012024010805087 (08-JAN-2024 21:05) is 1st solved successfully.
+Objective function value: 573343.4305
+Violations cost         : 0.1183
+The caseID: 81012024010810088 (08-JAN-2024 21:10) is 1st solved successfully.
+Objective function value: 570509.3899
+Violations cost         : 0.1131
+The caseID: 81012024010815089 (08-JAN-2024 21:15) is 1st solved successfully.
+Objective function value: 569990.3054
+Violations cost         : 0.1282
+The caseID: 81012024010820090 (08-JAN-2024 21:20) is 1st solved successfully.
+Objective function value: 573231.2549
+Violations cost         : 0.1309
+The caseID: 81012024010825091 (08-JAN-2024 21:25) is 1st solved successfully.
+Objective function value: 572004.7215
+Violations cost         : 0.1248
+The caseID: 81012024010830092 (08-JAN-2024 21:30) is 1st solved successfully.
+Objective function value: 525555.1008
+Violations cost         : 0.2737
+The caseID: 81012024010835095 (08-JAN-2024 21:35) is 1st solved successfully.
+Objective function value: 532624.7523
+Violations cost         : 0.1547
+The caseID: 81012024010840096 (08-JAN-2024 21:40) is 1st solved successfully.
+Objective function value: 539635.1716
+Violations cost         : 0.1421
+The caseID: 81012024010850098 (08-JAN-2024 21:50) is 1st solved successfully.
+Objective function value: 548254.8525
+Violations cost         : 0.1450
+The caseID: 81012024010900100 (08-JAN-2024 22:00) is 1st solved successfully.
+Objective function value: 559655.3183
+Violations cost         : 0.1944
+The caseID: 81012024010910104 (08-JAN-2024 22:10) is 1st solved successfully.
+Objective function value: 586746.3657
+Violations cost         : 0.1855
+The caseID: 81012024010920108 (08-JAN-2024 22:20) is 1st solved successfully.
+Objective function value: 600817.0409
+Violations cost         : 0.1571
+The caseID: 81012024010925109 (08-JAN-2024 22:25) is 1st solved successfully.
+Objective function value: 608586.0432
+Violations cost         : 0.1330
+The caseID: 81012024010930110 (08-JAN-2024 22:30) is 1st solved successfully.
+Objective function value: 603879.9307
+Violations cost         : 0.1890
+The caseID: 81012024010935113 (08-JAN-2024 22:35) is 1st solved successfully.
+Objective function value: 612751.0186
+Violations cost         : 0.1635
+The caseID: 81012024010940114 (08-JAN-2024 22:40) is 1st solved successfully.
+Objective function value: 620025.1481
+Violations cost         : 0.1900
+The caseID: 81012024010945115 (08-JAN-2024 22:45) is 1st solved successfully.
+Objective function value: 635136.7357
+Violations cost         : 0.2285
+The caseID: 81012024010950116 (08-JAN-2024 22:50) is 1st solved successfully.
+Objective function value: 636607.7414
+Violations cost         : 0.1897
+The caseID: 81012024010955117 (08-JAN-2024 22:55) is 1st solved successfully.
+Objective function value: 639875.5502
+Violations cost         : 0.1760
+The caseID: 81012024011000118 (08-JAN-2024 23:00) is 1st solved successfully.
+Objective function value: 593447.3110
+Violations cost         : 0.3133
+The caseID: 81012024011005121 (08-JAN-2024 23:05) is 1st solved successfully.
+Objective function value: 588124.1757
+Violations cost         : 0.2558
+The caseID: 81012024011010122 (08-JAN-2024 23:10) is 1st solved successfully.
+Objective function value: 594803.9135
+Violations cost         : 0.2189
+The caseID: 81012024011015123 (08-JAN-2024 23:15) is 1st solved successfully.
+Objective function value: 621216.7303
+Violations cost         : 0.2576
+The caseID: 81012024011020124 (08-JAN-2024 23:20) is 1st solved successfully.
+Objective function value: 625610.8033
+Violations cost         : 0.2478
+The caseID: 81012024011025125 (08-JAN-2024 23:25) is 1st solved successfully.
+Objective function value: 618633.6718
+Violations cost         : 0.2604
+The caseID: 81012024011030126 (08-JAN-2024 23:30) is 1st solved successfully.
+Objective function value: 596335.1733
+Violations cost         : 0.2544
+The caseID: 81012024011035129 (08-JAN-2024 23:35) is 1st solved successfully.
+Objective function value: 603321.2037
+Violations cost         : 0.2238
+The caseID: 81012024011040130 (08-JAN-2024 23:40) is 1st solved successfully.
+Objective function value: 625897.4646
+Violations cost         : 0.2118
+The caseID: 81012024011045131 (08-JAN-2024 23:45) is 1st solved successfully.
+Objective function value: 616669.5143
+Violations cost         : 0.2334
+The caseID: 81012024011050132 (08-JAN-2024 23:50) is 1st solved successfully.
+Objective function value: 631551.6622
+Violations cost         : 0.2006
+The caseID: 81012024011055133 (08-JAN-2024 23:55) is 1st solved successfully.
+Objective function value: 638821.5981
+Violations cost         : 0.1754
+Case: Pricing_20240108 is complete in 973.9380(secs)
+Case: Pricing_20240108 is finished in 976.2650(secs)
+
+Total execute time:       977.51(secs)

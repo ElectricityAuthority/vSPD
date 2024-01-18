@@ -3,14 +3,14 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       Testing
+$setglobal runName                       BrGroup_Cnstr_Ovrd_1_G
 
 $setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%..\Input\'
 $setglobal outputPath                    '%system.fp%..\Output\'
 $setglobal ovrdPath                      '%system.fp%..\Override\'
 
-$setglobal vSPDinputOvrdData             ''   !Name of override file 
+$setglobal vSPDinputOvrdData             'BrGroup_Cnstr_Ovrd_1'   !Name of override file 
 
 *+++ Model +++
 Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0

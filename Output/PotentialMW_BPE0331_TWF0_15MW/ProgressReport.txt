@@ -1,0 +1,29 @@
+Run: 'PotentialMW_BPE0331_TWF0_15MW'
+
+runvSPD started at: 01/12/24 09:06:23
+vSPDsetup started at: 01/12/24 09:06:23
+vSPDreportSetup started at: 01/12/24 09:06:24
+
+Case "Pricing_20240108" started at: 01/12/24 09:06:24
+The caseID: 71012024011100667 (08-JAN-2024 00:00) is 1st solved successfully.
+Objective function value: 652585.6794
+Violations cost         : 0.3080
+The caseID: 71012024011105670 (08-JAN-2024 00:05) is 1st solved successfully.
+Objective function value: 657711.5503
+Violations cost         : 0.1385
+The caseID: 71012024011110671 (08-JAN-2024 00:10) is 1st solved successfully.
+Objective function value: 659129.7917
+Violations cost         : 0.1334
+The caseID: 71012024011115674 (08-JAN-2024 00:15) is 1st solved successfully.
+Objective function value: 660283.1254
+Violations cost         : 0.1328
+The caseID: 71012024011120675 (08-JAN-2024 00:20) is 1st solved successfully.
+Objective function value: 663371.1365
+Violations cost         : 0.1580
+The caseID: 71012024011125676 (08-JAN-2024 00:25) is 1st solved successfully.
+Objective function value: 668729.3822
+Violations cost         : 0.1660
+Case: Pricing_20240108 is complete in  11.9220(secs)
+Case: Pricing_20240108 is finished in  25.1640(secs)
+
+Total execute time:        25.92(secs)
