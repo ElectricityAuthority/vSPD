@@ -1280,7 +1280,6 @@ $offtext
                 and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
                 and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
                   } = 1;
-
 * This is the approach Tuong propose (a target node is ineligible as target node twice consecutively  ))          
 *            nodeTonode(t,n,n2) $ sum[n1 $ nodeTonode(t,n1,n2), ShortfallTransferFromTo(t,n,n1)] = yes;
 *            nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1) = no;
