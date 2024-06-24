@@ -1492,7 +1492,6 @@ $offtext
             ) ;
 
             Loop (n $ sum[ b $ changedDeficitBus(t,b), busNodeAllocationFactor(t,b,n)],
-                o_nodePrice_TP(t,n) = deficitBusGenerationPenalty ;
                 o_nodeDeficit_TP(t,n) = sum[ b $ busNodeAllocationFactor(t,b,n), busNodeAllocationFactor(t,b,n) * o_busDeficit_TP(t,b) ] ;
             ) ;
 
