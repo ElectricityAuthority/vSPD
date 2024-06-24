@@ -1417,15 +1417,26 @@ $ontext
         and its associated ACNode are assigned a price of zero.
 $offtext
         if ( dtParameter(t,'priceTransfer') and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
+*           A node is dead if it is not associated through allocation factor with any live bus.
             o_nodeDead_TP(t,n) = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b)) }, NodeBusAllocationFactor(t,n,b) ] = 0 )} ;
+*           If a node is dead, it will be considered to price transfer.
             o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
-                                                  
+*           Define the live node n1 where the price is transfre to dead node n 
             o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { Sum[ isl $ { nodeIsland(t,n,isl) and nodeIsland(t,n1,isl) },1 ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0) };
+
+*           Continue until no more price transfer is eligible
             while (sum[ n $ o_nodeDead_TP(t,n), o_nodeDeadPrice_TP(t,n) ],
+*               Transfre price from a live node to a dead node            
                 o_nodePrice_TP(t,n) $ { o_nodeDead_TP(t,n) and o_nodeDeadPrice_TP(t,n) } = sum[n1 $ o_nodeDeadPriceFrom_TP(t,n,n1), o_nodePrice_TP(t,n1) ] ;
-                o_nodeDeadPrice_TP(t,n) = 1 $ sum[n1 $ o_nodeDead_TP(t,n1), o_nodeDeadPriceFrom_TP(t,n,n1) ];
-                o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n) = 1 $ { sum[ n1 $ { node2node(t,n1,n2) and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ] } ;
-                o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;
+*               If a dead node has price transferred to --> no longer dead in this while loop
+                o_nodeDead_TP(t,n) $ {o_nodeDead_TP(t,n) and sum[n1 $ {not o_nodeDead_TP(t,n1)}, o_nodeDeadPriceFrom_TP(t,n,n1) ]} = 0;
+*               Redefine the node from which price is transferred to remaining dead node   
+                o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { Sum[ isl $ { nodeIsland(t,n,isl) and nodeIsland(t,n1,isl) },1 ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0) };            
+*               Redefine the list of dead node to be considered for price transfer
+                o_nodeDeadPrice_TP(t,n) = 1 $ sum[n1 $ {not o_nodeDead_TP(t,n1)}, o_nodeDeadPriceFrom_TP(t,n,n1) ];
+*               The following code is not neccessary. It redefines where the price of a dead node come from  
+*                o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n) = 1 $ { sum[ n1 $ { node2node(t,n1,n2) and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ] } ;
+*                o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;           
             ) ;
         ) ;
 
