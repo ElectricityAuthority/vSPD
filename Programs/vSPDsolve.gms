@@ -761,7 +761,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_1.gms"
 * Need to initiate value for this parameters before it is used
 o_offerEnergy_TP(ca,dt,o) = 0;
 
-LoadCalcLosses(ca,dt,isl) = islandLosses(ca,dt,isl);
+LoadCalcLosses(ca,dt,isl) = (islandLosses(ca,dt,isl)$(dailymode = 0)) + (SPDLoadCalcLosses(ca,dt,isl)$(dailymode = 1));
 DidShortfallTransfer(ca,dt,n) = 0;
 ShortfallDisabledScaling(ca,dt,n) = 0;
 CheckedNodeCandidate(ca,dt,n) = 0;
@@ -872,7 +872,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
     generationStart(offer(t(ca,dt),o)) $ { sum[ o1, generationStart(ca,dt,o1)] = 0 } = sum[ dt1 $ (ord(dt1) = ord(dt)-1), o_offerEnergy_TP(ca,dt1,o) ] ;
 
 *   4.10 Real Time Pricing - First RTD load calculation --------------------------
-    if ( {studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201} and (dailymode = 0),
+    if ( {studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201} and {(dailymode = 0) or sum[n,DidShortfallTransfer(ca,dt,n)]},
 *       Calculate first target total load [4.10.6.5]
 *       Island-level MW load forecast. For the fist loop, uses islandLosses(t,isl)
         TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n) ];
@@ -1264,7 +1264,7 @@ of the candidate node is not the same as the ElectricalIslandpn of the node with
 $offtext
         unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
 
-        while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
+*        while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
 
 * If target node is dead --> move it up to one level
             nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes ;
@@ -1303,7 +1303,7 @@ $offtext
             ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
             ShortfallTransferFromTo(t,n,n1) = 0;
          
-        ) ;
+*        ) ;
 
 *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
 *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
@@ -1320,7 +1320,6 @@ $offtext
 *        LoopCount(t) = LoopCount(t) + 1 ;
         loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )},
             putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
-*            putclose rep 'Using SPDLoadCalcLosses instead. /' ;
             LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
 
         );
@@ -1373,7 +1372,7 @@ $offtext
                     and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
                     and [ sum[ br     $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) } , 1 ] > 0 ]
                       };
-*display busClearedPrice,busSOSinvalid;
+
             numberofbusSOSinvalid(ca,dt) = 2*sum[b, busSOSinvalid(ca,dt,b)];
 
             While ( sum[b, busSOSinvalid(ca,dt,b)] < numberofbusSOSinvalid(ca,dt) ,
