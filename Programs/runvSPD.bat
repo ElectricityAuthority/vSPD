@@ -1,6 +1,5 @@
 gams runvSPD.gms
 
-del "*.lst"
 del "*.lxi"
 del "*.log"
 del "*.put"
