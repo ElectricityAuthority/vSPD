@@ -407,7 +407,8 @@ instructedLoadShed(ca,dt,n)   = nodeParameter(ca,dt,n,'instructedLoadShed') ;
 instructedShedActive(ca,dt,n) = nodeParameter(ca,dt,n,'instructedShedActive') ;
 dispatchedLoad(ca,dt,n)       = nodeParameter(ca,dt,n,'dispatchedLoad') ;
 dispatchedGeneration(ca,dt,n) = nodeParameter(ca,dt,n,'dispatchedGeneration') ;
-
+* TN - This need to be fixed in the input (gdx creation process)
+loadIsNCL(ca,dt,'KOE1101')    = 0 ;
 * Factor to prorate the deficit and surplus at the nodal level
 totalBusAllocation(ca,dt,b) $ bus(ca,dt,b) = sum[ n $ Node(ca,dt,n), NodeBusAllocationFactor(ca,dt,n,b)];
 busNodeAllocationFactor(ca,dt,b,n) $ (totalBusAllocation(ca,dt,b) > 0) = NodeBusAllocationFactor(ca,dt,n,b) / totalBusAllocation(ca,dt,b) ;
@@ -905,6 +906,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         InitialLoad(t,n) $ { (LoadIsOverride(t,n) = 0) and ( (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) ) } = EstimatedInitialLoad(t,n) ;
         InitialLoad(t,n) $ { (LoadIsOverride(t,n) = 1) and (useActualLoad(t) = 1) and (InitialLoad(t,n) > MaxLoad(t,n)) } = MaxLoad(t,n) ;
         InitialLoad(t,n) $ DidShortfallTransfer(t,n) = requiredLoad(t,n);
+        InitialLoad(t,n) $ ShortfallDisabledScaling(t,n) = 0;
 
 *       Flag if load is scalable [4.10.6.4]
 *       If True [1] then the Pnode InitialLoad will be scaled in order to calculate requiredLoad, if False then Pnode InitialLoad will be directly assigned to requiredLoad
@@ -919,7 +921,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = requiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
 
     ) ;
-
+display requiredload;
 
 *   Recalculate energy scarcity limits -------------------------------------
     scarcityEnrgLimit(t,n,blk) = 0 ;
@@ -1221,10 +1223,12 @@ $offtext
         IsNodeDead(t,n) $ ( sum[b $ NodeBus(t,n,b), busElectricalIsland(t,b) ] = 0 ) = 1 ;
         NodeElectricalIsland(t,n) = smin[b $ NodeBusAllocationFactor(t,n,b), busElectricalIsland(t,b)] ;
         InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
+        InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
 
 *       Check if a pnode has energy shortfall
-        EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
-        EnergyShortfallMW(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
+        EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n);
+
+*        EnergyShortfallMW(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
 
 *       a.Checkable Energy Shortfall:
 *       If a node has an EnergyShortfallMW greater than zero and the node has LoadIsOverride set to False and the Pnode has InstructedShedActivepn set to False, then EnergyShortfall is checked.
@@ -1242,13 +1246,14 @@ $offtext
 *       the RTD Required Load calculation does not recalculate its requiredLoad at this node
         ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [ dtParameter(ca,dt,'shortfallRemovalMargin') $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
 
+        loop( (t,n) $ EnergyShortfallMW(t,n),
+            putclose rep n.tl ' reqd:'requiredLoad(t,n)'MW, short:' EnergyShortfallMW(t,n)'MW. Eligible for shortfall removal: ' EligibleShortfallRemoval(t,n):<1:0 /;
+        ) ;
+        
         requiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = requiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
         requiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (requiredLoad(t,n) < 0) } = 0 ;
         DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
-        
-        loop( (t,n) $ EnergyShortfallMW(t,n),
-            putclose rep 'Energy shortfall at node' n.tl,': ', EnergyShortfallMW(t,n)' MW. Eligible for shortfall removal: ' EligibleShortfallRemoval(t,n):<1:0 /;
-        ) ;
+
 
 $ontext
 e. Shortfall Transfer:
@@ -1287,10 +1292,15 @@ $offtext
 
             loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
                putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
-            ) ;           
+            ) ;
+            
+            loop( node(t,n) $ {ShortfallAdjustmentMW(t,n) and (sum[n1, ShortfallTransferFromTo(t,n,n1)]=0)},
+               putclose rep n.tl ' no transfer destination found for shortfall ' /;
+            ) ; 
 
 *           If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
             requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+            requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 1)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
             PotentialModellingInconsistency(t,n1) $ {(IsNodeDead(t,n1)=0) and sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] } = 1;
 
 *           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
@@ -1308,6 +1318,8 @@ $offtext
 *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
 *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
         ShortfallDisabledScaling(t,n) = 1 $ { (EnergyShortFallCheck(t,n)=1) and (EligibleShortfallRemoval(t,n)=0) };
+
+        
     ) ;
 *   Energy Shortfall Check End
 
