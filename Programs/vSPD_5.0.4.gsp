@@ -4,6 +4,12 @@
     "nodes": [
         {
             "codecMib": 106,
+            "file": "../Input/Pricing_20240620.gdx",
+            "name": "Pricing_20240620.gdx",
+            "type": "gdx"
+        },
+        {
+            "codecMib": 106,
             "file": "merge_gdx.gms",
             "name": "merge_gdx.gms",
             "type": "gms"
@@ -13,6 +19,12 @@
             "file": "runvSPD.gms",
             "name": "runvSPD.gms",
             "type": "gms"
+        },
+        {
+            "codecMib": 106,
+            "file": "runvSPD.lst",
+            "name": "runvSPD.lst",
+            "type": "lst"
         },
         {
             "codecMib": 106,

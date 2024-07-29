@@ -1,0 +1,2152 @@
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/05/24 12:02:16 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  *=====================================================================================
+   2  * Name:                 vSPDmodel.gms
+   3  * Function:             Mathematical formulation - based on the SPD formulation v9.0
+   4  * Developed by:         Electricity Authority, New Zealand
+   5  * Source:               https://github.com/ElectricityAuthority/vSPD
+   6  *                       http://www.emi.ea.govt.nz/Tools/vSPD
+   7  * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
+   8  *                       Email: emi@ea.govt.nz
+   9  * Modified on:          1 Oct 2019
+  10  *                       New feature added: New wind offer arrangements
+  11  * Modified on:          11 Dec 2020
+  12  *                       Branch Reverse Rating (this feature is suspended until further notice)
+  13  * Modified on:          24 Feb 2021
+  14  *                       Correcting the excess reserve sharing penalty
+  15  *                       by adding RESERVESHAREEFFECTIVE_CE and ECE variables
+  16  * Last modified on:     18 March 2022
+  17  *                       Rename/remove primary sets to tidy up the code and
+  18  *                       Assign value for constant sets such as ils, blk,resC, etc...
+  19  *
+  20  *=====================================================================================
+  21   
+      Directory of code sections in vSPDmodel.gms:
+        1. Declare sets and parameters for all symbols to be loaded from daily GDX files
+        2. Declare additional sets and parameters used throughout the model
+        3. Declare model variables and constraints, and initialise constraints
+       
+      Aliases to be aware of:
+        dt = dt1                                  tp = tp1,tp2
+        isl = isl1, isl2                          b = b1, frB, toB
+        n = n1, n2                                o = o1, o2
+        bd = bd1, bd2
+        br = br1
+  35   
+  36  * Allow empty data set declaration
+  38   
+  39  *===================================================================================
+  40  * 1. Declare sets and parameters for all symbols to be loaded from daily GDX files
+  41  *===================================================================================
+  42  * Hard-coded sets.
+  43  Sets
+  44    isl(*)              'Islands'                                                 / NI, SI /
+  45    blk(*)              'Trade block definitions used for the offer and bids'     / t1*t20 /
+  46    los(*)              'Loss segments available for loss modelling'              / ls1*ls13 /
+  47    fd(*)               'Directional flow definition used in the SPD formulation' / forward, backward /
+  48    resC(*)             'Definition of fast and sustained instantaneous reserve'  / FIR, SIR /
+  49    riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE /
+  50    resT(*)             'Definition of reserve types (PLSR, TWDR, ILR)'           / PLRO, TWRO, ILRO /
+  51   
+  52  * Risk/Reserve subset
+  53    GenRisk(riskC)      'Subset containing generator risks'                       / genRisk, genRiskECE /
+  54    ManualRisk(riskC)   'Subset containting manual risks'                         / manual, manualECE /
+  55    HVDCrisk(riskC)     'Subset containing DCCE and DCECE risks'                  / DCCE, DCECE /
+  56    HVDCSecRisk(riskC)  'Subset containing DCCE and DCECE secondary risk'         / HVDCsecRisk, HVDCsecRiskECE /
+  57   
+  58    PLRO(resT)          'PLSR reserve type'                                       / PLRO /
+  59    TWRO(resT)          'TWDR reserve type'                                       / TWRO /
+  60    ILRO(resT)          'ILR reserve type'                                        / ILRO /
+  61   
+  62  * Definition of CE and ECE events to support different CE and ECE CVPs
+  63    ContingentEvents(riskC)          'Subset of Risk Classes containing contigent event risks'           / genRisk, DCCE, manual, HVDCsecRisk /
+  64    ExtendedContingentEvent(riskC)   'Subset of Risk Classes containing extended contigent event risk'   / genRiskECE, DCECE, manualECE, HVDCsecRiskECE /
+  65   
+  66    casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
+  67   
+  68    dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+  69   
+  70    islPar(*)           'The various parameters applied for each island'  / HVDCsecRisk, HVDCsecRiskECE, HVDCSecSubtractor, sharedNFRLoadOffset, RMTlimitFIR, RMTlimitSIR, MWIPS, PSD, Losses, SPDLoadCalcLosses/
+  71   
+  72    bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct, factor /
+  73   
+  74    offerPar(*)         'The various parameters required for each offer'  / solvedInitialMW, initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW, riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR /
+  75   
+  76    bidPar(*)           'The various parameters required for each offer'  / dispatchable, discrete, difference /
+  77   
+  78    nodePar(*)          'The various parameters applied for each  node'   / referenceNode, demand, initialLoad, conformingFactor, nonConformingFactor, loadIsOverride, loadIsBad, loadIsNCL, maxLoad, instructedLoadShed, instructedShedActive, dispatchedLoad, dispatchedGeneration /
+  79   
+  80    brPar(*)            'Branch parameter specified'                      / forwardCap, backwardCap, resistance, susceptance, fixedLosses, numLossTranches, HVDCbranch, isOpen /
+  81   
+  82    resPar(*)           'Parameters applied to reserve class'             / sharingFIR, sharingSIR, roundPwrFIR, roundPwrSIR, roundPwr2Mono, biPole2Mono, monoPoleMin, MRCE, MRECE, lossScalingFactorHVDC, sharedNFRfactor,forwardHVDCcontrolBand, backwardHVDCcontrolBand /
+  83   
+  84    riskPar(*)          'Different risk parameters'                       / freeReserve, adjustFactor, HVDCRampUp, minRisk, sharingEffectiveFactor /
+  85   
+  86    CstrRHS(*)          'Constraint RHS definition'                       / cnstrSense, cnstrLimit, rampingCnstr /
+  87   
+  88    z(*)                'RP: round power, NR: no reverse, RZ: reverse'    /RP, NR, RZ/
+  89   
+  90    pole(*)             'HVDC poles'                                      / pole1, pole2 /
+  91   
+  92    testcases(*)        'Test Cases for RTP 4'                            /'MSS_21012023030850151_0X','MSS_21302023030830146_0X','MSS_21322023030800133_0X','MSS_61012023030935374_0X'/
+  93    ;
+  94   
+  95  * Primary sets that are defined by /loaded from gdx inputs
+  96  Sets
+  97    cn(*)               'Case name used to create the GDX file'
+  98    ca(*)               'Case ID associated with data'
+  99    dt(*)               'Date and time for the trade periods'
+ 100    tp(*)               'Trade periods for which input data is defined'
+ 101    b(*)                'Bus definitions for all trading periods'
+ 102    n(*)                'Node definitions for all trading periods'
+ 103    o(*)                'Offers for all trading periods'
+ 104    bd(*)               'Bids for all trading periods'
+ 105    trdr(*)             'Traders defined for all trading periods'
+ 106    br(*)               'Branch definition for all trading periods'
+ 107    brCstr(*)           'Branch constraint definitions for all trading periods'
+ 108    MnodeCstr(*)        'Market node constraint definitions for all trading periods'
+ 109    rg(*)               'Set representing a collection of generation and reserve offers treated as a group risk'
+ 110    rundt(*)            'Run datetime of the case for reporting'
+ 111    ;
+ 112   
+ 113  * Aliases
+ 114  Alias (dt,dt1,dt2),       (tp,tp1,tp2),     (isl,isl1,isl2),  (b,b1,frB,toB),      (n,n1,n2),          (o,o1,o2),        (bd,bd2,bd1)
+ 115        (br,br1),           (fd,fd1,rd,rd1),  (z,z1,rrz,rrz1),  (rg,rg1),            (blk,blk1,blk2),    (los,los1,bp,bp1,rsbp,rsbp1)
+ 116    ;
+ 117   
+ 118  * Dynamic sets that are loaded from GDX
+ 119  Sets
+ 120  * Case/period sets
+ 121    caseDefn(ca,cn<,rundt<)               'Mapping caseid - casename - rundatetime set'
+ 122    case2dt2tp(ca,dt,tp)                  'Mapping caseid - datetime - tradePeriod set'
+ 123   
+ 124  * Node/bus sets
+ 125    node2node(ca,dt,n,n1)                 'Node to node mapping used for price and energy shortfall transfer'
+ 126    busIsland(ca,dt,b,isl)                'Bus island mapping for the different trade periods'
+ 127    nodeBus(ca,dt,n,b)                    'Node bus mapping for the different trading periods'
+ 128   
+ 129  * Branch sets
+ 130    branchDefn(ca,dt,br<,frB,toB)         'Branch definition for the different trading periods'
+ 131    nodeoutagebranch(ca,dt,n,br)          'Mappinging of branch and node where branch outage may affect the capacity to supply to the node'
+ 132   
+ 133  * Offer sets
+ 134    offerNode(ca,dt,o<,n)                 'Offers and the corresponding offer node for the different trading periods'
+ 135    offerTrader(ca,dt,o,trdr<)            'Offers and the corresponding trader for the different trading periods'
+ 136    primarySecondaryOffer(ca,dt,o,o1)     'Primary-secondary offer mapping for the different trading periods - in use from 01 May 2012'
+ 137   
+ 138  * Bid sets
+ 139    bidNode(ca,dt,bd<,n)                  'Bids and the corresponding node for the different trading periods'
+ 140    bidTrader(ca,dt,bd,trdr<)             'Bids and the corresponding trader for the different trading periods'
+ 141   
+ 142  * Risk sets
+ 143    riskGroupOffer(ca,dt,rg<,o,riskC)     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
+ 144    ;
+ 145   
+ 146   
+ 147  * Parameters loaded from GDX file in vSPDsolve.gms
+ 148  Parameters
+ 149  * Case-Period data
+ 150    gdxDate(*)                                        'day, month, year of trade date applied to daily GDX'
+ 151    runMode(ca,casePar)                               'Study mode and interval length applied to each caseID'
+ 152    dtParameter(ca,dt,dtPar)                          'Parameters applied to each caseID-datetime pair'
+ 153   
+ 154  * Island data
+ 155    islandParameter(ca,dt,isl,islPar)                 'Island parameters for the different trading periods'
+ 156   
+ 157  * Nodal data
+ 158    nodeParameter(ca,dt,n,nodePar)                    'Nodal input data for all trading periods'
+ 159   
+ 160  * Bus data
+ 161    busElectricalIsland(ca,dt,b)                      'Electrical island status of each bus for the different trading periods (0 = Dead)'
+ 162    nodeBusAllocationFactor(ca,dt,n,b)                'Allocation factor of market node quantities to bus for the different trading periods'
+ 163   
+ 164  * Branch and branch constraint data
+ 165    branchParameter(ca,dt,br,brPar)                   'Branch parameters for the different time periods'
+ 166    branchCstrFactors(ca,dt,brCstr<,br)               'Branch security constraint factors (sensitivities) for the current trading period'
+ 167    branchCstrRHS(ca,dt,brCstr,CstrRHS)               'Branch constraint sense and limit for the different trading periods'
+ 168   
+ 169  * Offer data
+ 170    energyOffer(ca,dt,o,blk,bidofrCmpnt)              'Energy offers for the different trading periods'
+ 171    reserveOffer(ca,dt,o,resC,resT,blk,bidofrCmpnt)   'Reserve offers for the different trading periods'
+ 172    offerParameter(ca,dt,o,offerPar)                  'Initial MW for each offer for the different trading periods'
+ 173   
+ 174  * Bid data
+ 175    energyBid(ca,dt,bd,blk,bidofrCmpnt)               'Energy bids for the different trading periods'
+ 176    bidParameter(ca,dt,bd,bidPar)                     'Parameters applied to each bid for the different trading periods'
+ 177   
+ 178  * Market node constraint data
+ 179    mnCnstrRHS(ca,dt,MnodeCstr<,CstrRHS)              'Market node constraint sense and limit for the different trading periods'
+ 180    mnCstrEnrgFactors(ca,dt,MnodeCstr,o)              'Market node energy offer constraint factors for the current trading period'
+ 181    mnCnstrResrvFactors(ca,dt,MnodeCstr,o,resC,resT)  'Market node reserve offer constraint factors for the current trading period'
+ 182    mnCnstrEnrgBidFactors(ca,dt,MnodeCstr,bd)         'Market node energy bid constraint factors for the different trading periods'
+ 183    mnCnstrResrvBidFactors(ca,dt,MnodeCstr,bd,resC)   'Market node IL reserve bid constraint factors for the different trading periods - currently not used'
+ 184   
+ 185  * Risk and reserve/sharing data
+ 186    riskParameter(ca,dt,isl,resC,riskC,riskPar)       'Risk parameters for the different trading periods'
+ 187    reserveSharingParameter(ca,dt,resPar)             'Reserve (sharing) parameters for the different trading periods'
+ 188   
+ 189  * Scarcity data
+ 190    scarcityNationalFactor(ca,dt,blk,bidofrCmpnt)      'National energy scarcity factor parameters'
+ 191    scarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt)        'Nodal energy scarcity factor parameters'
+ 192    scarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt)         'Nodal energy scarcity limit parameters'
+ 193    scarcityResrvLimit(ca,dt,isl,resC,blk,bidofrCmpnt) 'Reserve scarcity limit parameters'
+ 194   
+ 195    ;
+ 196   
+ 197  * Setting scalars that are hard-coded or defined in vSPDSetting.inc
+ 198  Scalars
+ 199    useAClossModel
+ 200    useHVDClossModel
+ 201    useACbranchLimits                        'Use the AC branch limits (1 = Yes)'
+ 202    useHVDCbranchLimits                      'Use the HVDC branch limits (1 = Yes)'
+ 203    resolveCircularBranchFlows               'Resolve circular branch flows (1 = Yes)'
+ 204    resolveHVDCnonPhysicalLosses             'Resolve nonphysical losses on HVDC branches (1 = Yes)'
+ 205    resolveACnonPhysicalLosses               'Resolve nonphysical losses on AC branches (1 = Yes)'
+ 206    circularBranchFlowTolerance
+ 207    nonPhysicalLossTolerance
+ 208    useBranchFlowMIPtolerance
+ 209    useReserveModel                          'Use the reserve model (1 = Yes)'
+ 210    mixedMIPtolerance
+ 211    LPtimeLimit                              'CPU seconds allowed for LP solves'
+ 212    LPiterationLimit                         'Iteration limit allowed for LP solves'
+ 213    MIPtimeLimit                             'CPU seconds allowed for MIP solves'
+ 214    MIPiterationLimit                        'Iteration limit allowed for MIP solves'
+ 215    MIPoptimality
+ 216    disconnectedNodePriceCorrection          'Flag to apply price correction methods to disconnected node'
+ 217    branchReceivingEndLossProportion         'Proportion of losses to be allocated to the receiving end of a branch' /1/
+ 218    BigM                                     'Big M value to be applied for single active segment HVDC loss model' /10000/
+ 219   
+ 220  * External loss model from Transpower
+ 221    lossCoeff_A                       / 0.3101 /
+ 222    lossCoeff_C                       / 0.14495 /
+ 223    lossCoeff_D                       / 0.32247 /
+ 224    lossCoeff_E                       / 0.46742 /
+ 225    lossCoeff_F                       / 0.82247 /
+ 226    maxFlowSegment                    / 10000 /
+ 227   
+ 228    ;
+ 229   
+ 230  * End of GDX declarations
+ 231   
+ 232   
+ 233   
+ 234  *===================================================================================
+ 235  * 2. Declare additional sets and parameters used throughout the model
+ 236  *===================================================================================
+ 237   
+ 238  * Dynamic sets that are calculated on the fly
+ 239  Sets
+ 240  * Global
+ 241    case2dt(ca,dt)                         'mapping caseID-DateTime pair'
+ 242    tp2dt(tp,dt)                           'mapping period to first datetime in a period '
+ 243    t(ca,dt)                               'Current trading interval to solve'
+ 244   
+ 245  * Node/bus
+ 246    node(ca,dt,n)                          'Node definition for the different trading periods'
+ 247    bus(ca,dt,b)                           'Bus definition for the different trading periods'
+ 248    nodeIsland(ca,dt,n,isl)                'Mapping node to island'
+ 249   
+ 250  * Network
+ 251    branch(ca,dt,br)                       'Branches defined for the current trading period'
+ 252    branchBusDefn(ca,dt,br,frB,toB)        'Branch bus connectivity for the current trading period'
+ 253    branchFrBus(ca,dt,br,frB)              'Define branch from bus connectivity for the current trading period'
+ 254    branchToBus(ca,dt,br,frB)              'Define branch to bus connectivity for the current trading period'
+ 255    branchBusConnect(ca,dt,br,b)           'Indication if a branch is connected to a bus for the current trading period'
+ 256    HVDClink(ca,dt,br)                     'HVDC links (branches) defined for the current trading period'
+ 257    ACBranch(ca,dt,br)                     'AC branches defined for the current trading period'
+ 258    ACBranchSendingBus(ca,dt,br,b,fd)      'Sending (From) bus of AC branch in forward and backward direction'
+ 259    ACBranchReceivingBus(ca,dt,br,b,fd)    'Receiving (To) bus of AC branch in forward and backward direction'
+ 260    HVDClinkSendingBus(ca,dt,br,b)         'Sending (From) bus of HVDC link'
+ 261    HVDClinkReceivingBus(ca,dt,br,toB)     'Receiving (To) bus of HVDC link'
+ 262    HVDClinkBus(ca,dt,br,b)                'Sending or Receiving bus of HVDC link'
+ 263    HVDCpoleDirection(ca,dt,br,fd)         'Direction defintion for HVDC poles S->N : forward and N->S : backward'
+ 264    HVDCpoleBranchMap(pole,br)             'Mapping of HVDC  branch to pole number'
+ 265    validLossSegment(ca,dt,br,los,fd)      'Valid loss segments for a branch'
+ 266    lossBranch(ca,dt,br)                   'Subset of branches that have non-zero loss factors'
+ 267   
+ 268  * Branch constraint
+ 269    BranchConstraint(ca,dt,brCstr)         'Set of valid branch constraints defined for the current trading period'
+ 270   
+ 271  * Offer
+ 272    offer(ca,dt,o)                         'Offers defined for the current trading period'
+ 273    offerIsland(ca,dt,o,isl)               'Mapping of reserve offer to island for the current trading period'
+ 274    islandRiskGenerator(ca,dt,isl,o)       'Mapping of risk generator to island in the current trading period'
+ 275    genOfrBlk(ca,dt,o,blk)                 'Valid trade blocks for the respective generation offers'
+ 276    posEnrgOfr(ca,dt,o)                    'Postive energy offers defined for the current trading period'
+ 277    resOfrBlk(ca,dt,o,blk,resC,resT)       'Valid trade blocks for the respective reserve offers by class and type'
+ 278   
+ 279  * Bid
+ 280    Bid(ca,dt,bd)                          'Bids defined for the current trading period'
+ 281    bidIsland(ca,dt,bd,isl)                'Mapping of purchase bid ILR to island for the current trading period'
+ 282    DemBidBlk(ca,dt,bd,blk)                'Valid trade blocks for the respective purchase bids'
+ 283   
+ 284  * Market node constraint
+ 285    MNodeConstraint(ca,dt,MnodeCstr)       'Set of market node constraints defined for the current trading period'
+ 286   
+ 287  * Reserve/Risk
+ 288    islandRiskGroup(ca,dt,isl,rg,riskC)    'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
+ 289   
+ 290  * Reserve Sharing
+ 291    rampingConstraint(ca,dt,brCstr)         'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
+ 292    bipoleConstraint(ca,dt,isl,brCstr)      'Subset of branch constraints that limit total HVDC sent from an island'
+ 293    monopoleConstraint(ca,dt,isl,brCstr,br) 'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
+ 294    ;
+ 295   
+ 296  Alias (t,t1,t2);
+ 297   
+ 298  * Initialise risk/reserve data for the current trade period start
+ 299   
+ 300   
+ 301   
+ 302  * Parameters initialised on the fly
+ 303  Parameters
+ 304    studyMode(ca,dt)                        'RTD~101, RTDP~201, PRSS~130, NRSS~132, PRSL~131, NRSL~133, WDS~120'
+ 305    intervalDuration(ca,dt)                 'Length of the trading period in minutes (e.g. 30) applied to each caseID-Period pair'
+ 306   
+ 307  * Nodal data
+ 308    refNode(ca,dt,n)                        'Reference nodes for the different trading periods'
+ 309    requiredLoad(ca,dt,n)                   'Nodal demand for the current trading period in MW'
+ 310    inputInitialLoad(ca,dt,n)               'This value represents actual load MW for RTD schedule input'
+ 311    conformingFactor(ca,dt,n)               'Initial estimated load for conforming load'
+ 312    nonConformingLoad(ca,dt,n)              'Initial estimated load for non-conforming load'
+ 313    loadIsOverride(ca,dt,n)                 'Flag if set to 1 --> InputInitialLoad will be fixed as node demand'
+ 314    loadIsBad(ca,dt,n)                      'Flag if set to 1 --> InitialLoad will be replaced by Estimated Initial Load'
+ 315    loadIsNCL(ca,dt,n)                      'Flag if set to 1 --> non-conforming load --> will be fixed in RTD load calculation'
+ 316    maxLoad(ca,dt,n)                        'Pnode maximum load'
+ 317    instructedLoadShed(ca,dt,n)             'Instructed load shedding applied to RTDP and should be ignore by all other schedules'
+ 318    instructedShedActive(ca,dt,n)           'Flag if Instructed load shedding is active; applied to RTDP and should be ignore by all other schedules'
+ 319    dispatchedLoad(ca,dt,n)                 'Initial dispatched lite demand'
+ 320    dispatchedGeneration(ca,dt,n)           'Initial dispatched lite generation'
+ 321  * Factor to prorate the deficit and surplus at the nodal level
+ 322    totalBusAllocation(ca,dt,b)             'Total allocation of nodes to bus'
+ 323    busNodeAllocationFactor(ca,dt,b,n)      'Bus to node allocation factor'
+ 324   
+ 325  * Network
+ 326    branchCapacity(ca,dt,br,fd)             'Branch directed capacity for the different trading periods in MW (Branch Reverse Ratings)'
+ 327    branchResistance(ca,dt,br)              'Resistance of the a branch for the current trading period in per unit'
+ 328    branchSusceptance(ca,dt,br)             'Susceptance (inverse of reactance) of a branch for the current trading period in per unit'
+ 329    branchFixedLoss(ca,dt,br)               'Fixed loss of the a branch for the current trading period in MW'
+ 330    branchLossBlocks(ca,dt,br)              'Number of blocks in the loss curve for the a branch in the current trading period'
+ 331    lossSegmentMW(ca,dt,br,los,fd)          'MW capacity of each loss segment'
+ 332    lossSegmentFactor(ca,dt,br,los,fd)      'Loss factor of each loss segment'
+ 333    ACBranchLossMW(ca,dt,br,los,fd)         'MW element of the loss segment curve in MW'
+ 334    ACBranchLossFactor(ca,dt,br,los,fd)     'Loss factor element of the loss segment curve'
+ 335    HVDCBreakPointMWFlow(ca,dt,br,bp,fd)    'Value of power flow on the HVDC at the break point'
+ 336    HVDCBreakPointMWLoss(ca,dt,br,bp,fd)    'Value of variable losses on the HVDC at the break point'
+ 337   
+ 338  * Branch constraint
+ 339    BranchConstraintSense(ca,dt,brCstr)     'Branch security constraint sense for the current trading period (-1:<=, 0:= 1:>=)'
+ 340    BranchConstraintLimit(ca,dt,brCstr)     'Branch security constraint limit for the current trading period'
+ 341   
+ 342  * Offers parameters
+ 343    generationStart(ca,dt,o)                'The MW generation level associated with the offer at the start of a trading period'
+ 344    rampRateUp(ca,dt,o)                     'The ramping up rate in MW per minute associated with the generation offer (MW/min)'
+ 345    rampRateDn(ca,dt,o)                     'The ramping down rate in MW per minute associated with the generation offer (MW/min)'
+ 346    reserveGenMax(ca,dt,o)                  'Maximum generation and reserve capability for the current trading period (MW)'
+ 347    intermittentOffer(ca,dt,o)              'Flag to indicate if offer is from intermittent generator (1 = Yes)'
+ 348    FKBand(ca,dt,o)                         'Frequency keeper band MW which is set when the risk setter is selected as the frequency keeper'
+ 349    priceResponsive(ca,dt,o)                'Flag to indicate if wind offer is price responsive (1 = Yes)'
+ 350    potentialMW(ca,dt,o)                    'Potential max output of Wind offer'
+ 351    reserveMaxFactor(ca,dt,o,resC)          'Factor to adjust the maximum reserve of the different classes for the different offers'
+ 352   
+ 353  * Primary-secondary offer parameters
+ 354    primaryOffer(ca,dt,o)                   'Flag to indicate if offer is a primary offer (1 = Yes)'
+ 355    secondaryOffer(ca,dt,o)                 'Flag to indicate if offer is a secondary offer (1 = Yes)'
+ 356   
+ 357  * Energy offer
+ 358    enrgOfrMW(ca,dt,o,blk)                  'Generation offer block (MW)'
+ 359    enrgOfrPrice(ca,dt,o,blk)               'Generation offer price ($/MW)'
+ 360   
+ 361  * Reserve offer
+ 362    resrvOfrPct(ca,dt,o,blk,resC)           'The percentage of the MW block available for PLSR of class FIR or SIR'
+ 363    resrvOfrPrice(ca,dt,o,blk,resC,resT)    'The price of the reserve of the different reserve classes and types ($/MW)'
+ 364    resrvOfrMW(ca,dt,o,blk,resC,resT)       'The maximum MW offered reserve for the different reserve classes and types (MW)'
+ 365   
+ 366  * Bid
+ 367    demBidMW(ca,dt,bd,blk)                  'Demand bid block in MW'
+ 368    demBidPrice(ca,dt,bd,blk)               'Purchase bid price in $/MW'
+ 369    demBidILRMW(ca,dt,bd,blk,resC)          'Purchase bid ILR block in MW for the different reserve classes - place holder'
+ 370    demBidILRPrice(ca,dt,bd,blk,resC)       'Purchase bid ILR price in $/MW for the different reserve classes - place holder'
+ 371   
+ 372   
+ 373  * Market node constraint
+ 374    MNodeConstraintSense(ca,dt,MnodeCstr)   'Market node constraint sense for the current trading period'
+ 375    MNodeConstraintLimit(ca,dt,MnodeCstr)   'Market node constraint limit for the current trading period'
+ 376   
+ 377   
+ 378  * Risk/Reserve
+ 379    HVDCSecRiskEnabled(ca,dt,isl,riskC)     'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
+ 380    riskAdjFactor(ca,dt,isl,resC,riskC)     'Risk adjustment factor for each island, reserve class and risk class'
+ 381    HVDCpoleRampUp(ca,dt,isl,resC,riskC)    'HVDC pole MW ramp up capability for each island, reserve class and risk class'
+ 382   
+ 383   
+ 384  * Reserve Sharing parameters
+ 385    reserveShareEnabled(ca,dt,resC)         'Database flag if reserve class resC is sharable'
+ 386    reserveShareEnabledOverall(ca,dt)       'An internal parameter based on the FIR and SIR enabled, and used as a switch in various places'
+ 387    reserveRoundPower(ca,dt,resC)           'Database flag that disables round power under certain circumstances'
+ 388    modulationRiskClass(ca,dt,riskC)        'HVDC energy modulation due to frequency keeping action'
+ 389    modulationRisk(ca,dt)                   'Max of HVDC energy modulation due to frequency keeping action'
+ 390   
+ 391    roundPower2MonoLevel(ca,dt)             'HVDC sent value above which one pole is stopped and therefore FIR cannot use round power'
+ 392    bipole2MonoLevel(ca,dt)                 'HVDC sent value below which one pole is available to start in the opposite direction and therefore SIR can use round power'
+ 393    roPwrZoneExit(ca,dt,resC)               'Above this point there is no guarantee that HVDC sent can be reduced below MonopoleMinimum.'
+ 394   
+ 395    monopoleMinimum(ca,dt)                  'The lowest level that the sent HVDC sent can ramp down to when round power is not available.'
+ 396    HVDCControlBand(ca,dt,rd)               'Modulation limit of the HVDC control system apply to each HVDC direction'
+ 397    HVDClossScalingFactor(ca,dt)            'Losses used for full voltage mode are adjusted by a factor of (700/500)^2 for reduced voltage operation'
+ 398    RMTReserveLimit(ca,dt,isl,resC)         'The shared reserve limit used by RMT when it calculated the NFRs. Applied as a cap to the value that is calculated for SharedNFRMax.'
+ 399    sharedNFRFactor(ca,dt)                  'Factor that is applied to [sharedNFRLoad - sharedNFRLoadOffset] as part of the calculation of sharedNFRMax'
+ 400    sharedNFRLoadOffset(ca,dt,isl)          'Island load that does not provide load damping, e.g., Tiwai smelter load in the South Island. Subtracted from the sharedNFRLoad in the calculation of sharedNFRMax.'
+ 401    effectiveFactor(ca,dt,isl,resC,riskC)   'Estimate of the effectiveness of the shared reserve once it has been received in the risk island.'
+ 402   
+ 403  * HVDC data for Reserve Sharing
+ 404    numberOfPoles(ca,dt,isl)                    'Number of HVDC poles avaialbe to send energy from an island'
+ 405    monoPoleCapacity(ca,dt,isl,br)              'Maximum capacity of monopole defined by min of branch capacity and monopole constraint RHS'
+ 406    biPoleCapacity(ca,dt,isl)                   'Maximum capacity of bipole defined by bipole constraint RHS'
+ 407    HVDCMax(ca,dt,isl)                          'Max HVDC flow based on available poles and branch group constraints RHS'
+ 408    HVDCCapacity(ca,dt,isl)                     'Total sent capacity of HVDC based on available poles'
+ 409    HVDCResistance(ca,dt,isl)                   'Estimated resistance of HVDC flow sent from an island'
+ 410    HVDClossSegmentMW(ca,dt,isl,los)            'MW capacity of each loss segment applied to aggregated HVDC capacity'
+ 411    HVDClossSegmentFactor(ca,dt,isl,los)        'Loss factor of each loss segment applied to to aggregated HVDC loss'
+ 412    HVDCSentBreakPointMWFlow(ca,dt,isl,los)     'Value of total HVDC sent power flow at the break point               --> lambda segment loss model'
+ 413    HVDCSentBreakPointMWLoss(ca,dt,isl,los)     'Value of ariable losses of the total HVDC sent at the break point    --> lambda segment loss model'
+ 414    HVDCReserveBreakPointMWFlow(ca,dt,isl,los)  'Value of total HVDC sent power flow + reserve at the break point     --> lambda segment loss model'
+ 415    HVDCReserveBreakPointMWLoss(ca,dt,isl,los)  'Value of post-contingent variable HVDC losses at the break point     --> lambda segment loss model'
+ 416   
+ 417    sharedNFRLoad(ca,dt,isl)                'Island load, calculated in pre-processing from the required load and the bids. Used as an input to the calculation of SharedNFRMax.'
+ 418    sharedNFRMax(ca,dt,isl)                 'Amount of island free reserve that can be shared through HVDC'
+ 419    FreeReserve(ca,dt,isl,resC,riskC)       'MW free reserve for each island, reserve class and risk class'
+ 420  * NMIR parameters end
+ 421   
+ 422  * Real Time Pricing - Inputs
+ 423    useGenInitialMW(ca,dt)                  'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
+ 424    useActualLoad(ca,dt)                    'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
+ 425    maxSolveLoops(ca,dt)                    'The maximum number of times that the Energy Shortfall Check will re-solve the model'
+ 426   
+ 427    islandMWIPS(ca,dt,isl)                  'Island total generation at the start of RTD run'
+ 428    islandPDS(ca,dt,isl)                    'Island pre-solve deviation - used to adjust RTD node demand'
+ 429    islandLosses(ca,dt,isl)                 'Island estimated losss - used to adjust RTD mode demand'
+ 430    SPDLoadCalcLosses(ca,dt,isl)            'Island losses calculated by SPD in the first solve to adjust demand'
+ 431   
+ 432   
+ 433   
+ 434    energyScarcityEnabled(ca,dt)                 'Flag to apply energy scarcity (this is different from FP scarcity situation)'
+ 435    reserveScarcityEnabled(ca,dt)                'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
+ 436    scarcityEnrgLimit(ca,dt,n,blk)               'Node energy scarcity limits'
+ 437    scarcityEnrgPrice(ca,dt,n,blk)               'Node energy scarcity prices vs limits'
+ 438    scarcityResrvIslandLimit(ca,dt,isl,resC,blk) 'Reserve scarcity limits'
+ 439    scarcityResrvIslandPrice(ca,dt,isl,resC,blk) 'Reserve scarcity prices'
+ 440   
+ 441   
+ 442   
+ 443   
+ 444  * Real Time Pricing - Calculated parameters
+ 445    InitialLoad(ca,dt,n)                                'Value that represents the Pnode load MW at the start of the solution interval. Depending on the inputs this value will be either actual load, an operator applied override or an estimated initial load'
+ 446    LoadIsScalable(ca,dt,n)                             'Binary value. If True then the Pnode InitialLoad will be scaled in order to calculate nodedemand, if False then Pnode InitialLoad will be directly assigned to nodedemand'
+ 447    LoadScalingFactor(ca,dt,isl)                        'Island-level scaling factor applied to InitialLoad in order to calculate nodedemand'
+ 448    TargetTotalLoad(ca,dt,isl)                          'Island-level MW load forecast'
+ 449    LoadCalcLosses(ca,dt,isl)                           'Island-level MW losses used to calculate the Island-level load forecast from the InputIPS and the IslandPSD. 1st loop --> InitialLosses, 2nd solve loop --> SystemLosses as calculated in section 6.3'
+ 450    EstimatedInitialLoad(ca,dt,n)                       'Calculated estimate of initial MW load, available to be used as an alternative to InputInitialLoad'
+ 451    EstScalingFactor(ca,dt,isl)                         'Scaling applied to ConformingFactor load MW in order to calculate EstimatedInitialLoad'
+ 452    EstLoadIsScalable(ca,dt,n)                          'Binary value. If True then ConformingFactor load MW will be scaled in order to calculate EstimatedInitialLoad. If False then EstNonScalableLoad will be assigned directly to EstimatedInitialLoad'
+ 453    EstNonScalableLoad(ca,dt,n)                         'For a non-conforming Pnode this will be the NonConformingLoad MW input, for a conforming Pnode this will be the ConformingFactor MW input if that value is negative, otherwise it will be zero'
+ 454    EstScalableLoad(ca,dt,n)                            'For a non-conforming Pnode this value will be zero. For a conforming Pnode this value will be the ConformingFactor if it is non-negative, otherwise this value will be zero'
+ 455   
+ 456  * Post-processing
+ 457    useBranchFlowMIP(ca,dt)                             'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
+ 458   
+ 459   
+ 460    ;
+ 461   
+ 462  Scalars
+ 463  * Violation penalties
+ 464  * These violation penalties are not specified in the model formulation document (ver.4.3) but are specified in the
+ 465  * document "Resolving Infeasibilities & High Spring Washer Price situations - an overview" available at www.systemoperator.co.nz/n2766,264.html
+ 466    deficitBusGenerationPenalty                      'Bus deficit violation penalty'                      /500000/
+ 467    surplusBusGenerationPenalty                      'Bus surplus violation penalty'                      /500000/
+ 468    deficitBrCstrPenalty                             'Deficit branch group constraint violation penalty'  /650000/
+ 469    surplusBrCstrPenalty                             'Surplus branch group constraint violation penalty'  /650000/
+ 470    deficitGnrcCstrPenalty                           'Deficit generic constraint violation penalty'       /710000/
+ 471    surplusGnrcCstrPenalty                           'Surplus generic constraint violation penalty'       /710000/
+ 472    deficitRampRatePenalty                           'Deficit ramp rate violation penalty'                /850000/
+ 473    surplusRampRatePenalty                           'Surplus ramp rate violation penalty'                /850000/
+ 474    deficitBranchFlowPenalty                         'Deficit branch flow violation penalty'              /600000/
+ 475    surplusBranchFlowPenalty                         'Surplus branch flow violation penalty'              /600000/
+ 476    deficitMnodeCstrPenalty                          'Deficit market node constraint violation penalty'   /700000/
+ 477    surplusMnodeCstrPenalty                          'Surplus market node constraint violation penalty'   /700000/
+ 478    DeficitReservePenalty_CE                         '6s and 60s CE reserve deficit violation penalty'    /100000/
+ 479    DeficitReservePenalty_ECE                        '6s and 60s ECE reserve deficit violation penalty'   /800000/
+ 480    ;
+ 481   
+ 482   
+ 483  *===================================================================================
+ 484  * 3. Declare model variables and constraints, and initialise constraints
+ 485  *=================================================================== ================
+ 486   
+ 487  * VARIABLES - UPPER CASE
+ 488  * Equations, parameters and everything else - lower or mixed case
+ 489   
+ 490  * Model formulation originally based on the SPD model formulation version 4.3 (15 Feb 2008) and amended as indicated
+ 491   
+ 492  Variables
+ 493    NETBENEFIT                                       'Defined as the difference between the consumer surplus and producer costs adjusted for penalty costs'
+ 494  * Risk
+ 495    ISLANDRISK(ca,dt,isl,resC,riskC)                    'Island MW risk for the different reserve and risk classes'
+ 496    GENISLANDRISK(ca,dt,isl,o,resC,riskC)               'Island MW risk for different risk setting generators'
+ 497    GENISLANDRISKGROUP(ca,dt,isl,rg,resC,riskC)         'Island MW risk for different risk group - SPD version 11.0'
+ 498    HVDCGENISLANDRISK(ca,dt,isl,o,resC,riskC)           'Island MW risk for different risk setting generators + HVDC'
+ 499    HVDCMANISLANDRISK(ca,dt,isl,resC,riskC)             'Island MW risk for manual risk + HVDC'
+ 500    HVDCREC(ca,dt,isl)                                  'Total net pre-contingent HVDC MW flow received at each island'
+ 501    RISKOFFSET(ca,dt,isl,resC,riskC)                    'MW offset applied to the raw risk to account for HVDC pole rampup, AUFLS, free reserve and non-compliant generation'
+ 502   
+ 503  * NMIR free variables
+ 504    HVDCRESERVESENT(ca,dt,isl,resC,rd)                  'Total net post-contingent HVDC MW flow sent from an island applied to each reserve class'
+ 505    HVDCRESERVELOSS(ca,dt,isl,resC,rd)                  'Post-contingent HVDC loss of energy + reserve sent from an island applied to each reserve class'
+ 506  * NMIR free variables end
+ 507   
+ 508  * Network
+ 509    ACNODENETINJECTION(ca,dt,b)                         'MW injection at buses corresponding to AC nodes'
+ 510    ACBRANCHFLOW(ca,dt,br)                              'MW flow on undirected AC branch'
+ 511    ACNODEANGLE(ca,dt,b)                                'Bus voltage angle'
+ 512   
+ 513  * Demand bids can be either positive or negative from v6.0 of SPD formulation (with DSBF)
+ 514  * The lower bound of the free variable is updated in vSPDSolve.gms to allow backward compatibility
+ 515  * Note the formulation now refers to this as Demand. So Demand (in SPD formulation) = Purchase (in vSPD code)
+ 516    PURCHASE(ca,dt,bd)                                  'Total MW purchase scheduled'
+ 517    PURCHASEBLOCK(ca,dt,bd,blk)                         'MW purchase scheduled from the individual trade blocks of a bid'
+ 518   
+ 519    ;
+ 520   
+ 521  Positive variables
+ 522  * system cost and benefit
+ 523    SYSTEMBENEFIT(ca,dt)                                'Total purchase bid benefit by period'
+ 524    SYSTEMCOST(ca,dt)                                   'Total generation and reserve costs by period'
+ 525    SYSTEMPENALTYCOST(ca,dt)                            'Total violation costs by period'
+ 526    TOTALPENALTYCOST                                 'Total violation costs'
+ 527    SCARCITYCOST(ca,dt)                                 'Total scarcity Cost'
+ 528  * scarcity variables
+ 529    ENERGYSCARCITYBLK(ca,dt,n,blk)                      'Block energy scarcity cleared at bus b'
+ 530    ENERGYSCARCITYNODE(ca,dt,n)                         'Energy scarcity cleared at bus b'
+ 531   
+ 532    RESERVESHORTFALLBLK(ca,dt,isl,resC,riskC,blk)       'Block reserve shortfall by risk class (excluding genrisk and HVDC secondary risk)'
+ 533    RESERVESHORTFALL(ca,dt,isl,resC,riskC)              'Reserve shortfall by risk class (excluding genris kand HVDC secondary risk)'
+ 534   
+ 535    RESERVESHORTFALLUNITBLK(ca,dt,isl,o,resC,riskC,blk) 'Block reserve shortfall by risk generation unit (applied to genrisk and HVDC secondary risk)'
+ 536    RESERVESHORTFALLUNIT(ca,dt,isl,o,resC,riskC)        'Reserve shortfall by risk generation unit (applied to genrisk and HVDC secondary risk)'
+ 537   
+ 538    RESERVESHORTFALLGROUPBLK(ca,dt,isl,rg,resC,riskC,blk) 'Block Reserve shortfall by risk group (applied to genrisk and HVDC secondary risk)'
+ 539    RESERVESHORTFALLGROUP(ca,dt,isl,rg,resC,riskC)        'Reserve shortfall by risk risk group (applied to genrisk and HVDC secondary risk)'
+ 540   
+ 541  * Generation
+ 542    GENERATION(ca,dt,o)                                 'Total MW generation scheduled from an offer'
+ 543    GENERATIONBLOCK(ca,dt,o,blk)                        'MW generation scheduled from the individual trade blocks of an offer'
+ 544    GENERATIONUPDELTA(ca,dt,o)                          'Total increase in MW generation scheduled from an offer'
+ 545    GENERATIONDNDELTA(ca,dt,o)                          'Total decrease in MW generation scheduled from an offer'
+ 546  * Reserve
+ 547    RESERVE(ca,dt,o,resC,resT)                          'MW Reserve scheduled from an offer'
+ 548    RESERVEBLOCK(ca,dt,o,blk,resC,resT)                 'MW Reserve scheduled from the individual trade blocks of an offer'
+ 549    ISLANDRESERVE(ca,dt,isl,resC)                       'Total island cleared reserve'
+ 550   
+ 551  * NMIR positive variables
+ 552    SHAREDNFR(ca,dt,isl)                                'Amount of free load reserve being shared from an island'
+ 553    SHAREDRESERVE(ca,dt,isl,resC)                       'Amount of cleared reserve from an island being shared to the other island'
+ 554    HVDCSENT(ca,dt,isl)                                 'Directed pre-contingent HVDC MW flow sent from each island'
+ 555    HVDCSENTLOSS(ca,dt,isl)                             'Energy loss for  HVDC flow sent from an island'
+ 556    RESERVESHAREEFFECTIVE(ca,dt,isl,resC,riskC)         'Effective shared reserve received at island after adjusted for losses and effectiveness factor'
+ 557    RESERVESHARERECEIVED(ca,dt,isl,resC,rd)             'Directed shared reserve received at island after adjusted for losses'
+ 558    RESERVESHARESENT(ca,dt,isl,resC,rd)                 'Directed shared reserve sent from and island'
+ 559    RESERVESHAREPENALTY(ca,dt)                          'Penalty cost for excessive reserve sharing'
+ 560  * Tuong Nguyen added on 24 Feb 2021 to correct the calculation of RESERVESHAREPENALTY
+ 561    RESERVESHAREEFFECTIVE_CE(ca,dt,isl,resC)            'Max effective shared reserve for CE risk received at island after adjusted for losses and effectiveness factor'
+ 562    RESERVESHAREEFFECTIVE_ECE(ca,dt,isl,resC)           'Max effective shared reserve for ECE risk received at island after adjusted for losses and effectiveness factor'
+ 563  * NMIR positive variables end
+ 564   
+ 565  * Network
+ 566    HVDCLINKFLOW(ca,dt,br)                              'MW flow at the sending end scheduled for the HVDC link'
+ 567    HVDCLINKLOSSES(ca,dt,br)                            'MW losses on the HVDC link'
+ 568    LAMBDA(ca,dt,br,bp)                                 'Non-negative weight applied to the breakpoint of the HVDC link'
+ 569    ACBRANCHFLOWDIRECTED(ca,dt,br,fd)                   'MW flow on the directed branch'
+ 570    ACBRANCHLOSSESDIRECTED(ca,dt,br,fd)                 'MW losses on the directed branch'
+ 571    ACBRANCHFLOWBLOCKDIRECTED(ca,dt,br,los,fd)          'MW flow on the different blocks of the loss curve'
+ 572    ACBRANCHLOSSESBLOCKDIRECTED(ca,dt,br,los,fd)        'MW losses on the different blocks of the loss curve'
+ 573  * Violations
+ 574    DEFICITBUSGENERATION(ca,dt,b)                       'Deficit generation at a bus in MW'
+ 575    SURPLUSBUSGENERATION(ca,dt,b)                       'Surplus generation at a bus in MW'
+ 576    DEFICITBRANCHSECURITYCONSTRAINT(ca,dt,brCstr)       'Deficit branch security constraint in MW'
+ 577    SURPLUSBRANCHSECURITYCONSTRAINT(ca,dt,brCstr)       'Surplus branch security constraint in MW'
+ 578    DEFICITRAMPRATE(ca,dt,o)                            'Deficit ramp rate in MW'
+ 579    SURPLUSRAMPRATE(ca,dt,o)                            'Surplus ramp rate in MW'
+ 580    DEFICITBRANCHFLOW(ca,dt,br)                         'Deficit branch flow in MW'
+ 581    SURPLUSBRANCHFLOW(ca,dt,br)                         'Surplus branch flow in MW'
+ 582    DEFICITMNODECONSTRAINT(ca,dt,MnodeCstr)             'Deficit market node constraint in MW'
+ 583    SURPLUSMNODECONSTRAINT(ca,dt,MnodeCstr)             'Surplus market node constraint in MW'
+ 584  * Seperate CE and ECE violation variables to support different CVPs for CE and ECE
+ 585    DEFICITRESERVE_CE(ca,dt,isl,resC)                   'Deficit CE reserve generation in each island for each reserve class in MW'
+ 586    DEFICITRESERVE_ECE(ca,dt,isl,resC)                  'Deficit ECE reserve generation in each island for each reserve class in MW'
+ 587   
+ 588    ;
+ 589   
+ 590  Binary variables
+ 591  * NMIR binary variables
+ 592    HVDCSENDING(ca,dt,isl)                              'Binary variable indicating if island isl is the sending end of the HVDC flow. 1 = Yes.'
+ 593    INZONE(ca,dt,isl,resC,z)                            'Binary variable (1 = Yes ) indicating if the HVDC flow is in a zone (z) that facilitates the appropriate quantity of shared reserves in the reverse direction to the HVDC sending island isl for reserve class resC.'
+ 594    HVDCSENTINSEGMENT(ca,dt,isl,los)                    'Binary variable to decide which loss segment HVDC flow sent from an island falling into --> active segment loss model'
+ 595  * Discete dispachable demand block binary variables
+ 596    PURCHASEBLOCKBINARY(ca,dt,bd,blk)                   'Binary variable to decide if a purchase block is cleared either fully or nothing at all'
+ 597  * HVDC Secondary risk should not be covered if HVDC sending is zero. The following binary variable is to enforced that (Update from RTP phase 4)
+ 598    HVDCSENDZERO(ca,dt,isl)                              'Binary variable indicating if island is NOT the sending energy through HVDC flow. 1 = Yes.'
+ 599    ;
+ 600   
+ 601  SOS1 Variables
+ 602    ACBRANCHFLOWDIRECTED_INTEGER(ca,dt,br,fd)           'Integer variables used to select branch flow direction in the event of circular branch flows (3.8.1)'
+ 603    HVDCLINKFLOWDIRECTED_INTEGER(ca,dt,fd)              'Integer variables used to select the HVDC branch flow direction on in the event of S->N (forward) and N->S (reverse) flows (3.8.2)'
+ 604  * Integer varaible to prevent intra-pole circulating branch flows
+ 605    HVDCPOLEFLOW_INTEGER(ca,dt,pole,fd)                 'Integer variables used to select the HVDC pole flow direction on in the event of circulating branch flows within a pole'
+ 606    ;
+ 607   
+ 608  SOS2 Variables
+ 609    LAMBDAINTEGER(ca,dt,br,bp)                          'Integer variables used to enforce the piecewise linear loss approxiamtion on the HVDC links'
+ 610    LAMBDAHVDCENERGY(ca,dt,isl,bp)                      'Integer variables used to enforce the piecewise linear loss approxiamtion (NMIR) on the HVDC links'
+ 611    LAMBDAHVDCRESERVE(ca,dt,isl,resC,rd,rsbp)           'Integer variables used to enforce the piecewise linear loss approxiamtion (NMIR) on the HVDC links'
+ 612    ;
+ 613   
+ 614   
+ 615  Equations
+ 616    ObjectiveFunction                                'Objective function of the dispatch model (5.1.1.1)'
+ 617  * Cost and benefit breaking down
+ 618    SystemBenefitDefinition(ca,dt)                      'Defined as the sum of the purcahse bid benefit'
+ 619    SystemCostDefinition(ca,dt)                         'Defined as the sum of the generation and reserve costs'
+ 620    SystemPenaltyCostDefinition(ca,dt)                  'Defined as the sum of the individual violation costs'
+ 621    TotalViolationCostDefinition                     'Deined as the sume of period violation cost - (for reporting)'
+ 622    TotalScarcityCostDefinition(ca,dt)                  'Deined as the sume of scarcity cost'
+ 623   
+ 624   
+ 625  * Offer and purchase constraints
+ 626    GenerationChangeUpDown(ca,dt,o)                     'Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
+ 627    GenerationOfferDefintion(ca,dt,o)                   'Definition of generation provided by an offer (6.1.1.3)'
+ 628    DemBidDiscrete(ca,dt,bd,blk)                        'Definition of discrete purchase mode (6.1.1.7)'
+ 629    DemBidDefintion(ca,dt,bd)                           'Definition of purchase provided by a bid (6.1.1.8)'
+ 630    EnergyScarcityDefinition(ca,dt,n)                   'Definition of bus energy scarcity (6.1.1.10)'
+ 631   
+ 632  * Ramping constraints
+ 633    GenerationRampUp(ca,dt,o)                           'Maximum movement of the generator upwards due to up ramp rate (6.2.1.1)'
+ 634    GenerationRampDown(ca,dt,o)                         'Maximum movement of the generator downwards due to down ramp rate (6.2.1.2)'
+ 635   
+ 636   
+ 637   
+ 638  * HVDC transmission constraints
+ 639    HVDClinkMaximumFlow(ca,dt,br)                       'Maximum flow on each HVDC link (6.3.1.1)'
+ 640    HVDClinkLossDefinition(ca,dt,br)                    'Definition of losses on the HVDC link (6.3.1.2)'
+ 641    HVDClinkFlowDefinition(ca,dt,br)                    'Definition of MW flow on the HVDC link (6.3.1.3)'
+ 642    LambdaDefinition(ca,dt,br)                          'Definition of weighting factor (6.3.1.4)'
+ 643   
+ 644  * HVDC transmission constraints to resolve non-physical loss and circular flow
+ 645  * These constraints are not explicitly formulated in SPD formulation
+ 646  * But you can find the description in "Post-Solve Checks"
+ 647    HVDClinkFlowIntegerDefinition1(ca,dt)               'Definition 1 of the integer HVDC link flow variable )'
+ 648    HVDClinkFlowIntegerDefinition2(ca,dt,fd)            'Definition 2 of the integer HVDC link flow variable'
+ 649    HVDClinkFlowIntegerDefinition3(ca,dt,pole)          'Definition 4 of the HVDC pole integer varaible to prevent intra-pole circulating branch flows'
+ 650    HVDClinkFlowIntegerDefinition4(ca,dt,pole,fd)       'Definition 4 of the HVDC pole integer varaible to prevent intra-pole circulating branch flows'
+ 651    LambdaIntegerDefinition1(ca,dt,br)                  'Definition of weighting factor when branch integer constraints are needed'
+ 652    LambdaIntegerDefinition2(ca,dt,br,los)              'Definition of weighting factor when branch integer constraints are needed'
+ 653   
+ 654  * AC transmission constraints
+ 655    ACnodeNetInjectionDefinition1(ca,dt,b)              '1st definition of the net injection at buses corresponding to AC nodes (6.4.1.1)'
+ 656    ACnodeNetInjectionDefinition2(ca,dt,b)              '2nd definition of the net injection at buses corresponding to AC nodes (6.4.1.2)'
+ 657    ACBranchMaximumFlow(ca,dt,br,fd)                    'Maximum flow on the AC branch (6.4.1.3)'
+ 658    ACBranchFlowDefinition(ca,dt,br)                    'Relationship between directed and undirected branch flow variables (6.4.1.4)'
+ 659    LinearLoadFlow(ca,dt,br)                            'Equation that describes the linear load flow (6.4.1.5)'
+ 660    ACBranchBlockLimit(ca,dt,br,los,fd)                 'Limit on each AC branch flow block (6.4.1.6)'
+ 661    ACDirectedBranchFlowDefinition(ca,dt,br,fd)         'Composition of the directed branch flow from the block branch flow (6.4.1.7)'
+ 662    ACBranchLossCalculation(ca,dt,br,los,fd)            'Calculation of the losses in each loss segment (6.4.1.8)'
+ 663    ACDirectedBranchLossDefinition(ca,dt,br,fd)         'Composition of the directed branch losses from the block branch losses (6.4.1.9)'
+ 664   
+ 665  * AC transmission constraints to resolve circular flow
+ 666    ACDirectedBranchFlowIntegerDefinition1(ca,dt,br)    'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses'
+ 667    ACDirectedBranchFlowIntegerDefinition2(ca,dt,br,fd) 'Integer constraint to enforce a flow direction on loss AC branches in the presence of circular branch flows or non-physical losses'
+ 668   
+ 669  * Risk
+ 670    RiskOffsetCalculation_DCCE(ca,dt,isl,resC,riskC)          '6.5.1.1 : Calculation of the risk offset variable for the DCCE risk class.'
+ 671    RiskOffsetCalculation_DCECE(ca,dt,isl,resC,riskC)         '6.5.1.3 : Calculation of the risk offset variable for the DCECE risk class.'
+ 672    HVDCRecCalculation(ca,dt,isl)                             '6.5.1.4 : Calculation of the net received HVDC MW flow into an island.'
+ 673    HVDCIslandRiskCalculation(ca,dt,isl,resC,riskC)           '6.5.1.5 : Calculation of the island risk for a DCCE and DCECE.'
+ 674   
+ 675    GenIslandRiskCalculation(ca,dt,isl,o,resC,riskC)          '6.5.1.6 : Calculation of the island risk for risk setting generators.'
+ 676    GenIslandRiskCalculation_1(ca,dt,isl,o,resC,riskC)        '6.5.1.6 : Calculation of the island risk for risk setting generators.'
+ 677    ManualIslandRiskCalculation(ca,dt,isl,resC,riskC)         '6.5.1.7 : Calculation of the island risk based on manual specifications.'
+ 678    HVDCSendMustZeroBinaryDefinition(ca,dt,isl)               '6.5.1.8: Define a flag to show if HVDC sending zero MW flow from an island '
+ 679   
+ 680    HVDCIslandSecRiskCalculation_GEN(ca,dt,isl,o,resC,riskC)     '6.5.1.9 : Calculation of the island risk for an HVDC secondary risk to an AC risk.'
+ 681    HVDCIslandSecRiskCalculation_GEN_1(ca,dt,isl,o,resC,riskC)   '6.5.1.9 : Calculation of the island risk for an HVDC secondary risk to an AC risk.'
+ 682    HVDCIslandSecRiskCalculation_Manual(ca,dt,isl,resC,riskC)    '6.5.1.10: Calculation of the island risk for an HVDC secondary risk to a manual risk.'
+ 683    HVDCIslandSecRiskCalculation_Manu_1(ca,dt,isl,resC,riskC)    '6.5.1.10: Calculation of the island risk for an HVDC secondary risk to a manual risk.'
+ 684    GenIslandRiskGroupCalculation(ca,dt,isl,rg,resC,riskC)       '6.5.1.11: Calculation of the island risk of risk group.'
+ 685    GenIslandRiskGroupCalculation_1(ca,dt,isl,rg,resC,riskC)     '6.5.1.11: Calculation of the risk of risk group.'
+ 686   
+ 687  * General NMIR equations
+ 688    EffectiveReserveShareCalculation(ca,dt,isl,resC,riskC)                           '6.5.2.1 : Calculation of effective shared reserve'
+ 689    SharedReserveLimitByClearedReserve(ca,dt,isl,resC)                               '6.5.2.2 : Shared offered reserve is limited by cleared reserved'
+ 690    BothClearedAndFreeReserveCanBeShared(ca,dt,isl,resC,rd)                          '6.5.2.4 : Shared reserve is covered by cleared reserved and shareable free reserve'
+ 691    ReserveShareSentLimitByHVDCControlBand(ca,dt,isl,resC,rd)                        '6.5.2.5 : Reserve share sent from an island is limited by HVDC control band'
+ 692    FwdReserveShareSentLimitByHVDCCapacity(ca,dt,isl,resC,rd)                        '6.5.2.6 : Forward reserve share sent from an island is limited by HVDC capacity'
+ 693    ReverseReserveOnlyToEnergySendingIsland(ca,dt,isl,resC,rd)                       '6.5.2.7 : Shared reserve sent in reverse direction is possible only if the island is not sending energy through HVDC'
+ 694    ReverseReserveShareLimitByHVDCControlBand(ca,dt,isl,resC,rd)                     '6.5.2.8 : Reverse reserve share recieved at an island is limited by HVDC control band'
+ 695    ForwardReserveOnlyToEnergyReceivingIsland(ca,dt,isl,resC,rd)                     '6.5.2.9 : Forward received reserve is possible if in the same direction of HVDC '
+ 696    ReverseReserveLimitInReserveZone(ca,dt,isl,resC,rd,z)                            '6.5.2.10: Reverse reserve constraint if HVDC sent flow in reverse zone'
+ 697    ZeroReserveInNoReserveZone(ca,dt,isl,resC,z)                                     '6.5.2.11 & 6.5.2.18: No reverse reserve if HVDC sent flow in no reverse zone and no forward reserve if round power disabled'
+ 698    OnlyOneActiveHVDCZoneForEachReserveClass(ca,dt,resC)                             '6.5.2.12: Across both island, one and only one zone is active for each reserve class'
+ 699    ZeroSentHVDCFlowForNonSendingIsland(ca,dt,isl)                                   '6.5.2.13: Directed HVDC sent from an island, if non-zero, must fall in a zone for each reserve class'
+ 700    RoundPowerZoneSentHVDCUpperLimit(ca,dt,isl,resC,z)                               '6.5.2.14: Directed HVDC sent from an island <= RoundPowerZoneExit level if in round power zone of that island'
+ 701    HVDCSendingIslandDefinition(ca,dt,isl,resC)                                      '6.5.2.15: An island is HVDC sending island if HVDC flow sent is in one of the three zones for each reserve class '
+ 702    OnlyOneSendingIslandExists(ca,dt)                                                '6.5.2.19: One and only one island is HVDC sending island'
+ 703    HVDCSentCalculation(ca,dt,isl)                                                   '6.5.2.20: Total HVDC sent from each island'
+ 704   
+ 705  * Lamda loss model
+ 706    HVDCFlowAccountedForForwardReserve(ca,dt,isl,resC,rd)                            '6.5.2.21: HVDC flow sent from an island taking into account forward sent reserve'
+ 707    ForwardReserveReceivedAtHVDCReceivingIsland(ca,dt,isl,resC,rd)                   '6.5.2.22: Forward reserve RECEIVED at an HVDC receiving island'
+ 708    HVDCFlowAccountedForReverseReserve(ca,dt,isl,resC,rd)                            '6.5.2.23: HVDC flow sent from an island taking into account reverse received reserve'
+ 709    ReverseReserveReceivedAtHVDCSendingIsland(ca,dt,isl,resC,rd)                     '6.5.2.24: Reverse reserve RECEIVED at an HVDC sending island'
+ 710    HVDCSentEnergyLambdaDefinition(ca,dt,isl)                                        '6.5.2.25: Definition of weight factor for total HVDC energy sent from an island'
+ 711    HVDCSentEnergyFlowDefinition(ca,dt,isl)                                          '6.5.2.26: Lambda definition of total HVDC energy flow sent from an island'
+ 712    HVDCSentEnergyLossesDefinition(ca,dt,isl)                                        '6.5.2.27: Lambda definition of total loss of HVDC energy sent from an island'
+ 713    HVDCSentReserveLambdaDefinition(ca,dt,isl,resC,rd)                               '6.5.2.28: Definition of weight factor for total HVDC+reserve sent from an island'
+ 714    HVDCSentReserveFlowDefinition(ca,dt,isl,resC,rd)                                 '6.5.2.29: Lambda definition of Reserse + Energy flow on HVDC sent from an island'
+ 715    HVDCSentReserveLossesDefinition(ca,dt,isl,resC,rd)                               '6.5.2.30: Lambda definition of Reserse + Energy loss on HVDC sent from an island'
+ 716   
+ 717  * Reserve share penalty
+ 718  * Tuong Nguyen added on 24 Feb 2021 to correct the calculation
+ 719    ReserveShareEffective_CE_Calculation(ca,dt,isl,resC,riskC)                       '6.5.2.31: Calculate max effective shared reserve for CE risk received at island'
+ 720    ReserveShareEffective_ECE_Calculation(ca,dt,isl,resC,riskC)                      '6.5.2.31: Calculate max effective shared reserve for ECE risk received at island'
+ 721    ExcessReserveSharePenalty(ca,dt)                                                 '6.5.2.31: Constraint to avoid excessive reserve share'
+ 722   
+ 723  * Reserve
+ 724    PLSRReserveProportionMaximum(ca,dt,o,blk,resC,resT)                              '6.5.3.1: Maximum PLSR as a proportion of the block MW'
+ 725    ReserveInterruptibleOfferLimit(ca,dt,o,bd,resC,resT)                             '6.5.3.3: Cleared IL reserve is constrained by cleared dispatchable demand'
+ 726    ReserveOfferDefinition(ca,dt,o,resC,resT)                                        '6.5.3.4: Definition of the reserve offers of different classes and types'
+ 727    EnergyAndReserveMaximum(ca,dt,o,resC)                                            '6.5.3.5: Definition of maximum energy and reserves from each generator'
+ 728   
+ 729  * Reserve scarcity/shortfall
+ 730    HVDCRiskReserveShortFallCalculation(ca,dt,isl,resC,RiskC)                        '6.5.4.2: Total Reserve Shortfall for DCCE risk'
+ 731    ManualRiskReserveShortFallCalculation(ca,dt,isl,resC,RiskC)                      '6.5.4.2: Total Reserve Shortfall for Manual risk'
+ 732    GenRiskReserveShortFallCalculation(ca,dt,isl,o,resC,RiskC)                       '6.5.4.2: Total Reserve Shortfall for generation risk unit'
+ 733    HVDCsecRiskReserveShortFallCalculation(ca,dt,isl,o,resC,RiskC)                   '6.5.4.2: Total Reserve Shortfall for generation unit + HVDC risk'
+ 734    HVDCsecManualRiskReserveShortFallCalculation(ca,dt,isl,resC,RiskC)                '6.5.4.2: Total Reserve Shortfall for Manual risk + HVDC risk'
+ 735    RiskGroupReserveShortFallCalculation(ca,dt,isl,rg,resC,RiskC)                     '6.5.4.2: Total Reserve Shortfall for Risk Group'
+ 736   
+ 737  * Matching of reserve requirement and availability
+ 738    IslandReserveCalculation(ca,dt,isl,resC)                                         '6.5.5.1: Calculate total island cleared reserve'
+ 739    SupplyDemandReserveRequirement(ca,dt,isl,resC,riskC)                             '6.5.5.2&3: Matching of reserve supply and demand'
+ 740   
+ 741  * Branch security constraints
+ 742    BranchSecurityConstraintLE(ca,dt,brCstr)                                         '6.6.1.5: Branch security constraint with LE sense'
+ 743    BranchSecurityConstraintGE(ca,dt,brCstr)                                         '6.6.1.5: Branch security constraint with GE sense'
+ 744    BranchSecurityConstraintEQ(ca,dt,brCstr)                                         '6.6.1.5: Branch security constraint with EQ sense'
+ 745   
+ 746  * Market node security constraints
+ 747    MNodeSecurityConstraintLE(ca,dt,MnodeCstr)                                       '6.6.1.7: Market node security constraint with LE sense'
+ 748    MNodeSecurityConstraintGE(ca,dt,MnodeCstr)                                       '6.6.1.7: Market node security constraint with GE sense'
+ 749    MNodeSecurityConstraintEQ(ca,dt,MnodeCstr)                                       '6.6.1.7: Market node security constraint with EQ sense'
+ 750   
+ 751    ;
+ 752   
+ 753  * OBJECTIVE FUNCTION (5.1.1.1)
+ 754  ObjectiveFunction..
+ 755    NETBENEFIT
+ 756  =e=
+ 757    sum[ t, SYSTEMBENEFIT(t) - SYSTEMCOST(t) - SCARCITYCOST(t)
+ 758          - SYSTEMPENALTYCOST(t) - RESERVESHAREPENALTY(t) ]
+ 759    + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
+ 760    ;
+ 761   
+ 762  * Defined as the net sum of generation cost + reserve cost
+ 763  SystemCostDefinition(t)..
+ 764    SYSTEMCOST(t)
+ 765  =e=
+ 766    sum[ genOfrBlk(t,o,blk)
+ 767       , GENERATIONBLOCK(genOfrBlk)
+ 768       * enrgOfrPrice(genOfrBlk) ]
+ 769  + sum[ resOfrBlk(t,o,blk,resC,resT)
+ 770       , RESERVEBLOCK(resOfrBlk)
+ 771       * resrvOfrPrice(resOfrBlk) ]
+ 772    ;
+ 773   
+ 774  * Defined as the net sum of dispatchable load benefit
+ 775  SystemBenefitDefinition(t)..
+ 776    SYSTEMBENEFIT(t)
+ 777  =e=
+ 778    sum[ demBidBlk(t,bd,blk)
+ 779       , PURCHASEBLOCK(demBidBlk)
+ 780       * demBidPrice(demBidBlk) ]
+ 781    ;
+ 782   
+ 783  * Defined as the sum of the individual violation costs
+ 784  SystemPenaltyCostDefinition(t)..
+ 785    SYSTEMPENALTYCOST(t)
+ 786  =e=
+ 787    sum[ bus(t,b), deficitBusGenerationPenalty * DEFICITBUSGENERATION(bus)
+ 788                      + surplusBusGenerationPenalty * SURPLUSBUSGENERATION(bus) ]
+ 789   
+ 790  + sum[ branch(t,br), surplusBranchFlowPenalty * SURPLUSBRANCHFLOW(branch) ]
+ 791   
+ 792  + sum[ offer(t,o), deficitRampRatePenalty * DEFICITRAMPRATE(offer)
+ 793                        + surplusRampRatePenalty * SURPLUSRAMPRATE(Offer) ]
+ 794   
+ 795  + sum[ BranchConstraint(t,brCstr)
+ 796       , deficitBrCstrPenalty * DEFICITBRANCHSECURITYCONSTRAINT(t,brCstr)
+ 797       + surplusBrCstrPenalty * SURPLUSBRANCHSECURITYCONSTRAINT(t,brCstr) ]
+ 798   
+ 799  + sum[ MNodeConstraint(t,MnodeCstr)
+ 800       , deficitMnodeCstrPenalty * DEFICITMNODECONSTRAINT(MNodeConstraint)
+ 801       + surplusMnodeCstrPenalty * SURPLUSMNODECONSTRAINT(MNodeConstraint) ]
+ 802   
+ 803  + sum[ (isl,resC)
+ 804         , [DeficitReservePenalty_CE  * DEFICITRESERVE_CE(t,isl,resC) ]
+ 805         + [DeficitReservePenalty_ECE * DEFICITRESERVE_ECE(t,isl,resC)]
+ 806       ]
+ 807   
+ 808  + sum[ o $ { (StudyMode(t) = 101) or (StudyMode(t) = 201) }
+ 809           , 0.0005 * ( GENERATIONUPDELTA(t,o) + GENERATIONDNDELTA(t,o) )
+ 810       ]
+ 811    ;
+ 812   
+ 813  * Defined as the sum of the individual violation costs (for reporting)
+ 814  TotalViolationCostDefinition..
+ 815    TOTALPENALTYCOST =e= sum[ t, SYSTEMPENALTYCOST(t) ] ;
+ 816   
+ 817  * Deined as the sume of scarcity cost
+ 818  TotalScarcityCostDefinition(t)..
+ 819    SCARCITYCOST(t)
+ 820  =e=
+ 821    sum[ (n,blk), scarcityEnrgPrice(t,n,blk) * ENERGYSCARCITYBLK(t,n,blk) ]
+ 822   
+ 823  + sum[ (isl,resC,riskC,blk) $ HVDCrisk(riskC)
+ 824       , ScarcityResrvIslandPrice(t,isl,resC,blk)
+ 825        * RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
+ 826   
+ 827  + sum[ (isl,resC,riskC,blk) $ ManualRisk(riskC)
+ 828       , ScarcityResrvIslandPrice(t,isl,resC,blk)
+ 829       * RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
+ 830   
+ 831  +  sum[ (isl,o,resC,riskC,blk) $ { GenRisk(riskC)
+ 832                                 and islandRiskGenerator(t,isl,o) }
+ 833       , ScarcityResrvIslandPrice(t,isl,resC,blk)
+ 834       * RESERVESHORTFALLUNITBLK(t,isl,o,resC,riskC,blk) ]
+ 835   
+ 836  +  sum[ (isl,o,resC,riskC,blk) $ { HVDCsecRisk(riskC)
+ 837                                 and islandRiskGenerator(t,isl,o) }
+ 838       , ScarcityResrvIslandPrice(t,isl,resC,blk)
+ 839       * RESERVESHORTFALLUNITBLK(t,isl,o,resC,riskC,blk) ]
+ 840   
+ 841  +  sum[ (isl, resC,riskC,blk) $ HVDCsecRisk(riskC)
+ 842       , ScarcityResrvIslandPrice(t,isl,resC,blk)
+ 843       * RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
+ 844   
+ 845  +  sum[ (isl,rg,resC,riskC,blk) $ GenRisk(riskC)
+ 846       , ScarcityResrvIslandPrice(t,isl,resC,blk)
+ 847       * RESERVESHORTFALLGROUPBLK(t,isl,rg,resC,riskC,blk) ]
+ 848  ;
+ 849   
+ 850   
+ 851  *======= GENERATION AND LOAD CONSTRAINTS =======================================
+ 852   
+ 853  * Calculate the MW of generation increase/decrease for RTD and RTDP (6.1.1.2)'
+ 854  GenerationChangeUpDown(t,o) $ { (StudyMode(t) = 101) or (StudyMode(t) = 201) }..
+ 855    GENERATIONUPDELTA(t,o) - GENERATIONDNDELTA(t,o)
+ 856  =e=
+ 857    GENERATION(t,o) - generationStart(t,o);
+ 858   
+ 859  * Definition of generation provided by an offer (6.1.1.3)
+ 860  GenerationOfferDefintion(offer(t,o))..
+ 861    GENERATION(offer)
+ 862  =e=
+ 863    sum[ genOfrBlk(offer,blk), GENERATIONBLOCK(offer,blk) ]
+ 864    ;
+ 865   
+ 866  * Definition of discrete purchase mode (6.1.1.7)
+ 867  DemBidDiscrete(bid(t,bd),blk) $ { bidParameter(bid,'discrete') = 1 }..
+ 868    PURCHASEBLOCK(bid,blk)
+ 869  =e=
+ 870    PURCHASEBLOCKBINARY(bid,blk) * demBidMW(bid,blk)
+ 871    ;
+ 872   
+ 873  * Definition of purchase provided by a bid (6.1.1.8)
+ 874  DemBidDefintion(bid(t,bd))..
+ 875    PURCHASE(bid)
+ 876  =e=
+ 877    sum[ demBidBlk(bid,blk), PURCHASEBLOCK(bid,blk) ]
+ 878    ;
+ 879   
+ 880  * Definition of bus energy scarcity (6.1.1.10)
+ 881  EnergyScarcityDefinition(t,n)..
+ 882    ENERGYSCARCITYNODE(t,n)
+ 883  =e=
+ 884    sum[ blk, ENERGYSCARCITYBLK(t,n,blk) ]
+ 885    ;
+ 886   
+ 887  *======= GENERATION AND LOAD CONSTRAINTS END ===================================
+ 888   
+ 889   
+ 890   
+ 891  *======= RAMPING CONSTRAINTS ===================================================
+ 892  * Note: The CoefficientForRampRate in SPD formulation  = intervalDuration / 60
+ 893   
+ 894  * Maximum movement of the generator downwards due to up ramp rate (6.2.1.1)
+ 895  GenerationRampUp(t,o) $ { posEnrgOfr(t,o) and primaryOffer(t,o) }..
+ 896    sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
+ 897  + GENERATION(t,o) - DEFICITRAMPRATE(t,o)
+ 898  =l=
+ 899    generationStart(t,o) + (rampRateUp(t,o) * intervalDuration(t) / 60)
+ 900    ;
+ 901   
+ 902  * Maximum movement of the generator downwards due to down ramp rate (6.2.1.2)
+ 903  GenerationRampDown(t,o) $ { posEnrgOfr(t,o) and primaryOffer(t,o) }..
+ 904    sum[ o1 $ PrimarySecondaryOffer(t,o,o1), GENERATION(t,o1) ]
+ 905  + GENERATION(t,o) + SURPLUSRAMPRATE(t,o)
+ 906  =g=
+ 907    generationStart(t,o) - (rampRateDn(t,o) * intervalDuration(t) / 60)
+ 908    ;
+ 909   
+ 910  *======= RAMPING CONSTRAINTS END================================================
+ 911   
+ 912   
+ 913  *======= HVDC TRANSMISSION EQUATIONS ===========================================
+ 914   
+ 915  * Maximum flow on each HVDC link (6.3.1.1)
+ 916  HVDClinkMaximumFlow(HVDClink(t,br)) $ useHVDCbranchLimits ..
+ 917    HVDCLINKFLOW(HVDClink)
+ 918  =l=
+ 919    sum[ fd $ ( ord(fd)=1 ), branchCapacity(HVDClink,fd) ]
+ 920    ;
+ 921   
+ 922  * Definition of losses on the HVDC link (6.3.1.2)
+ 923  HVDClinkLossDefinition(HVDClink(t,br))..
+ 924    HVDCLINKLOSSES(HVDClink)
+ 925  =e=
+ 926    sum[ validLossSegment(HVDClink,bp,fd)
+ 927       , HVDCBreakPointMWLoss(HVDClink,bp,fd) * LAMBDA(HVDClink,bp) ]
+ 928    ;
+ 929   
+ 930  * Definition of MW flow on the HVDC link (6.3.1.3)
+ 931  HVDClinkFlowDefinition(HVDClink(t,br))..
+ 932    HVDCLINKFLOW(HVDClink)
+ 933  =e=
+ 934    sum[ validLossSegment(HVDClink,bp,fd)
+ 935    , HVDCBreakPointMWFlow(HVDClink,bp,fd) * LAMBDA(HVDClink,bp) ]
+ 936    ;
+ 937   
+ 938  * Definition of weighting factor (6.3.1.4)
+ 939  LambdaDefinition(HVDClink(t,br))..
+ 940    sum(validLossSegment(HVDClink,bp,fd), LAMBDA(HVDClink,bp))
+ 941  =e=
+ 942    1
+ 943    ;
+ 944   
+ 945   
+ 946  *======= HVDC TRANSMISSION EQUATIONS END =======================================
+ 947   
+ 948   
+ 949   
+ 950  *======= HVDC TRANSMISSION EQUATIONS FOR SOS1 VARIABLES ========================
+ 951  * HVDC transmission constraints to resolve non-physical loss and circular flow
+ 952  * These constraints are not explicitly formulated in SPD formulation
+ 953  * But you can find the description in "Post-Solve Checks
+ 954   
+ 955  * Definition 1 of the integer HVDC link flow variable
+ 956  * HVDC_North_Flow + HVDC_South_Flow
+ 957  * = BEN_HAY_1_Flow + BEN_HAY_2_Flow + HAY_BEN_1_Flow + HAY_BEN_2_Flow
+ 958  HVDClinkFlowIntegerDefinition1(t) $ { UseBranchFlowMIP(t) and
+ 959                                        resolveCircularBranchFlows }..
+ 960    sum[ fd, HVDCLINKFLOWDIRECTED_INTEGER(t,fd) ]
+ 961  =e=
+ 962    sum[ HVDCpoleDirection(HVDClink(t,br),fd), HVDCLINKFLOW(HVDClink) ]
+ 963    ;
+ 964   
+ 965  * Definition 2 of the integer HVDC link flow variable
+ 966  * HVDC_North_Flow = BEN_HAY_1_Flow + BEN_HAY_2_Flow
+ 967  * HVDC_South_Flow = HAY_BEN_1_Flow + HAY_BEN_2_Flow
+ 968  HVDClinkFlowIntegerDefinition2(t,fd) $ { UseBranchFlowMIP(t) and
+ 969                                           resolveCircularBranchFlows }..
+ 970    HVDCLINKFLOWDIRECTED_INTEGER(t,fd)
+ 971  =e=
+ 972    sum[ HVDCpoleDirection(HVDClink(t,br),fd), HVDCLINKFLOW(HVDClink) ]
+ 973    ;
+ 974   
+ 975  * Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows
+ 976  * Pole1_North_Flow + Pole1_South_Flow = BEN_HAY_1_Flow + HAY_BEN_1_Flow
+ 977  * Pole2_North_Flow + Pole2_South_Flow = BEN_HAY_2_Flow + HAY_BEN_2_Flow
+ 978  HVDClinkFlowIntegerDefinition3(t,pole) $ { UseBranchFlowMIP(t) and
+ 979                                             resolveCircularBranchFlows }..
+ 980    sum[ br $ { HVDClink(t,br)
+ 981            and HVDCpoleBranchMap(pole,br) } , HVDCLINKFLOW(t,br) ]
+ 982  =e=
+ 983    sum[ fd, HVDCPOLEFLOW_INTEGER(t,pole,fd) ]
+ 984    ;
+ 985   
+ 986  * Definition of the integer HVDC pole flow variable for intra-pole circulating branch flows
+ 987  * Pole1_North_Flow = BEN_HAY_1_Flow + HAY_BEN_1_Flow
+ 988  * Pole1_South_Flow = BEN_HAY_1_Flow + HAY_BEN_1_Flow
+ 989  * Pole2_North_Flow = BEN_HAY_2_Flow + HAY_BEN_2_Flow
+ 990  * Pole2_South_Flow = BEN_HAY_2_Flow + HAY_BEN_2_Flow
+ 991   
+ 992  HVDClinkFlowIntegerDefinition4(t,pole,fd) $ { UseBranchFlowMIP(t) and
+ 993                                                resolveCircularBranchFlows }..
+ 994    sum[ HVDCpoleDirection(HVDClink(t,br),fd) $ HVDCpoleBranchMap(pole,br)
+ 995       , HVDCLINKFLOW(HVDClink) ]
+ 996  =e=
+ 997    HVDCPOLEFLOW_INTEGER(t,pole,fd)
+ 998    ;
+ 999   
+1000  *======= HVDC TRANSMISSION EQUATIONS FOR SOS1 VARIABLES END ====================
+1001   
+1002   
+1003  *======= HVDC TRANSMISSION EQUATIONS FOR SOS2 VARIABLES ========================
+1004  * Definition 1 of weighting factor when branch integer constraints are needed
+1005  LambdaIntegerDefinition1(HVDClink(t,br)) $ { UseBranchFlowMIP(t) and
+1006                                               resolveHVDCnonPhysicalLosses }..
+1007    sum[ validLossSegment(HVDClink,bp,fd), LAMBDAINTEGER(HVDClink,bp) ]
+1008  =e=
+1009    1
+1010    ;
+1011   
+1012  * Definition 2 of weighting factor when branch integer constraints are needed
+1013  LambdaIntegerDefinition2(HVDClink(t,br),bp)
+1014    $ { UseBranchFlowMIP(t) and resolveHVDCnonPhysicalLosses
+1015    and sum[ fd $ validLossSegment(HVDClink,bp,fd), 1] }..
+1016    LAMBDAINTEGER(HVDClink,bp)
+1017  =e=
+1018    LAMBDA(HVDClink,bp)
+1019    ;
+1020   
+1021  *======= HVDC TRANSMISSION EQUATIONS END =======================================
+1022   
+1023   
+1024   
+1025   
+1026  *======= AC TRANSMISSION EQUATIONS =============================================
+1027   
+1028  * 1st definition of the net injection at buses corresponding to AC nodes (6.4.1.1)
+1029  ACnodeNetInjectionDefinition1(bus(t,b))..
+1030    ACNODENETINJECTION(t,b)
+1031  =e=
+1032    sum[ ACBranchSendingBus(ACBranch(t,br),b,fd)
+1033       , ACBRANCHFLOWDIRECTED(ACBranch,fd)
+1034       ]
+1035  - sum[ ACBranchReceivingBus(ACBranch(t,br),b,fd)
+1036       , ACBRANCHFLOWDIRECTED(ACBranch,fd)
+1037       ]
+1038    ;
+1039   
+1040  * 2nd definition of the net injection at buses corresponding to AC nodes (6.4.1.2)
+1041  ACnodeNetInjectionDefinition2(bus(t,b))..
+1042    ACNODENETINJECTION(t,b)
+1043  =e=
+1044    sum[ offerNode(t,o,n) $ NodeBus(t,n,b)
+1045       , nodeBusAllocationFactor(t,n,b) * GENERATION(t,o) ]
+1046  - sum[ BidNode(t,bd,n) $ NodeBus(t,n,b)
+1047       , NodeBusAllocationFactor(t,n,b) * PURCHASE(t,bd) ]
+1048  - sum[ NodeBus(t,n,b)
+1049       , NodeBusAllocationFactor(t,n,b) * requiredLoad(t,n) ]
+1050  + sum[ HVDClinkReceivingBus(HVDClink(t,br),b), HVDCLINKFLOW(HVDClink)   ]
+1051  - sum[ HVDClinkReceivingBus(HVDClink(t,br),b), HVDCLINKLOSSES(HVDClink) ]
+1052  - sum[ HVDClinkSendingBus(HVDClink(t,br),b)  , HVDCLINKFLOW(HVDClink)   ]
+1053  - sum[ HVDClinkBus(HVDClink(t,br),b),   0.5 * branchFixedLoss(HVDClink) ]
+1054  - sum[ ACBranchReceivingBus(ACBranch(t,br),b,fd)
+1055       , branchReceivingEndLossProportion
+1056       * ACBRANCHLOSSESDIRECTED(ACBranch,fd) ]
+1057  - sum[ ACBranchSendingBus(ACBranch(t,br),b,fd)
+1058       , (1 - branchReceivingEndLossProportion)
+1059       * ACBRANCHLOSSESDIRECTED(ACBranch,fd) ]
+1060  - sum[ BranchBusConnect(ACBranch(t,br),b), 0.5*branchFixedLoss(ACBranch) ]
+1061  + DEFICITBUSGENERATION(t,b) - SURPLUSBUSGENERATION(t,b)
+1062  * Note that we model energy scarcity as penalty instead of benefit like SPD
+1063  * The reason for this is to avoid numerical issues.
+1064  + sum[ NodeBus(t,n,b)
+1065       , NodeBusAllocationFactor(t,n,b) * ENERGYSCARCITYNODE(t,n)]
+1066    ;
+1067   
+1068  * Maximum flow on the AC branch (6.4.1.3)
+1069  ACBranchMaximumFlow(ACbranch(t,br),fd) $ useACbranchLimits..
+1070    ACBRANCHFLOWDIRECTED(ACBranch,fd) - SURPLUSBRANCHFLOW(ACBranch)
+1071  =l=
+1072    branchCapacity(ACBranch,fd)
+1073    ;
+1074   
+1075  * Relationship between directed and undirected branch flow variables (6.4.1.4)
+1076  ACBranchFlowDefinition(ACBranch(t,br))..
+1077    ACBRANCHFLOW(ACBranch)
+1078  =e=
+1079    sum[ fd $ (ord(fd) = 1), ACBRANCHFLOWDIRECTED(ACBranch,fd) ]
+1080  - sum[ fd $ (ord(fd) = 2), ACBRANCHFLOWDIRECTED(ACBranch,fd) ]
+1081    ;
+1082   
+1083  * Equation that describes the linear load flow (6.4.1.5)
+1084  LinearLoadFlow(ACBranch(t,br))..
+1085    ACBRANCHFLOW(ACBranch)
+1086  =e=
+1087    branchSusceptance(ACBranch)
+1088    * sum[ BranchBusDefn(ACBranch,frB,toB)
+1089         , ACNODEANGLE(t,frB) - ACNODEANGLE(t,toB) ]
+1090    ;
+1091   
+1092  * Limit on each AC branch flow block (6.4.1.6)
+1093  ACBranchBlockLimit(validLossSegment(ACBranch(t,br),los,fd))..
+1094    ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd)
+1095  =l=
+1096    ACBranchLossMW(ACBranch,los,fd)
+1097    ;
+1098   
+1099  * Composition of the directed branch flow from the block branch flow (6.4.1.7)
+1100  ACDirectedBranchFlowDefinition(ACBranch(t,br),fd)..
+1101    ACBRANCHFLOWDIRECTED(ACBranch,fd)
+1102  =e=
+1103    sum[ validLossSegment(ACBranch,los,fd)
+1104       , ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd) ]
+1105    ;
+1106   
+1107  * Calculation of the losses in each loss segment (6.4.1.8) - Modified for BranchcReverseRatings
+1108  ACBranchLossCalculation(validLossSegment(ACBranch(t,br),los,fd))..
+1109    ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,fd)
+1110  =e=
+1111    ACBRANCHFLOWBLOCKDIRECTED(ACBranch,los,fd)
+1112    * ACBranchLossFactor(ACBranch,los,fd)
+1113    ;
+1114   
+1115  * Composition of the directed branch losses from the block branch losses (6.4.1.9)
+1116  ACDirectedBranchLossDefinition(ACBranch(t,br),fd)..
+1117    ACBRANCHLOSSESDIRECTED(ACBranch,fd)
+1118  =e=
+1119    sum[ validLossSegment(ACBranch,los,fd)
+1120       , ACBRANCHLOSSESBLOCKDIRECTED(ACBranch,los,fd) ]
+1121    ;
+1122   
+1123  *======= AC TRANSMISSION EQUATIONS END =========================================
+1124   
+1125   
+1126   
+1127  *======= AC TRANSMISSION EQUATIONS FOR SOS1 VARIABLES ==========================
+1128  * AC transmission constraints to resolve circular flow
+1129  * These constraints are not explicitly formulated in SPD formulation
+1130  * But you can find the description in "Post-Solve Checks"
+1131   
+1132  * Integer constraint to enforce a flow direction on loss AC branches in the
+1133  * presence of circular branch flows or non-physical losses
+1134  ACDirectedBranchFlowIntegerDefinition1(ACBranch(lossBranch(t,br)))
+1135    $ { UseBranchFlowMIP(t) and resolveCircularBranchFlows }..
+1136    sum[ fd, ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,fd) ]
+1137  =e=
+1138    sum[ fd, ACBRANCHFLOWDIRECTED(ACBranch,fd) ]
+1139    ;
+1140   
+1141  * Integer constraint to enforce a flow direction on loss AC branches in the
+1142  * presence of circular branch flows or non-physical losses
+1143  ACDirectedBranchFlowIntegerDefinition2(ACBranch(lossBranch(t,br)),fd)
+1144    $ { UseBranchFlowMIP(t) and resolveCircularBranchFlows }..
+1145    ACBRANCHFLOWDIRECTED_INTEGER(ACBranch,fd)
+1146  =e=
+1147    ACBRANCHFLOWDIRECTED(ACBranch,fd)
+1148    ;
+1149   
+1150  *======= AC TRANSMISSION EQUATIONS FOR SOS1 VARIABLES END ======================
+1151   
+1152   
+1153   
+1154  *======= RISK EQUATIONS ========================================================
+1155   
+1156  * 6.5.1.1 : Calculation of the risk offset variable for the DCCE risk class.
+1157  RiskOffsetCalculation_DCCE(t,isl,resC,riskC)
+1158    $ { HVDCrisk(riskC) and ContingentEvents(riskC)  }..
+1159    RISKOFFSET(t,isl,resC,riskC)
+1160  =e=
+1161    FreeReserve(t,isl,resC,riskC) + HVDCPoleRampUp(t,isl,resC,riskC)
+1162    ;
+1163   
+1164  * 6.5.1.3 : Calculation of the risk offset variable for the DCECE risk class.
+1165  RiskOffsetCalculation_DCECE(t,isl,resC,riskC)
+1166    $ { HVDCrisk(riskC) and ExtendedContingentEvent(riskC) }..
+1167    RISKOFFSET(t,isl,resC,riskC)
+1168  =e=
+1169    FreeReserve(t,isl,resC,riskC)
+1170    ;
+1171   
+1172  * 6.5.1.4 : Calculation of the net received HVDC MW flow into an island.
+1173  HVDCRecCalculation(t,isl)..
+1174    HVDCREC(t,isl)
+1175  =e=
+1176    sum[ (b,br) $ { BusIsland(t,b,isl)
+1177                and HVDClinkSendingBus(t,br,b)
+1178                and HVDCLink(t,br)
+1179                  }, -HVDCLINKFLOW(t,br)
+1180       ]
+1181  + sum[ (b,br) $ { BusIsland(t,b,isl)
+1182                and HVDClinkReceivingBus(t,br,b)
+1183                and HVDCLink(t,br)
+1184                  }, HVDCLINKFLOW(t,br) - HVDCLINKLOSSES(t,br)
+1185       ]
+1186    ;
+1187   
+1188  * 6.5.1.5 : Calculation of the island risk for a DCCE and DCECE.
+1189  HVDCIslandRiskCalculation(t,isl,resC,HVDCrisk)..
+1190    ISLANDRISK(t,isl,resC,HVDCrisk)
+1191  =e=
+1192    riskAdjFactor(t,isl,resC,HVDCrisk)
+1193    * [ HVDCREC(t,isl)
+1194      - RISKOFFSET(t,isl,resC,HVDCrisk)
+1195      + modulationRiskClass(t,HVDCrisk)
+1196      ]
+1197  * Scarcity reserve (only applied for CE risk)
+1198    - RESERVESHORTFALL(t,isl,resC,HVDCrisk) $ ContingentEvents(HVDCrisk)
+1199    ;
+1200   
+1201  * 6.5.1.6 : Calculation of the risk of risk setting generators
+1202  GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
+1203    $ islandRiskGenerator(t,isl,o) ..
+1204    GENISLANDRISK(t,isl,o,resC,GenRisk)
+1205  =e=
+1206    riskAdjFactor(t,isl,resC,GenRisk)
+1207    * [ GENERATION(t,o)
+1208      - FreeReserve(t,isl,resC,GenRisk)
+1209      + FKBand(t,o)
+1210      + sum[ resT, RESERVE(t,o,resC,resT) ]
+1211      + sum[ o1 $ PrimarySecondaryOffer(t,o,o1)
+1212           , sum[ resT, RESERVE(t,o1,resC,resT) ] + GENERATION(t,o1) ]
+1213      ]
+1214  * NMIR update
+1215  - RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk)$reserveShareEnabled(t,resC)
+1216  * Scarcity reserve (only applied for CE risk)
+1217  - RESERVESHORTFALLUNIT(t,isl,o,resC,GenRisk) $ ContingentEvents(GenRisk)
+1218    ;
+1219   
+1220  * 6.5.1.6 : Calculation of the island risk for risk setting generators
+1221  GenIslandRiskCalculation(t,isl,o,resC,GenRisk)
+1222    $ islandRiskGenerator(t,isl,o) ..
+1223    ISLANDRISK(t,isl,resC,GenRisk)
+1224  =g=
+1225    GENISLANDRISK(t,isl,o,resC,GenRisk) ;
+1226   
+1227  * 6.5.1.7 : Calculation of the island risk based on manual specifications
+1228  ManualIslandRiskCalculation(t,isl,resC,ManualRisk)..
+1229    ISLANDRISK(t,isl,resC,ManualRisk)
+1230  =e=
+1231    riskAdjFactor(t,isl,resC,ManualRisk)
+1232    * [ riskParameter(t,isl,resC,ManualRisk,'minRisk')
+1233      - FreeReserve(t,isl,resC,ManualRisk)
+1234      ]
+1235  * NMIR update
+1236  - RESERVESHAREEFFECTIVE(t,isl,resC,ManualRisk)$reserveShareEnabled(t,resC)
+1237  * Scarcity reserve (only applied for CE risk)
+1238  - RESERVESHORTFALL(t,isl,resC,ManualRisk) $ ContingentEvents(ManualRisk)
+1239    ;
+1240   
+1241  * 6.5.1.8: Define a flag to show if HVDC sending zero MW flow from an island
+1242  HVDCSendMustZeroBinaryDefinition(t,isl).. HVDCSENT(t,isl) =l= BigM * [ 1 - HVDCSENDZERO(t,isl) ] ;
+1243   
+1244   
+1245  * 6.5.1.9 : Calculation of the island risk for an HVDC secondary generation risk
+1246  * HVDC secondary risk includes HVDC risk and Generation of both primary and secondary generation unit + cleared reserve + the FKBand for generator primary risk
+1247  HVDCIslandSecRiskCalculation_GEN_1(t,isl,o,resC,HVDCSecRisk)
+1248    $ { islandRiskGenerator(t,isl,o)  and
+1249        HVDCSecRiskEnabled(t,isl,HVDCSecRisk) }..
+1250    HVDCGENISLANDRISK(t,isl,o,resC,HVDCSecRisk)
+1251  =e=
+1252    riskAdjFactor(t,isl,resC,HVDCSecRisk)
+1253    * [ GENERATION(t,o)
+1254      - FreeReserve(t,isl,resC,HVDCSecRisk)
+1255      + HVDCREC(t,isl)
+1256      - islandParameter(t,isl,'HVDCSecSubtractor')
+1257      + FKBand(t,o)
+1258      + sum[ resT, RESERVE(t,o,resC,resT) ]
+1259      + sum[ o1 $ PrimarySecondaryOffer(t,o,o1)
+1260           , sum[ resT, RESERVE(t,o1,resC,resT) ] + GENERATION(t,o1) ]
+1261      + modulationRiskClass(t,HVDCSecRisk)
+1262      ]
+1263  * Scarcity reserve (only applied for CE risk)
+1264    - RESERVESHORTFALLUNIT(t,isl,o,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+1265  * HVDC secondary risk not applied if HVDC sent is zero
+1266    - BigM * sum[ isl1 $ (not sameas(isl1,isl)), HVDCSENDZERO(t,isl) ]
+1267    ;
+1268   
+1269  * 6.5.1.9 : Calculation of the island risk for an HVDC secondary generation risk
+1270  HVDCIslandSecRiskCalculation_GEN(t,isl,o,resC,HVDCSecRisk)
+1271    $ { islandRiskGenerator(t,isl,o)  and
+1272        HVDCSecRiskEnabled(t,isl,HVDCSecRisk) }..
+1273    ISLANDRISK(t,isl,resC,HVDCSecRisk)
+1274  =g=
+1275    HVDCGENISLANDRISK(t,isl,o,resC,HVDCSecRisk)
+1276    ;
+1277   
+1278  * 6.5.1.10: Calculation of the island risk for an HVDC secondary manual risk
+1279  HVDCIslandSecRiskCalculation_Manu_1(t,isl,resC,HVDCSecRisk)
+1280    $ HVDCSecRiskEnabled(t,isl,HVDCSecRisk)..
+1281    HVDCMANISLANDRISK(t,isl,resC,HVDCSecRisk)
+1282  =e=
+1283    riskAdjFactor(t,isl,resC,HVDCSecRisk)
+1284    * [ riskParameter(t,isl,resC,HVDCSecRisk,'minRisk')
+1285      - FreeReserve(t,isl,resC,HVDCSecRisk)
+1286      + HVDCREC(t,isl)
+1287      - islandParameter(t,isl,'HVDCSecSubtractor')
+1288      + modulationRiskClass(t,HVDCSecRisk)
+1289      ]
+1290  * Scarcity reserve (only applied for CE risk)
+1291    - RESERVESHORTFALL(t,isl,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+1292  * HVDC secondary risk not applied if HVDC sent is zero
+1293    - BigM * sum[ isl1 $ (not sameas(isl1,isl)), HVDCSENDZERO(t,isl) ]
+1294    ;
+1295   
+1296  * 6.5.1.10: Calculation of the island risk for an HVDC secondary manual risk
+1297  HVDCIslandSecRiskCalculation_Manual(t,isl,resC,HVDCSecRisk)
+1298    $ HVDCSecRiskEnabled(t,isl,HVDCSecRisk)..
+1299    ISLANDRISK(t,isl,resC,HVDCSecRisk)
+1300  =g=
+1301    HVDCMANISLANDRISK(t,isl,resC,HVDCSecRisk)
+1302    ;
+1303   
+1304  * 6.5.1.11: Calculation of the risk of risk group
+1305  GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
+1306    $ islandRiskGroup(t,isl,rg,GenRisk)..
+1307    GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
+1308  =e=
+1309    riskAdjFactor(t,isl,resC,GenRisk)
+1310    * [ sum[ o $ { offerIsland(t,o,isl)
+1311               and riskGroupOffer(t,rg,o,GenRisk)
+1312                 } , GENERATION(t,o) + FKBand(t,o)
+1313                   + sum[ resT, RESERVE(t,o,resC,resT) ]
+1314           ]
+1315      - FreeReserve(t,isl,resC,GenRisk)
+1316      ]
+1317  * NMIR update
+1318  - RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk)$reserveShareEnabled(t,resC)
+1319  * Scarcity reserve (only applied for CE risk)
+1320  - RESERVESHORTFALLGROUP(t,isl,rg,resC,GenRisk) $ ContingentEvents(GenRisk)
+1321    ;
+1322   
+1323  * 6.5.1.11: Calculation of the island risk for risk group
+1324  GenIslandRiskGroupCalculation(t,isl,rg,resC,GenRisk)
+1325    $ islandRiskGroup(t,isl,rg,GenRisk)..
+1326    ISLANDRISK(t,isl,resC,GenRisk)
+1327  =g=
+1328    GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
+1329    ;
+1330   
+1331  *======= RISK EQUATIONS END ====================================================
+1332   
+1333   
+1334  *======= NMIR - RESERVE SHARING EQUATIONS ======================================
+1335   
+1336  * General NMIR equations start -------------------------------------------------
+1337   
+1338  * Calculation of effective shared reserve - (6.5.2.1)
+1339  EffectiveReserveShareCalculation(t,isl,resC,riskC)
+1340    $ { reserveShareEnabled(t,resC)
+1341    and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+1342    RESERVESHAREEFFECTIVE(t,isl,resC,riskC)
+1343  =l=
+1344    Sum[ rd , RESERVESHARERECEIVED(t,isl,resC,rd)
+1345            * effectiveFactor(t,isl,resC,riskC) ]
+1346    ;
+1347   
+1348  * Shared offered reserve is limited by cleared reserved - (6.5.2.2)
+1349  SharedReserveLimitByClearedReserve(t,isl,resC)
+1350    $ reserveShareEnabled(t,resC)..
+1351    SHAREDRESERVE(t,isl,resC)
+1352  =l=
+1353    ISLANDRESERVE(t,isl,resC)
+1354    ;
+1355   
+1356  * Both cleared reserved and shareable free reserve can be shared - (6.5.2.4)
+1357  BothClearedAndFreeReserveCanBeShared(t,isl,resC,rd)
+1358    $ reserveShareEnabled(t,resC)..
+1359    RESERVESHARESENT(t,isl,resC,rd)
+1360  =l=
+1361    SHAREDRESERVE(t,isl,resC) + SHAREDNFR(t,isl)$(ord(resC)=1)
+1362    ;
+1363   
+1364  * Reserve share sent is limited by HVDC control band - (6.5.2.5)
+1365  ReserveShareSentLimitByHVDCControlBand(t,isl,resC,rd)
+1366    $ reserveShareEnabled(t,resC)..
+1367    RESERVESHARESENT(t,isl,resC,rd)
+1368  =l=
+1369    [ HVDCControlBand(t,rd) - modulationRisk(t)
+1370    ] $ (HVDCControlBand(t,rd) > modulationRisk(t))
+1371    ;
+1372   
+1373  * Forward reserve share sent is limited by HVDC capacity - (6.5.2.6)
+1374  FwdReserveShareSentLimitByHVDCCapacity(t,isl,resC,rd)
+1375    $ { reserveShareEnabled(t,resC) and (ord(rd) = 1) }..
+1376    RESERVESHARESENT(t,isl,resC,rd)
+1377  + HVDCSENT(t,isl)
+1378  =l=
+1379    [ HVDCMax(t,isl) - modulationRisk(t) ] $ (HVDCMax(t,isl) > modulationRisk(t))
+1380  ;
+1381   
+1382  * Reverse shared reserve is only possible for receiving island - (6.5.2.7)
+1383  ReverseReserveOnlyToEnergySendingIsland(t,isl,resC,rd)
+1384    $ { reserveShareEnabled(t,resC) and (ord(rd) = 2) }..
+1385    RESERVESHARESENT(t,isl,resC,rd)
+1386  =l=
+1387    BigM * [ 1 - HVDCSENDING(t,isl) ]
+1388    ;
+1389   
+1390  * Reverse shared reserve recieved at an island is limited by HVDC control band - (6.5.2.8)
+1391  ReverseReserveShareLimitByHVDCControlBand(t,isl,resC,rd)
+1392    $ { reserveShareEnabled(t,resC) and (ord(rd) = 2) }..
+1393    RESERVESHARERECEIVED(t,isl,resC,rd)
+1394  =l=
+1395    HVDCSENDING(t,isl) * [ HVDCControlBand(t,rd) - modulationRisk(t)
+1396                         ] $ ( HVDCControlBand(t,rd) > modulationRisk(t) )
+1397    ;
+1398   
+1399  * Forward received shared reserve only possible for receiving island - (3.4.2.9)
+1400  ForwardReserveOnlyToEnergyReceivingIsland(t,isl,resC,rd)
+1401    $ { reserveShareEnabled(t,resC) and (ord(rd) = 1) }..
+1402    RESERVESHARERECEIVED(t,isl,resC,rd)
+1403  =l=
+1404    BigM * [ 1 - HVDCSENDING(t,isl) ]
+1405    ;
+1406   
+1407  * Reverse shared reserve limit if HVDC sent flow in reverse zone - (6.5.2.10)
+1408  ReverseReserveLimitInReserveZone(t,isl,resC,rd,z)
+1409    $ { reserveShareEnabled(t,resC) and (ord(rd) = 2) and (ord(z) = 3) }..
+1410    RESERVESHARERECEIVED(t,isl,resC,rd)
+1411  =l=
+1412    HVDCSENT(t,isl)
+1413  - (monopoleMinimum(t) + modulationRisk(t))
+1414  + BigM * [ 1 - INZONE(t,isl,resC,z) ]
+1415    ;
+1416   
+1417  * No reverse shared reserve if HVDC sent flow in no reverse zone &
+1418  * No forward reserve if HVDC sent flow in no reverse zone and RP disabled
+1419  * (6.5.2.11) & (6.5.2.18)
+1420  ZeroReserveInNoReserveZone(t,isl,resC,z)
+1421    $ { reserveShareEnabled(t,resC) and (ord(z) = 2) }..
+1422    Sum[ rd $ (ord(rd) = 2), RESERVESHARERECEIVED(t,isl,resC,rd) ]
+1423  + Sum[ rd $ (ord(rd) = 1), RESERVESHARESENT(t,isl,resC,rd)
+1424       ] $ {reserveRoundPower(t,resC) = 0}
+1425  =l=
+1426    BigM * [ 1 - INZONE(t,isl,resC,z) ]
+1427    ;
+1428   
+1429  * Across both island, only one zone is active for each reserve class -(6.5.2.12)
+1430  OnlyOneActiveHVDCZoneForEachReserveClass(t,resC) $ reserveShareEnabled(t,resC)..
+1431    Sum[ (isl,z), INZONE(t,isl,resC,z) ] =e= 1 ;
+1432   
+1433  * HVDC sent from sending island only - (6.5.2.13)
+1434  ZeroSentHVDCFlowForNonSendingIsland(t,isl) $ reserveShareEnabledOverall(t)..
+1435    HVDCSENT(t,isl) =l= BigM * HVDCSENDING(t,isl) ;
+1436   
+1437  * HVDC sent from an island <= RoundPowerZoneExit level if in round power zone
+1438  * of that island - (6.5.2.14)
+1439  RoundPowerZoneSentHVDCUpperLimit(t,isl,resC,z)
+1440    $ { reserveShareEnabled(t,resC) and (ord(z) = 1) }..
+1441    HVDCSENT(t,isl)
+1442  =l=
+1443    roPwrZoneExit(t,resC) + BigM * [ 1 - INZONE(t,isl,resC,z) ]
+1444  ;
+1445   
+1446  * An island is HVDC sending island if HVDC flow sent is in one of the three
+1447  * zones for each reserve class - (6.5.2.15)
+1448  HVDCSendingIslandDefinition(t,isl,resC) $ reserveShareEnabled(t,resC)..
+1449    HVDCSENDING(t,isl) =e= Sum[ z, INZONE(t,isl,resC,z) ] ;
+1450   
+1451  * One and only one island is HVDC sending island - (6.5.2.19)
+1452  OnlyOneSendingIslandExists(t) $ reserveShareEnabledOverall(t)..
+1453   Sum[ isl, HVDCSENDING(t,isl) ] =e= 1 ;
+1454   
+1455  * Total HVDC sent from each island - (6.5.2.20)
+1456  HVDCSentCalculation(t,isl) $ reserveShareEnabledOverall(t)..
+1457    HVDCSENT(t,isl)
+1458  =e=
+1459    Sum[ (b,br) $ { BusIsland(t,b,isl)
+1460                and HVDClinkSendingBus(t,br,b)
+1461                and HVDClink(t,br)
+1462                  }, HVDCLINKFLOW(t,br)
+1463       ]
+1464  ;
+1465   
+1466  * General NMIR equations end ---------------------------------------------------
+1467   
+1468   
+1469  * Lamda loss model -------------------------------------------------------------
+1470   
+1471  * HVDC flow + forward reserve sent from an island - (6.5.2.21)
+1472  HVDCFlowAccountedForForwardReserve(t,isl,resC,rd)
+1473    $ { reserveShareEnabled(t,resC) and (ord(rd) = 1) }..
+1474    HVDCRESERVESENT(t,isl,resC,rd)
+1475  =e=
+1476    RESERVESHARESENT(t,isl,resC,rd) + HVDCSENT(t,isl)
+1477    ;
+1478   
+1479  * Received forward shared reserve at an HVDC receiving island - (6.5.2.22)
+1480  ForwardReserveReceivedAtHVDCReceivingIsland(t,isl,resC,rd)
+1481    $ { reserveShareEnabled(t,resC) and (ord(rd) = 1) }..
+1482    RESERVESHARERECEIVED(t,isl,resC,rd)
+1483  =e=
+1484    Sum[ isl1 $ (not sameas(isl1,isl))
+1485        , RESERVESHARESENT(t,isl1,resC,rd)
+1486        - HVDCRESERVELOSS(t,isl1,resC,rd)
+1487        + HVDCSENTLOSS(t,isl1) ]
+1488    ;
+1489   
+1490  * HVDC flow - received reverse reserve sent from an island - (6.5.2.23)
+1491  HVDCFlowAccountedForReverseReserve(t,isl,resC,rd)
+1492    $ { reserveShareEnabled(t,resC) and (ord(rd) = 2) }..
+1493    HVDCRESERVESENT(t,isl,resC,rd)
+1494  =e=
+1495    HVDCSENT(t,isl) - RESERVESHARERECEIVED(t,isl,resC,rd)
+1496    ;
+1497   
+1498  * Reverse reserve RECEIVED at an HVDC sending island - (6.5.2.24)
+1499  ReverseReserveReceivedAtHVDCSendingIsland(t,isl,resC,rd)
+1500    $ { reserveShareEnabled(t,resC) and (ord(rd) = 2) }..
+1501    RESERVESHARERECEIVED(t,isl,resC,rd)
+1502  =e=
+1503    Sum[ isl1 $ (not sameas(isl1,isl)), RESERVESHARESENT(t,isl1,resC,rd) ]
+1504  - HVDCRESERVELOSS(t,isl,resC,rd)
+1505  + HVDCSENTLOSS(t,isl)
+1506    ;
+1507   
+1508  * Total weight factor = 1 for HVDC energy sent from an island - (6.5.2.25)
+1509  HVDCSentEnergyLambdaDefinition(t,isl) $ reserveShareEnabledOverall(t)..
+1510    Sum[ bp $ (ord(bp) <= 7),LAMBDAHVDCENERGY(t,isl,bp) ] =e= 1 ;
+1511   
+1512  * Lambda definition of total HVDC energy flow sent from an island
+1513  * (6.5.2.26) - SPD version 11.0
+1514  HVDCSentEnergyFlowDefinition(t,isl) $ reserveShareEnabledOverall(t)..
+1515    HVDCSENT(t,isl)
+1516  =e=
+1517    Sum[ bp $ (ord(bp) <= 7), HVDCSentBreakPointMWFlow(t,isl,bp)
+1518                            * LAMBDAHVDCENERGY(t,isl,bp) ]
+1519    ;
+1520   
+1521  * Lambda definition of total loss of HVDC energy sent from an island
+1522  * (6.5.2.27) - SPD version 11.0
+1523  HVDCSentEnergyLossesDefinition(t,isl) $ reserveShareEnabledOverall(t)..
+1524    HVDCSENTLOSS(t,isl)
+1525  =e=
+1526    Sum[ bp $ (ord(bp) <= 7), HVDCSentBreakPointMWLoss(t,isl,bp)
+1527                            * LAMBDAHVDCENERGY(t,isl,bp) ]
+1528    ;
+1529   
+1530  * Total weight factor = 1 for HVDC+reserve sent from an island -(6.5.2.28)
+1531  HVDCSentReserveLambdaDefinition(t,isl,resC,rd) $ reserveShareEnabled(t,resC)..
+1532    Sum[ rsbp, LAMBDAHVDCRESERVE(t,isl,resC,rd,rsbp) ] =e= 1 ;
+1533   
+1534  * Lambda definition of Reserse + Energy flow on HVDC sent from an island
+1535  * (3.4.2.29) - SPD version 11.0
+1536  HVDCSentReserveFlowDefinition(t,isl,resC,rd)
+1537    $ reserveShareEnabled(t,resC)..
+1538    HVDCRESERVESENT(t,isl,resC,rd)
+1539  =e=
+1540    Sum[ rsbp, HVDCReserveBreakPointMWFlow(t,isl,rsbp)
+1541             * LAMBDAHVDCRESERVE(t,isl,resC,rd,rsbp) ]
+1542    ;
+1543   
+1544  * Lambda definition of Reserse + Energy Loss on HVDC sent from an island
+1545  * (3.4.2.30) - SPD version 11.0
+1546  HVDCSentReserveLossesDefinition(t,isl,resC,rd)
+1547    $ reserveShareEnabled(t,resC)..
+1548    HVDCRESERVELOSS(t,isl,resC,rd)
+1549  =e=
+1550    Sum[ rsbp, HVDCReserveBreakPointMWLoss(t,isl,rsbp)
+1551             * LAMBDAHVDCRESERVE(t,isl,resC,rd,rsbp) ]
+1552    ;
+1553   
+1554  * Lamda loss model end ---------------------------------------------------------
+1555   
+1556   
+1557  * Calculate Reserve sharing excess penalty -------------------------------------
+1558   
+1559  * Tuong Nguyen added on 24 Feb 2021 to correct the calculation
+1560  * Calculate max effective shared reserve for CE risk received at island (6.5.2.31)
+1561  ReserveShareEffective_CE_Calculation(t,isl,resC,riskC)
+1562    $ { reserveShareEnabled(t,resC) and ContingentEvents(riskC)
+1563    and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+1564    RESERVESHAREEFFECTIVE_CE(t,isl,resC)
+1565  =g=
+1566    RESERVESHAREEFFECTIVE(t,isl,resC,riskC)
+1567    ;
+1568   
+1569  * Tuong Nguyen added on 24 Feb 2021 to correct the calculation
+1570  * Calculate max effective shared reserve for CE risk received at island (6.5.2.31)
+1571  ReserveShareEffective_ECE_Calculation(t,isl,resC,riskC)
+1572    $ { reserveShareEnabled(t,resC) and ExtendedContingentEvent(riskC)
+1573    and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+1574    RESERVESHAREEFFECTIVE_ECE(t,isl,resC)
+1575  =g=
+1576    RESERVESHAREEFFECTIVE(t,isl,resC,riskC)
+1577    ;
+1578   
+1579  * Constraint to avoid excessive reserve share (6.5.2.31)
+1580  ExcessReserveSharePenalty(t) $ reserveShareEnabledOverall(t)..
+1581    RESERVESHAREPENALTY(t)
+1582  =e=
+1583    sum[ isl, 1e-5 * SHAREDNFR(t,isl) ]
+1584  + sum[ (isl,resC), 2e-5 * SHAREDRESERVE(t,isl,resC) ]
+1585  * Tuong Nguyen modified on 24 Feb 2021 to correct the calculation
+1586  *+ sum[ (isl,resC,riskC), 3e-5 * RESERVESHAREEFFECTIVE(t,isl,resC,riskC)]
+1587  + sum[ (isl,resC), 3e-5 * RESERVESHAREEFFECTIVE_CE(t,isl,resC)]
+1588  + sum[ (isl,resC), 3e-5 * RESERVESHAREEFFECTIVE_ECE(t,isl,resC)]
+1589  ;
+1590  * Calculate Reserve sharing excess penalty end ---------------------------------
+1591   
+1592  *======= NMIR - RESERVE SHARING EQUATIONS END ==================================
+1593   
+1594   
+1595   
+1596  *======= RESERVE EQUATIONS =====================================================
+1597  * 6.5.3.1: Maximum PLSR as a proportion of the block MW
+1598  PLSRReserveProportionMaximum(offer(t,o),blk,resC,PLRO)
+1599    $ resOfrBlk(offer,blk,resC,PLRO)..
+1600    RESERVEBLOCK(Offer,blk,resC,PLRO)
+1601  =l=
+1602    resrvOfrPct(Offer,blk,resC) * GENERATION(Offer)
+1603    ;
+1604   
+1605  * 6.5.3.3: Cleared IL reserve is constrained by cleared dispatchable demand'
+1606  ReserveInterruptibleOfferLimit(t,o,bd,resC,ILRO(resT))
+1607    $ { sameas(o,bd) and offer(t,o) and bid(t,bd) and (sum[blk,demBidMW(t,bd,blk)] >= 0) } ..
+1608    RESERVE(t,o,resC,resT)
+1609  =l=
+1610    PURCHASE(t,bd);
+1611   
+1612   
+1613  * 6.5.3.4 Definition of the reserve offers of different classes and types
+1614  ReserveOfferDefinition(offer(t,o),resC,resT)..
+1615    RESERVE(offer,resC,resT)
+1616  =e=
+1617    sum[ blk, RESERVEBLOCK(offer,blk,resC,resT) ]
+1618    ;
+1619   
+1620  * 6.5.3.5 Definition of maximum energy and reserves from each generator
+1621  EnergyAndReserveMaximum(offer(t,o),resC)..
+1622    GENERATION(offer)
+1623  + reserveMaxFactor(offer,resC)
+1624    * sum[ resT $ (not ILRO(resT)), RESERVE(offer,resC,resT) ]
+1625  =l=
+1626    reserveGenMax(offer)
+1627    ;
+1628   
+1629  *======= RESERVE EQUATIONS END =================================================
+1630   
+1631   
+1632   
+1633  *======= RESERVE SCARCITY ======================================================
+1634  * 6.5.4.2: Total Reserve Shortfall for DCCE risk
+1635  HVDCRiskReserveShortFallCalculation(t,isl,resC,HVDCrisk(RiskC))
+1636    $ ContingentEvents(riskC)..
+1637    RESERVESHORTFALL(t,isl,resC,riskC)
+1638  =e=
+1639    sum[ blk, RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
+1640    ;
+1641   
+1642  * 6.5.4.2: Total Reserve Shortfall for Manual risk
+1643  ManualRiskReserveShortFallCalculation(t,isl,resC,ManualRisk(RiskC))
+1644    $ ContingentEvents(riskC)..
+1645    RESERVESHORTFALL(t,isl,resC,riskC)
+1646  =e=
+1647    sum[ blk, RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
+1648    ;
+1649   
+1650  * 6.5.4.2: Total Reserve Shortfall for generation risk unit
+1651  GenRiskReserveShortFallCalculation(t,isl,o,resC,GenRisk(RiskC))
+1652    $ { ContingentEvents(riskC) and  islandRiskGenerator(t,isl,o)  }..
+1653    RESERVESHORTFALLUNIT(t,isl,o,resC,riskC)
+1654  =e=
+1655    sum[ blk, RESERVESHORTFALLUNITBLK(t,isl,o,resC,riskC,blk) ]
+1656    ;
+1657   
+1658  * 6.5.4.2: Total Reserve Shortfall for generation unit + HVDC risk
+1659  HVDCsecRiskReserveShortFallCalculation(t,isl,o,resC,HVDCsecRisk(RiskC))
+1660    $ { ContingentEvents(riskC) and  islandRiskGenerator(t,isl,o)  }..
+1661    RESERVESHORTFALLUNIT(t,isl,o,resC,riskC)
+1662  =e=
+1663    sum[ blk, RESERVESHORTFALLUNITBLK(t,isl,o,resC,riskC,blk) ]
+1664    ;
+1665   
+1666  * 6.5.4.2: Total Reserve Shortfall for Manual risk + HVDC risk
+1667  HVDCsecManualRiskReserveShortFallCalculation(t,isl,resC,HVDCsecRisk(RiskC))
+1668    $ ContingentEvents(riskC)..
+1669    RESERVESHORTFALL(t,isl,resC,riskC)
+1670  =e=
+1671    sum[ blk, RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
+1672    ;
+1673   
+1674  * 6.5.4.2: Total Reserve Shortfall for risk group
+1675  RiskGroupReserveShortFallCalculation(t,isl,rg,resC,GenRisk(RiskC))
+1676    $ { ContingentEvents(riskC) and islandRiskGroup(t,isl,rg,RiskC)}..
+1677    RESERVESHORTFALLGROUP(t,isl,rg,resC,riskC)
+1678  =e=
+1679    sum[ blk, RESERVESHORTFALLGROUPBLK(t,isl,rg,resC,riskC,blk) ]
+1680    ;
+1681   
+1682  *======= RESERVE SCARCITY END ==================================================
+1683   
+1684   
+1685   
+1686  *======= RISK AND RESERVE BALANCE EQUATIONS ====================================
+1687   
+1688  * 6.5.5.1: Calculate total island cleared reserve
+1689  IslandReserveCalculation(t,isl,resC)..
+1690    ISLANDRESERVE(t,isl,resC)
+1691  =l=
+1692    Sum[ (o,resT) $ { offer(t,o) and offerIsland(t,o,isl) }
+1693                  , RESERVE(t,o,resC,resT)
+1694       ]
+1695    ;
+1696   
+1697  * 6.5.5.2 & 6.5.5.3: Matching of reserve supply and demand
+1698  SupplyDemandReserveRequirement(t,isl,resC,riskC) $ useReserveModel..
+1699    ISLANDRISK(t,isl,resC,riskC)
+1700  - DEFICITRESERVE_CE(t,isl,resC)   $ ContingentEvents(riskC)
+1701  - DEFICITRESERVE_ECE(t,isl,resC)  $ ExtendedContingentEvent(riskC)
+1702  =l=
+1703    ISLANDRESERVE(t,isl,resC)
+1704    ;
+1705   
+1706  *======= RISK AND RESERVE BALANCE EQUATIONS END ================================
+1707   
+1708   
+1709   
+1710  *======= SECURITY EQUATIONS ====================================================
+1711   
+1712  * 6.6.1.5 Branch security constraint with LE sense
+1713  BranchSecurityConstraintLE(t,brCstr)
+1714    $ (BranchConstraintSense(t,brCstr) = -1)..
+1715    sum[ br $ ACbranch(t,br)
+1716       , branchCstrFactors(t,brCstr,br) * ACBRANCHFLOW(t,br) ]
+1717  + sum[ br $ HVDClink(t,br)
+1718       , branchCstrFactors(t,brCstr,br) * HVDCLINKFLOW(t,br) ]
+1719  - SURPLUSBRANCHSECURITYCONSTRAINT(t,brCstr)
+1720  =l=
+1721    BranchConstraintLimit(t,brCstr)
+1722    ;
+1723   
+1724  * 6.6.1.5 Branch security constraint with GE sense
+1725  BranchSecurityConstraintGE(t,brCstr)
+1726    $ (BranchConstraintSense(t,brCstr) = 1)..
+1727    sum[ br $ ACbranch(t,br)
+1728       , branchCstrFactors(t,brCstr,br) * ACBRANCHFLOW(t,br) ]
+1729  + sum[ br $ HVDClink(t,br)
+1730       , branchCstrFactors(t,brCstr,br) * HVDCLINKFLOW(t,br) ]
+1731  + DEFICITBRANCHSECURITYCONSTRAINT(t,brCstr)
+1732  =g=
+1733    BranchConstraintLimit(t,brCstr)
+1734    ;
+1735   
+1736  * 6.6.1.5 Branch security constraint with EQ sense
+1737  BranchSecurityConstraintEQ(t,brCstr)
+1738    $ (BranchConstraintSense(t,brCstr) = 0)..
+1739    sum[ br $ ACbranch(t,br)
+1740       , branchCstrFactors(t,brCstr,br) * ACBRANCHFLOW(t,br) ]
+1741  + sum[ br $ HVDClink(t,br)
+1742       , branchCstrFactors(t,brCstr,br) * HVDCLINKFLOW(t,br) ]
+1743  + DEFICITBRANCHSECURITYCONSTRAINT(t,brCstr)
+1744  - SURPLUSBRANCHSECURITYCONSTRAINT(t,brCstr)
+1745  =e=
+1746    BranchConstraintLimit(t,brCstr)
+1747    ;
+1748   
+1749   
+1750   
+1751  * Market node security constraint with LE sense (3.5.1.7a)
+1752  MNodeSecurityConstraintLE(t,MnodeCstr)
+1753    $ (MNodeConstraintSense(t,MnodeCstr) = -1)..
+1754    sum[ o $ posEnrgOfr(t,o)
+1755         , MNCstrEnrgFactors(t,MnodeCstr,o)
+1756         * GENERATION(t,o)
+1757       ]
+1758  + sum[ (o,resC,resT) $ offer(t,o)
+1759         , MNCnstrResrvFactors(t,MnodeCstr,o,resC,resT)
+1760         * RESERVE(t,o,resC,resT)
+1761       ]
+1762  + sum[ bd $ Bid(t,bd)
+1763         , mnCnstrEnrgBidFactors(t,MnodeCstr,bd)
+1764         * PURCHASE(t,bd)
+1765       ]
+1766  - SURPLUSMNODECONSTRAINT(t,MnodeCstr)
+1767  =l=
+1768    MNodeConstraintLimit(t,MnodeCstr)
+1769    ;
+1770   
+1771  * Market node security constraint with GE sense (3.5.1.7b)
+1772  MNodeSecurityConstraintGE(t,MnodeCstr)
+1773    $ (MNodeConstraintSense(t,MnodeCstr) = 1)..
+1774    sum[ o $ posEnrgOfr(t,o)
+1775         , MNCstrEnrgFactors(t,MnodeCstr,o)
+1776         * GENERATION(t,o)
+1777       ]
+1778  + sum[ (o,resC,resT) $ offer(t,o)
+1779         , MNCnstrResrvFactors(t,MnodeCstr,o,resC,resT)
+1780         * RESERVE(t,o,resC,resT)
+1781       ]
+1782  + sum[ bd $ Bid(t,bd)
+1783         , mnCnstrEnrgBidFactors(t,MnodeCstr,bd)
+1784         * PURCHASE(t,bd)
+1785       ]
+1786  + DEFICITMNODECONSTRAINT(t,MnodeCstr)
+1787  =g=
+1788    MNodeConstraintLimit(t,MnodeCstr)
+1789    ;
+1790   
+1791  * Market node security constraint with EQ sense (3.5.1.7c)
+1792  MNodeSecurityConstraintEQ(t,MnodeCstr)
+1793    $ (MNodeConstraintSense(t,MnodeCstr) = 0)..
+1794    sum[ o $ posEnrgOfr(t,o)
+1795         , MNCstrEnrgFactors(t,MnodeCstr,o)
+1796         * GENERATION(t,o)
+1797       ]
+1798  + sum[ (o,resC,resT) $ offer(t,o)
+1799         , MNCnstrResrvFactors(t,MnodeCstr,o,resC,resT)
+1800         * RESERVE(t,o,resC,resT)
+1801       ]
+1802  + sum[ bd $ Bid(t,bd)
+1803         , mnCnstrEnrgBidFactors(t,MnodeCstr,bd)
+1804         * PURCHASE(t,bd)
+1805       ]
+1806  + DEFICITMNODECONSTRAINT(t,MnodeCstr)
+1807  - SURPLUSMNODECONSTRAINT(t,MnodeCstr)
+1808  =e=
+1809    MNodeConstraintLimit(t,MnodeCstr)
+1810    ;
+1811   
+1812  *======= SECURITY EQUATIONS END ================================================
+1813   
+1814   
+1815  * Model declarations
+1816  Model vSPD /
+1817  * Objective function
+1818    ObjectiveFunction
+1819  * Offer and purchase definitions
+1820    GenerationOfferDefintion, DemBidDefintion
+1821    EnergyScarcityDefinition,
+1822    GenerationRampUp, GenerationRampDown
+1823  * Network
+1824    HVDClinkMaximumFlow, HVDClinkLossDefinition
+1825    HVDClinkFlowDefinition, LambdaDefinition
+1826    ACnodeNetInjectionDefinition1
+1827    ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+1828    ACBranchFlowDefinition, LinearLoadFlow
+1829    ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+1830    ACBranchLossCalculation, ACDirectedBranchLossDefinition
+1831  * Risk
+1832    HVDCIslandRiskCalculation, HVDCRecCalculation
+1833    GenIslandRiskCalculation, GenIslandRiskCalculation_1
+1834    GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+1835    ManualIslandRiskCalculation
+1836  * Reserve
+1837    PLSRReserveProportionMaximum, ReserveOfferDefinition
+1838    EnergyAndReserveMaximum
+1839  * Reserve scarcity/shortfall
+1840    HVDCRiskReserveShortFallCalculation
+1841    ManualRiskReserveShortFallCalculation
+1842    GenRiskReserveShortFallCalculation
+1843    HVDCsecRiskReserveShortFallCalculation
+1844    HVDCsecManualRiskReserveShortFallCalculation
+1845    RiskGroupReserveShortFallCalculation
+1846  * Matching of reserve requirement and availability
+1847    SupplyDemandReserveRequirement, IslandReserveCalculation
+1848  * Risk Offset calculation
+1849    RiskOffsetCalculation_DCCE
+1850    RiskOffsetCalculation_DCECE
+1851  * Island risk definitions
+1852  * Include HVDC secondary risk constraints
+1853    HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
+1854    HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
+1855  * Branch security constraints
+1856    BranchSecurityConstraintLE
+1857    BranchSecurityConstraintGE
+1858    BranchSecurityConstraintEQ
+1859  * Market node security constraints
+1860    MNodeSecurityConstraintLE, MNodeSecurityConstraintGE
+1861    MNodeSecurityConstraintEQ
+1862  * ViolationCost
+1863    SystemCostDefinition, SystemBenefitDefinition
+1864    SystemPenaltyCostDefinition, TotalViolationCostDefinition
+1865    TotalScarcityCostDefinition
+1866    / ;
+1867   
+1868  Model vSPD_NMIR /
+1869  * Objective function
+1870    ObjectiveFunction
+1871  * Offer and purchase definitions
+1872    GenerationOfferDefintion, DemBidDiscrete,
+1873    DemBidDefintion, EnergyScarcityDefinition,
+1874    GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
+1875  * Network
+1876    HVDClinkMaximumFlow, HVDClinkLossDefinition
+1877    HVDClinkFlowDefinition, LambdaDefinition
+1878    ACnodeNetInjectionDefinition1
+1879    ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+1880    ACBranchFlowDefinition, LinearLoadFlow
+1881    ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+1882    ACBranchLossCalculation, ACDirectedBranchLossDefinition
+1883  * Risk
+1884    RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
+1885    HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
+1886    GenIslandRiskCalculation, GenIslandRiskCalculation_1
+1887    GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+1888    HVDCSendMustZeroBinaryDefinition
+1889    HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
+1890    HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
+1891  * Reserve
+1892    PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit
+1893    ReserveOfferDefinition, EnergyAndReserveMaximum
+1894  * Reserve scarcity/shortfall
+1895    HVDCRiskReserveShortFallCalculation
+1896    ManualRiskReserveShortFallCalculation
+1897    GenRiskReserveShortFallCalculation
+1898    HVDCsecRiskReserveShortFallCalculation
+1899    HVDCsecManualRiskReserveShortFallCalculation
+1900    RiskGroupReserveShortFallCalculation
+1901  * Matching of reserve requirement and availability
+1902    SupplyDemandReserveRequirement, IslandReserveCalculation
+1903  * Branch security constraints
+1904    BranchSecurityConstraintLE
+1905    BranchSecurityConstraintGE
+1906    BranchSecurityConstraintEQ
+1907  * Market node security constraints
+1908    MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
+1909  * ViolationCost
+1910    SystemCostDefinition, SystemBenefitDefinition
+1911    SystemPenaltyCostDefinition, TotalViolationCostDefinition
+1912    TotalScarcityCostDefinition
+1913  * General NMIR equations
+1914    EffectiveReserveShareCalculation
+1915    SharedReserveLimitByClearedReserve
+1916    BothClearedAndFreeReserveCanBeShared
+1917    ReverseReserveShareLimitByHVDCControlBand
+1918    ReserveShareSentLimitByHVDCControlBand
+1919    FwdReserveShareSentLimitByHVDCCapacity
+1920    ReverseReserveOnlyToEnergySendingIsland
+1921    ForwardReserveOnlyToEnergyReceivingIsland
+1922    ReverseReserveLimitInReserveZone
+1923    ZeroReserveInNoReserveZone
+1924    OnlyOneActiveHVDCZoneForEachReserveClass
+1925    ZeroSentHVDCFlowForNonSendingIsland
+1926    RoundPowerZoneSentHVDCUpperLimit
+1927    HVDCSendingIslandDefinition
+1928    OnlyOneSendingIslandExists
+1929    HVDCSentCalculation
+1930    ExcessReserveSharePenalty
+1931    ReserveShareEffective_CE_Calculation
+1932    ReserveShareEffective_ECE_Calculation
+1933  * Lamda loss model NMIR
+1934    HVDCFlowAccountedForForwardReserve
+1935    ForwardReserveReceivedAtHVDCReceivingIsland
+1936    HVDCFlowAccountedForReverseReserve
+1937    ReverseReserveReceivedAtHVDCSendingIsland
+1938    HVDCSentEnergyLambdaDefinition
+1939    HVDCSentEnergyFlowDefinition
+1940    HVDCSentEnergyLossesDefinition
+1941    HVDCSentReserveLambdaDefinition
+1942    HVDCSentReserveFlowDefinition
+1943    HVDCSentReserveLossesDefinition
+1944    / ;
+1945   
+1946  Model vSPD_MIP /
+1947  * Objective function
+1948    ObjectiveFunction
+1949  * Offer and purchase definitions
+1950    GenerationOfferDefintion, DemBidDiscrete, DemBidDefintion
+1951    EnergyScarcityDefinition,
+1952    GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
+1953  * Network
+1954    HVDClinkMaximumFlow, HVDClinkLossDefinition
+1955    HVDClinkFlowDefinition, LambdaDefinition
+1956    ACnodeNetInjectionDefinition1
+1957    ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+1958    ACBranchFlowDefinition, LinearLoadFlow
+1959    ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+1960    ACBranchLossCalculation, ACDirectedBranchLossDefinition
+1961    ACDirectedBranchFlowIntegerDefinition1, ACDirectedBranchFlowIntegerDefinition2
+1962    LambdaIntegerDefinition1, LambdaIntegerDefinition2
+1963  * Risk
+1964    RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
+1965    HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
+1966    GenIslandRiskCalculation, GenIslandRiskCalculation_1
+1967    GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+1968    HVDCSendMustZeroBinaryDefinition
+1969    HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
+1970    HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
+1971  * Reserve
+1972    PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit
+1973    ReserveOfferDefinition, EnergyAndReserveMaximum
+1974  * Reserve scarcity/shortfall
+1975    HVDCRiskReserveShortFallCalculation
+1976    ManualRiskReserveShortFallCalculation
+1977    GenRiskReserveShortFallCalculation
+1978    HVDCsecRiskReserveShortFallCalculation
+1979    HVDCsecManualRiskReserveShortFallCalculation
+1980    RiskGroupReserveShortFallCalculation
+1981  * Matching of reserve requirement and availability
+1982    SupplyDemandReserveRequirement, IslandReserveCalculation
+1983  * Branch security constraints
+1984    BranchSecurityConstraintLE
+1985    BranchSecurityConstraintGE
+1986    BranchSecurityConstraintEQ
+1987  * Market node security constraints
+1988    MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
+1989  * ViolationCost
+1990    SystemCostDefinition, SystemBenefitDefinition
+1991    SystemPenaltyCostDefinition, TotalViolationCostDefinition
+1992    TotalScarcityCostDefinition
+1993  * Set of integer constraints on the HVDC link to incorporate the allowance of HVDC roundpower
+1994    HVDClinkFlowIntegerDefinition1, HVDClinkFlowIntegerDefinition2
+1995    HVDClinkFlowIntegerDefinition3, HVDClinkFlowIntegerDefinition4
+1996  * General NMIR equations
+1997    EffectiveReserveShareCalculation
+1998    SharedReserveLimitByClearedReserve
+1999    BothClearedAndFreeReserveCanBeShared
+2000    ReverseReserveShareLimitByHVDCControlBand
+2001    ReserveShareSentLimitByHVDCControlBand
+2002    FwdReserveShareSentLimitByHVDCCapacity
+2003    ReverseReserveOnlyToEnergySendingIsland
+2004    ForwardReserveOnlyToEnergyReceivingIsland
+2005    ReverseReserveLimitInReserveZone
+2006    ZeroReserveInNoReserveZone
+2007    OnlyOneActiveHVDCZoneForEachReserveClass
+2008    ZeroSentHVDCFlowForNonSendingIsland
+2009    RoundPowerZoneSentHVDCUpperLimit
+2010    HVDCSendingIslandDefinition
+2011    OnlyOneSendingIslandExists
+2012    HVDCSentCalculation
+2013    ExcessReserveSharePenalty
+2014    ReserveShareEffective_CE_Calculation
+2015    ReserveShareEffective_ECE_Calculation
+2016  * Lamda loss model NMIR
+2017    HVDCFlowAccountedForForwardReserve
+2018    ForwardReserveReceivedAtHVDCReceivingIsland
+2019    HVDCFlowAccountedForReverseReserve
+2020    ReverseReserveReceivedAtHVDCSendingIsland
+2021    HVDCSentEnergyLambdaDefinition
+2022    HVDCSentEnergyFlowDefinition
+2023    HVDCSentEnergyLossesDefinition
+2024    HVDCSentReserveLambdaDefinition
+2025    HVDCSentReserveFlowDefinition
+2026    HVDCSentReserveLossesDefinition
+2027    / ;
+2028   
+2029  Model vSPD_BranchFlowMIP /
+2030  * Objective function
+2031    ObjectiveFunction
+2032  * Offer and purchase definitions
+2033    GenerationOfferDefintion, DemBidDefintion
+2034    EnergyScarcityDefinition,
+2035    GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
+2036  * Network
+2037    HVDClinkMaximumFlow, HVDClinkLossDefinition
+2038    HVDClinkFlowDefinition, LambdaDefinition
+2039    ACnodeNetInjectionDefinition1
+2040    ACnodeNetInjectionDefinition2, ACBranchMaximumFlow
+2041    ACBranchFlowDefinition, LinearLoadFlow
+2042    ACBranchBlockLimit, ACDirectedBranchFlowDefinition
+2043    ACBranchLossCalculation, ACDirectedBranchLossDefinition
+2044    ACDirectedBranchFlowIntegerDefinition1, ACDirectedBranchFlowIntegerDefinition2
+2045    LambdaIntegerDefinition1, LambdaIntegerDefinition2
+2046  * Risk
+2047    RiskOffsetCalculation_DCCE, RiskOffsetCalculation_DCECE
+2048    HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
+2049    GenIslandRiskCalculation, GenIslandRiskCalculation_1
+2050    GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+2051    HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
+2052    HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
+2053  * Reserve
+2054    PLSRReserveProportionMaximum, ReserveOfferDefinition
+2055    EnergyAndReserveMaximum
+2056  * Reserve scarcity/shortfall
+2057    HVDCRiskReserveShortFallCalculation
+2058    ManualRiskReserveShortFallCalculation
+2059    GenRiskReserveShortFallCalculation
+2060    HVDCsecRiskReserveShortFallCalculation
+2061    HVDCsecManualRiskReserveShortFallCalculation
+2062    RiskGroupReserveShortFallCalculation
+2063  * Matching of reserve requirement and availability
+2064    SupplyDemandReserveRequirement, IslandReserveCalculation
+2065  * Branch security constraints
+2066    BranchSecurityConstraintLE
+2067    BranchSecurityConstraintGE
+2068    BranchSecurityConstraintEQ
+2069  * Market node security constraints
+2070    MNodeSecurityConstraintLE, MNodeSecurityConstraintGE, MNodeSecurityConstraintEQ
+2071  * ViolationCost
+2072    SystemCostDefinition, SystemBenefitDefinition
+2073    SystemPenaltyCostDefinition, TotalViolationCostDefinition
+2074    TotalScarcityCostDefinition
+2075  * Set of intrger constraints on the HVDC link to incorporate the allowance of HVDC roundpower
+2076    HVDClinkFlowIntegerDefinition1, HVDClinkFlowIntegerDefinition2
+2077    HVDClinkFlowIntegerDefinition3, HVDClinkFlowIntegerDefinition4
+2078  * General NMIR equations
+2079    EffectiveReserveShareCalculation
+2080    SharedReserveLimitByClearedReserve
+2081    BothClearedAndFreeReserveCanBeShared
+2082    ReverseReserveShareLimitByHVDCControlBand
+2083    ReserveShareSentLimitByHVDCControlBand
+2084    FwdReserveShareSentLimitByHVDCCapacity
+2085    ReverseReserveOnlyToEnergySendingIsland
+2086    ForwardReserveOnlyToEnergyReceivingIsland
+2087    ReverseReserveLimitInReserveZone
+2088    ZeroReserveInNoReserveZone
+2089    OnlyOneActiveHVDCZoneForEachReserveClass
+2090    ZeroSentHVDCFlowForNonSendingIsland
+2091    RoundPowerZoneSentHVDCUpperLimit
+2092    HVDCSendingIslandDefinition
+2093    OnlyOneSendingIslandExists
+2094    HVDCSentCalculation
+2095    ExcessReserveSharePenalty
+2096    ReserveShareEffective_CE_Calculation
+2097    ReserveShareEffective_ECE_Calculation
+2098  * Lamda loss model NMIR
+2099    HVDCFlowAccountedForForwardReserve
+2100    ForwardReserveReceivedAtHVDCReceivingIsland
+2101    HVDCFlowAccountedForReverseReserve
+2102    ReverseReserveReceivedAtHVDCSendingIsland
+2103    HVDCSentEnergyLambdaDefinition
+2104    HVDCSentEnergyFlowDefinition
+2105    HVDCSentEnergyLossesDefinition
+2106    HVDCSentReserveLambdaDefinition
+2107    HVDCSentReserveFlowDefinition
+2108    HVDCSentReserveLossesDefinition
+2109    / ;
+2110   
+2111  Model vSPD_FTR /
+2112  * Objective function
+2113    ObjectiveFunction
+2114  * Offer and purchase definitions
+2115    GenerationOfferDefintion
+2116  * Network
+2117    HVDClinkMaximumFlow
+2118    ACNodeNetInjectionDefinition1, ACNodeNetInjectionDefinition2
+2119    ACBranchMaximumFlow, ACBranchFlowDefinition, LinearLoadFlow
+2120  * Branch security constraints
+2121    BranchSecurityConstraintLE
+2122    BranchSecurityConstraintGE
+2123    BranchSecurityConstraintEQ
+2124  * ViolationCost
+2125    SystemCostDefinition, SystemBenefitDefinition
+2126    SystemPenaltyCostDefinition, TotalViolationCostDefinition
+2127    TotalScarcityCostDefinition
+2128    / ;
+
+
+COMPILATION TIME     =        0.016 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/05/24 12:02:16 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+EXECUTION TIME       =        0.000 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+
+
+USER: Small MUD-5 User License                       G231026|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S11
+
+
+**** FILE SUMMARY
+
+Input      C:\GitHub\vSPD\Programs\vSPDmodel.gms
+Output     C:\GitHub\vSPD\Programs\vSPDmodel.lst
+Save       C:\GitHub\vSPD\Programs\vSPDmodel.g0?
+
+**** WARNING - COMPILER OPTIONS ARE NON DEFAULT     ONEMPTY

@@ -1,0 +1,65 @@
+Run: 'RTD_20240620_TP24_BF_Daily'
+
+runvSPD started at: 07/04/24 14:42:18
+vSPDsetup started at: 07/04/24 14:42:18
+vSPDreportSetup started at: 07/04/24 14:42:19
+
+Case "Pricing_20240620" started at: 07/04/24 14:42:19
+The caseID: 191302024062300479 (20-JUN-2024 11:30) is 1st solved successfully.
+Objective function value: 613552201.0687
+Violations cost         : 0.0000
+The caseID: 191012024062330489 (20-JUN-2024 11:30) is 1st solved successfully.
+Objective function value: 97527348.4847
+Violations cost         : 0.2505
+The caseID: 191012024062340493 (20-JUN-2024 11:40) is 1st solved successfully.
+Objective function value: 97177851.6427
+Violations cost         : 0.2346
+The caseID: 191012024062345498 (20-JUN-2024 11:45) is 1st solved successfully.
+Objective function value: 97114560.9694
+Violations cost         : 0.2444
+KOE1101 reqd: 21.0890MW, short:  3.6947MW. Eligible for shortfall removal: 1
+Short fall adjustment from KOE1101 to MPE1101:   3.6949 MW
+The caseID: 191012024062345498 (20-JUN-2024 11:45) is 1st solved successfully.
+Objective function value: 97114249.3349
+Violations cost         : 0.2444
+KOE1101 reqd: 17.3941MW, short:  2.9765MW. Eligible for shortfall removal: 1
+MPE1101 reqd:  3.6949MW, short:  0.7390MW. Eligible for shortfall removal: 1
+Short fall adjustment from KOE1101 to MDN1101:   2.9767 MW
+Short fall adjustment from MPE1101 to MDN1101:   0.7392 MW
+The caseID: 191012024062345498 (20-JUN-2024 11:45) is 1st solved successfully.
+Objective function value: 97113875.1267
+Violations cost         : 0.2444
+KOE1101 reqd: 14.4174MW, short:  2.4061MW. Eligible for shortfall removal: 1
+MDN1101 reqd:  3.7159MW, short:  0.7432MW. Eligible for shortfall removal: 1
+MPE1101 reqd:  2.9557MW, short:  0.5911MW. Eligible for shortfall removal: 1
+Short fall adjustment from KOE1101 to MDN2201:   2.4063 MW
+Short fall adjustment from MDN1101 to MDN2201:   0.7434 MW
+Short fall adjustment from MPE1101 to MDN2201:   0.5913 MW
+The caseID: 191012024062345498 (20-JUN-2024 11:45) is 1st solved successfully.
+Objective function value: 97113561.6537
+Violations cost         : 0.2444
+KOE1101 reqd: 12.0111MW, short:  1.9458MW. Eligible for shortfall removal: 1
+MDN1101 reqd:  2.9725MW, short:  0.5945MW. Eligible for shortfall removal: 1
+MDN2201 reqd:  3.7411MW, short:  0.7482MW. Eligible for shortfall removal: 1
+MPE1101 reqd:  2.3644MW, short:  0.4729MW. Eligible for shortfall removal: 1
+KOE1101 no transfer destination found for shortfall
+MDN1101 no transfer destination found for shortfall
+MDN2201 no transfer destination found for shortfall
+MPE1101 no transfer destination found for shortfall
+The caseID: 191012024062345498 (20-JUN-2024 11:45) is 1st solved successfully.
+Objective function value: 97163988.7714
+Violations cost         : 0.2464
+KOE1101 no transfer destination found for shortfall
+MDN1101 no transfer destination found for shortfall
+MDN2201 no transfer destination found for shortfall
+MPE1101 no transfer destination found for shortfall
+The caseID: 191012024062345503 (20-JUN-2024 11:45) is 1st solved successfully.
+Objective function value: 97136911.9879
+Violations cost         : 52300.2137
+The caseID: 191012024062355506 (20-JUN-2024 11:55) is 1st solved successfully.
+Objective function value: 97042775.3758
+Violations cost         : 52300.2179
+Case: Pricing_20240620 is complete in  21.0940(secs)
+Case: Pricing_20240620 is finished in  22.0670(secs)
+
+Total execute time:        22.64(secs)

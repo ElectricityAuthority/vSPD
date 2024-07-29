@@ -1,0 +1,179 @@
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/05/24 12:02:17 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  *=====================================================================================
+   2  * Name:               vSPDPeriod.gms
+   3  * Function:           Establish the set of periods selected to be solved in vSPD
+   4  *                     and unload to gdx file for later use in vSPDsolve.gms
+   5  * Developed by:       Electricity Authority, New Zealand
+   6  * Source:             https://github.com/ElectricityAuthority/vSPD
+   7  *                     https://www.emi.ea.govt.nz/Tools/vSPD
+   8  * Contact:            Forum: https://www.emi.ea.govt.nz/forum/
+   9  *                     Email: emi@ea.govt.nz
+  10  * Last modified on:   1 Nov 2022
+  11  *
+  12  *=====================================================================================
+  13   
+INCLUDE    C:\GitHub\vSPD\Programs\vSPDsettings.inc
+  15  *+++ vSPD settings +++
+  18   
+  19  *+++ Paths +++
+  21   
+  26   
+  28   
+  29  *+++ Model +++
+  30  Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+  31  Scalar dailymode                         / 0 / ;   ! Solving quickly by using RTD pre-calculated demand or PRSS solved initial MW
+  32   
+  33  *+++ Network +++
+  34  Scalar useACLossModel                    / 1 /    ;
+  35  Scalar useHVDCLossModel                  / 1 /    ;
+  36  Scalar useACBranchLimits                 / 1 /    ;
+  37  Scalar useHVDCBranchLimits               / 1 /    ;
+  38  Scalar resolveCircularBranchFlows        / 1 /    ;
+  39  Scalar resolveHVDCNonPhysicalLosses      / 1 /    ;
+  40  Scalar resolveACNonPhysicalLosses        / 0 /    ;   ! Placeholder for future code development
+  41  Scalar circularBranchFlowTolerance       / 1e-4 / ;
+  42  Scalar nonPhysicalLossTolerance          / 1e-6 / ;
+  43  Scalar useBranchFlowMIPTolerance         / 1e-6 / ;
+  44   
+  45  *+++ Constraints +++
+  46  Scalar useReserveModel                   / 1 /    ;
+  47  Scalar suppressMixedConstraint           / 0 /    ;   ! No longer used since Mixed MIP Constraints no longer exists
+  48  Scalar mixedMIPtolerance                 / 1e-6 / ;   ! No longer used since Mixed MIP Constraints no longer exists
+  49   
+  50  *+++ Solver +++
+  51  Scalar LPtimeLimit                       / 3600 / ;
+  52  Scalar LPiterationLimit                  / 2000000000 / ;
+  53  Scalar MIPtimeLimit                      / 3600 / ;
+  54  Scalar MIPiterationLimit                 / 2000000000 / ;
+  55  Scalar MIPoptimality                     / 0 / ;
+  58   
+  59   
+  60  *+++ Various switches +++
+INCLUDE    C:\GitHub\vSPD\Programs\vSPDcase.inc
+  64   
+  65  * If input file does not exist then go to the next input file
+  67   
+  68   
+  69  *===============================================================================
+  70  * 1. Initialize set and data
+  71  *===============================================================================
+  72  Sets
+  73  ca                      'Set of caseID'
+  74  tp                      'Set of trading periods'
+  75  dt                      'Set of datetime'
+  76  case2dt2tp(ca<,dt<,tp<) 'Mapping caseID to datetime and to trading periods'
+  77   
+  78   
+  79  sca(ca)                 'caseID to be solved'
+  80  stp(tp)                 'Trading periods to be solved'
+  81  sdt(dt)                 'Date time to be solved'
+  82  scase2dt2tp(ca,dt,tp)   'Mapping solved caseID to datetime and to trading periods'
+  83  ;
+  84  alias (tp,tp1), (dt,dt1), (ca,ca1);
+  85   
+  86  Parameter casePublishedSecs(ca,tp) 'Time Weight Seconds apply to case file for final pricing calculation' ;
+  87   
+  88   
+GDXIN   C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+--- LOAD  case2dt2tp = 4:i_dateTimeTradePeriodMap
+--- LOAD  casePublishedSecs = 42:i_priceCaseFilesPublishedSecs
+  93   
+  94  *===============================================================================
+  95  * 2. Establish which trading periods are to be solved
+  96  *===============================================================================
+  97  Sets
+  98  alp            'All trading periods to be solved'  / All /
+  99  tmp            'Temporary list of trading period to be solved'
+INCLUDE    C:\GitHub\vSPD\Programs\vSPDtpsToSolve.inc
+      a. to solve all trading periods
+      /  
+      All
+      /  
+       
+      b. to solve trading periods 3 and 6
+      /                /        
+      TP3      Or      TP3, TP6 
+      TP6              /        
+      /                         
+ 113  *============================================= // ==========================================
+ 114   
+ 115  /
+ 116  TP24
+ 117  *191012024062345498
+ 118  /
+ 119  ;
+ 120  sca(ca)       = no ;
+ 121  stp(tp)       = no ;
+ 122  sdt(dt)       = no ;
+ 123   
+ 124  stp(tp) $ sum[ tmp, diag(tp,tmp)] = yes ;
+ 125  sdt(dt) $ sum[ tmp, diag(dt,tmp)] = yes ;
+ 126  sca(ca) $ sum[ tmp, diag(ca,tmp)] = yes ;
+ 127   
+ 128  stp(tp) $ sum[ tmp, diag(tmp,'All')] = yes ;
+ 129  sdt(dt) $ sum[ tmp, diag(tmp,'All')] = yes ;
+ 130  sca(ca) $ sum[ tmp, diag(tmp,'All')] = yes ;
+ 131   
+ 132   
+ 133  sdt(dt) $ { ( sum[dt1 $ sdt(dt1), 1] = 0 ) and (sum[ca $ sca(ca), 1] = 0 ) and sum[ (ca,stp(tp)) $ { case2dt2tp(ca,dt,tp)}, 1 ] } = yes ;
+ 134  sdt(dt) $ { ( sum[dt1 $ sdt(dt1), 1] = 0 ) and (sum[tp $ stp(tp), 1] = 0 ) and sum[ (sca(ca),tp) $ { case2dt2tp(ca,dt,tp)}, 1 ] } = yes ;
+ 135  sdt(dt) $ { ( sum[dt1 $ sdt(dt1), 1] = 0 ) and sum[ (sca(ca),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 136   
+ 137  stp(tp) $ { ( sum[tp1 $ stp(tp1), 1] = 0 ) and ( sum[ca $ sca(ca), 1] = 0 ) and sum[ (ca,sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 138  stp(tp) $ { ( sum[tp1 $ stp(tp1), 1] = 0 ) and ( sum[dt $ sdt(dt), 1] = 0 ) and sum[ (sca(ca),dt) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 139  stp(tp) $ { ( sum[tp1 $ stp(tp1), 1] = 0 ) and sum[ (sca(ca),sdt(dt)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 140   
+ 141  sca(ca) $ { ( sum[dt $ sdt(dt), 1] = 0 ) and sum[ (dt,stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 142  sca(ca) $ { ( sum[tp $ stp(tp), 1] = 0 ) and sum[ (sdt(dt),tp) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 143  sca(ca) $ { ( sum[ca1 $ sca(ca1), 1] = 0 ) and sum[ (sdt(dt),stp(tp)) $ case2dt2tp(ca,dt,tp), 1 ] } = yes ;
+ 144   
+ 145  scase2dt2tp(sca(ca),sdt(dt),stp(tp)) = yes $ {case2dt2tp(ca,dt,tp) and casePublishedSecs(ca,tp)} ;
+ 146   
+ 147  sca(ca) = yes $ sum[ (sdt(dt),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
+ 148  sdt(dt) = yes $ sum[ (sca(ca),stp(tp)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
+ 149  stp(tp) = yes $ sum[ (sca(ca),sdt(dt)) $ scase2dt2tp(ca,dt,tp), 1 ] ;
+ 150   
+ 151   
+ 152  execute_unload 'C:\GitHub\vSPD\Programs\\vSPDperiod.gdx'
+ 153    sca    = i_caseID
+ 154    stp    = i_tradePeriod
+ 155    sdt    = i_dateTime
+ 156    scase2dt2tp  = i_DateTimeTradePeriod
+ 157    ;
+ 158   
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/05/24 12:02:17 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\GitHub\vSPD\Programs\vSPDperiod.gms
+     2       14 INCLUDE        1      14  .C:\GitHub\vSPD\Programs\vSPDsettings.inc
+     3       62 INCLUDE        1      15  .C:\GitHub\vSPD\Programs\vSPDcase.inc
+     4       66 IF EXIST       1      18  C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+     5       89 GDXIN          1      41  C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+     6      100 INCLUDE        1      52  .C:\GitHub\vSPD\Programs\vSPDtpsToSolve.inc
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  42.5.0 cf11b917 WEX-WEI
+GAMS 42.5.0  cf11b917 Mar 30, 2023          WEX-WEI x86 64bit/MS Windows - 07/05/24 12:02:17 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+EXECUTION TIME       =        0.015 SECONDS      4 MB  42.5.0 cf11b917 WEX-WEI
+
+
+USER: Small MUD-5 User License                       G231026|0002CO-GEN
+      Electricity Authority - Te Mana Hiko,                  DC5643-S11
+
+
+**** FILE SUMMARY
+
+Input      C:\GitHub\vSPD\Programs\vSPDperiod.gms
+Output     C:\GitHub\vSPD\Programs\vSPDperiod.lst

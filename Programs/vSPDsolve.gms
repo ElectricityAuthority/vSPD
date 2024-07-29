@@ -82,6 +82,7 @@ Parameters
 
 * Flag to apply corresponding vSPD model
   VSPDModel(ca,dt)                                       '0=VSPD, 1=vSPD_BranchFlowMIP, 2=VSPD (last solve)'
+  RTDLastSolve(ca,dt)                                    'Flag to indicate if the next run is the last RTD run. Ex: no energy shortage transfer'
 
 * MIP logic
   circularBranchFlowExist(ca,dt,br)                      'Flag to indicate if circulating branch flows exist on each branch: 1 = Yes'
@@ -770,6 +771,7 @@ PotentialModellingInconsistency(ca,dt,n)= 1 $ { sum[ branch(ca,dt,br) $ nodeouta
 
 unsolvedDT(ca,dt) = yes $ case2dt(ca,dt) ;
 VSPDModel(ca,dt) = 0 ;
+RTDLastSolve(ca,dt) = 0 ;
 LoopCount(ca,dt) = 1 $ case2dt(ca,dt) ;
 IsNodeDead(ca,dt,n) = 0 ;
 nodeTonode(ca,dt,n,n1) = node2node(ca,dt,n,n1) ;
@@ -777,7 +779,9 @@ nodeTonode(ca,dt,n,n1) = node2node(ca,dt,n,n1) ;
 While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 
   loop[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt) and (LoopCount(ca,dt) <= maxSolveLoops(ca,dt)) },
+  if (LoopCount(ca,dt)=1, putclose rep ' '/;)
   repeat(
+    putclose rep 'Loop Count: ' LoopCount(ca,dt):<2:0 /;
 *   7a. Reset all sets, parameters and variables -------------------------------
     option clear = t ;
 *   Generation variables
@@ -921,7 +925,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
         requiredLoad(t,n) $ { (DidShortfallTransfer(t,n)=0)                                } = requiredLoad(t,n) + [InstructedLoadShed(t,n) $ InstructedShedActive(t,n)];
 
     ) ;
-display requiredload;
+
 
 *   Recalculate energy scarcity limits -------------------------------------
     scarcityEnrgLimit(t,n,blk) = 0 ;
@@ -1060,14 +1064,14 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *       Post a progress message to the console and for use by EMI.
         if (ModelSolved = 1,
             loop (t,
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved successfully.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
                              'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
             ) ;
         elseif (ModelSolved = 0) and (sequentialSolve = 1),
             loop (t,
                 unsolvedDT(t) = no;
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved unsuccessfully.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved unsuccessfully.'/
             ) ;
 
         ) ;
@@ -1147,7 +1151,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             SOS1_solve(t)  = yes;
             loop(t,
                 unsolvedDT(t) = no;
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully for branch integer.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved successfully for branch integer.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
                              'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /;
 *              set vSPD model to solve as normal mode after successfully resolving using branch integer
@@ -1157,7 +1161,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             loop (t,
                 unsolvedDT(t) = yes;
                 VSPDModel(t) = 2;
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved unsuccessfully for branch integer.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved unsuccessfully for branch integer.'/
             ) ;
         ) ;
     ) ;
@@ -1244,6 +1248,7 @@ $offtext
 *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
 *       If the adjustment would make requiredLoad negative then requiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
 *       the RTD Required Load calculation does not recalculate its requiredLoad at this node
+        ShortfallAdjustmentMW(t,n) = 0;
         ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [ dtParameter(ca,dt,'shortfallRemovalMargin') $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
 
         loop( (t,n) $ EnergyShortfallMW(t,n),
@@ -1269,51 +1274,50 @@ of the candidate node is not the same as the ElectricalIslandpn of the node with
 $offtext
         unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
 
-*        while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
-
 * If target node is dead --> move it up to one level
-            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes ;
-            nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no ;
+        nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes ;
+        nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no ;
 
 * This is the approach SPD is using (a deficit node is ineligible as target node )
-            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = yes;
-            nodeTonode(t,n,n1) $ sum[n2 $ { nodeTonode(t,n,n2) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = no;
+        nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = yes;
+        nodeTonode(t,n,n1) $ sum[n2 $ { nodeTonode(t,n,n2) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = no;
             
-*           Check if shortfall from node n is eligibly transfered to node n1
-            ShortfallTransferFromTo(nodeTonode(t,n,n1))
-                $ { (ShortfallAdjustmentMW(t,n) > 0)
-                and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
-                and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
-                  } = 1;
+* Check if shortfall from node n is eligibly transfered to node n1
+        ShortfallTransferFromTo(nodeTonode(t,n,n1))
+            $ { (ShortfallAdjustmentMW(t,n) > 0)
+            and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
+            and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
+              } = 1;
 
 * This is the approach Tuong propose (a target node is ineligible as target node twice consecutively  ))          
-*            nodeTonode(t,n,n2) $ sum[n1 $ nodeTonode(t,n1,n2), ShortfallTransferFromTo(t,n,n1)] = yes;
-*            nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1) = no;
+*        nodeTonode(t,n,n2) $ sum[n1 $ nodeTonode(t,n1,n2), ShortfallTransferFromTo(t,n,n1)] = yes;
+*        nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1) = no;
 
-            loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
-               putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
-            ) ;
+        loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
+           putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
+        ) ;
             
-            loop( node(t,n) $ {ShortfallAdjustmentMW(t,n) and (sum[n1, ShortfallTransferFromTo(t,n,n1)]=0)},
-               putclose rep n.tl ' no transfer destination found for shortfall ' /;
-            ) ; 
+        loop( node(t,n) $ {ShortfallAdjustmentMW(t,n) and (sum[n1, ShortfallTransferFromTo(t,n,n1)]=0)},
+           putclose rep n.tl ' no transfer destination found for shortfall ' /;
+        ) ;
+        
+        RTDLastSolve(t) $ { sum[ (n,n1), ShortfallTransferFromTo(t,n,n1)]=0 } = 1;
 
-*           If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
-            requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-            requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 1)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-            PotentialModellingInconsistency(t,n1) $ {(IsNodeDead(t,n1)=0) and sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] } = 1;
+*       If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
+        requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+        requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 1)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+        PotentialModellingInconsistency(t,n1) $ {(IsNodeDead(t,n1)=0) and sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] } = 1;
 
-*           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
-            ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+*       If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
+        ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
 
-*           and the DidShortfallTransfer of the transfer target node is set to 1
-            DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
+*       and the DidShortfallTransfer of the transfer target node is set to 1
+        DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
 
-*           Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
-            ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
-            ShortfallTransferFromTo(t,n,n1) = 0;
-         
-*        ) ;
+*       Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
+        ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
+        ShortfallTransferFromTo(t,n,n1) = 0;
+ 
 
 *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
 *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
@@ -1325,12 +1329,18 @@ $offtext
 
     unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1) and (dailymode = 0)} = yes ;
     if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1] and (dailymode = 0),
-        putclose rep 'Recalculate RTD Island Loss for next solve'/;
+
         LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
-*        LoopCount(t) = LoopCount(t) + 1 ;
-        loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )},
+
+        loop( (t,isl),
+            putclose rep 'Recalulated losses for ' isl.tl ' is ' LoadCalcLosses(t,isl):<10:5;
+        );
+        
+        loop( (t,isl) $ { unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and RTDLastSolve(t)
+                      and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )
+                        },
             putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
             LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
 

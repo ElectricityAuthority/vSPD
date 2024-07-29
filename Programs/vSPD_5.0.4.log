@@ -1,0 +1,3094 @@
+
+--- Job runvSPD.gms Start 07/05/24 12:02:16 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\42\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\GitHub\vSPD\Programs\runvSPD.gms
+    PageSize 0
+    ScrDir C:\GitHub\vSPD\Programs\225a\
+    SysDir C:\GAMS\42\
+    LogOption 3
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: Small MUD-5 User License                       G231026|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S11
+          C:\GAMS\42\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
+--- Starting compilation
+--- runvSPD.gms(13) 2 Mb
+--- call cls
+--- runvSPD.gms(14) 2 Mb
+--- $echo File C:\GitHub\vSPD\Programs\con
+--- runvSPD.gms(24) 2 Mb
+--- . vSPDsettings.inc(47) 2 Mb
+--- runvSPD.gms(49) 2 Mb
+--- . vSPDfileList.inc(3) 3 Mb
+--- runvSPD.gms(62) 3 Mb
+--- call gams vSPDmodel.gms s=vSPDmodel
+--- Job vSPDmodel.gms Start 07/05/24 12:02:16 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\42\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\GitHub\vSPD\Programs\vSPDmodel.gms
+    Save C:\GitHub\vSPD\Programs\vSPDmodel.g0?
+    ScrDir C:\GitHub\vSPD\Programs\225b\
+    SysDir C:\GAMS\42\
+Licensee: Small MUD-5 User License                       G231026|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S11
+          C:\GAMS\42\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
+--- Starting compilation
+--- vSPDmodel.gms(2128) 3 Mb
+--- Starting execution: elapsed 0:00:00.019
+*** Status: Normal completion
+--- Job vSPDmodel.gms Stop 07/05/24 12:02:16 elapsed 0:00:00.022
+--- runvSPD.gms(149) 3 Mb
+--- Starting execution: elapsed 0:00:00.125
+--- runvSPD.gms(115) 4 Mb
+C:\GitHub\vSPD\Programs\..\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_NodeResults_TP.xlsx - The process cannot access the file because it is being used by another process.
+C:\GitHub\vSPD\Programs\..\Output\RTD_20240620_TP24_BF\~$RTD_20240620_TP24_BF_NodeResults_TP.xlsx - The process cannot access the file because it is being used by another process.
+The process cannot access the file because it is being used by another process.
+--- runvSPD.gms(116) 4 Mb
+--- runvSPD.gms(117) 4 Mb
+--- runvSPD.gms(118) 4 Mb
+--- runvSPD.gms(119) 4 Mb
+vSPDcase.inc
+vSPDfileList.inc
+vSPDsettings.inc
+vSPDtpsToSolve.inc
+        4 file(s) copied.
+--- runvSPD.gms(120) 4 Mb
+merge_gdx.gms
+runvSPD.gms
+vSPDmodel.gms
+vSPDoverrides.gms
+vSPDperiod.gms
+vSPDreport.gms
+vSPDreportSetup.gms
+vSPDsolve.gms
+        8 file(s) copied.
+--- runvSPD.gms(121) 4 Mb
+        1 file(s) copied.
+--- runvSPD.gms(133) 4 Mb
+--- Job vSPDreportSetup.gms Start 07/05/24 12:02:16 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\42\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\GitHub\vSPD\Programs\vSPDreportSetup.gms
+    ScrDir C:\GitHub\vSPD\Programs\225b\
+    SysDir C:\GAMS\42\
+Licensee: Small MUD-5 User License                       G231026|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S11
+          C:\GAMS\42\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
+--- Starting compilation
+--- vSPDreportSetup.gms(14) 2 Mb
+--- . vSPDsettings.inc(47) 2 Mb
+--- vSPDreportSetup.gms(106) 2 Mb
+--- Starting execution: elapsed 0:00:00.110
+--- vSPDreportSetup.gms(121) 3 Mb
+--- Putfile rep C:\GitHub\vSPD\Programs\ProgressReport.txt
+--- Putfile summaryResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_SummaryResults_TP.csv
+--- Putfile islandResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_IslandResults_TP.csv
+--- Putfile busResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BusResults_TP.csv
+--- Putfile nodeResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_NodeResults_TP.csv
+--- Putfile PublishedEnergyPrices_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_PublishedEnergyPrices_TP.csv
+--- Putfile PublishedReservePrices_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_PublishedReservePrices_TP.csv
+--- Putfile offerResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_OfferResults_TP.csv
+--- Putfile bidResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BidResults_TP.csv
+--- Putfile reserveResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_ReserveResults_TP.csv
+--- Putfile riskResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_RiskResults_TP.csv
+--- Putfile branchResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BranchResults_TP.csv
+--- Putfile brCstrResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BrConstraintResults_TP.csv
+--- Putfile MNodeCstrResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_MNodeConstraintResults_TP.csv
+*** Status: Normal completion
+--- Job vSPDreportSetup.gms Stop 07/05/24 12:02:16 elapsed 0:00:00.119
+--- runvSPD.gms(140) 4 Mb
+--- Job vSPDperiod Start 07/05/24 12:02:17 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\42\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\GitHub\vSPD\Programs\vSPDperiod.gms
+    ScrDir C:\GitHub\vSPD\Programs\225b\
+    SysDir C:\GAMS\42\
+Licensee: Small MUD-5 User License                       G231026|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S11
+          C:\GAMS\42\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
+--- Starting compilation
+--- vSPDperiod.gms(14) 2 Mb
+--- . vSPDsettings.inc(47) 2 Mb
+--- vSPDperiod.gms(15) 2 Mb
+--- . vSPDcase.inc(1) 2 Mb
+--- vSPDperiod.gms(41) 2 Mb
+--- GDXin=C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+--- GDX File ($gdxIn) C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+--- vSPDperiod.gms(52) 3 Mb
+--- . vSPDtpsToSolve.inc(18) 3 Mb
+--- vSPDperiod.gms(93) 3 Mb
+--- Starting execution: elapsed 0:00:00.024
+--- vSPDperiod.gms(152) 4 Mb
+--- GDX File (execute_unload) C:\GitHub\vSPD\Programs\vSPDperiod.gdx
+*** Status: Normal completion
+--- Job vSPDperiod.gms Stop 07/05/24 12:02:17 elapsed 0:00:00.027
+--- Job vSPDsolve.gms Start 07/05/24 12:02:17 42.5.0 cf11b917 WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\42\gmsprmNT.txt
+--- GAMS Parameters defined
+    Restart C:\GitHub\vSPD\Programs\vSPDmodel.g0?
+    Input C:\GitHub\vSPD\Programs\vSPDsolve.gms
+    ScrDir C:\GitHub\vSPD\Programs\225b\
+    SysDir C:\GAMS\42\
+    LogOption 3
+    ErrMsg 1
+    IDE 1
+    HoldFixed 0
+Licensee: Small MUD-5 User License                       G231026|0002CO-GEN
+          Electricity Authority - Te Mana Hiko,                  DC5643-S11
+          C:\GAMS\42\gamslice.txt
+          License Admin: Phil Bishop, Phil.Bishop@ea.govt.nz               
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 42.5.0   Copyright (C) 1987-2023 GAMS Development. All rights reserved
+--- Starting continued compilation
+--- Workfile was generated under GAMS version WEX425-425
+--- vSPDsolve.gms(39) 3 Mb
+--- . Intervals.inc(3113) 16 Mb
+--- vSPDsolve.gms(40) 16 Mb
+--- . vSPDsettings.inc(47) 16 Mb
+--- vSPDsolve.gms(41) 16 Mb
+--- . vSPDcase.inc(1) 16 Mb
+--- vSPDsolve.gms(308) 16 Mb
+--- GDXin=C:\GitHub\vSPD\Programs\vSPDPeriod.gdx
+--- GDX File ($gdxIn) C:\GitHub\vSPD\Programs\vSPDPeriod.gdx
+--- vSPDsolve.gms(313) 16 Mb
+--- GDXin=C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+--- GDX File ($gdxIn) C:\GitHub\vSPD\Input\Pricing_20240620.gdx
+--- vSPDsolve.gms(1763) 30 Mb
+--- . vSPDreport.gms(444) 30 Mb
+--- vSPDsolve.gms(1779) 37 Mb
+--- Starting execution: elapsed 0:00:00.935
+--- vSPDsolve.gms(6068) 73 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 86 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191302024062300479
+---       dt = 20-JUN-2024 11:30
+---       FOR/WHILE = 1
+---   32,502 rows  57,933 columns  110,403 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 8.542E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 3.500E-04, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:03.123
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.85 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.95 Mb (peak 16.39 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.78 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14750 rows and 29980 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13700 substitutions.
+Reduced MIP has 4167 rows, 14279 columns, and 33107 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.20 sec. (133.76 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.84 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 82 rows and 264 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4085 rows, 14015 columns, and 32578 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.39 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =     613659860.619058
+Perturbation started.
+Iteration:   101   Dual objective     =     613659860.619058
+Iteration:   416   Dual objective     =     613659860.031202
+Iteration:   645   Dual objective     =     613659799.900790
+Iteration:   864   Dual objective     =     613659799.184920
+Iteration:  1060   Dual objective     =     613659756.061697
+Iteration:  1259   Dual objective     =     613659756.058072
+Iteration:  1449   Dual objective     =     613659756.054813
+Iteration:  1642   Dual objective     =     613659756.050762
+Iteration:  1828   Dual objective     =     613659756.029467
+Iteration:  1962   Dual objective     =     613659756.018525
+Iteration:  2099   Dual objective     =     613659756.010687
+Iteration:  2255   Dual objective     =     613659755.991568
+Iteration:  2398   Dual objective     =     613659755.951880
+Iteration:  2568   Dual objective     =     613659755.209527
+Iteration:  2772   Dual objective     =     613659755.192512
+Iteration:  2959   Dual objective     =     613659755.178247
+Iteration:  3147   Dual objective     =     613659752.709048
+Iteration:  3344   Dual objective     =     613659752.610670
+Iteration:  3522   Dual objective     =     613659752.224155
+Iteration:  3703   Dual objective     =     613659751.376354
+Iteration:  3853   Dual objective     =     613659749.182221
+Iteration:  4029   Dual objective     =     613659748.324262
+Iteration:  4196   Dual objective     =     613659748.142655
+Iteration:  4364   Dual objective     =     613659743.978104
+Iteration:  4527   Dual objective     =     613659722.002886
+Iteration:  4714   Dual objective     =     613659716.415809
+Iteration:  4894   Dual objective     =     613659714.026672
+Iteration:  5061   Dual objective     =     613659693.662449
+Iteration:  5219   Dual objective     =     613659691.242333
+Iteration:  5362   Dual objective     =     613659278.486659
+Iteration:  5515   Dual objective     =     613557555.915887
+Iteration:  5636   Dual objective     =     613555252.254108
+Iteration:  5729   Dual objective     =     613552894.286260
+Iteration:  5824   Dual objective     =     613552238.919865
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =     613552205.082083
+Root relaxation solution time = 0.25 sec. (274.06 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   6.13552e+08     9                 6.13552e+08     5853         
+      0     0   6.13552e+08    13                    Cuts: 59     5889         
+*     0+    0                       6.13552e+08   6.13552e+08             0.00%
+Found incumbent of value 6.1355208e+08 after 0.61 sec. (529.23 ticks)
+      0     0   6.13552e+08     7   6.13552e+08      Cuts: 42     5903    0.00%
+*     0+    0                       6.13552e+08   6.13552e+08             0.00%
+Found incumbent of value 6.1355220e+08 after 0.72 sec. (634.08 ticks)
+      0     0   6.13552e+08     6   6.13552e+08       Cuts: 2     5907    0.00%
+      0     0        cutoff         6.13552e+08   6.13552e+08     5911    0.00%
+Elapsed time = 0.80 sec. (715.93 ticks, tree = 0.01 MB)
+
+Implied bound cuts applied:  7
+Flow cuts applied:  21
+Mixed integer rounding cuts applied:  21
+
+Root node processing (before b&c):
+  Real time             =    0.80 sec. (714.28 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (2.70 ticks)
+                          ------------
+Total (root+branch&cut) =    0.81 sec. (716.98 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.81sec (det. 717.15 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14694 rows and 29991 columns.
+Aggregator did 13617 substitutions.
+Reduced LP has 4190 rows, 14325 columns, and 33250 nonzeros.
+Presolve time = 0.06 sec. (50.61 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =     613660920.568000
+Iteration:   311   Dual objective     =     613660859.086768
+Iteration:   590   Dual objective     =     613660858.372314
+Perturbation started.
+Iteration:   707   Dual objective     =     613660858.372314
+Iteration:   929   Dual objective     =     613660814.759599
+Iteration:  1121   Dual objective     =     613660814.745201
+Iteration:  1297   Dual objective     =     613660797.650354
+Iteration:  1488   Dual objective     =     613660791.343493
+Iteration:  1670   Dual objective     =     613660790.327787
+Iteration:  1834   Dual objective     =     613660790.099034
+Iteration:  1984   Dual objective     =     613660790.073814
+Iteration:  2118   Dual objective     =     613660790.006885
+Iteration:  2267   Dual objective     =     613660789.921942
+Iteration:  2416   Dual objective     =     613660789.648392
+Iteration:  2580   Dual objective     =     613660787.412862
+Iteration:  2736   Dual objective     =     613660787.198891
+Iteration:  2915   Dual objective     =     613660766.465794
+Iteration:  3107   Dual objective     =     613660514.140140
+Iteration:  3299   Dual objective     =     613660475.175261
+Iteration:  3473   Dual objective     =     613566662.832896
+Iteration:  3639   Dual objective     =     613558382.207132
+Iteration:  3776   Dual objective     =     613555942.909127
+Iteration:  3887   Dual objective     =     613553155.594809
+Iteration:  3989   Dual objective     =     613552464.743585
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.31sec (det. 324.44 ticks)
+
+
+Proven optimal solution
+MIP Solution:    613552201.068659    (5911 iterations, 1 nodes)
+Final Solve:     613552201.068659    (4040 iterations)
+
+Best possible:   613552201.068659
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:04.536
+--- vSPDsolve.gms(6068) 86 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 90 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062330489
+---       dt = 20-JUN-2024 11:30
+---       FOR/WHILE = 1
+---   32,533 rows  58,033 columns  110,699 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.691E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:04.942
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14716 rows and 29994 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4247 rows, 14380 columns, and 33308 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.19 sec. (133.94 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.82 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 129 rows and 444 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4118 rows, 13936 columns, and 32330 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.56 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97620698.578982
+Perturbation started.
+Iteration:   101   Dual objective     =      97620698.578982
+Iteration:   390   Dual objective     =      97620697.839226
+Iteration:   619   Dual objective     =      97607291.278827
+Iteration:   849   Dual objective     =      97607289.873342
+Iteration:  1088   Dual objective     =      97602782.156694
+Iteration:  1281   Dual objective     =      97602782.123201
+Iteration:  1490   Dual objective     =      97602782.111076
+Iteration:  1692   Dual objective     =      97600476.038781
+Iteration:  1886   Dual objective     =      97600476.009206
+Iteration:  2091   Dual objective     =      97600475.871482
+Iteration:  2284   Dual objective     =      97600475.865534
+Iteration:  2456   Dual objective     =      97600475.854338
+Iteration:  2629   Dual objective     =      97600475.848033
+Iteration:  2820   Dual objective     =      97600475.829475
+Iteration:  3018   Dual objective     =      97600210.640307
+Iteration:  3209   Dual objective     =      97600208.612599
+Iteration:  3363   Dual objective     =      97600208.595537
+Iteration:  3518   Dual objective     =      97600208.583055
+Iteration:  3668   Dual objective     =      97600208.571753
+Iteration:  3844   Dual objective     =      97600208.550263
+Iteration:  4004   Dual objective     =      97600208.448248
+Iteration:  4176   Dual objective     =      97600208.107176
+Iteration:  4362   Dual objective     =      97600208.102082
+Iteration:  4540   Dual objective     =      97600207.928974
+Iteration:  4721   Dual objective     =      97600207.497785
+Iteration:  4901   Dual objective     =      97600180.853740
+Iteration:  5083   Dual objective     =      97600179.750664
+Iteration:  5251   Dual objective     =      97600177.997621
+Iteration:  5432   Dual objective     =      97600167.237552
+Iteration:  5599   Dual objective     =      97600165.910912
+Iteration:  5745   Dual objective     =      97599842.182852
+Iteration:  5897   Dual objective     =      97541474.559801
+Iteration:  6049   Dual objective     =      97537561.414356
+Iteration:  6168   Dual objective     =      97536579.681476
+Iteration:  6262   Dual objective     =      97535657.216747
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97535577.620622
+Root relaxation solution time = 0.27 sec. (279.79 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.75356e+07     8                 9.75356e+07     6310         
+*     0+    0                       9.75249e+07   9.75356e+07             0.01%
+Found incumbent of value 9.7524855e+07 after 0.56 sec. (487.75 ticks)
+      0     0   9.75356e+07    12   9.75249e+07      Cuts: 42     6323    0.01%
+*     0+    0                       9.75356e+07   9.75356e+07             0.00%
+Found incumbent of value 9.7535561e+07 after 0.62 sec. (550.33 ticks)
+      0     0   9.75356e+07    13   9.75356e+07      Cuts: 24     6356    0.00%
+      0     2   9.75356e+07     9   9.75356e+07   9.75356e+07     6368    0.00%
+Elapsed time = 0.86 sec. (794.83 ticks, tree = 0.01 MB)
+*     3     1      integral     0   9.75356e+07   9.75356e+07     6414    0.00%
+Found incumbent of value 9.7535576e+07 after 0.88 sec. (816.89 ticks)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  6
+Mixed integer rounding cuts applied:  7
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.84 sec. (790.07 ticks)
+Sequential b&c:
+  Real time             =    0.03 sec. (27.93 ticks)
+                          ------------
+Total (root+branch&cut) =    0.88 sec. (818.00 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.88sec (det. 818.17 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14686 rows and 30023 columns.
+Aggregator did 13572 substitutions.
+Reduced LP has 4274 rows, 14438 columns, and 33462 nonzeros.
+Presolve time = 0.06 sec. (50.71 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97621630.754501
+Iteration:   334   Dual objective     =      97608220.512131
+Iteration:   648   Dual objective     =      97608220.488765
+Perturbation started.
+Iteration:   707   Dual objective     =      97608220.488765
+Iteration:   931   Dual objective     =      97603712.273290
+Iteration:  1103   Dual objective     =      97603712.198745
+Iteration:  1283   Dual objective     =      97603690.409321
+Iteration:  1476   Dual objective     =      97603685.762722
+Iteration:  1682   Dual objective     =      97601375.879198
+Iteration:  1869   Dual objective     =      97601375.091910
+Iteration:  2015   Dual objective     =      97601374.931525
+Iteration:  2171   Dual objective     =      97601374.903781
+Iteration:  2321   Dual objective     =      97601374.893452
+Iteration:  2475   Dual objective     =      97601374.821997
+Iteration:  2633   Dual objective     =      97601374.528077
+Iteration:  2834   Dual objective     =      97601374.213720
+Iteration:  2991   Dual objective     =      97601364.082778
+Iteration:  3191   Dual objective     =      97601363.028287
+Iteration:  3350   Dual objective     =      97601358.861831
+Iteration:  3515   Dual objective     =      97601172.817533
+Iteration:  3698   Dual objective     =      97578097.712825
+Iteration:  3856   Dual objective     =      97547323.787866
+Iteration:  4009   Dual objective     =      97536862.925171
+Iteration:  4136   Dual objective     =      97535925.033478
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.28sec (det. 318.64 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97535575.648624    (6414 iterations, 4 nodes)
+Final Solve:      97535575.648624    (4203 iterations)
+
+Best possible:    97535575.648624
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:06.367
+--- vSPDsolve.gms(6068) 90 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 92 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062330489
+---       dt = 20-JUN-2024 11:30
+---       FOR/WHILE = 2
+---   32,533 rows  58,033 columns  110,699 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.690E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:06.762
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14717 rows and 29996 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4246 rows, 14378 columns, and 33305 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.17 sec. (133.94 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 126 rows and 436 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4120 rows, 13942 columns, and 32343 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.49 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97560050.702171
+Perturbation started.
+Iteration:   101   Dual objective     =      97560050.702171
+Iteration:   393   Dual objective     =      97560049.962324
+Iteration:   599   Dual objective     =      97546645.728017
+Iteration:   818   Dual objective     =      97546642.015703
+Iteration:  1037   Dual objective     =      97546598.881247
+Iteration:  1269   Dual objective     =      97542134.235057
+Iteration:  1455   Dual objective     =      97539828.162933
+Iteration:  1668   Dual objective     =      97539828.139567
+Iteration:  1856   Dual objective     =      97539828.010209
+Iteration:  2056   Dual objective     =      97539828.001252
+Iteration:  2225   Dual objective     =      97539827.993270
+Iteration:  2397   Dual objective     =      97539827.982088
+Iteration:  2590   Dual objective     =      97539827.974271
+Iteration:  2774   Dual objective     =      97539827.968033
+Iteration:  2972   Dual objective     =      97539827.443986
+Iteration:  3149   Dual objective     =      97539562.760453
+Iteration:  3332   Dual objective     =      97539560.731145
+Iteration:  3498   Dual objective     =      97539560.714851
+Iteration:  3665   Dual objective     =      97539560.705132
+Iteration:  3843   Dual objective     =      97539560.674211
+Iteration:  4011   Dual objective     =      97539560.645704
+Iteration:  4174   Dual objective     =      97539560.551075
+Iteration:  4337   Dual objective     =      97539560.414946
+Iteration:  4515   Dual objective     =      97539560.134603
+Iteration:  4702   Dual objective     =      97539560.027225
+Iteration:  4868   Dual objective     =      97539559.940834
+Iteration:  5054   Dual objective     =      97539559.830479
+Iteration:  5225   Dual objective     =      97539557.139448
+Iteration:  5400   Dual objective     =      97539531.841705
+Iteration:  5529   Dual objective     =      97539529.821187
+Iteration:  5692   Dual objective     =      97539518.987315
+Iteration:  5849   Dual objective     =      97539504.735896
+Iteration:  6002   Dual objective     =      97484729.908514
+Iteration:  6138   Dual objective     =      97480280.979142
+Iteration:  6282   Dual objective     =      97476548.273727
+Iteration:  6394   Dual objective     =      97475430.980984
+Iteration:  6496   Dual objective     =      97475050.025843
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97475050.507482
+Root relaxation solution time = 0.23 sec. (283.62 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.74751e+07     8                 9.74751e+07     6496         
+*     0+    0                       9.74643e+07   9.74751e+07             0.01%
+Found incumbent of value 9.7464290e+07 after 0.52 sec. (491.00 ticks)
+      0     0   9.74751e+07    11   9.74643e+07      Cuts: 41     6506    0.01%
+*     0+    0                       9.74750e+07   9.74751e+07             0.00%
+Found incumbent of value 9.7475034e+07 after 0.56 sec. (552.39 ticks)
+      0     0   9.74751e+07    14   9.74750e+07      Cuts: 25     6539    0.00%
+      0     2   9.74751e+07     9   9.74750e+07   9.74751e+07     6554    0.00%
+Elapsed time = 0.80 sec. (814.19 ticks, tree = 0.01 MB)
+*     6     0      integral     0   9.74750e+07   9.74750e+07     6608    0.00%
+Found incumbent of value 9.7475049e+07 after 0.83 sec. (844.28 ticks)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  7
+Mixed integer rounding cuts applied:  8
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.80 sec. (811.45 ticks)
+Sequential b&c:
+  Real time             =    0.03 sec. (34.06 ticks)
+                          ------------
+Total (root+branch&cut) =    0.83 sec. (845.51 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.83sec (det. 845.68 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14688 rows and 30026 columns.
+Aggregator did 13571 substitutions.
+Reduced LP has 4273 rows, 14436 columns, and 33459 nonzeros.
+Presolve time = 0.06 sec. (50.70 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97613282.554956
+Iteration:   355   Dual objective     =      97599872.289220
+Iteration:   649   Dual objective     =      97595364.131457
+Perturbation started.
+Iteration:   808   Dual objective     =      97595364.131457
+Iteration:   982   Dual objective     =      97595364.093388
+Iteration:  1137   Dual objective     =      97595364.075389
+Iteration:  1297   Dual objective     =      97595363.968436
+Iteration:  1476   Dual objective     =      97595338.087725
+Iteration:  1697   Dual objective     =      97595334.528343
+Iteration:  1918   Dual objective     =      97593028.079692
+Iteration:  2082   Dual objective     =      97593027.714487
+Iteration:  2237   Dual objective     =      97593027.696964
+Iteration:  2420   Dual objective     =      97593027.625382
+Iteration:  2626   Dual objective     =      97593027.024295
+Iteration:  2817   Dual objective     =      97593025.862301
+Iteration:  3005   Dual objective     =      97593015.556687
+Iteration:  3193   Dual objective     =      97593014.435815
+Iteration:  3370   Dual objective     =      97592826.545876
+Iteration:  3533   Dual objective     =      97570088.529420
+Iteration:  3686   Dual objective     =      97569368.686694
+Iteration:  3819   Dual objective     =      97531923.475088
+Iteration:  3921   Dual objective     =      97528375.009356
+Iteration:  4038   Dual objective     =      97475225.975385
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.30sec (det. 295.43 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97475048.535548    (6608 iterations, 7 nodes)
+Final Solve:      97475048.535548    (4068 iterations)
+
+Best possible:    97475048.535548
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:08.135
+--- vSPDsolve.gms(6068) 92 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 93 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062340493
+---       dt = 20-JUN-2024 11:40
+---       FOR/WHILE = 1
+---   32,533 rows  58,033 columns  110,699 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.653E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:08.640
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14723 rows and 30008 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4240 rows, 14366 columns, and 33286 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.22 sec. (134.00 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.02 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 124 rows and 429 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4116 rows, 13937 columns, and 32335 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.37 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97240674.344163
+Perturbation started.
+Iteration:   101   Dual objective     =      97240674.344163
+Iteration:   406   Dual objective     =      97240673.500003
+Iteration:   619   Dual objective     =      97227291.543924
+Iteration:   831   Dual objective     =      97227288.391276
+Iteration:  1035   Dual objective     =      97227245.006114
+Iteration:  1263   Dual objective     =      97222728.648072
+Iteration:  1476   Dual objective     =      97220428.127169
+Iteration:  1678   Dual objective     =      97220428.105086
+Iteration:  1864   Dual objective     =      97220427.972917
+Iteration:  2041   Dual objective     =      97220427.964273
+Iteration:  2196   Dual objective     =      97220427.947327
+Iteration:  2389   Dual objective     =      97220427.928542
+Iteration:  2576   Dual objective     =      97220427.843510
+Iteration:  2757   Dual objective     =      97220427.835336
+Iteration:  2935   Dual objective     =      97220427.825218
+Iteration:  3126   Dual objective     =      97220160.681505
+Iteration:  3306   Dual objective     =      97220158.779408
+Iteration:  3477   Dual objective     =      97220158.767058
+Iteration:  3637   Dual objective     =      97220158.753103
+Iteration:  3795   Dual objective     =      97220158.745955
+Iteration:  3951   Dual objective     =      97220158.720658
+Iteration:  4137   Dual objective     =      97220158.665168
+Iteration:  4305   Dual objective     =      97220158.611916
+Iteration:  4477   Dual objective     =      97220158.196198
+Iteration:  4673   Dual objective     =      97220158.092215
+Iteration:  4849   Dual objective     =      97220158.016809
+Iteration:  5022   Dual objective     =      97220157.965823
+Iteration:  5197   Dual objective     =      97220156.015762
+Iteration:  5342   Dual objective     =      97220129.334364
+Iteration:  5498   Dual objective     =      97220127.433207
+Iteration:  5671   Dual objective     =      97220117.330015
+Iteration:  5846   Dual objective     =      97220115.655978
+Iteration:  6012   Dual objective     =      97219819.949639
+Iteration:  6174   Dual objective     =      97171168.996266
+Iteration:  6331   Dual objective     =      97166052.854678
+Iteration:  6460   Dual objective     =      97164303.667000
+Iteration:  6560   Dual objective     =      97163608.309667
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97163323.141265
+Root relaxation solution time = 0.27 sec. (293.38 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71633e+07     7                 9.71633e+07     6628         
+*     0+    0                       9.71614e+07   9.71633e+07             0.00%
+Found incumbent of value 9.7161389e+07 after 0.56 sec. (492.49 ticks)
+      0     0   9.71633e+07    12   9.71614e+07      Cuts: 26     6640    0.00%
+*     0+    0                       9.71633e+07   9.71633e+07             0.00%
+Found incumbent of value 9.7163313e+07 after 0.62 sec. (555.83 ticks)
+      0     0   9.71633e+07    13   9.71633e+07      Cuts: 29     6667    0.00%
+      0     2   9.71633e+07    10   9.71633e+07   9.71633e+07     6677    0.00%
+Elapsed time = 0.78 sec. (712.81 ticks, tree = 0.01 MB)
+*     4     0      integral     0   9.71633e+07   9.71633e+07     6727    0.00%
+Found incumbent of value 9.7163321e+07 after 0.80 sec. (736.65 ticks)
+
+Flow cuts applied:  1
+Mixed integer rounding cuts applied:  7
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.78 sec. (710.23 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (27.60 ticks)
+                          ------------
+Total (root+branch&cut) =    0.80 sec. (737.82 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.80sec (det. 737.99 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14695 rows and 30046 columns.
+Aggregator did 13574 substitutions.
+Reduced LP has 4263 rows, 14413 columns, and 33409 nonzeros.
+Presolve time = 0.06 sec. (50.70 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97241605.495009
+Iteration:   290   Dual objective     =      97228218.071479
+Iteration:   590   Dual objective     =      97228174.687723
+Perturbation started.
+Iteration:   702   Dual objective     =      97228174.687723
+Iteration:   876   Dual objective     =      97223657.913385
+Iteration:  1027   Dual objective     =      97223657.839637
+Iteration:  1188   Dual objective     =      97223633.875164
+Iteration:  1402   Dual objective     =      97223628.083545
+Iteration:  1594   Dual objective     =      97221326.414502
+Iteration:  1762   Dual objective     =      97221326.408766
+Iteration:  1917   Dual objective     =      97221326.394413
+Iteration:  2076   Dual objective     =      97221326.350425
+Iteration:  2236   Dual objective     =      97221326.169298
+Iteration:  2420   Dual objective     =      97221325.633043
+Iteration:  2583   Dual objective     =      97221314.081966
+Iteration:  2766   Dual objective     =      97221313.016131
+Iteration:  2933   Dual objective     =      97221184.589452
+Iteration:  3101   Dual objective     =      97200533.049378
+Iteration:  3245   Dual objective     =      97166872.169307
+Iteration:  3361   Dual objective     =      97165785.521246
+Iteration:  3458   Dual objective     =      97164159.632395
+Iteration:  3586   Dual objective     =      97163498.229064
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.28sec (det. 278.24 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97163321.185472    (6727 iterations, 5 nodes)
+Final Solve:      97163321.185472    (3639 iterations)
+
+Best possible:    97163321.185472
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:09.987
+--- vSPDsolve.gms(6068) 93 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 95 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062340493
+---       dt = 20-JUN-2024 11:40
+---       FOR/WHILE = 2
+---   32,533 rows  58,033 columns  110,699 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.655E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:10.393
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14724 rows and 30010 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4239 rows, 14364 columns, and 33283 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.20 sec. (134.00 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.02 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 124 rows and 430 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4115 rows, 13934 columns, and 32330 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.41 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.02 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97203093.170156
+Perturbation started.
+Iteration:   101   Dual objective     =      97203093.170156
+Iteration:   392   Dual objective     =      97203092.359856
+Iteration:   625   Dual objective     =      97189708.178646
+Iteration:   840   Dual objective     =      97189707.250863
+Iteration:  1062   Dual objective     =      97185147.574171
+Iteration:  1285   Dual objective     =      97185147.508445
+Iteration:  1495   Dual objective     =      97182846.980597
+Iteration:  1714   Dual objective     =      97182846.957456
+Iteration:  1917   Dual objective     =      97182846.823455
+Iteration:  2100   Dual objective     =      97182846.802683
+Iteration:  2271   Dual objective     =      97182846.797445
+Iteration:  2449   Dual objective     =      97182846.788752
+Iteration:  2622   Dual objective     =      97182846.699528
+Iteration:  2776   Dual objective     =      97182846.695496
+Iteration:  2957   Dual objective     =      97182846.217251
+Iteration:  3138   Dual objective     =      97182578.835102
+Iteration:  3313   Dual objective     =      97182577.650734
+Iteration:  3476   Dual objective     =      97182577.628442
+Iteration:  3603   Dual objective     =      97182577.609918
+Iteration:  3789   Dual objective     =      97182577.577639
+Iteration:  3940   Dual objective     =      97182577.550628
+Iteration:  4111   Dual objective     =      97182577.076536
+Iteration:  4294   Dual objective     =      97182577.057456
+Iteration:  4480   Dual objective     =      97182576.976760
+Iteration:  4667   Dual objective     =      97182576.825409
+Iteration:  4839   Dual objective     =      97182574.527244
+Iteration:  4989   Dual objective     =      97182562.475774
+Iteration:  5154   Dual objective     =      97182561.369230
+Iteration:  5315   Dual objective     =      97182551.079562
+Iteration:  5468   Dual objective     =      97182549.452963
+Iteration:  5631   Dual objective     =      97182534.847177
+Iteration:  5779   Dual objective     =      97182533.988716
+Iteration:  5939   Dual objective     =      97182229.305254
+Iteration:  6118   Dual objective     =      97129790.982148
+Iteration:  6266   Dual objective     =      97127441.814588
+Iteration:  6375   Dual objective     =      97125840.567491
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97125553.586109
+Root relaxation solution time = 0.27 sec. (284.17 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71256e+07     8                 9.71256e+07     6469         
+*     0+    0                       9.56028e+07   9.71256e+07             1.59%
+Found incumbent of value 9.5602769e+07 after 0.56 sec. (489.61 ticks)
+      0     0   9.71256e+07    12   9.56028e+07      Cuts: 39     6482    1.59%
+*     0+    0                       9.71255e+07   9.71256e+07             0.00%
+Found incumbent of value 9.7125543e+07 after 0.64 sec. (552.14 ticks)
+      0     0   9.71256e+07    13   9.71255e+07      Cuts: 28     6514    0.00%
+      0     2   9.71256e+07     9   9.71255e+07   9.71256e+07     6523    0.00%
+Elapsed time = 0.88 sec. (784.87 ticks, tree = 0.01 MB)
+*     4     0      integral     0   9.71256e+07   9.71256e+07     6579    0.00%
+Found incumbent of value 9.7125552e+07 after 0.91 sec. (808.64 ticks)
+
+Implied bound cuts applied:  1
+Flow cuts applied:  5
+Mixed integer rounding cuts applied:  8
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.88 sec. (779.79 ticks)
+Sequential b&c:
+  Real time             =    0.03 sec. (30.02 ticks)
+                          ------------
+Total (root+branch&cut) =    0.91 sec. (809.81 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.91sec (det. 809.98 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14697 rows and 30049 columns.
+Aggregator did 13573 substitutions.
+Reduced LP has 4262 rows, 14411 columns, and 33406 nonzeros.
+Presolve time = 0.08 sec. (50.69 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97256324.606080
+Iteration:   324   Dual objective     =      97242937.182550
+Perturbation started.
+Iteration:   505   Dual objective     =      97242937.182550
+Iteration:   724   Dual objective     =      97238376.964866
+Iteration:   883   Dual objective     =      97238376.947013
+Iteration:  1046   Dual objective     =      97238373.882093
+Iteration:  1219   Dual objective     =      97238354.348462
+Iteration:  1448   Dual objective     =      97238350.613637
+Iteration:  1625   Dual objective     =      97238350.389410
+Iteration:  1775   Dual objective     =      97238350.373047
+Iteration:  1949   Dual objective     =      97238350.307311
+Iteration:  2123   Dual objective     =      97238349.628817
+Iteration:  2319   Dual objective     =      97238349.572888
+Iteration:  2480   Dual objective     =      97238337.773125
+Iteration:  2692   Dual objective     =      97236035.930830
+Iteration:  2861   Dual objective     =      97235869.379509
+Iteration:  3034   Dual objective     =      97214796.685693
+Iteration:  3199   Dual objective     =      97181609.371885
+Iteration:  3280   Dual objective     =      97180418.547399
+Iteration:  3407   Dual objective     =      97178417.082313
+Iteration:  3528   Dual objective     =      97125657.633917
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.28sec (det. 267.99 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97125551.630064    (6579 iterations, 5 nodes)
+Final Solve:      97125551.630064    (3552 iterations)
+
+Best possible:    97125551.630064
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:11.824
+--- vSPDsolve.gms(6068) 95 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 96 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345498
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 1
+---   32,533 rows  58,033 columns  110,699 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.655E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:12.360
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14717 rows and 29997 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4246 rows, 14377 columns, and 33295 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.17 sec. (133.92 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 123 rows and 429 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4123 rows, 13948 columns, and 32346 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.02 sec. (20.35 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97206543.016344
+Perturbation started.
+Iteration:   101   Dual objective     =      97206543.016344
+Iteration:   397   Dual objective     =      97206542.111491
+Iteration:   641   Dual objective     =      97194889.318128
+Iteration:   849   Dual objective     =      97194888.505560
+Iteration:  1049   Dual objective     =      97194845.121346
+Iteration:  1269   Dual objective     =      97190337.421549
+Iteration:  1489   Dual objective     =      97188035.033161
+Iteration:  1685   Dual objective     =      97188035.017042
+Iteration:  1878   Dual objective     =      97188034.866430
+Iteration:  2066   Dual objective     =      97188034.633149
+Iteration:  2249   Dual objective     =      97188034.620966
+Iteration:  2410   Dual objective     =      97188034.618748
+Iteration:  2594   Dual objective     =      97188034.608379
+Iteration:  2768   Dual objective     =      97188034.116700
+Iteration:  2919   Dual objective     =      97188034.110482
+Iteration:  3108   Dual objective     =      97187769.548431
+Iteration:  3282   Dual objective     =      97187769.530335
+Iteration:  3447   Dual objective     =      97187769.506364
+Iteration:  3621   Dual objective     =      97187769.487989
+Iteration:  3787   Dual objective     =      97187769.434026
+Iteration:  3936   Dual objective     =      97187769.364251
+Iteration:  4099   Dual objective     =      97187769.184791
+Iteration:  4253   Dual objective     =      97187768.941110
+Iteration:  4444   Dual objective     =      97187768.832785
+Iteration:  4624   Dual objective     =      97187768.790855
+Iteration:  4790   Dual objective     =      97187767.499779
+Iteration:  4963   Dual objective     =      97187754.174976
+Iteration:  5142   Dual objective     =      97187753.870102
+Iteration:  5324   Dual objective     =      97187752.393060
+Iteration:  5489   Dual objective     =      97187741.542854
+Iteration:  5661   Dual objective     =      97187727.060157
+Iteration:  5831   Dual objective     =      97187714.968897
+Iteration:  5996   Dual objective     =      97187432.118090
+Iteration:  6124   Dual objective     =      97144956.365468
+Iteration:  6258   Dual objective     =      97142784.813397
+Iteration:  6348   Dual objective     =      97142423.467675
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97142334.161127
+Root relaxation solution time = 0.26 sec. (282.79 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71423e+07     8                 9.71423e+07     6408         
+*     0+    0                       9.71363e+07   9.71423e+07             0.01%
+Found incumbent of value 9.7136264e+07 after 0.53 sec. (485.54 ticks)
+      0     0   9.71423e+07    12   9.71363e+07      Cuts: 31     6423    0.01%
+*     0+    0                       9.71405e+07   9.71423e+07             0.00%
+Found incumbent of value 9.7140481e+07 after 0.61 sec. (546.94 ticks)
+      0     0   9.71423e+07    17   9.71405e+07      Cuts: 38     6458    0.00%
+*     0+    0                       9.71423e+07   9.71423e+07             0.00%
+Found incumbent of value 9.7142266e+07 after 0.72 sec. (670.73 ticks)
+      0     2   9.71423e+07    10   9.71423e+07   9.71423e+07     6470    0.00%
+Elapsed time = 0.84 sec. (795.15 ticks, tree = 0.01 MB)
+*     3     1      integral     0   9.71423e+07   9.71423e+07     6510    0.00%
+Found incumbent of value 9.7142309e+07 after 0.86 sec. (810.85 ticks)
+*     5     0      integral     0   9.71423e+07   9.71423e+07     6543    0.00%
+                                                  Impl Bds: 1                  
+Found incumbent of value 9.7142332e+07 after 0.89 sec. (836.53 ticks)
+
+Implied bound cuts applied:  5
+Flow cuts applied:  7
+Mixed integer rounding cuts applied:  6
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.86 sec. (793.64 ticks)
+Sequential b&c:
+  Real time             =    0.05 sec. (44.05 ticks)
+                          ------------
+Total (root+branch&cut) =    0.91 sec. (837.68 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.91sec (det. 837.85 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14688 rows and 30028 columns.
+Aggregator did 13572 substitutions.
+Reduced LP has 4272 rows, 14433 columns, and 33455 nonzeros.
+Presolve time = 0.08 sec. (50.70 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97257655.581482
+Iteration:   341   Dual objective     =      97245999.704564
+Perturbation started.
+Iteration:   505   Dual objective     =      97245999.704564
+Iteration:   752   Dual objective     =      97241448.164782
+Iteration:   915   Dual objective     =      97241448.152195
+Iteration:  1086   Dual objective     =      97241431.319495
+Iteration:  1240   Dual objective     =      97241423.748370
+Iteration:  1424   Dual objective     =      97241417.374181
+Iteration:  1610   Dual objective     =      97241417.156978
+Iteration:  1782   Dual objective     =      97239114.809359
+Iteration:  1926   Dual objective     =      97239114.796093
+Iteration:  2088   Dual objective     =      97239114.766391
+Iteration:  2238   Dual objective     =      97239114.555475
+Iteration:  2405   Dual objective     =      97239114.091696
+Iteration:  2574   Dual objective     =      97239114.049307
+Iteration:  2722   Dual objective     =      97239103.643642
+Iteration:  2930   Dual objective     =      97239102.262457
+Iteration:  3096   Dual objective     =      97238955.201325
+Iteration:  3287   Dual objective     =      97215705.049099
+Iteration:  3457   Dual objective     =      97165344.704608
+Iteration:  3591   Dual objective     =      97142822.356091
+Iteration:  3689   Dual objective     =      97142347.276466
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.30sec (det. 289.39 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97142332.104355    (6543 iterations, 6 nodes)
+Final Solve:      97142332.104355    (3705 iterations)
+
+Best possible:    97142332.104355
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:13.774
+--- vSPDsolve.gms(6068) 96 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 99 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345498
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 2
+---   32,533 rows  58,033 columns  110,702 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.652E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:14.273
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14716 rows and 29993 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13686 substitutions.
+Reduced MIP has 4246 rows, 14380 columns, and 33298 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.20 sec. (133.93 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 126 rows and 441 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4120 rows, 13939 columns, and 32328 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.39 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97175015.924311
+Perturbation started.
+Iteration:   101   Dual objective     =      97175015.924311
+Iteration:   400   Dual objective     =      97175015.116721
+Iteration:   635   Dual objective     =      97163362.291136
+Iteration:   849   Dual objective     =      97163361.405566
+Iteration:  1081   Dual objective     =      97163318.008739
+Iteration:  1310   Dual objective     =      97158810.300943
+Iteration:  1531   Dual objective     =      97156507.932004
+Iteration:  1732   Dual objective     =      97156507.921917
+Iteration:  1929   Dual objective     =      97156507.770243
+Iteration:  2133   Dual objective     =      97156507.536147
+Iteration:  2305   Dual objective     =      97156507.529094
+Iteration:  2471   Dual objective     =      97156507.517350
+Iteration:  2661   Dual objective     =      97156507.508032
+Iteration:  2851   Dual objective     =      97156507.488571
+Iteration:  3027   Dual objective     =      97156507.009023
+Iteration:  3200   Dual objective     =      97156242.537717
+Iteration:  3379   Dual objective     =      97156242.528898
+Iteration:  3549   Dual objective     =      97156242.513827
+Iteration:  3702   Dual objective     =      97156242.503665
+Iteration:  3848   Dual objective     =      97156242.485737
+Iteration:  4000   Dual objective     =      97156242.444289
+Iteration:  4183   Dual objective     =      97156241.923434
+Iteration:  4395   Dual objective     =      97156241.901437
+Iteration:  4559   Dual objective     =      97156241.855159
+Iteration:  4729   Dual objective     =      97156239.855202
+Iteration:  4902   Dual objective     =      97156228.267449
+Iteration:  5097   Dual objective     =      97156226.971931
+Iteration:  5272   Dual objective     =      97156225.652536
+Iteration:  5424   Dual objective     =      97156216.064483
+Iteration:  5615   Dual objective     =      97156200.977000
+Iteration:  5767   Dual objective     =      97156199.866945
+Iteration:  5923   Dual objective     =      97156188.082103
+Iteration:  6094   Dual objective     =      97155907.063639
+Iteration:  6243   Dual objective     =      97113286.595926
+Iteration:  6369   Dual objective     =      97111663.656777
+Iteration:  6472   Dual objective     =      97111276.182006
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97111152.321956
+Root relaxation solution time = 0.27 sec. (290.20 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71112e+07     7                 9.71112e+07     6535         
+*     0+    0                       9.71111e+07   9.71112e+07             0.00%
+Found incumbent of value 9.7111079e+07 after 0.53 sec. (488.71 ticks)
+      0     0   9.71112e+07    13   9.71111e+07      Cuts: 27     6550    0.00%
+*     0+    0                       9.71112e+07   9.71112e+07             0.00%
+Found incumbent of value 9.7111150e+07 after 0.61 sec. (547.15 ticks)
+      0     0   9.71112e+07    16   9.71112e+07      Cuts: 30     6582    0.00%
+      0     2   9.71112e+07     8   9.71112e+07   9.71112e+07     6606    0.00%
+Elapsed time = 0.84 sec. (772.78 ticks, tree = 0.01 MB)
+
+Implied bound cuts applied:  1
+Flow cuts applied:  2
+Mixed integer rounding cuts applied:  7
+Gomory fractional cuts applied:  2
+
+Root node processing (before b&c):
+  Real time             =    0.86 sec. (770.21 ticks)
+Sequential b&c:
+  Real time             =    0.00 sec. (16.25 ticks)
+                          ------------
+Total (root+branch&cut) =    0.86 sec. (786.47 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.86sec (det. 786.63 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14687 rows and 30024 columns.
+Aggregator did 13573 substitutions.
+Reduced LP has 4272 rows, 14436 columns, and 33458 nonzeros.
+Presolve time = 0.06 sec. (50.70 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97226439.028817
+Iteration:   312   Dual objective     =      97214783.151899
+Iteration:   633   Dual objective     =      97210231.616035
+Perturbation started.
+Iteration:   904   Dual objective     =      97210231.616035
+Iteration:  1079   Dual objective     =      97210231.579296
+Iteration:  1238   Dual objective     =      97210231.548896
+Iteration:  1418   Dual objective     =      97210208.760589
+Iteration:  1631   Dual objective     =      97210203.423779
+Iteration:  1828   Dual objective     =      97210202.053977
+Iteration:  1985   Dual objective     =      97210201.783023
+Iteration:  2133   Dual objective     =      97210201.762305
+Iteration:  2288   Dual objective     =      97210201.730930
+Iteration:  2427   Dual objective     =      97210201.670076
+Iteration:  2590   Dual objective     =      97210201.366820
+Iteration:  2783   Dual objective     =      97210201.012044
+Iteration:  2971   Dual objective     =      97207887.724336
+Iteration:  3151   Dual objective     =      97207885.837540
+Iteration:  3322   Dual objective     =      97207880.562331
+Iteration:  3503   Dual objective     =      97185372.694870
+Iteration:  3702   Dual objective     =      97134133.698676
+Iteration:  3855   Dual objective     =      97112048.701984
+Iteration:  3967   Dual objective     =      97111318.932677
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.27sec (det. 296.77 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97111150.246346    (6641 iterations, 3 nodes)
+Final Solve:      97111150.246346    (4022 iterations)
+
+Best possible:    97111150.246346
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:15.624
+--- vSPDsolve.gms(6068) 99 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 99 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345498
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 3
+---   32,533 rows  58,033 columns  110,705 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.652E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:16.085
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14715 rows and 29989 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13687 substitutions.
+Reduced MIP has 4246 rows, 14383 columns, and 33301 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.17 sec. (133.94 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 126 rows and 444 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4120 rows, 13939 columns, and 32332 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.46 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97179067.323327
+Perturbation started.
+Iteration:   101   Dual objective     =      97179067.323327
+Iteration:   396   Dual objective     =      97179066.581248
+Iteration:   625   Dual objective     =      97167413.685864
+Iteration:   827   Dual objective     =      97167412.872835
+Iteration:  1038   Dual objective     =      97167369.737944
+Iteration:  1271   Dual objective     =      97162861.767150
+Iteration:  1479   Dual objective     =      97160559.390820
+Iteration:  1680   Dual objective     =      97160559.382033
+Iteration:  1878   Dual objective     =      97160559.236289
+Iteration:  2075   Dual objective     =      97160559.128348
+Iteration:  2248   Dual objective     =      97160558.993831
+Iteration:  2411   Dual objective     =      97160558.981140
+Iteration:  2589   Dual objective     =      97160558.979531
+Iteration:  2785   Dual objective     =      97160558.961492
+Iteration:  2941   Dual objective     =      97160558.923529
+Iteration:  3151   Dual objective     =      97160293.996392
+Iteration:  3321   Dual objective     =      97160293.975563
+Iteration:  3489   Dual objective     =      97160293.951823
+Iteration:  3665   Dual objective     =      97160293.908284
+Iteration:  3822   Dual objective     =      97160293.841902
+Iteration:  3988   Dual objective     =      97160293.733809
+Iteration:  4185   Dual objective     =      97160293.385859
+Iteration:  4358   Dual objective     =      97160293.303112
+Iteration:  4528   Dual objective     =      97160292.971109
+Iteration:  4713   Dual objective     =      97160265.039790
+Iteration:  4873   Dual objective     =      97160264.450563
+Iteration:  5029   Dual objective     =      97160263.095641
+Iteration:  5200   Dual objective     =      97160252.173851
+Iteration:  5367   Dual objective     =      97160251.304013
+Iteration:  5531   Dual objective     =      97160239.544227
+Iteration:  5663   Dual objective     =      97159960.688864
+Iteration:  5812   Dual objective     =      97117112.054069
+Iteration:  5942   Dual objective     =      97115626.726349
+Iteration:  6037   Dual objective     =      97115237.034111
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97115156.341111
+Root relaxation solution time = 0.25 sec. (267.12 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71152e+07     7                 9.71152e+07     6088         
+*     0+    0                       9.71151e+07   9.71152e+07             0.00%
+Found incumbent of value 9.7115127e+07 after 0.50 sec. (464.48 ticks)
+      0     0   9.71152e+07    12   9.71151e+07      Cuts: 22     6102    0.00%
+      0     0   9.71152e+07    15   9.71151e+07      Cuts: 25     6139    0.00%
+      0     2   9.71152e+07     8   9.71151e+07   9.71152e+07     6156    0.00%
+Elapsed time = 0.83 sec. (771.26 ticks, tree = 0.01 MB)
+*     3     1      integral     0   9.71152e+07   9.71152e+07     6205    0.00%
+Found incumbent of value 9.7115154e+07 after 0.83 sec. (791.24 ticks)
+
+Flow cuts applied:  4
+Mixed integer rounding cuts applied:  7
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.83 sec. (769.10 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (23.25 ticks)
+                          ------------
+Total (root+branch&cut) =    0.84 sec. (792.35 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.84sec (det. 792.51 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14686 rows and 30020 columns.
+Aggregator did 13574 substitutions.
+Reduced LP has 4272 rows, 14439 columns, and 33461 nonzeros.
+Presolve time = 0.05 sec. (50.71 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97230864.725681
+Iteration:   307   Dual objective     =      97219208.850714
+Iteration:   603   Dual objective     =      97219165.452789
+Perturbation started.
+Iteration:   707   Dual objective     =      97219165.452789
+Iteration:   885   Dual objective     =      97219165.444889
+Iteration:  1050   Dual objective     =      97219165.266438
+Iteration:  1230   Dual objective     =      97219145.859603
+Iteration:  1466   Dual objective     =      97212332.107914
+Iteration:  1671   Dual objective     =      97212330.869756
+Iteration:  1833   Dual objective     =      97212329.068810
+Iteration:  1987   Dual objective     =      97212329.051850
+Iteration:  2147   Dual objective     =      97212329.016472
+Iteration:  2306   Dual objective     =      97212328.921666
+Iteration:  2485   Dual objective     =      97212328.342722
+Iteration:  2682   Dual objective     =      97212328.305698
+Iteration:  2841   Dual objective     =      97212318.078636
+Iteration:  3031   Dual objective     =      97212312.931973
+Iteration:  3214   Dual objective     =      97212310.954577
+Iteration:  3393   Dual objective     =      97212161.345511
+Iteration:  3542   Dual objective     =      97189293.441271
+Iteration:  3698   Dual objective     =      97138150.991117
+Iteration:  3821   Dual objective     =      97115832.985250
+Iteration:  3920   Dual objective     =      97115169.546143
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.25sec (det. 285.26 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97115154.268036    (6205 iterations, 4 nodes)
+Final Solve:      97115154.268036    (3935 iterations)
+
+Best possible:    97115154.268036
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:17.386
+--- vSPDsolve.gms(6068) 99 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 99 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345498
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 4
+---   32,533 rows  58,033 columns  110,708 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.652E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:17.958
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14714 rows and 29985 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13688 substitutions.
+Reduced MIP has 4246 rows, 14386 columns, and 33304 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.19 sec. (133.95 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 132 rows and 465 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4114 rows, 13921 columns, and 32299 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.63 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97177770.830985
+Perturbation started.
+Iteration:   101   Dual objective     =      97177770.830985
+Iteration:   388   Dual objective     =      97177770.082619
+Iteration:   626   Dual objective     =      97166117.187592
+Iteration:   825   Dual objective     =      97166116.353627
+Iteration:  1037   Dual objective     =      97161565.314497
+Iteration:  1268   Dual objective     =      97161565.270426
+Iteration:  1464   Dual objective     =      97159262.894530
+Iteration:  1676   Dual objective     =      97159262.756147
+Iteration:  1890   Dual objective     =      97159262.516749
+Iteration:  2093   Dual objective     =      97159262.513840
+Iteration:  2276   Dual objective     =      97159262.498843
+Iteration:  2451   Dual objective     =      97159262.490977
+Iteration:  2634   Dual objective     =      97159262.484451
+Iteration:  2824   Dual objective     =      97159262.471518
+Iteration:  3012   Dual objective     =      97159262.426821
+Iteration:  3201   Dual objective     =      97159261.973454
+Iteration:  3377   Dual objective     =      97158997.502533
+Iteration:  3535   Dual objective     =      97158997.493160
+Iteration:  3694   Dual objective     =      97158997.479917
+Iteration:  3870   Dual objective     =      97158997.466601
+Iteration:  4020   Dual objective     =      97158997.452884
+Iteration:  4201   Dual objective     =      97158997.389051
+Iteration:  4352   Dual objective     =      97158997.332208
+Iteration:  4533   Dual objective     =      97158996.907239
+Iteration:  4687   Dual objective     =      97158996.853989
+Iteration:  4862   Dual objective     =      97158996.800343
+Iteration:  5062   Dual objective     =      97158994.946127
+Iteration:  5250   Dual objective     =      97158969.085153
+Iteration:  5387   Dual objective     =      97158967.759914
+Iteration:  5593   Dual objective     =      97158966.660216
+Iteration:  5772   Dual objective     =      97158956.810767
+Iteration:  5939   Dual objective     =      97158954.926570
+Iteration:  6114   Dual objective     =      97158675.180417
+Iteration:  6265   Dual objective     =      97118301.952740
+Iteration:  6392   Dual objective     =      97114564.622913
+Iteration:  6497   Dual objective     =      97114021.192425
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97113870.071840
+Root relaxation solution time = 0.25 sec. (290.62 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71139e+07     8                 9.71139e+07     6578         
+*     0+    0                       9.71077e+07   9.71139e+07             0.01%
+Found incumbent of value 9.7107704e+07 after 0.55 sec. (497.25 ticks)
+      0     0   9.71139e+07    13   9.71077e+07      Cuts: 38     6595    0.01%
+*     0+    0                       9.71139e+07   9.71139e+07             0.00%
+Found incumbent of value 9.7113868e+07 after 0.61 sec. (555.72 ticks)
+      0     0   9.71139e+07    15   9.71139e+07      Cuts: 27     6620    0.00%
+      0     2   9.71139e+07     7   9.71139e+07   9.71139e+07     6645    0.00%
+Elapsed time = 0.84 sec. (791.41 ticks, tree = 0.01 MB)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  6
+Mixed integer rounding cuts applied:  8
+Gomory fractional cuts applied:  2
+
+Root node processing (before b&c):
+  Real time             =    0.83 sec. (786.43 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (18.82 ticks)
+                          ------------
+Total (root+branch&cut) =    0.84 sec. (805.25 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.84sec (det. 805.42 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14685 rows and 30016 columns.
+Aggregator did 13575 substitutions.
+Reduced LP has 4272 rows, 14442 columns, and 33464 nonzeros.
+Presolve time = 0.05 sec. (50.71 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97229881.698983
+Iteration:   330   Dual objective     =      97218225.800663
+Iteration:   640   Dual objective     =      97218181.949674
+Perturbation started.
+Iteration:   803   Dual objective     =      97218181.949674
+Iteration:   974   Dual objective     =      97213674.261460
+Iteration:  1127   Dual objective     =      97213674.245921
+Iteration:  1283   Dual objective     =      97213652.425057
+Iteration:  1501   Dual objective     =      97213645.302002
+Iteration:  1711   Dual objective     =      97213644.633439
+Iteration:  1885   Dual objective     =      97211342.050450
+Iteration:  2038   Dual objective     =      97211341.999926
+Iteration:  2232   Dual objective     =      97211341.930451
+Iteration:  2428   Dual objective     =      97211341.341880
+Iteration:  2613   Dual objective     =      97211341.208523
+Iteration:  2807   Dual objective     =      97211330.037062
+Iteration:  3006   Dual objective     =      97211328.147214
+Iteration:  3175   Dual objective     =      97211190.794769
+Iteration:  3338   Dual objective     =      97188163.363711
+Iteration:  3518   Dual objective     =      97136859.237489
+Iteration:  3652   Dual objective     =      97115338.981539
+Iteration:  3766   Dual objective     =      97114072.788319
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.27sec (det. 280.22 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97113867.998228    (6680 iterations, 3 nodes)
+Final Solve:      97113867.998228    (3827 iterations)
+
+Best possible:    97113867.998228
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:19.288
+--- vSPDsolve.gms(6068) 99 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 99 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345498
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 5
+---   32,533 rows  58,033 columns  110,708 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.652E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:19.853
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14714 rows and 29985 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13688 substitutions.
+Reduced MIP has 4246 rows, 14386 columns, and 33304 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.19 sec. (133.95 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 132 rows and 465 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4114 rows, 13921 columns, and 32299 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.63 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.64 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97228609.382793
+Perturbation started.
+Iteration:   101   Dual objective     =      97228609.382793
+Iteration:   388   Dual objective     =      97228608.634427
+Iteration:   626   Dual objective     =      97216955.739400
+Iteration:   826   Dual objective     =      97216954.905406
+Iteration:  1049   Dual objective     =      97212403.866141
+Iteration:  1262   Dual objective     =      97212403.822016
+Iteration:  1466   Dual objective     =      97210101.445990
+Iteration:  1654   Dual objective     =      97210101.422712
+Iteration:  1846   Dual objective     =      97210101.291271
+Iteration:  2027   Dual objective     =      97210101.056888
+Iteration:  2207   Dual objective     =      97210101.046544
+Iteration:  2360   Dual objective     =      97210101.039222
+Iteration:  2542   Dual objective     =      97210101.033979
+Iteration:  2700   Dual objective     =      97210101.021599
+Iteration:  2894   Dual objective     =      97210100.536021
+Iteration:  3084   Dual objective     =      97209836.910798
+Iteration:  3260   Dual objective     =      97209835.964311
+Iteration:  3435   Dual objective     =      97209835.940605
+Iteration:  3608   Dual objective     =      97209835.900499
+Iteration:  3770   Dual objective     =      97209835.866940
+Iteration:  3960   Dual objective     =      97209835.830072
+Iteration:  4130   Dual objective     =      97209835.356420
+Iteration:  4292   Dual objective     =      97209835.330613
+Iteration:  4451   Dual objective     =      97209835.216802
+Iteration:  4625   Dual objective     =      97209834.547098
+Iteration:  4804   Dual objective     =      97209821.581635
+Iteration:  4950   Dual objective     =      97209819.283184
+Iteration:  5106   Dual objective     =      97209808.889742
+Iteration:  5297   Dual objective     =      97209794.321159
+Iteration:  5468   Dual objective     =      97209792.900312
+Iteration:  5643   Dual objective     =      97209504.156472
+Iteration:  5791   Dual objective     =      97167055.272308
+Iteration:  5933   Dual objective     =      97164538.875703
+Iteration:  6036   Dual objective     =      97164101.276138
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97163990.789589
+Root relaxation solution time = 0.27 sec. (265.79 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71640e+07     8                 9.71640e+07     6101         
+*     0+    0                       9.71576e+07   9.71640e+07             0.01%
+Found incumbent of value 9.7157560e+07 after 0.55 sec. (472.92 ticks)
+      0     0   9.71640e+07    13   9.71576e+07      Cuts: 38     6118    0.01%
+*     0+    0                       9.71640e+07   9.71640e+07             0.00%
+Found incumbent of value 9.7163989e+07 after 0.61 sec. (531.36 ticks)
+      0     0   9.71640e+07    16   9.71640e+07      Cuts: 29     6146    0.00%
+      0     2   9.71640e+07     7   9.71640e+07   9.71640e+07     6171    0.00%
+Elapsed time = 0.80 sec. (711.56 ticks, tree = 0.01 MB)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  7
+Mixed integer rounding cuts applied:  6
+Gomory fractional cuts applied:  2
+
+Root node processing (before b&c):
+  Real time             =    0.80 sec. (706.66 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (20.70 ticks)
+                          ------------
+Total (root+branch&cut) =    0.81 sec. (727.36 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.81sec (det. 727.53 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14685 rows and 30016 columns.
+Aggregator did 13575 substitutions.
+Reduced LP has 4272 rows, 14442 columns, and 33464 nonzeros.
+Presolve time = 0.08 sec. (50.71 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97229572.188036
+Iteration:   298   Dual objective     =      97217916.313069
+Iteration:   611   Dual objective     =      97213364.744665
+Perturbation started.
+Iteration:   803   Dual objective     =      97213364.744665
+Iteration:   967   Dual objective     =      97213364.735688
+Iteration:  1130   Dual objective     =      97213364.542662
+Iteration:  1318   Dual objective     =      97213344.363454
+Iteration:  1528   Dual objective     =      97213336.822682
+Iteration:  1731   Dual objective     =      97211033.883272
+Iteration:  1868   Dual objective     =      97211033.652572
+Iteration:  2034   Dual objective     =      97211033.605120
+Iteration:  2210   Dual objective     =      97211033.498866
+Iteration:  2400   Dual objective     =      97211032.929638
+Iteration:  2569   Dual objective     =      97211022.345343
+Iteration:  2755   Dual objective     =      97211019.336674
+Iteration:  2931   Dual objective     =      97211018.615843
+Iteration:  3104   Dual objective     =      97210867.771438
+Iteration:  3293   Dual objective     =      97187914.905212
+Iteration:  3459   Dual objective     =      97187692.569201
+Iteration:  3587   Dual objective     =      97164742.214264
+Iteration:  3695   Dual objective     =      97164035.782428
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.27sec (det. 269.86 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97163988.753265    (6208 iterations, 3 nodes)
+Final Solve:      97163988.753265    (3721 iterations)
+
+Best possible:    97163988.753265
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:21.168
+--- vSPDsolve.gms(6068) 99 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 99 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345503
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 1
+---   32,533 rows  58,033 columns  110,710 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.652E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:21.801
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14715 rows and 29992 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13686 substitutions.
+Reduced MIP has 4247 rows, 14381 columns, and 33301 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.17 sec. (134.03 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 128 rows and 445 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4119 rows, 13936 columns, and 32321 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.56 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      96773596.938363
+Perturbation started.
+Iteration:   101   Dual objective     =      96773596.938363
+Iteration:   388   Dual objective     =      96768125.039948
+Iteration:   624   Dual objective     =      96760768.629385
+Iteration:   846   Dual objective     =      96760767.814965
+Iteration:  1055   Dual objective     =      96760724.419561
+Iteration:  1280   Dual objective     =      96757126.024139
+Iteration:  1485   Dual objective     =      96754808.864895
+Iteration:  1703   Dual objective     =      96754808.704907
+Iteration:  1898   Dual objective     =      96754808.702274
+Iteration:  2090   Dual objective     =      96754808.560071
+Iteration:  2252   Dual objective     =      96754808.555661
+Iteration:  2442   Dual objective     =      96754808.546653
+Iteration:  2624   Dual objective     =      96754808.538548
+Iteration:  2767   Dual objective     =      96754808.530050
+Iteration:  2960   Dual objective     =      96754808.027327
+Iteration:  3154   Dual objective     =      96754545.419555
+Iteration:  3315   Dual objective     =      96754545.403040
+Iteration:  3448   Dual objective     =      96754545.380704
+Iteration:  3621   Dual objective     =      96754545.365741
+Iteration:  3791   Dual objective     =      96754545.307636
+Iteration:  3970   Dual objective     =      96754545.234898
+Iteration:  4136   Dual objective     =      96754544.914362
+Iteration:  4284   Dual objective     =      96754544.757779
+Iteration:  4458   Dual objective     =      96754544.641120
+Iteration:  4619   Dual objective     =      96754544.104456
+Iteration:  4788   Dual objective     =      96754543.570377
+Iteration:  4959   Dual objective     =      96754543.451780
+Iteration:  5120   Dual objective     =      96754539.640382
+Iteration:  5288   Dual objective     =      96754516.075178
+Iteration:  5448   Dual objective     =      96754504.525164
+Iteration:  5618   Dual objective     =      96754491.359880
+Iteration:  5768   Dual objective     =      96754213.797527
+Iteration:  5910   Dual objective     =      96712296.900369
+Iteration:  6055   Dual objective     =      96710374.583987
+Iteration:  6155   Dual objective     =      96709767.507717
+Iteration:  6252   Dual objective     =      96709513.799558
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      96709507.233511
+Root relaxation solution time = 0.27 sec. (274.22 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.67095e+07     8                 9.67095e+07     6262         
+*     0+    0                       9.67027e+07   9.67095e+07             0.01%
+Found incumbent of value 9.6702685e+07 after 0.52 sec. (477.11 ticks)
+      0     0   9.67095e+07    12   9.67027e+07      Cuts: 35     6278    0.01%
+      0     0   9.67095e+07    15   9.67027e+07      Cuts: 30     6305    0.01%
+*     0+    0                       9.67094e+07   9.67095e+07             0.00%
+Found incumbent of value 9.6709447e+07 after 0.67 sec. (629.78 ticks)
+      0     2   9.67095e+07     8   9.67094e+07   9.67095e+07     6317    0.00%
+Elapsed time = 0.78 sec. (740.38 ticks, tree = 0.01 MB)
+*     3     1      integral     0   9.67095e+07   9.67095e+07     6381    0.00%
+Found incumbent of value 9.6709505e+07 after 0.80 sec. (764.22 ticks)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  7
+Mixed integer rounding cuts applied:  9
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.77 sec. (738.32 ticks)
+Sequential b&c:
+  Real time             =    0.03 sec. (27.01 ticks)
+                          ------------
+Total (root+branch&cut) =    0.80 sec. (765.33 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.80sec (det. 765.50 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14686 rows and 30021 columns.
+Aggregator did 13572 substitutions.
+Reduced LP has 4274 rows, 14440 columns, and 33466 nonzeros.
+Presolve time = 0.06 sec. (50.71 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97227374.197286
+Iteration:   322   Dual objective     =      97214543.507437
+Iteration:   585   Dual objective     =      97214500.133919
+Perturbation started.
+Iteration:   601   Dual objective     =      97214500.133919
+Iteration:   797   Dual objective     =      97210901.256102
+Iteration:   950   Dual objective     =      97210901.192399
+Iteration:  1112   Dual objective     =      97210879.740964
+Iteration:  1295   Dual objective     =      97210874.734173
+Iteration:  1492   Dual objective     =      97210870.169304
+Iteration:  1669   Dual objective     =      97208553.370865
+Iteration:  1810   Dual objective     =      97208553.357928
+Iteration:  1959   Dual objective     =      97208553.336327
+Iteration:  2119   Dual objective     =      97208553.254387
+Iteration:  2301   Dual objective     =      97208553.010804
+Iteration:  2485   Dual objective     =      97208552.628363
+Iteration:  2651   Dual objective     =      97208542.055795
+Iteration:  2826   Dual objective     =      97208541.030176
+Iteration:  2982   Dual objective     =      97208540.417892
+Iteration:  3170   Dual objective     =      96805788.663088
+Iteration:  3322   Dual objective     =      96783555.309151
+Iteration:  3482   Dual objective     =      96783385.276877
+Iteration:  3654   Dual objective     =      96760541.404628
+Iteration:  3764   Dual objective     =      96709641.526336
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.30sec (det. 305.06 ticks)
+
+
+Proven optimal solution
+MIP Solution:     96709505.165732    (6381 iterations, 4 nodes)
+Final Solve:      96709505.165732    (3808 iterations)
+
+Best possible:    96709505.165732
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:23.135
+--- vSPDsolve.gms(6068) 99 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 102 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062345503
+---       dt = 20-JUN-2024 11:45
+---       FOR/WHILE = 2
+---   32,533 rows  58,033 columns  110,710 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.655E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:23.680
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14716 rows and 29996 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8900 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4247 rows, 14378 columns, and 33298 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.19 sec. (134.02 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.83 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 126 rows and 436 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4121 rows, 13942 columns, and 32336 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.49 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97205505.185261
+Perturbation started.
+Iteration:   101   Dual objective     =      97205505.185261
+Iteration:   396   Dual objective     =      97205504.771835
+Iteration:   617   Dual objective     =      97192677.723122
+Iteration:   836   Dual objective     =      97192676.068196
+Iteration:  1055   Dual objective     =      97192632.672838
+Iteration:  1276   Dual objective     =      97189034.277021
+Iteration:  1482   Dual objective     =      97186717.125020
+Iteration:  1682   Dual objective     =      97186717.114307
+Iteration:  1864   Dual objective     =      97186717.104346
+Iteration:  2062   Dual objective     =      97186716.969342
+Iteration:  2242   Dual objective     =      97186716.932649
+Iteration:  2426   Dual objective     =      97186716.803286
+Iteration:  2629   Dual objective     =      97186716.794817
+Iteration:  2800   Dual objective     =      97186716.785016
+Iteration:  2990   Dual objective     =      97186716.716239
+Iteration:  3206   Dual objective     =      97186454.250825
+Iteration:  3374   Dual objective     =      97186453.615165
+Iteration:  3517   Dual objective     =      97186453.605258
+Iteration:  3682   Dual objective     =      97186453.586857
+Iteration:  3860   Dual objective     =      97186453.574461
+Iteration:  4028   Dual objective     =      97186453.529778
+Iteration:  4195   Dual objective     =      97186453.476953
+Iteration:  4354   Dual objective     =      97186453.427512
+Iteration:  4524   Dual objective     =      97186453.203851
+Iteration:  4668   Dual objective     =      97186452.947949
+Iteration:  4851   Dual objective     =      97186452.851447
+Iteration:  5011   Dual objective     =      97186451.796168
+Iteration:  5182   Dual objective     =      97186451.637723
+Iteration:  5347   Dual objective     =      97186447.837869
+Iteration:  5512   Dual objective     =      97186424.440553
+Iteration:  5676   Dual objective     =      97186412.800156
+Iteration:  5845   Dual objective     =      97186411.658584
+Iteration:  5997   Dual objective     =      97186398.716799
+Iteration:  6161   Dual objective     =      97142539.028030
+Iteration:  6309   Dual objective     =      97138523.639977
+Iteration:  6447   Dual objective     =      97137592.306681
+Iteration:  6544   Dual objective     =      97137082.993193
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97136913.850866
+Root relaxation solution time = 0.27 sec. (296.24 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.71369e+07     8                 9.71369e+07     6615         
+*     0+    0                       9.71285e+07   9.71369e+07             0.01%
+Found incumbent of value 9.7128547e+07 after 0.55 sec. (501.12 ticks)
+      0     0   9.71369e+07    12   9.71285e+07      Cuts: 36     6631    0.01%
+      0     0   9.71369e+07    15   9.71285e+07      Cuts: 29     6664    0.01%
+*     0+    0                       9.71361e+07   9.71369e+07             0.00%
+Found incumbent of value 9.7136058e+07 after 0.72 sec. (664.42 ticks)
+      0     2   9.71369e+07     8   9.71361e+07   9.71369e+07     6676    0.00%
+Elapsed time = 0.88 sec. (817.26 ticks, tree = 0.01 MB)
+*     2     0      integral     0   9.71369e+07   9.71369e+07     6735    0.00%
+Found incumbent of value 9.7136912e+07 after 0.89 sec. (835.32 ticks)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  7
+Mixed integer rounding cuts applied:  9
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.88 sec. (814.85 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (21.56 ticks)
+                          ------------
+Total (root+branch&cut) =    0.89 sec. (836.41 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.89sec (det. 836.57 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14688 rows and 30026 columns.
+Aggregator did 13570 substitutions.
+Reduced LP has 4274 rows, 14437 columns, and 33463 nonzeros.
+Presolve time = 0.06 sec. (50.70 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97258767.481408
+Iteration:   320   Dual objective     =      97245936.833796
+Iteration:   631   Dual objective     =      97245892.696262
+Perturbation started.
+Iteration:   803   Dual objective     =      97245892.696262
+Iteration:  1007   Dual objective     =      97245892.688072
+Iteration:  1178   Dual objective     =      97245892.444704
+Iteration:  1374   Dual objective     =      97245867.254930
+Iteration:  1584   Dual objective     =      97239949.728424
+Iteration:  1760   Dual objective     =      97239949.565828
+Iteration:  1914   Dual objective     =      97239949.552154
+Iteration:  2044   Dual objective     =      97239949.535356
+Iteration:  2201   Dual objective     =      97239949.493970
+Iteration:  2374   Dual objective     =      97239949.407348
+Iteration:  2541   Dual objective     =      97239948.818809
+Iteration:  2717   Dual objective     =      97239948.783848
+Iteration:  2885   Dual objective     =      97239938.274510
+Iteration:  3064   Dual objective     =      97239936.899429
+Iteration:  3230   Dual objective     =      97239933.606022
+Iteration:  3406   Dual objective     =      97239771.703245
+Iteration:  3577   Dual objective     =      97217230.214239
+Iteration:  3710   Dual objective     =      97217130.532583
+Iteration:  3841   Dual objective     =      97189885.903393
+Iteration:  3954   Dual objective     =      97137056.860977
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.27sec (det. 309.17 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97136911.917909    (6735 iterations, 3 nodes)
+Final Solve:      97136911.917909    (3995 iterations)
+
+Best possible:    97136911.917909
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:25.065
+--- vSPDsolve.gms(6068) 102 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 103 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062355506
+---       dt = 20-JUN-2024 11:55
+---       FOR/WHILE = 1
+---   32,533 rows  58,033 columns  110,707 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.646E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:25.638
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14722 rows and 30008 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13685 substitutions.
+Reduced MIP has 4241 rows, 14366 columns, and 33290 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.16 sec. (133.98 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.84 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 124 rows and 433 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4117 rows, 13933 columns, and 32335 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.41 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      96714895.696048
+Perturbation started.
+Iteration:   101   Dual objective     =      96714895.696048
+Iteration:   384   Dual objective     =      96714895.280394
+Iteration:   617   Dual objective     =      96701700.481453
+Iteration:   828   Dual objective     =      96701699.671299
+Iteration:  1040   Dual objective     =      96701656.045470
+Iteration:  1269   Dual objective     =      96701655.979329
+Iteration:  1487   Dual objective     =      96695931.272842
+Iteration:  1689   Dual objective     =      96695931.249500
+Iteration:  1885   Dual objective     =      96695931.121614
+Iteration:  2086   Dual objective     =      96695930.989112
+Iteration:  2267   Dual objective     =      96695930.981317
+Iteration:  2450   Dual objective     =      96695930.975170
+Iteration:  2609   Dual objective     =      96695930.968951
+Iteration:  2805   Dual objective     =      96695930.907304
+Iteration:  2962   Dual objective     =      96695930.438912
+Iteration:  3154   Dual objective     =      96695663.865318
+Iteration:  3317   Dual objective     =      96695663.849539
+Iteration:  3457   Dual objective     =      96695663.840306
+Iteration:  3615   Dual objective     =      96695663.820035
+Iteration:  3764   Dual objective     =      96695663.796458
+Iteration:  3941   Dual objective     =      96695663.660319
+Iteration:  4122   Dual objective     =      96695663.257333
+Iteration:  4298   Dual objective     =      96695663.195971
+Iteration:  4488   Dual objective     =      96695663.134190
+Iteration:  4661   Dual objective     =      96695663.097818
+Iteration:  4830   Dual objective     =      96695660.884376
+Iteration:  4998   Dual objective     =      96695635.688494
+Iteration:  5166   Dual objective     =      96695633.917103
+Iteration:  5335   Dual objective     =      96695623.896841
+Iteration:  5499   Dual objective     =      96695622.052813
+Iteration:  5652   Dual objective     =      96695332.072936
+Iteration:  5803   Dual objective     =      96649627.248401
+Iteration:  5949   Dual objective     =      96647144.032099
+Iteration:  6056   Dual objective     =      96646503.469242
+Iteration:  6149   Dual objective     =      96646082.112255
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      96646072.479616
+Root relaxation solution time = 0.27 sec. (268.18 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.66461e+07     7                 9.66461e+07     6167         
+*     0+    0                       9.66453e+07   9.66461e+07             0.00%
+Found incumbent of value 9.6645336e+07 after 0.53 sec. (465.95 ticks)
+      0     0   9.66461e+07    12   9.66453e+07      Cuts: 26     6182    0.00%
+*     0+    0                       9.66461e+07   9.66461e+07             0.00%
+Found incumbent of value 9.6646071e+07 after 0.59 sec. (528.20 ticks)
+      0     0   9.66461e+07    16   9.66461e+07      Cuts: 35     6214    0.00%
+      0     2   9.66461e+07     7   9.66461e+07   9.66461e+07     6234    0.00%
+Elapsed time = 0.78 sec. (720.07 ticks, tree = 0.01 MB)
+
+Flow cuts applied:  2
+Mixed integer rounding cuts applied:  5
+Gomory fractional cuts applied:  2
+
+Root node processing (before b&c):
+  Real time             =    0.78 sec. (715.68 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (18.07 ticks)
+                          ------------
+Total (root+branch&cut) =    0.80 sec. (733.76 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.80sec (det. 733.92 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14692 rows and 30036 columns.
+Aggregator did 13572 substitutions.
+Reduced LP has 4268 rows, 14425 columns, and 33445 nonzeros.
+Presolve time = 0.06 sec. (50.70 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97170036.429943
+Iteration:   342   Dual objective     =      97156838.856954
+Iteration:   637   Dual objective     =      97156795.719439
+Perturbation started.
+Iteration:   707   Dual objective     =      97156795.719439
+Iteration:   935   Dual objective     =      97156794.651190
+Iteration:  1095   Dual objective     =      97156794.604924
+Iteration:  1273   Dual objective     =      97156775.151216
+Iteration:  1464   Dual objective     =      97153362.403614
+Iteration:  1655   Dual objective     =      97151045.163128
+Iteration:  1812   Dual objective     =      97151045.155804
+Iteration:  1955   Dual objective     =      97151045.120824
+Iteration:  2114   Dual objective     =      97151045.084007
+Iteration:  2264   Dual objective     =      97151045.024802
+Iteration:  2447   Dual objective     =      97151044.681666
+Iteration:  2619   Dual objective     =      97151044.385176
+Iteration:  2787   Dual objective     =      97151033.797177
+Iteration:  2976   Dual objective     =      97151027.131307
+Iteration:  3154   Dual objective     =      97151026.214139
+Iteration:  3326   Dual objective     =      96746887.226285
+Iteration:  3487   Dual objective     =      96723794.802293
+Iteration:  3643   Dual objective     =      96723477.239222
+Iteration:  3778   Dual objective     =      96697425.709886
+Iteration:  3897   Dual objective     =      96646364.583843
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.28sec (det. 309.27 ticks)
+
+
+Proven optimal solution
+MIP Solution:     96646070.548036    (6267 iterations, 3 nodes)
+Final Solve:      96646070.548036    (3971 iterations)
+
+Best possible:    96646070.548036
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:26.928
+--- vSPDsolve.gms(6068) 103 Mb
+--- Generating MIP model vSPD_NMIR
+--- vSPDsolve.gms(6349) 105 Mb
+--- LOOPS FOR/WHILE = 1
+---       ca = 191012024062355506
+---       dt = 20-JUN-2024 11:55
+---       FOR/WHILE = 2
+---   32,533 rows  58,033 columns  110,707 non-zeroes
+---   16 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.650E-03, 9.646E+07] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E-03, 9.999E+03] - Zero values observed as well
+--- Matrix    [min, max] : [ 2.135E-07, 1.000E+06]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:27.469
+
+IBM ILOG CPLEX   42.5.0 cf11b917 Mar 30, 2023          WEI x86 64bit/MS Window
+
+--- GAMS/Cplex Link licensed for continuous and discrete problems.
+
+Reading parameter(s) from "C:\GitHub\vSPD\Programs\cplex.opt"
+>>  epopt = 1e-9
+>>  epint = 0
+>>  eprhs = 1e-6
+>>  epgap = 0
+>>  epagap = 1e-9
+Finished reading from "C:\GitHub\vSPD\Programs\cplex.opt"
+
+--- GMO setup time: 0.00s
+--- Space for names approximately 7.86 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 15.96 Mb (peak 16.40 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 1.48 Mb (peak 11.80 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 0
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Generic callback                                 0x50
+Tried aggregator 6 times.
+MIP Presolve eliminated 14723 rows and 30012 columns.
+MIP Presolve added 116 rows and 29 columns.
+MIP Presolve modified 8914 coefficients.
+Aggregator did 13684 substitutions.
+Reduced MIP has 4241 rows, 14363 columns, and 33287 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.16 sec. (133.97 ticks)
+Probing fixed 0 vars, tightened 20 bounds.
+Probing time = 0.00 sec. (0.84 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+MIP Presolve eliminated 125 rows and 433 columns.
+MIP Presolve modified 9 coefficients.
+Reduced MIP has 4116 rows, 13930 columns, and 32326 nonzeros.
+Reduced MIP has 40 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.03 sec. (20.44 ticks)
+Probing fixed 0 vars, tightened 5 bounds.
+Probing time = 0.00 sec. (0.65 ticks)
+Clique table members: 138.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: none, using 1 thread.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97116195.521768
+Perturbation started.
+Iteration:   101   Dual objective     =      97116195.521768
+Iteration:   387   Dual objective     =      97110398.509647
+Iteration:   634   Dual objective     =      97102999.833395
+Iteration:   856   Dual objective     =      97102999.381021
+Iteration:  1070   Dual objective     =      97102955.799841
+Iteration:  1274   Dual objective     =      97099548.197239
+Iteration:  1491   Dual objective     =      97097231.037960
+Iteration:  1702   Dual objective     =      97097230.897946
+Iteration:  1887   Dual objective     =      97097230.894683
+Iteration:  2074   Dual objective     =      97097230.863605
+Iteration:  2253   Dual objective     =      97097230.857345
+Iteration:  2427   Dual objective     =      97097230.742388
+Iteration:  2613   Dual objective     =      97097230.737191
+Iteration:  2807   Dual objective     =      97097230.707525
+Iteration:  2984   Dual objective     =      97097230.203205
+Iteration:  3190   Dual objective     =      97096963.597840
+Iteration:  3343   Dual objective     =      97096963.586010
+Iteration:  3486   Dual objective     =      97096963.571451
+Iteration:  3670   Dual objective     =      97096963.543436
+Iteration:  3810   Dual objective     =      97096963.525441
+Iteration:  4013   Dual objective     =      97096963.499050
+Iteration:  4173   Dual objective     =      97096963.453372
+Iteration:  4332   Dual objective     =      97096963.232458
+Iteration:  4507   Dual objective     =      97096962.956294
+Iteration:  4694   Dual objective     =      97096962.863513
+Iteration:  4862   Dual objective     =      97096962.822004
+Iteration:  5028   Dual objective     =      97096962.740113
+Iteration:  5191   Dual objective     =      97096960.221775
+Iteration:  5362   Dual objective     =      97096935.383078
+Iteration:  5518   Dual objective     =      97096934.786791
+Iteration:  5675   Dual objective     =      97096933.627242
+Iteration:  5845   Dual objective     =      97096931.834512
+Iteration:  6022   Dual objective     =      97096922.288616
+Iteration:  6190   Dual objective     =      97096921.172997
+Iteration:  6339   Dual objective     =      97096629.996463
+Iteration:  6504   Dual objective     =      97048950.643570
+Iteration:  6634   Dual objective     =      97045347.366449
+Iteration:  6752   Dual objective     =      97043450.348171
+Iteration:  6845   Dual objective     =      97042846.459730
+Removing perturbation.
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97042777.293314
+Root relaxation solution time = 0.28 sec. (320.19 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+      0     0   9.70428e+07     8                 9.70428e+07     6900         
+*     0+    0                       9.70334e+07   9.70428e+07             0.01%
+Found incumbent of value 9.7033442e+07 after 0.53 sec. (529.39 ticks)
+      0     0   9.70428e+07    11   9.70334e+07      Cuts: 38     6915    0.01%
+*     0+    0                       9.70428e+07   9.70428e+07             0.00%
+Found incumbent of value 9.7042775e+07 after 0.59 sec. (591.15 ticks)
+      0     0   9.70428e+07    15   9.70428e+07      Cuts: 28     6941    0.00%
+      0     2   9.70428e+07     7   9.70428e+07   9.70428e+07     6970    0.00%
+Elapsed time = 0.88 sec. (854.70 ticks, tree = 0.01 MB)
+
+Implied bound cuts applied:  2
+Flow cuts applied:  7
+Mixed integer rounding cuts applied:  5
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.88 sec. (848.74 ticks)
+Sequential b&c:
+  Real time             =    0.02 sec. (20.83 ticks)
+                          ------------
+Total (root+branch&cut) =    0.89 sec. (869.57 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.89sec (det. 869.73 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.1.0 | 2022-11-27 | 9160aff4d
+CPXPARAM_Advance                                 2
+CPXPARAM_Threads                                 1
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_Simplex_Limits_Iterations               2000000000
+CPXPARAM_Simplex_Tolerances_Optimality           1.0000000000000001e-09
+CPXPARAM_TimeLimit                               3600
+CPXPARAM_MIP_Tolerances_AbsMIPGap                1.0000000000000001e-09
+CPXPARAM_MIP_Tolerances_MIPGap                   0
+CPXPARAM_MIP_Tolerances_Integrality              0
+Tried aggregator 1 time.
+LP Presolve eliminated 14694 rows and 30041 columns.
+Aggregator did 13570 substitutions.
+Reduced LP has 4268 rows, 14422 columns, and 33442 nonzeros.
+Presolve time = 0.08 sec. (50.69 ticks)
+Initializing dual steep norms . . .
+
+Iteration log . . .
+Iteration:     1   Dual objective     =      97169455.367443
+Iteration:   344   Dual objective     =      97156257.732939
+Perturbation started.
+Iteration:   505   Dual objective     =      97156214.656939
+Iteration:   716   Dual objective     =      97156213.616498
+Iteration:   887   Dual objective     =      97156213.566390
+Iteration:  1064   Dual objective     =      97156195.553095
+Iteration:  1278   Dual objective     =      97152782.010734
+Iteration:  1480   Dual objective     =      97150463.617872
+Iteration:  1654   Dual objective     =      97150463.584384
+Iteration:  1811   Dual objective     =      97150463.568232
+Iteration:  1958   Dual objective     =      97150463.530166
+Iteration:  2130   Dual objective     =      97150463.426494
+Iteration:  2276   Dual objective     =      97150463.231539
+Iteration:  2449   Dual objective     =      97150462.825576
+Iteration:  2608   Dual objective     =      97150452.538180
+Iteration:  2788   Dual objective     =      97150447.885316
+Iteration:  2947   Dual objective     =      97150284.402664
+Iteration:  3134   Dual objective     =      97150273.802247
+Iteration:  3299   Dual objective     =      97126923.403679
+Iteration:  3455   Dual objective     =      97102657.539622
+Iteration:  3580   Dual objective     =      97095768.426247
+Iteration:  3693   Dual objective     =      97042854.108762
+Removing perturbation.
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.31sec (det. 296.24 ticks)
+
+
+Proven optimal solution
+MIP Solution:     97042775.344800    (7014 iterations, 3 nodes)
+Final Solve:      97042775.344800    (3723 iterations)
+
+Best possible:    97042775.344800
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model vSPD_NMIR
+--- Executing after solve: elapsed 0:00:28.931
+--- vSPDsolve.gms(7301) 110 Mb
+--- Putfile rep C:\GitHub\vSPD\Programs\ProgressReport.txt
+--- Putfile SummaryResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_SummaryResults_TP.csv
+--- Putfile IslandResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_IslandResults_TP.csv
+--- Putfile BusResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BusResults_TP.csv
+--- Putfile NodeResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_NodeResults_TP.csv
+--- Putfile PublishedEnergyPrices_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_PublishedEnergyPrices_TP.csv
+--- Putfile PublishedReservePrices_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_PublishedReservePrices_TP.csv
+--- Putfile OfferResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_OfferResults_TP.csv
+--- Putfile BidResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BidResults_TP.csv
+--- Putfile ReserveResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_ReserveResults_TP.csv
+--- Putfile riskResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_RiskResults_TP.csv
+--- Putfile BranchResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BranchResults_TP.csv
+--- Putfile BrCstrResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_BrConstraintResults_TP.csv
+--- Putfile MnodeCstrResults_TP C:\GitHub\vSPD\Output\RTD_20240620_TP24_BF\RTD_20240620_TP24_BF_MnodeConstraintResults_TP.csv
+*** Status: Normal completion
+--- Job vSPDsolve.gms Stop 07/05/24 12:02:46 elapsed 0:00:29.293
+        1 file(s) copied.
+--- runvSPD.gms(165) 4 Mb
+        1 file(s) moved.
+--- Putfile rep C:\GitHub\vSPD\Programs\ProgressReport.txt
+--- Putfile temp C:\GitHub\vSPD\Programs\temp.put
+--- Putfile vSPDcase C:\GitHub\vSPD\Programs\vSPDcase.inc
+*** Status: Normal completion
+--- Job runvSPD.gms Stop 07/05/24 12:02:46 elapsed 0:00:30.182
