@@ -65,7 +65,7 @@ Sets
 
   casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
 
-  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity, badPriceFactor /
 
   islPar(*)           'The various parameters applied for each island'  / HVDCsecRisk, HVDCsecRiskECE, HVDCSecSubtractor, sharedNFRLoadOffset, RMTlimitFIR, RMTlimitSIR, MWIPS, PSD, Losses, SPDLoadCalcLosses/
 
@@ -756,7 +756,7 @@ ObjectiveFunction..
 =e=
   sum[ t, SYSTEMBENEFIT(t) - SYSTEMCOST(t) - SCARCITYCOST(t)
         - SYSTEMPENALTYCOST(t) - RESERVESHAREPENALTY(t) ]
-*  + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
+  + sum[(t,n,blk), scarcityEnrgLimit(t,n,blk) * scarcityEnrgPrice(t,n,blk)]
   ;
 
 * Defined as the net sum of generation cost + reserve cost
@@ -1834,8 +1834,8 @@ Model vSPD /
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
   ManualIslandRiskCalculation
 * Reserve
-  PLSRReserveProportionMaximum, ReserveOfferDefinition
-  EnergyAndReserveMaximum
+  PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit,
+  ReserveOfferDefinition, EnergyAndReserveMaximum
 * Reserve scarcity/shortfall
   HVDCRiskReserveShortFallCalculation
   ManualRiskReserveShortFallCalculation
@@ -2051,8 +2051,8 @@ Model vSPD_BranchFlowMIP /
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
 * Reserve
-  PLSRReserveProportionMaximum, ReserveOfferDefinition
-  EnergyAndReserveMaximum
+  PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit,
+  ReserveOfferDefinition, EnergyAndReserveMaximum
 * Reserve scarcity/shortfall
   HVDCRiskReserveShortFallCalculation
   ManualRiskReserveShortFallCalculation
