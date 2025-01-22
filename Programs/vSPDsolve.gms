@@ -727,7 +727,7 @@ HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <
 * Data appllied to Real Time Pricing
   useGenInitialMW(ca,dt)            = dtParameter(ca,dt,'useGenInitialMW') ;
   useActualLoad(ca,dt)              = dtParameter(ca,dt,'useActualLoad') ;
-  maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') ;  
+  maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') + 5${dtParameter(ca,dt,'maxSolveLoop')=0} ;
   islandMWIPS(ca,dt,isl)            = islandParameter(ca,dt,isl,'MWIPS') ;
   islandPDS(ca,dt,isl)              = islandParameter(ca,dt,isl,'PSD') ;
   islandLosses(ca,dt,isl)           = islandParameter(ca,dt,isl,'Losses') ;
