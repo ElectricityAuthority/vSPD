@@ -14,7 +14,9 @@ Sets
   casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
   
   dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD,
-                                                                          useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity /
+                                                                          useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity,
+                                                                          badPriceFactor /
+
   bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct, factor /
   
   offerPar(*)         'The various parameters required for each offer'  / solvedInitialMW, initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW,

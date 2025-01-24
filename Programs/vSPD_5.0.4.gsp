@@ -1,6 +1,6 @@
 {
     "file": "runvSPD.gms",
-    "name": "vSPD_5.0.0",
+    "name": "vSPD_5.0.4",
     "nodes": [
         {
             "codecMib": 106,
@@ -12,6 +12,12 @@
             "codecMib": 106,
             "file": "runvSPD.gms",
             "name": "runvSPD.gms",
+            "type": "gms"
+        },
+        {
+            "codecMib": 106,
+            "file": "vSPDfileList.inc",
+            "name": "vSPDfileList.inc",
             "type": "gms"
         },
         {

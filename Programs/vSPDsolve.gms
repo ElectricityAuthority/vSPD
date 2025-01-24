@@ -13,7 +13,7 @@ Created on:           1st November 2022 for Real Time Pricing
 
 Directory of code sections in vSPDsolve.gms:
 1. Declare symbols and initialise some of them
-2. Load data from GDX file f
+2. Load data from GDX file
 3. Manage model and data compatability
 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
 5. Initialise constraint violation penalties (CVPs)
@@ -105,11 +105,12 @@ Parameters
   busDisconnected(ca,dt,b)                               'Indication if bus is disconnected or not (1 = Yes) for the study trade periods'
   busClearedPrice(ca,dt,b)                               'Highest cleared price of offer at bus'
 * Unmmaped bus defificit temporary parameters
-  temp_busDeficit_TP(ca,dt,b)                             'Bus deficit violation for each trade period'
+  temp_busDeficit_TP(ca,dt,b)                            'Bus deficit violation for each trade period'
 * TN - Replacing invalid prices after SOS1
   busSOSinvalid(ca,dt,b)                                 'Buses with invalid bus prices after SOS1 solve'
   numberofbusSOSinvalid(ca,dt)                           'Number of buses with invalid bus prices after SOS1 solve --> used to check if invalid prices can be improved (numberofbusSOSinvalid reduces after each iteration)'
-  
+  badPriceFactor(ca,dt)                                  'A multiplier applied to the maximum energy scarcity price to identify invalid prices af SOS1 solve.'
+  scarcityEnergyPriceMax(ca,dt)                          'Maximum energy scarcity price used to set the bounds for SOS1 valid price'
  ;
 
 * Extra sets and parameters used for energy shortfall check
@@ -726,12 +727,12 @@ HVDCReserveBreakPointMWLoss(ca,dt,isl,rsbp) $ { (ord(rsbp) > 7) and (ord(rsbp) <
 * Data appllied to Real Time Pricing
   useGenInitialMW(ca,dt)            = dtParameter(ca,dt,'useGenInitialMW') ;
   useActualLoad(ca,dt)              = dtParameter(ca,dt,'useActualLoad') ;
-  maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') ;
+  maxSolveLoops(ca,dt)              = dtParameter(ca,dt,'maxSolveLoop') + 5${dtParameter(ca,dt,'maxSolveLoop')=0} ;
   islandMWIPS(ca,dt,isl)            = islandParameter(ca,dt,isl,'MWIPS') ;
   islandPDS(ca,dt,isl)              = islandParameter(ca,dt,isl,'PSD') ;
   islandLosses(ca,dt,isl)           = islandParameter(ca,dt,isl,'Losses') ;
   SPDLoadCalcLosses(ca,dt,isl)      = islandParameter(ca,dt,isl,'SPDLoadCalcLosses') ;
-
+  
 * For PRICERESPONSIVEIG generators, The RTD rampRateUp is capped: (4.7.2.2)
 rampRateUp(offer(ca,dt,o)) $ { (studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and intermittentOffer(offer) and priceResponsive(offer) }
                            = Min[ rampRateUp(offer), dtParameter(ca,dt,'igIncreaseLimitRTD')*60/intervalDuration(ca,dt) ] ;
@@ -744,8 +745,11 @@ requiredLoad(node(ca,dt,n)) $ { sum[ (bd,blk) $ ( bidNode(ca,dt,bd,n) and (bidPa
 * Initialize energy scarcity limits and prices ---------------------------------
 energyScarcityEnabled(ca,dt)                 = dtParameter(ca,dt,'enrgScarcity') ;
 reserveScarcityEnabled(ca,dt)                = dtParameter(ca,dt,'resrvScarcity') ;
+badPriceFactor(ca,dt)                        = dtParameter(ca,dt,'badPriceFactor') ;
+badPriceFactor(ca,dt) $ { badPriceFactor(ca,dt) = 0 } = 5;
 scarcityResrvIslandLimit(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'limitMW') ;
 scarcityResrvIslandPrice(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'price') ;
+scarcityEnergyPriceMax(ca,dt)                = smax(blk, scarcityNationalFactor(ca,dt,blk,'price')); 
 
 
 * TN - Pivot or demand analysis begin
@@ -761,7 +765,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_1.gms"
 * Need to initiate value for this parameters before it is used
 o_offerEnergy_TP(ca,dt,o) = 0;
 
-LoadCalcLosses(ca,dt,isl) = islandLosses(ca,dt,isl);
+LoadCalcLosses(ca,dt,isl) = (islandLosses(ca,dt,isl)$(dailymode = 0)) + (SPDLoadCalcLosses(ca,dt,isl)$(dailymode = 1));
 DidShortfallTransfer(ca,dt,n) = 0;
 ShortfallDisabledScaling(ca,dt,n) = 0;
 CheckedNodeCandidate(ca,dt,n) = 0;
@@ -770,13 +774,14 @@ PotentialModellingInconsistency(ca,dt,n)= 1 $ { sum[ branch(ca,dt,br) $ nodeouta
 unsolvedDT(ca,dt) = yes $ case2dt(ca,dt) ;
 VSPDModel(ca,dt) = 0 ;
 LoopCount(ca,dt) = 1 $ case2dt(ca,dt) ;
-IsNodeDead(ca,dt,n) = 0 ;
 nodeTonode(ca,dt,n,n1) = node2node(ca,dt,n,n1) ;
 
 While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 
   loop[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt) and (LoopCount(ca,dt) <= maxSolveLoops(ca,dt)) },
+  if (LoopCount(ca,dt)=1, putclose rep ' '/;)
   repeat(
+    putclose rep 'Loop Count: ' LoopCount(ca,dt):<2:0 /;
 *   7a. Reset all sets, parameters and variables -------------------------------
     option clear = t ;
 *   Generation variables
@@ -864,7 +869,9 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
     option clear = LPmodelSolved ;
 *   End reset
 
-
+*   IsNodeDead is a temporary term and need to be refesh at the start of every loop
+    IsNodeDead(ca,dt,n) = 0 ;
+    
 *   7b. Initialise current trade period and model data -------------------------
     t(ca,dt)= yes  $ case2dt(ca,dt);
 
@@ -872,7 +879,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
     generationStart(offer(t(ca,dt),o)) $ { sum[ o1, generationStart(ca,dt,o1)] = 0 } = sum[ dt1 $ (ord(dt1) = ord(dt)-1), o_offerEnergy_TP(ca,dt1,o) ] ;
 
 *   4.10 Real Time Pricing - First RTD load calculation --------------------------
-    if ( {studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201} and (dailymode = 0),
+    if ( {studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201} and {(dailymode = 0) or sum[n,DidShortfallTransfer(ca,dt,n)]},
 *       Calculate first target total load [4.10.6.5]
 *       Island-level MW load forecast. For the fist loop, uses islandLosses(t,isl)
         TargetTotalLoad(t,isl) = islandMWIPS(t,isl) + islandPDS(t,isl) - LoadCalcLosses(t,isl) + sum[n $ nodeIsland(t,n,isl),dispatchedGeneration(t,n) - dispatchedLoad(t,n) ];
@@ -954,6 +961,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
     GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = enrgOfrMW(genOfrBlk) ;
     GENERATIONBLOCK.fx(t,o,blk) $ (not genOfrBlk(t,o,blk)) = 0 ;
 *   Constraint 6.1.1.3 - Fix the invalid generation to Zero
+    GENERATION.fx(t,o) $ (not offer(t,o)) = 0 ;
     GENERATION.fx(offer(t,o)) $ (not posEnrgOfr(offer)) = 0 ;
 *   Constraint 6.1.1.4 - Set Upper Bound for intermittent generation
     GENERATION.up(offer(t,o)) $ { intermittentOffer(offer) and priceResponsive(offer) } = min[ potentialMW(offer), reserveGenMax(offer) ] ;
@@ -1035,7 +1043,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
     RESERVESHORTFALLGROUPBLK.up(t,isl,rg,resC,riskC,blk) = scarcityResrvIslandLimit(t,isl,resC,blk) $ reserveScarcityEnabled(t);
     RESERVESHORTFALLGROUPBLK.fx(t,isl,rg,resC,riskC,blk) $ (not reserveScarcityEnabled(t)) = 0;
     RESERVESHORTFALLGROUP.fx(t,isl,rg,resC,riskC)        $ (not reserveScarcityEnabled(t)) = 0;
-;
+
 *======= RISK & RESERVE EQUATIONS END ==========================================
 
 *   Updating the variable bounds before model solve end
@@ -1049,6 +1057,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
         option bratio = 1 ;
         vSPD_NMIR.Optfile = 1 ;
         vSPD_NMIR.optcr = MIPOptimality ;
+        vSPD_NMIR.optca = MIPOptimality ;
         vSPD_NMIR.reslim = MIPTimeLimit ;
         vSPD_NMIR.iterlim = MIPIterationLimit ;
         solve vSPD_NMIR using mip maximizing NETBENEFIT ;
@@ -1058,14 +1067,14 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
 *       Post a progress message to the console and for use by EMI.
         if (ModelSolved = 1,
             loop (t,
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved successfully.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
                              'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /
             ) ;
         elseif (ModelSolved = 0) and (sequentialSolve = 1),
             loop (t,
                 unsolvedDT(t) = no;
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved unsuccessfully.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved unsuccessfully.'/
             ) ;
 
         ) ;
@@ -1145,7 +1154,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             SOS1_solve(t)  = yes;
             loop(t,
                 unsolvedDT(t) = no;
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved successfully for branch integer.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved successfully for branch integer.'/
                              'Objective function value: ' NETBENEFIT.l:<15:4 /
                              'Violations cost         : ' TOTALPENALTYCOST.l:<15:4 /;
 *              set vSPD model to solve as normal mode after successfully resolving using branch integer
@@ -1155,7 +1164,7 @@ $Ifi %opMode%=='DPS' $include "Demand\vSPDSolveDPS_2.gms"
             loop (t,
                 unsolvedDT(t) = yes;
                 VSPDModel(t) = 2;
-                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is 1st solved unsuccessfully for branch integer.'/
+                putclose rep 'The caseID: ' ca.tl ' (' dt.tl ') is solved unsuccessfully for branch integer.'/
             ) ;
         ) ;
     ) ;
@@ -1214,17 +1223,18 @@ $offtext
                                or ( sum[ b1 $ { busElectricalIsland(t,b1) = busElectricalIsland(bus) } , busGeneration(t,b1) ] = 0 ) } = 1 ;
 
 *   Energy Shortfall Check (7.2)
-    if( (smax[t, dtParameter(t,'enrgShortfallTransfer')] = 1) and (LoopCount(ca,dt) < maxSolveLoops(ca,dt)),
+    if( (smax[t, dtParameter(t,'enrgShortfallTransfer')] = 1) and (LoopCount(ca,dt) < maxSolveLoops(ca,dt))
+    and ((dailymode = 0) or (studyMode(ca,dt) <> 101 and studyMode(ca,dt) <> 201)),
 
 *       Check for dead nodes
         IsNodeDead(t,n) = 1 $ ( sum[b $ { NodeBus(t,n,b) and (busDisconnected(t,b)=0) }, NodeBusAllocationFactor(t,n,b) ] = 0 ) ;
         IsNodeDead(t,n) $ ( sum[b $ NodeBus(t,n,b), busElectricalIsland(t,b) ] = 0 ) = 1 ;
         NodeElectricalIsland(t,n) = smin[b $ NodeBusAllocationFactor(t,n,b), busElectricalIsland(t,b)] ;
         InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
+        InputInitialLoad(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
 
 *       Check if a pnode has energy shortfall
-        EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
-        EnergyShortfallMW(t,n) $ { IsNodeDead(t,n) and (NodeElectricalIsland(t,n) > 0) } = 0;
+        EnergyShortfallMW(t,n) $ Node(t,n) = ENERGYSCARCITYNODE.l(t,n);
 
 *       a.Checkable Energy Shortfall:
 *       If a node has an EnergyShortfallMW greater than zero and the node has LoadIsOverride set to False and the Pnode has InstructedShedActivepn set to False, then EnergyShortfall is checked.
@@ -1233,100 +1243,128 @@ $offtext
 *       c. Eligible for Removal:
 *       An EnergyShortfall is eligible for removal if there is evidence that it is due to a modelling inconsistency (as described below),
 *       or if the RTD Required Load calculation used an estimated initial load rather than an actual initial load, or if the node is dead node.
-        EligibleShortfallRemoval(t,n) = 1 $ [EnergyShortFallCheck(t,n)  and { PotentialModellingInconsistency(t,n) or (useActualLoad(t) = 0) or (LoadIsBad(t,n) = 1) or (IsNodeDead(t,n) = 1) }] ;
+        EligibleShortfallRemoval(t,n) = 1 $ [ EnergyShortFallCheck(t,n)  and
+                                              { PotentialModellingInconsistency(t,n)
+                                            or (useActualLoad(t) = 0)
+                                            or (LoadIsBad(t,n) = 1)
+                                            or (IsNodeDead(t,n) = 1)
+                                              }
+                                            ] ;
 
 *       d. Shortfall Removal:
 *       If the shortfall at a node is eligible for removal then a Shortfall Adjustment quantity is subtracted from the requiredLoad in order to remove the shortfall.
 *       If the node is dead node then the Shortfall Adjustment is equal to EnergyShortfallMW otherwise it's equal to EnergyShortfall plus EnergyShortfallRemovalMargin.
-*       If the adjustment would make requiredLoad negative then requiredLoad is assigned a value of zero. The adjusted node has DidShortfallTransferpn set to True so that
-*       the RTD Required Load calculation does not recalculate its requiredLoad at this node
+        ShortfallAdjustmentMW(t,n) = 0;
         ShortfallAdjustmentMW(t,n) $ EligibleShortfallRemoval(t,n) = [ dtParameter(ca,dt,'shortfallRemovalMargin') $ (IsNodeDead(t,n) = 0) ] + EnergyShortfallMW(t,n) ;
-
+        loop( (t,n) $ EnergyShortfallMW(t,n),
+            putclose rep n.tl ' reqd:'requiredLoad(t,n)'MW, short:' EnergyShortfallMW(t,n)'MW. Eligible for shortfall removal: ' EligibleShortfallRemoval(t,n):<1:0 /;
+        ) ;
+*       If the adjustment would make requiredLoad negative then requiredLoad is assigned a value of zero.
         requiredLoad(t,n) $ EligibleShortfallRemoval(t,n) = requiredLoad(t,n) - ShortfallAdjustmentMW(t,n) ;
         requiredLoad(t,n) $ { EligibleShortfallRemoval(t,n) and (requiredLoad(t,n) < 0) } = 0 ;
+*       The adjusted node has DidShortfallTransferpn set to True so that the RTD Required Load calculation does not recalculate its requiredLoad at this node
         DidShortfallTransfer(t,n) $ EligibleShortfallRemoval(t,n) = 1 ;
-        
-        loop( (t,n) $ EnergyShortfallMW(t,n),
-            putclose rep 'Energy shortfall at node' n.tl,': ', EnergyShortfallMW(t,n)' MW. Eligible for shortfall removal: ' EligibleShortfallRemoval(t,n):<1:0 /;
-        ) ;
+
+
+*       Tuong: This "unsolvedDT" is vSPD parameter to flag if a vSPD resolve is required.
+*       If energy shortfall transfer is eligible, then we will need to resolve
+        unsolvedDT(t) = yes $ sum[n, EligibleShortfallRemoval(t,n)] ;
+*       If there is energy shortfall that is ineligible to transfer but the shortfall scaling is not yet disabled
+*       then we still need to resolve after disable scaling at the shortfall node
+        unsolvedDT(t) $ sum[n $ (ShortfallDisabledScaling(t,n)=0),EnergyShortFallCheck(t,n)] = yes ;
 
 $ontext
-e. Shortfall Transfer:
-If the previous step adjusts requiredLoad then the processing will search for a transfer target Pnode to receive the Shortfall Adjustment quantity (the search process is described below).
-If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node and the DidShortfallTransfer of the transfer target Pnode flag is set to True.
-k. Shortfall Transfer Target:
-In the Shortfall Transfer step, the search for a transfer target node proceeds as follows.
-The first choice candidate for price transfer source is the PnodeTransferPnode of the target Pnode. If the candidate is ineligible then the new candidate will be the PnodeTransferPnode of the candidate,
-if any, but only if this new candidate has not already been visited in this search. The process of locating and checking candidates will continue until an eligible transfer Pnode is located or until no
-more candidates are found. A candidate node isn't eligible as a target if it has a non-zero EnergyShortfall in the solution being checked or had one in the solution of a previous solve loop, or if the
-candidate node has LoadIsOverridepn set to True, or if the candidate node has InstructedShedActivepn set to True, or if the node with the shortfall is not in Electrical Island 0 and the ElectricalIsland
-of the candidate node is not the same as the ElectricalIslandpn of the node with the shortfall, or if the candidate node is in the set of DEADPNODESpn.
-$offtext
-        unsolvedDT(t) = yes $ sum[n $ EligibleShortfallRemoval(t,n), ShortfallAdjustmentMW(t,n)] ;
+        e. Shortfall Transfer:
+        If the previous step adjusts requiredLoad then the processing will search for a transfer target Pnode
+        to receive the Shortfall Adjustment quantity (the search process is described in (k) below).
+        If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the
+        transfer target node and the DidShortfallTransfer of the transfer target Pnode flag is set to True.
+        k. Shortfall Transfer Target:
+        In the Shortfall Transfer step, the search for a transfer target node proceeds as follows.
+        The first choice candidate for price transfer source is the PnodeTransferPnode [nodeToNode] of the target Pnode.
+        If the candidate is ineligible then the new candidate will be the PnodeTransferPnode of the candidate,
+        if any, but only if this new candidate has not already been visited in this search.
+        The process of locating and checking candidates will continue until an eligible transfer Pnode is located
+        or until no more candidates are found.
+$offtext        
+*       A candidate node isn't eligible as a target if:
+*       it has a non-zero EnergyShortfall in the solution being checked
+*       or had one in the solution of a previous solve loop,
+        nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, EnergyShortfallMW(t,n1)] = yes;
+        nodeTonode(t,n,n1) $ sum[n2 $ { nodeTonode(t,n,n2) and nodeTonode(t,n1,n2) }, EnergyShortfallMW(t,n1)] = no;
 
-        while( sum[n, ShortfallAdjustmentMW(ca,dt,n)],
+*       or if the candidate node is in the set of DEADPNODESpn.
+        nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes ;
+        nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no ;
+*       or if the candidate node has LoadIsOverridepn set to True,
+*       or if the candidate node has InstructedShedActivepn set to True,
+*       or if the node with the shortfall is not in Electrical Island 0
+*          and the ElectricalIsland of the candidate node is not the same
+*          as the ElectricalIslandpn of the node with the shortfall,
+        ShortfallTransferFromTo(nodeTonode(t,n,n1))
+            $ { (ShortfallAdjustmentMW(t,n) > 0)
+            and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
+            and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
+              } = 1;
 
-* If target node is dead --> move it up to one level
-            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, IsNodeDead(t,n1)] = yes ;
-            nodeTonode(t,n,n1) $ IsNodeDead(t,n1) = no ;
-
-* This is the approach SPD is using (a deficit node is ineligible as target node )
-            nodeTonode(t,n,n2) $ sum[n1 $ { nodeTonode(t,n,n1) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = yes;
-            nodeTonode(t,n,n1) $ sum[n2 $ { nodeTonode(t,n,n2) and nodeTonode(t,n1,n2) }, ShortfallAdjustmentMW(t,n1)] = no;
-            
-*           Check if shortfall from node n is eligibly transfered to node n1
-            ShortfallTransferFromTo(nodeTonode(t,n,n1))
-                $ { (ShortfallAdjustmentMW(t,n) > 0)
-                and (LoadIsOverride(t,n1) = 0) and (InstructedShedActive(t,n1) = 0)
-                and [ (NodeElectricalIsland(t,n) = NodeElectricalIsland(t,n1)) or (NodeElectricalIsland(t,n) = 0) ]
-                  } = 1;
-                  
-* This is the approach Tuong propose (a target node is ineligible as target node twice consecutively  ))          
-*            nodeTonode(t,n,n2) $ sum[n1 $ nodeTonode(t,n1,n2), ShortfallTransferFromTo(t,n,n1)] = yes;
-*            nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1) = no;
-
-            loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
-               putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
-            ) ;           
-
-*           If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
-            requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-            PotentialModellingInconsistency(t,n1) $ {(IsNodeDead(t,n1)=0) and sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] } = 1;
-
-*           If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
-            ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
-
-*           and the DidShortfallTransfer of the transfer target node is set to 1
-            DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
-
-*           Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
-            ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
-            ShortfallTransferFromTo(t,n,n1) = 0;
-         
+        loop( nodeTonode(t,n,n1) $ ShortfallTransferFromTo(t,n,n1),
+           putclose rep 'Short fall adjustment from 'n.tl' to ', n1.tl,': ', ShortfallAdjustmentMW(t,n)' MW' /;
         ) ;
+            
+        loop( node(t,n) $ {ShortfallAdjustmentMW(t,n) and (sum[n1, ShortfallTransferFromTo(t,n,n1)]=0)},
+           putclose rep n.tl ' no transfer destination found for shortfall ' /;
+        ) ;
+                     
+
+*       If a transfer target node is found then the ShortfallAdjustmentMW is added to the requiredLoad of the transfer target node
+        requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 0)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+        requiredLoad(t,n1) $ (IsNodeDead(t,n1) = 1)= requiredLoad(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+        PotentialModellingInconsistency(t,n1) $ {(IsNodeDead(t,n1)=0) and sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] } = 1;
+
+*       If a transfer target node is dead then the ShortfallAdjustmentMW is added to the ShortfallAdjustmentMW of the transfer target node
+        ShortfallAdjustmentMW(t,n1) $ (IsNodeDead(t,n1) = 1) = ShortfallAdjustmentMW(t,n1) + sum[ n $ ShortfallTransferFromTo(t,n,n1), ShortfallAdjustmentMW(t,n)] ;
+
+*       and the DidShortfallTransfer of the transfer target node is set to 1
+        DidShortfallTransfer(t,n1) $ sum[n, ShortfallTransferFromTo(t,n,n1)] = 1 ;
+
+*       Set ShortfallAdjustmentMW at node n to zero if shortfall can be transfered to a target node
+        ShortfallAdjustmentMW(t,n) $ sum[ n1, ShortfallTransferFromTo(t,n,n1)] = 0;
+        ShortfallTransferFromTo(t,n,n1) = 0;
+ 
 
 *       f. Scaling Disabled: For an RTD schedule type, when an EnergyShortfallpn is checked but the shortfall is not eligible for removal then ShortfallDisabledScalingpn is set to True
 *       which will prevent the RTD Required Load calculation from scaling InitialLoad.
         ShortfallDisabledScaling(t,n) = 1 $ { (EnergyShortFallCheck(t,n)=1) and (EligibleShortfallRemoval(t,n)=0) };
+
+        
     ) ;
 *   Energy Shortfall Check End
 
-    unsolvedDT(t) $ {(studyMode(t) = 101 or studyMode(t) = 201) and (LoopCount(t)=1) and (dailymode = 0)} = yes ;
+
+    unsolvedDT(t) $ { ( studyMode(t) = 101 or studyMode(t) = 201 ) and (LoopCount(t)=1) and (dailymode = 0)} = yes ;
+    
+    loop( (t,isl) $ { not unsolvedDT(t) and ( studyMode(t) = 101 or studyMode(t) = 201 )
+                and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )
+                    },
+        putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5') and SPD (' SPDLoadCalcLosses(t,isl):<10:5').' ;        
+
+    );
+    
     if ((studyMode(ca,dt) = 101 or studyMode(ca,dt) = 201) and sum[unsolvedDT(t),1] and (dailymode = 0),
-        putclose rep 'Recalculate RTD Island Loss for next solve'/;
+
         LoadCalcLosses(t,isl)= Sum[ (br,frB,toB) $ { ACbranch(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) }, sum[ fd, ACBRANCHLOSSESDIRECTED.l(t,br,fd) ] + branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and ( busIsland(t,toB,isl) or busIsland(t,frB,isl) ) }, 0.5 * branchFixedLoss(t,br) ]
                              + Sum[ (br,frB,toB) $ { HVDClink(t,br) and branchBusDefn(t,br,frB,toB) and busIsland(t,toB,isl) and (not (busIsland(t,frB,isl))) }, HVDCLINKLOSSES.l(t,br) ] ;
-*        LoopCount(t) = LoopCount(t) + 1 ;
-        loop( (t,isl) $ {unsolvedDT(t) and ( SPDLoadCalcLosses(t,isl) > 0 ) and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )},
-            putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ') --> Using SPD calculated losses instead.' ;
-*            putclose rep 'Using SPDLoadCalcLosses instead. /' ;
-            LoadCalcLosses(t,isl) = SPDLoadCalcLosses(t,isl);
 
+        loop( (t,isl),
+            putclose rep 'Recalulated losses for ' isl.tl ' is ' LoadCalcLosses(t,isl):<10:5;
         );
+        
     ) ;
+
     LoopCount(t) = LoopCount(t) + 1 ;
     unsolvedDT(t) $ (LoopCount(t) > maxSolveLoops(t)) = no ;
+ 
 *   6g. Collect and store results of solved periods into output parameters -----
 *   Note: all the price relating outputs such as costs and revenues are calculated in section 7.b
 
@@ -1367,13 +1405,20 @@ $offtext
 *           Calculate highest bus cleared offere price        
             busClearedPrice(ca,dt,b) = smax[ (o,n,blk) $ { offernode(ca,dt,o,n) and nodebus(ca,dt,n,b) and (GENERATIONBLOCK.l(ca,dt,o,blk) > 0) },enrgOfrPrice(ca,dt,o,blk) ];
             busSOSinvalid(ca,dt,b)
-                = 1 $ { [ ( busPrice(ca,dt,b) = 0 ) or ( busPrice(ca,dt,b) > 0.9*deficitBusGenerationPenalty ) or ( busPrice(ca,dt,b) < -0.9*surplusBusGenerationPenalty )
-                        or (busPrice(ca,dt,b)=busClearedPrice(ca,dt,b) ) or (busPrice(ca,dt,b)=busClearedPrice(ca,dt,b) + 0.0005 ) or (busPrice(ca,dt,b)=busClearedPrice(ca,dt,b) - 0.0005 )   ]
-                    and bus(ca,dt,b)  and [ not busDisconnected(ca,dt,b) ]  and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
+                = 1 $ { [ ( busPrice(ca,dt,b) = 0 )
+                       or ( busPrice(ca,dt,b) >  badPriceFactor(ca,dt) * scarcityEnergyPriceMax(ca,dt)  )
+                       or ( busPrice(ca,dt,b) < -badPriceFactor(ca,dt) * scarcityEnergyPriceMax(ca,dt)  )
+                       or ( busPrice(ca,dt,b) = busClearedPrice(ca,dt,b) )
+                       or ( busPrice(ca,dt,b) = busClearedPrice(ca,dt,b) + 0.0005 )
+                       or ( busPrice(ca,dt,b) = busClearedPrice(ca,dt,b) - 0.0005 )
+                        ]
+                    and bus(ca,dt,b)
+                    and [ not busDisconnected(ca,dt,b) ]
+                    and [ busLoad(ca,dt,b) = busGeneration(ca,dt,b) ]
                     and [ sum[(br,fd) $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) }, ACBRANCHFLOWDIRECTED.l(ca,dt,br,fd) ] = 0 ]
                     and [ sum[ br     $ { BranchBusConnect(ca,dt,br,b) and branch(ca,dt,br) } , 1 ] > 0 ]
                       };
-*display busClearedPrice,busSOSinvalid;
+
             numberofbusSOSinvalid(ca,dt) = 2*sum[b, busSOSinvalid(ca,dt,b)];
 
             While ( sum[b, busSOSinvalid(ca,dt,b)] < numberofbusSOSinvalid(ca,dt) ,
@@ -1417,18 +1462,26 @@ $ontext
         and its associated ACNode are assigned a price of zero.
 $offtext
         if ( dtParameter(t,'priceTransfer') and [(studyMode(t) = 101) or (studyMode(t) = 201) or (studyMode(t) = 130) or (studyMode(t) = 131)],
+*           A node is dead if it is not associated through allocation factor with any live bus.
             o_nodeDead_TP(t,n) = 1 $ { ( sum[b $ {NodeBus(t,n,b) and (not busDisconnected(t,b)) }, NodeBusAllocationFactor(t,n,b) ] = 0 )} ;
+*           If a node is dead, it will be considered to price transfer.
             o_nodeDeadPrice_TP(t,n) $ o_nodeDead_TP(t,n) = 1;
-            
-*            o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { [ ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = Smin[b1 $ NodeBus(t,n1,b1), busElectricalIsland(t,b1)] )
-*                                                  or ( Smin[b $ NodeBus(t,n,b), busElectricalIsland(t,b)] = 0 ) ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0)  };
-                                                  
+*           Define the live node n1 where the price is transfre to dead node n 
             o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { Sum[ isl $ { nodeIsland(t,n,isl) and nodeIsland(t,n1,isl) },1 ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0) };
+
+*           Continue until no more price transfer is eligible
             while (sum[ n $ o_nodeDead_TP(t,n), o_nodeDeadPrice_TP(t,n) ],
+*               Transfre price from a live node to a dead node            
                 o_nodePrice_TP(t,n) $ { o_nodeDead_TP(t,n) and o_nodeDeadPrice_TP(t,n) } = sum[n1 $ o_nodeDeadPriceFrom_TP(t,n,n1), o_nodePrice_TP(t,n1) ] ;
-                o_nodeDeadPrice_TP(t,n) = 1 $ sum[n1 $ o_nodeDead_TP(t,n1), o_nodeDeadPriceFrom_TP(t,n,n1) ];
-                o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n) = 1 $ { sum[ n1 $ { node2node(t,n1,n2) and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ] } ;
-                o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;
+*               If a dead node has price transferred to --> no longer dead in this while loop
+                o_nodeDead_TP(t,n) $ {o_nodeDead_TP(t,n) and sum[n1 $ {not o_nodeDead_TP(t,n1)}, o_nodeDeadPriceFrom_TP(t,n,n1) ]} = 0;
+*               Redefine the node from which price is transferred to remaining dead node   
+                o_nodeDeadPriceFrom_TP(t,n,n1) = 1 $ { Sum[ isl $ { nodeIsland(t,n,isl) and nodeIsland(t,n1,isl) },1 ] and o_nodeDead_TP(t,n) and node2node(t,n,n1) and ( o_nodeDead_TP(t,n1) = 0) };            
+*               Redefine the list of dead node to be considered for price transfer
+                o_nodeDeadPrice_TP(t,n) = 1 $ sum[n1 $ {not o_nodeDead_TP(t,n1)}, o_nodeDeadPriceFrom_TP(t,n,n1) ];
+*               The following code is not neccessary. It redefines where the price of a dead node come from  
+*                o_nodeDeadPriceFrom_TP(t,n,n2) $ o_nodeDeadPrice_TP(t,n) = 1 $ { sum[ n1 $ { node2node(t,n1,n2) and o_nodeDeadPriceFrom_TP(t,n,n1) }, 1 ] } ;
+*                o_nodeDeadPriceFrom_TP(t,n,n1) $ o_nodeDead_TP(t,n1) = 0 ;           
             ) ;
         ) ;
 
@@ -1484,7 +1537,6 @@ $offtext
             ) ;
 
             Loop (n $ sum[ b $ changedDeficitBus(t,b), busNodeAllocationFactor(t,b,n)],
-                o_nodePrice_TP(t,n) = deficitBusGenerationPenalty ;
                 o_nodeDeficit_TP(t,n) = sum[ b $ busNodeAllocationFactor(t,b,n), busNodeAllocationFactor(t,b,n) * o_busDeficit_TP(t,b) ] ;
             ) ;
 
@@ -1492,7 +1544,8 @@ $offtext
         ) ;
 * TN - post processing unmapped generation deficit buses end
 
-        o_nodeDeficit_TP(t,n) $ Node(t,n)
+*        o_nodeDeficit_TP(t,n) $ Node(t,n)
+        o_nodeDeficit_TP(t,n) $ {Node(t,n) and not IsNodeDead(t,n)}
             = ENERGYSCARCITYNODE.l(t,n) + sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * DEFICITBUSGENERATION.l(t,b) ] ;
 
         o_nodeSurplus_TP(t,n) $ Node(t,n) = sum[ b $ NodeBus(t,n,b), busNodeAllocationFactor(t,b,n) * SURPLUSBUSGENERATION.l(t,b) ] ;
