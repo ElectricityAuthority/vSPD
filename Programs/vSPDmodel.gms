@@ -65,7 +65,7 @@ Sets
 
   casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
 
-  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity, badPriceFactor /
+  dtPar(*)            'The various parameters applied for datetime'     / usegeninitialMW, enrgShortfallTransfer, priceTransfer, replaceSurplusPrice, igIncreaseLimitRTD, useActualLoad, dontScaleNegLoad, maxSolveLoop, shortfallRemovalMargin, enrgScarcity, resrvScarcity, badPriceFactor, CommRiskDoCheckResOffers, CommRiskDoRiskAdjustment /
 
   islPar(*)           'The various parameters applied for each island'  / HVDCsecRisk, HVDCsecRiskECE, HVDCSecSubtractor, sharedNFRLoadOffset, RMTlimitFIR, RMTlimitSIR, MWIPS, PSD, Losses, SPDLoadCalcLosses/
 
@@ -140,7 +140,9 @@ Sets
   bidTrader(ca,dt,bd,trdr<)             'Bids and the corresponding trader for the different trading periods'
 
 * Risk sets
-  riskGroupOffer(ca,dt,rg<,o,riskC)     'Mappimg of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
+  riskGroupOffer(ca,dt,rg<,o,riskC)     'Mapping of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
+  riskGroupOfferIL(ca,dt,rg<,o,riskC)   'Mapping of risk group to IL offers in current trading period for each risk class - SPD version 15.0 update'
+    
   ;
 
 
@@ -185,6 +187,7 @@ Parameters
 * Risk and reserve/sharing data
   riskParameter(ca,dt,isl,resC,riskC,riskPar)       'Risk parameters for the different trading periods'
   reserveSharingParameter(ca,dt,resPar)             'Reserve (sharing) parameters for the different trading periods'
+  riskGroupOfferBr(ca,dt,rg<,br,riskC)              'AC branch directional risk factor applied to a risk group for each risk class - SPD version 15.0 update'
 
 * Scarcity data
   scarcityNationalFactor(ca,dt,blk,bidofrCmpnt)      'National energy scarcity factor parameters'
