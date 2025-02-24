@@ -432,8 +432,6 @@ Parameters
   islandLosses(ca,dt,isl)                 'Island estimated losss - used to adjust RTD mode demand'
   SPDLoadCalcLosses(ca,dt,isl)            'Island losses calculated by SPD in the first solve to adjust demand'
   
-
-
   energyScarcityEnabled(ca,dt)                 'Flag to apply energy scarcity (this is different from FP scarcity situation)'
   reserveScarcityEnabled(ca,dt)                'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
   scarcityEnrgLimit(ca,dt,n,blk)               'Node energy scarcity limits'
@@ -441,7 +439,8 @@ Parameters
   scarcityResrvIslandLimit(ca,dt,isl,resC,blk) 'Reserve scarcity limits'
   scarcityResrvIslandPrice(ca,dt,isl,resC,blk) 'Reserve scarcity prices'
 
-
+  commRiskDoRiskAdjustment(ca,dt)              'The CommRiskDoRiskAdjustment would only be set to 0 for testing. If it was set to 0 then the ACSecondaryRiskMW adjustment would not be applied:'
+  commRiskDoCheckResOffers(ca,dt)              'Similarly, the CommRiskDoCheckResOffers would only be set to 0 for testing. If it was set to 0 then the resevre offered on secondary risk is not set to zero'
 
 
 * Real Time Pricing - Calculated parameters
