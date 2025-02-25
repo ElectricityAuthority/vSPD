@@ -141,7 +141,6 @@ Sets
 
 * Risk sets
   riskGroupOffer(ca,dt,rg<,o,riskC)     'Mapping of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
-
   ;
 
 
