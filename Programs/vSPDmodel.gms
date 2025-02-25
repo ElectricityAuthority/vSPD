@@ -71,7 +71,7 @@ Sets
 
   bidofrCmpnt(*)      'Components of the bid and offer'                 / limitMW, price, plsrPct, factor /
 
-  offerPar(*)         'The various parameters required for each offer'  / solvedInitialMW, initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW, riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR /
+  offerPar(*)         'The various parameters required for each offer'  / solvedInitialMW, initialMW, rampUpRate, rampDnRate, resrvGenMax, isIG, FKbandMW, isPriceResponse, potentialMW, riskGenerator, dispatchable, maxFactorFIR, maxFactorSIR, ACSecondaryCERiskMW, ACSecondaryECERiskMW, isCommissioning, isPartStation /
 
   bidPar(*)           'The various parameters required for each offer'  / dispatchable, discrete, difference /
 
@@ -382,7 +382,11 @@ Parameters
   HVDCSecRiskEnabled(ca,dt,isl,riskC)     'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
   riskAdjFactor(ca,dt,isl,resC,riskC)     'Risk adjustment factor for each island, reserve class and risk class'
   HVDCpoleRampUp(ca,dt,isl,resC,riskC)    'HVDC pole MW ramp up capability for each island, reserve class and risk class'
- 
+  
+* Secondary Risk (for comissioning)
+  ACSecondaryRiskOffer(ca,dt,o,riskC)     'Secondary risk associated with a reserve/energy offer'
+  ACSecondaryRiskGroup(ca,dt,rg,riskC)    'Secondary risk associated with a risk group'
+  ACSecondaryRiskBranch(ca,dt,br,riskC)   'Secondary risk associated with a risk branch'
 
 * Reserve Sharing parameters
   reserveShareEnabled(ca,dt,resC)         'Database flag if reserve class resC is sharable'
@@ -1207,6 +1211,7 @@ GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
 =e=
   riskAdjFactor(t,isl,resC,GenRisk)
   * [ GENERATION(t,o)
+    - ACSecondaryRiskOffer(t,o,GenRisk)
     - FreeReserve(t,isl,resC,GenRisk)
     + FKBand(t,o)
     + sum[ resT, RESERVE(t,o,resC,resT) ]
@@ -1314,6 +1319,7 @@ GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
                } , GENERATION(t,o) + FKBand(t,o)
                  + sum[ resT, RESERVE(t,o,resC,resT) ]
          ]
+    - ACSecondaryRiskGroup(t,rg,riskC)
     - FreeReserve(t,isl,resC,GenRisk)
     ]
 * NMIR update
