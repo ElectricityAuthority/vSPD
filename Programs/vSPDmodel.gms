@@ -48,8 +48,8 @@ Sets
   resC(*)             'Definition of fast and sustained instantaneous reserve'  / FIR, SIR /
   riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE /
   resT(*)             'Definition of reserve types (PLSR, TWDR, ILR)'           / PLRO, TWRO, ILRO /
-  
-* Risk/Reserve subset 
+
+* Risk/Reserve subset
   GenRisk(riskC)      'Subset containing generator risks'                       / genRisk, genRiskECE /
   ManualRisk(riskC)   'Subset containting manual risks'                         / manual, manualECE /
   HVDCrisk(riskC)     'Subset containing DCCE and DCECE risks'                  / DCCE, DCECE /
@@ -58,7 +58,7 @@ Sets
   PLRO(resT)          'PLSR reserve type'                                       / PLRO /
   TWRO(resT)          'TWDR reserve type'                                       / TWRO /
   ILRO(resT)          'ILR reserve type'                                        / ILRO /
-  
+
 * Definition of CE and ECE events to support different CE and ECE CVPs
   ContingentEvents(riskC)          'Subset of Risk Classes containing contigent event risks'           / genRisk, DCCE, manual, HVDCsecRisk /
   ExtendedContingentEvent(riskC)   'Subset of Risk Classes containing extended contigent event risk'   / genRiskECE, DCECE, manualECE, HVDCsecRiskECE /
@@ -141,8 +141,7 @@ Sets
 
 * Risk sets
   riskGroupOffer(ca,dt,rg<,o,riskC)     'Mapping of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
-  riskGroupOfferIL(ca,dt,rg<,o,riskC)   'Mapping of risk group to IL offers in current trading period for each risk class - SPD version 15.0 update'
-    
+
   ;
 
 
@@ -187,7 +186,7 @@ Parameters
 * Risk and reserve/sharing data
   riskParameter(ca,dt,isl,resC,riskC,riskPar)       'Risk parameters for the different trading periods'
   reserveSharingParameter(ca,dt,resPar)             'Reserve (sharing) parameters for the different trading periods'
-  riskGroupOfferBr(ca,dt,rg<,br,riskC)              'AC branch directional risk factor applied to a risk group for each risk class - SPD version 15.0 update'
+  directionalRiskFactor(ca,dt,rg<,br,riskC)         'AC branch directional risk factor applied to a risk group for each risk class - SPD version 15.0 update'
 
 * Scarcity data
   scarcityNationalFactor(ca,dt,blk,bidofrCmpnt)      'National energy scarcity factor parameters'
@@ -289,7 +288,8 @@ Sets
 
 * Reserve/Risk
   islandRiskGroup(ca,dt,isl,rg,riskC)    'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
-  
+  islandLinkRiskGroup(ca,dt,isl,rg,riskC)'Mappimg of link risk group to island in current trading period for each risk class - SPD version 15.0 update'
+
 * Reserve Sharing
   rampingConstraint(ca,dt,brCstr)         'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
   bipoleConstraint(ca,dt,isl,brCstr)      'Subset of branch constraints that limit total HVDC sent from an island'
@@ -382,7 +382,7 @@ Parameters
   HVDCSecRiskEnabled(ca,dt,isl,riskC)     'Flag indicating if the HVDC secondary risk is enabled (1 = Yes)'
   riskAdjFactor(ca,dt,isl,resC,riskC)     'Risk adjustment factor for each island, reserve class and risk class'
   HVDCpoleRampUp(ca,dt,isl,resC,riskC)    'HVDC pole MW ramp up capability for each island, reserve class and risk class'
-  
+
 * Secondary Risk (for comissioning)
   ACSecondaryRiskOffer(ca,dt,o,riskC)     'Secondary risk associated with a reserve/energy offer'
   ACSecondaryRiskGroup(ca,dt,rg,riskC)    'Secondary risk associated with a risk group'
@@ -398,7 +398,7 @@ Parameters
   roundPower2MonoLevel(ca,dt)             'HVDC sent value above which one pole is stopped and therefore FIR cannot use round power'
   bipole2MonoLevel(ca,dt)                 'HVDC sent value below which one pole is available to start in the opposite direction and therefore SIR can use round power'
   roPwrZoneExit(ca,dt,resC)               'Above this point there is no guarantee that HVDC sent can be reduced below MonopoleMinimum.'
-  
+
   monopoleMinimum(ca,dt)                  'The lowest level that the sent HVDC sent can ramp down to when round power is not available.'
   HVDCControlBand(ca,dt,rd)               'Modulation limit of the HVDC control system apply to each HVDC direction'
   HVDClossScalingFactor(ca,dt)            'Losses used for full voltage mode are adjusted by a factor of (700/500)^2 for reduced voltage operation'
@@ -420,7 +420,7 @@ Parameters
   HVDCSentBreakPointMWLoss(ca,dt,isl,los)     'Value of ariable losses of the total HVDC sent at the break point    --> lambda segment loss model'
   HVDCReserveBreakPointMWFlow(ca,dt,isl,los)  'Value of total HVDC sent power flow + reserve at the break point     --> lambda segment loss model'
   HVDCReserveBreakPointMWLoss(ca,dt,isl,los)  'Value of post-contingent variable HVDC losses at the break point     --> lambda segment loss model'
-  
+
   sharedNFRLoad(ca,dt,isl)                'Island load, calculated in pre-processing from the required load and the bids. Used as an input to the calculation of SharedNFRMax.'
   sharedNFRMax(ca,dt,isl)                 'Amount of island free reserve that can be shared through HVDC'
   FreeReserve(ca,dt,isl,resC,riskC)       'MW free reserve for each island, reserve class and risk class'
@@ -430,12 +430,12 @@ Parameters
   useGenInitialMW(ca,dt)                  'Flag that if set to 1 indicates that for a schedule that is solving multiple intervals in sequential mode'
   useActualLoad(ca,dt)                    'Flag that if set to 0, initial estimated load [conformingfactor/noncomformingload] is used as initial load '
   maxSolveLoops(ca,dt)                    'The maximum number of times that the Energy Shortfall Check will re-solve the model'
-  
+
   islandMWIPS(ca,dt,isl)                  'Island total generation at the start of RTD run'
   islandPDS(ca,dt,isl)                    'Island pre-solve deviation - used to adjust RTD node demand'
   islandLosses(ca,dt,isl)                 'Island estimated losss - used to adjust RTD mode demand'
   SPDLoadCalcLosses(ca,dt,isl)            'Island losses calculated by SPD in the first solve to adjust demand'
-  
+
   energyScarcityEnabled(ca,dt)                 'Flag to apply energy scarcity (this is different from FP scarcity situation)'
   reserveScarcityEnabled(ca,dt)                'Flag to apply reserve scarcity (this is different from FP scarcity situation)'
   scarcityEnrgLimit(ca,dt,n,blk)               'Node energy scarcity limits'
@@ -688,7 +688,9 @@ Equations
   HVDCIslandSecRiskCalculation_Manual(ca,dt,isl,resC,riskC)    '6.5.1.10: Calculation of the island risk for an HVDC secondary risk to a manual risk.'
   HVDCIslandSecRiskCalculation_Manu_1(ca,dt,isl,resC,riskC)    '6.5.1.10: Calculation of the island risk for an HVDC secondary risk to a manual risk.'
   GenIslandRiskGroupCalculation(ca,dt,isl,rg,resC,riskC)       '6.5.1.11: Calculation of the island risk of risk group.'
-  GenIslandRiskGroupCalculation_1(ca,dt,isl,rg,resC,riskC)     '6.5.1.11: Calculation of the risk of risk group.'
+  GenIslandRiskGroupCalculation_1(ca,dt,isl,rg,resC,riskC)     '6.5.1.11: Calculation of the island risk of risk group.'
+  AClineRiskGroupCalculation(ca,dt,isl,rg,resC,riskC)          '6.5.1.12: Calculation of the island risk of link risk group.'
+  AClineRiskGroupCalculation_1(ca,dt,isl,rg,resC,riskC)        '6.5.1.12: Calculation of the island risk of link risk group.'
 
 * General NMIR equations
   EffectiveReserveShareCalculation(ca,dt,isl,resC,riskC)                           '6.5.2.1 : Calculation of effective shared reserve'
@@ -1319,7 +1321,7 @@ GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
                } , GENERATION(t,o) + FKBand(t,o)
                  + sum[ resT, RESERVE(t,o,resC,resT) ]
          ]
-    - ACSecondaryRiskGroup(t,rg,riskC)
+    - ACSecondaryRiskGroup(t,rg,GenRisk)
     - FreeReserve(t,isl,resC,GenRisk)
     ]
 * NMIR update
@@ -1331,6 +1333,36 @@ GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
 * 6.5.1.11: Calculation of the island risk for risk group
 GenIslandRiskGroupCalculation(t,isl,rg,resC,GenRisk)
   $ islandRiskGroup(t,isl,rg,GenRisk)..
+  ISLANDRISK(t,isl,resC,GenRisk)
+=g=
+  GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
+  ;
+
+* 6.5.1.12: Calculation of the island risk of link risk group.
+AClineRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
+  $ islandLinkRiskGroup(t,isl,rg,GenRisk)..
+  GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
+=e=
+  riskAdjFactor(t,isl,resC,GenRisk)
+  * [ sum[ br $ directionalRiskFactor(t,rg,br,GenRisk)
+              , ACBRANCHFLOW(t,br) * directionalRiskFactor(t,rg,br,GenRisk)]
+
+    + sum[ (o,resT) $ { offerIsland(t,o,isl)
+                    and riskGroupOffer(t,rg,o,GenRisk)
+                      } , RESERVE(t,o,resC,resT)
+         ]
+    - ACSecondaryRiskGroup(t,rg,GenRisk)
+    - FreeReserve(t,isl,resC,GenRisk)
+    ]
+* NMIR update
+- RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk)$reserveShareEnabled(t,resC)
+* Scarcity reserve (only applied for CE risk)
+- RESERVESHORTFALLGROUP(t,isl,rg,resC,GenRisk) $ ContingentEvents(GenRisk)
+  ;
+
+* 6.5.1.12: Calculation of the island risk of link risk group.
+AClineRiskGroupCalculation(t,isl,rg,resC,GenRisk)
+  $ islandLinkRiskGroup(t,isl,rg,GenRisk)..
   ISLANDRISK(t,isl,resC,GenRisk)
 =g=
   GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
@@ -1840,6 +1872,7 @@ Model vSPD /
   HVDCIslandRiskCalculation, HVDCRecCalculation
   GenIslandRiskCalculation, GenIslandRiskCalculation_1
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+  AClineRiskGroupCalculation, AClineRiskGroupCalculation_1
   ManualIslandRiskCalculation
 * Reserve
   PLSRReserveProportionMaximum, ReserveInterruptibleOfferLimit,
@@ -1893,6 +1926,7 @@ Model vSPD_NMIR /
   HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
   GenIslandRiskCalculation, GenIslandRiskCalculation_1
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+  AClineRiskGroupCalculation, AClineRiskGroupCalculation_1
   HVDCSendMustZeroBinaryDefinition
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
@@ -1973,6 +2007,7 @@ Model vSPD_MIP /
   HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
   GenIslandRiskCalculation, GenIslandRiskCalculation_1
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+  AClineRiskGroupCalculation, AClineRiskGroupCalculation_1
   HVDCSendMustZeroBinaryDefinition
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
@@ -2056,6 +2091,7 @@ Model vSPD_BranchFlowMIP /
   HVDCIslandRiskCalculation, HVDCRecCalculation, ManualIslandRiskCalculation
   GenIslandRiskCalculation, GenIslandRiskCalculation_1
   GenIslandRiskGroupCalculation, GenIslandRiskGroupCalculation_1
+  AClineRiskGroupCalculation, AClineRiskGroupCalculation_1
   HVDCIslandSecRiskCalculation_GEN, HVDCIslandSecRiskCalculation_GEN_1
   HVDCIslandSecRiskCalculation_Manual, HVDCIslandSecRiskCalculation_Manu_1
 * Reserve
