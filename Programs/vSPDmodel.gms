@@ -1310,7 +1310,7 @@ HVDCIslandSecRiskCalculation_Manual(t,isl,resC,HVDCSecRisk)
 
 * 6.5.1.11: Calculation of the risk of risk group
 GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
-  $ islandRiskGroup(t,isl,rg,GenRisk)..
+  $ {islandRiskGroup(t,isl,rg,GenRisk) and (not islandLinkRiskGroup(t,isl,rg,GenRisk))}..
   GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
 =e=
   riskAdjFactor(t,isl,resC,GenRisk)
