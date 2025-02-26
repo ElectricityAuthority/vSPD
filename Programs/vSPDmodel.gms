@@ -385,7 +385,6 @@ Parameters
 * Secondary Risk (for comissioning)
   ACSecondaryRiskOffer(ca,dt,o,riskC)     'Secondary risk associated with a reserve/energy offer'
   ACSecondaryRiskGroup(ca,dt,rg,riskC)    'Secondary risk associated with a risk group'
-  ACSecondaryRiskBranch(ca,dt,br,riskC)   'Secondary risk associated with a risk branch'
 
 * Reserve Sharing parameters
   reserveShareEnabled(ca,dt,resC)         'Database flag if reserve class resC is sharable'
