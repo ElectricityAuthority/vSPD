@@ -1,5 +1,0 @@
-epopt = 1e-9
-epint = 0
-eprhs = 1e-6
-epgap = 0
-epagap = 1e-9
