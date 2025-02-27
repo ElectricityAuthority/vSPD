@@ -16,6 +16,12 @@
         },
         {
             "codecMib": 106,
+            "file": "runvSPD.lst",
+            "name": "runvSPD.lst",
+            "type": "lst"
+        },
+        {
+            "codecMib": 106,
             "file": "vSPDfileList.inc",
             "name": "vSPDfileList.inc",
             "type": "gms"
