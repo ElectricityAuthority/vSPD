@@ -1,0 +1,1096 @@
+I,NETDATA,BRANCHNODE,1.0,ID_BRANCH,KEY1,KEY2,KEY3,KEY4,ID_FROMENODE,ID_TOENODE,BRANCHTYPE,MINANGLE,MAXANGLE,NORMALANGLE
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_HEN3      1 ,ALB     ,ALB_HEN3      ,1 ,LN,ALB     220     15      ,HEN     220     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_HPI1      1 ,ALB     ,ALB_HPI1      ,1 ,LN,ALB     220     18      ,HPI     220     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_SVL1      1 ,ALB     ,ALB_SVL1      ,1 ,LN,ALB     220     123     ,SVL     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_SVL2      1 ,ALB     ,ALB_SVL2      ,1 ,LN,ALB     220     1       ,SVL     220     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_WRD1      1 ,ALB     ,ALB_WRD1      ,1 ,LN,ALB     110     65      ,WRD     110     103     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_WRD2      1 ,ALB     ,ALB_WRD2      ,1 ,LN,ALB     110     68      ,WRD     110     102     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_WRD3      1 ,ALB     ,ALB_WRD3      ,1 ,LN,ALB     110     62      ,WRD     110     100     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     ALB_WRD4      1 ,ALB     ,ALB_WRD4      ,1 ,LN,ALB     220     132     ,WRD     220     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRB     BRB_HPI1      1 ,BRB     ,BRB_HPI1      ,1 ,LN,BRB     220     10      ,HPI     220     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRB     BRB_MDN       1 ,BRB     ,BRB_MDN       ,1 ,LN,BRB     220     21      ,MDN     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_HEP1      1 ,HEN     ,HEN_HEP1      ,1 ,LN,HEN     110     72      ,HEP     110     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_HEP2      1 ,HEN     ,HEN_HEP2      ,1 ,LN,HEN     110     66      ,HEP     110     25      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_HEP3      1 ,HEN     ,HEN_HEP3      ,1 ,LN,HEN     110     60      ,HEP     110     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_HEP4      1 ,HEN     ,HEN_HEP4      ,1 ,LN,HEN     110     54      ,HEP     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_HPI1      1 ,HEN     ,HEN_HPI1      ,1 ,LN,HEN     220     11      ,HPI     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTO     HEN_MPE1      2 ,MTO     ,HEN_MPE1      ,2 ,LN,MTO     110     4       ,WEL     110     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MPE     HEN_MPE1      3 ,MPE     ,HEN_MPE1      ,3 ,LN,MPE     110     30      ,MTO     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_MPE1      1 ,HEN     ,HEN_MPE1      ,1 ,LN,HEN     110     57      ,WEL     110     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTO     HEN_MPE2      2 ,MTO     ,HEN_MPE2      ,2 ,LN,MTO     110     1       ,WEL     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MPE     HEN_MPE2      3 ,MPE     ,HEN_MPE2      ,3 ,LN,MPE     110     18      ,MTO     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_MPE2      1 ,HEN     ,HEN_MPE2      ,1 ,LN,HEN     110     51      ,WEL     110     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_SWN       1 ,HEN     ,HEN_SWN       ,1 ,LN,HEN     220     14      ,SWN     220     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEP     HEP_ROS1      1 ,HEP     ,HEP_ROS1      ,1 ,LN,HEP     110     28      ,ROS     110     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEP     HEP_ROS2      1 ,HEP     ,HEP_ROS2      ,1 ,LN,HEP     110     11      ,ROS     110     52      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HOB     HOB_WRD1      1 ,HOB     ,HOB_WRD1      ,1 ,LN,HOB     220     211     ,WRD     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HPI     HPI_MDN1      1 ,HPI     ,HPI_MDN1      ,1 ,LN,HPI     220     10      ,MDN     220     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KOE     KOE_MPE1      1 ,KOE     ,KOE_MPE1      ,1 ,LN,KOE     110     20      ,MPE     110     27      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KOE     KOE_MPE2      1 ,KOE     ,KOE_MPE2      ,1 ,LN,KOE     110     11      ,MPE     110     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KOE     KOE_NGA2      1 ,KOE     ,KOE_NGA2      ,1 ,LN,KOE     110     28      ,NGA     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KOE     KOE_NGA1      1 ,KOE     ,KOE_NGA1      ,1 ,LN,KOE     110     21      ,NGA     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KOE     KOE_KTS1      1 ,KOE     ,KOE_KTS1      ,1 ,LN,KOE     110     40      ,KTS     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KOE     KOE_NGB1      1 ,KOE     ,KOE_NGB1      ,1 ,LN,KOE     110     30      ,NGB     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MDN     MDN_MPE1      1 ,MDN     ,MDN_MPE1      ,1 ,LN,MDN     110     46      ,MPE     110     36      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MDN     MDN_MPE2      1 ,MDN     ,MDN_MPE2      ,1 ,LN,MDN     110     37      ,MPE     110     24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTO     MTO_RWI_1     1 ,MTO     ,MTO_RWI_1     ,1 ,LN,MTO     33      38      ,RWI     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRB     BRB_RUK1      1 ,BRB     ,BRB_RUK1      ,1 ,LN,BRB     33      42      ,RUK     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRB     BRB_RUK2      1 ,BRB     ,BRB_RUK2      ,1 ,LN,BRB     33      43      ,RUK     33      2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_WIR1      1 ,OTA     ,OTA_WIR1      ,1 ,LN,OTA     110     76      ,WIR     110     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_WIR2      1 ,OTA     ,OTA_WIR2      ,1 ,LN,OTA     110     73      ,WIR     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DRY     DRY_GLN1      1 ,DRY     ,DRY_GLN1      ,1 ,LN,DRY     220     6       ,GLN     220     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DRY     DRY_GLN2      1 ,DRY     ,DRY_GLN2      ,1 ,LN,DRY     220     9       ,GLN     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DRY     DRY_TAK_OTA1  1 ,DRY     ,DRY_TAK_OTA1  ,1 ,LN,DRY     220     1       ,TAK     220     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     DRY_TAK_OTA1  2 ,OTA     ,DRY_TAK_OTA1  ,2 ,LN,OTA     220     17      ,TAK     220     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DRY     DRY_TAK_OTA2  1 ,DRY     ,DRY_TAK_OTA2  ,1 ,LN,DRY     220     15      ,TAK     220     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     DRY_TAK_OTA2  2 ,OTA     ,DRY_TAK_OTA2  ,2 ,LN,OTA     220     425     ,TAK     220     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOT     DRY_BOB_HLY2  1 ,BOT     ,DRY_BOB_HLY2  ,1 ,LN,BOT     220     2       ,DRY     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOT     DRY_BOB_HLY2  2 ,BOT     ,DRY_BOB_HLY2  ,2 ,LN,BOT     220     2       ,HLY     220     23      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOB     DRY_BOB_HLY2  3 ,BOB     ,DRY_BOB_HLY2  ,3 ,LN,BOB     220     64      ,BOT     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOT     DRY_BOB_HLY1  1 ,BOT     ,DRY_BOB_HLY1  ,1 ,LN,BOT     220     1       ,DRY     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOT     DRY_BOB_HLY1  2 ,BOT     ,DRY_BOB_HLY1  ,2 ,LN,BOT     220     1       ,HLY     220     95      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOB     DRY_BOB_HLY1  3 ,BOB     ,DRY_BOB_HLY1  ,3 ,LN,BOB     220     70      ,BOT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HEN     HEN_OTA       1 ,HEN     ,HEN_OTA       ,1 ,LN,HEN     220     24      ,OTA     220     429     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HOB     HOB_LST3      1 ,HOB     ,HOB_LST3      ,1 ,LN,HOB     110     256     ,LST     110     25      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HOB     HOB_LST4      1 ,HOB     ,HOB_LST4      ,1 ,LN,HOB     110     257     ,LST     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HOB     HOB_PEN1      1 ,HOB     ,HOB_PEN1      ,1 ,LN,HOB     220     216     ,PEN     220     306     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GLN     KILN_COGEN    1 ,GLN     ,KILN_COGEN    ,1 ,LN,GLN     33      38      ,GLN     33      39      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LST     LST_PEN1      1 ,LST     ,LST_PEN1      ,1 ,LN,LST     110     3       ,PEN     110     52      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LST     LST_PEN2      1 ,LST     ,LST_PEN2      ,1 ,LN,LST     110     2       ,PEN     110     59      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LST     LST_QST1      1 ,LST     ,LST_QST1      ,1 ,LN,LST     110     4       ,QST     110     100     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LST     LST_ROS1      1 ,LST     ,LST_ROS1      ,1 ,LN,LST     110     26      ,ROS     110     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MNG     MNG_OTA1      1 ,MNG     ,MNG_OTA1      ,1 ,LN,MNG     110     28      ,OTA     110     90      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MNG     MNG_OTA2      1 ,MNG     ,MNG_OTA2      ,1 ,LN,MNG     110     11      ,OTA     110     87      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MNG     MNG_ROS1      1 ,MNG     ,MNG_ROS1      ,1 ,LN,MNG     110     25      ,ROS     110     34      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MNG     MNG_ROS2      1 ,MNG     ,MNG_ROS2      ,1 ,LN,MNG     110     8       ,ROS     110     40      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHW     OHW_OTA1      1 ,OHW     ,OHW_OTA1      ,1 ,LN,OHW     220     5       ,OTA     220     34      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHW     OHW_OTA2      1 ,OHW     ,OHW_OTA2      ,1 ,LN,OHW     220     8       ,OTA     220     408     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_PAK3      1 ,OTA     ,OTA_PAK3      ,1 ,LN,OTA     220     31      ,PAK     220     100     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_PAK4      1 ,OTA     ,OTA_PAK4      ,1 ,LN,OTA     220     435     ,PAK     220     104     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_PEN2      1 ,OTA     ,OTA_PEN2      ,1 ,LN,OTA     110     121     ,PEN     110     49      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_PEN5      1 ,OTA     ,OTA_PEN5      ,1 ,LN,OTA     220     404     ,PEN     220     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_PEN6      1 ,OTA     ,OTA_PEN6      ,1 ,LN,OTA     220     56      ,PEN     220     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_ROS1      1 ,OTA     ,OTA_ROS1      ,1 ,LN,OTA     110     118     ,ROS     110     46      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_ROS2      1 ,OTA     ,OTA_ROS2      ,1 ,LN,OTA     110     115     ,ROS     110     28      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_SWN       1 ,OTA     ,OTA_SWN       ,1 ,LN,OTA     220     20      ,SWN     220     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_TIE4      1 ,OTA     ,OTA_TIE4      ,1 ,LN,OTA     220     152     ,OTA     220     415     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_TIE5      1 ,OTA     ,OTA_TIE5      ,1 ,LN,OTA     220     142     ,OTA     220     439     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_WKM1      1 ,OTA     ,OTA_WKM1      ,1 ,LN,OTA     220     48      ,WKM     220     32      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OTA     OTA_WKM2      1 ,OTA     ,OTA_WKM2      ,1 ,LN,OTA     220     41      ,WKM     220     27      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PAK     PAK_PEN3      1 ,PAK     ,PAK_PEN3      ,1 ,LN,PAK     220     102     ,PEN     220     311     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BHL     PAK_WKM1      1 ,BHL     ,PAK_WKM1      ,1 ,LN,BHL     220     1       ,PAK     220     118     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BHL     PAK_WKM1      2 ,BHL     ,PAK_WKM1      ,2 ,LN,BHL     220     1       ,WKM     220     204     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BHL     PAK_WKM2      1 ,BHL     ,PAK_WKM2      ,1 ,LN,BHL     220     2       ,PAK     220     128     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BHL     PAK_WKM2      2 ,BHL     ,PAK_WKM2      ,2 ,LN,BHL     220     2       ,WKM     220     200     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PEN     PEN_R862      1 ,PEN     ,PEN_R862      ,1 ,LN,PEN     220     304     ,PEN     220     305     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_BOB1      1 ,ARI     ,ARI_BOB1      ,1 ,LN,ARI     110     29      ,BOB     110     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HLY     HLY_RHO1      1 ,HLY     ,HLY_RHO1      ,1 ,LN,HLY     33      206     ,RHO     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HLY     HLY_RHO2      1 ,HLY     ,HLY_RHO2      ,1 ,LN,HLY     33      207     ,RHO     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_HAM1      1 ,ARI     ,ARI_HAM1      ,1 ,LN,ARI     110     19      ,HAM     110     82      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_HAM2      1 ,ARI     ,ARI_HAM2      ,1 ,LN,ARI     110     34      ,HAM     110     69      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_HTI       1 ,ARI     ,ARI_HTI       ,1 ,LN,ARI     110     24      ,HTI     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_KIN1      1 ,ARI     ,ARI_KIN1      ,1 ,LN,ARI     110     49      ,KIN     110     30      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_KIN2      1 ,ARI     ,ARI_KIN2      ,1 ,LN,ARI     110     44      ,KIN     110     24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARI     ARI_ONG       1 ,ARI     ,ARI_ONG       ,1 ,LN,ARI     110     39      ,RTO     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ONG     ARI_ONG       2 ,ONG     ,ARI_ONG       ,2 ,LN,ONG     110     10      ,RTO     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HTI     ARI_ONG       3 ,HTI     ,ARI_ONG       ,3 ,LN,HTI     110     12      ,RTO     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BOB     BOB_HAM1      1 ,BOB     ,BOB_HAM1      ,1 ,LN,BOB     110     25      ,HAM     110     57      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CBG     HAM_KPO1      1 ,CBG     ,HAM_KPO1      ,1 ,LN,CBG     110     10      ,HAM     110     76      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CBG     HAM_KPO1      2 ,CBG     ,HAM_KPO1      ,2 ,LN,CBG     110     7       ,KPO     110     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CBG     HAM_KPO2      1 ,CBG     ,HAM_KPO2      ,1 ,LN,CBG     110     3       ,HAM     110     63      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CBG     HAM_KPO2      2 ,CBG     ,HAM_KPO2      ,2 ,LN,CBG     110     6       ,KPO     110     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAM     HAM_OHW1      1 ,HAM     ,HAM_OHW1      ,1 ,LN,HAM     220     29      ,OHW     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAM     HAM_PAO_WHU1  1 ,HAM     ,HAM_PAO_WHU1  ,1 ,LN,HAM     110     60      ,MVE     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MVE     HAM_PAO_WHU1  2 ,MVE     ,HAM_PAO_WHU1  ,2 ,LN,MVE     110     1       ,WHU     110     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MVE     HAM_PAO_WHU1  3 ,MVE     ,HAM_PAO_WHU1  ,3 ,LN,MVE     110     1       ,PAO     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MVE     HAM_PAO_WHU2  3 ,MVE     ,HAM_PAO_WHU2  ,3 ,LN,MVE     110     2       ,PAO     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MVE     HAM_PAO_WHU2  2 ,MVE     ,HAM_PAO_WHU2  ,2 ,LN,MVE     110     2       ,WHU     110     26      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAM     HAM_PAO_WHU2  1 ,HAM     ,HAM_PAO_WHU2  ,1 ,LN,HAM     110     73      ,MVE     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAM     HAM_WKM       1 ,HAM     ,HAM_WKM       ,1 ,LN,HAM     220     22      ,WKM     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HIN     HIN_KPO       1 ,HIN     ,HIN_KPO       ,1 ,LN,HIN     110     2       ,KPO     110     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HLY     HLY_OHW1      1 ,HLY     ,HLY_OHW1      ,1 ,LN,HLY     220     43      ,OHW     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HLY     HLY_OHW2      1 ,HLY     ,HLY_OHW2      ,1 ,LN,HLY     220     56      ,OHW     220     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HLY     HLY_SFD       1 ,HLY     ,HLY_SFD       ,1 ,LN,HLY     220     12      ,SFD     220     22      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HLY     HLY_TWH1      1 ,HLY     ,HLY_TWH1      ,1 ,LN,HLY     220     8       ,TWH     220     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HTI     HTI_TMU1      1 ,HTI     ,HTI_TMU1      ,1 ,LN,HTI     110     17      ,TMU     110     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KPO     KPO_TMU       1 ,KPO     ,KPO_TMU       ,1 ,LN,KPO     110     12      ,TMU     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KPU     KPU_WKO1      1 ,KPU     ,KPU_WKO1      ,1 ,LN,KPU     110     9       ,WKO     110     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KPU     KPU_WKO2      1 ,KPU     ,KPU_WKO2      ,1 ,LN,KPU     110     6       ,WKO     110     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHW     OHW_WKM1      1 ,OHW     ,OHW_WKM1      ,1 ,LN,OHW     220     19      ,WKM     220     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHW     OHW_WKM2      1 ,OHW     ,OHW_WKM2      ,1 ,LN,OHW     220     29      ,WKM     220     205     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TMN     TMN_TWH1      1 ,TMN     ,TMN_TWH1      ,1 ,LN,TMN     220     8       ,TWH     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TUK     TUK_TWH1      1 ,TUK     ,TUK_TWH1      ,1 ,LN,TUK     33      1       ,TWH     33      33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WHU     WHU_WKO1      1 ,WHU     ,WHU_WKO1      ,1 ,LN,WHU     110     8       ,WKO     110     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WHU     WHU_WKO2      1 ,WHU     ,WHU_WKO2      ,1 ,LN,WHU     110     20      ,WKO     110     10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ANI     ANI_EDG1      1 ,ANI     ,ANI_EDG1      ,1 ,LN,ANI     33      8       ,EDG     33      115     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ANI     ANI_MAT       1 ,ANI     ,ANI_MAT       ,1 ,LN,ANI     110     1       ,MAT     110     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARA     ARA_WRK       1 ,ARA     ,ARA_WRK       ,1 ,LN,ARA     220     9       ,WRK     220     26      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATI     ATI_OHK       1 ,ATI     ,ATI_OHK       ,1 ,LN,ATI     220     33      ,OHK     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATI     ATI_R112      1 ,ATI     ,ATI_R112      ,1 ,LN,ATI     220     23      ,ATI     220     33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATI     ATI_TRK1      1 ,ATI     ,ATI_TRK1      ,1 ,LN,ATI     220     18      ,TRK     220     74      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATI     ATI_TRK2      1 ,ATI     ,ATI_TRK2      ,1 ,LN,ATI     220     13      ,TRK     220     71      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATI     ATI_WKM       1 ,ATI     ,ATI_WKM       ,1 ,LN,ATI     220     28      ,WKM     220     24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_KAW1      1 ,EDG     ,EDG_KAW1      ,1 ,LN,EDG     110     51      ,KAW     110     42      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_KAW2      1 ,EDG     ,EDG_KAW2      ,1 ,LN,EDG     110     69      ,KAW     110     73      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_KAW3      1 ,EDG     ,EDG_KAW3      ,1 ,LN,EDG     220     25      ,KAW     220     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_OWH2      1 ,EDG     ,EDG_OWH2      ,1 ,LN,EDG     110     48      ,OWH     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_RGT1      1 ,EDG     ,EDG_RGT1      ,1 ,LN,EDG     33      111     ,RGT     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_TRK1      1 ,EDG     ,EDG_TRK1      ,1 ,LN,EDG     220     11      ,TRK     220     62      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_TRK2      1 ,EDG     ,EDG_TRK2      ,1 ,LN,EDG     220     18      ,TRK     220     65      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDG     EDG_WAI2      1 ,EDG     ,EDG_WAI2      ,1 ,LN,EDG     110     131     ,WAI     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAG     KAG_GEN       1 ,KAG     ,KAG_GEN       ,1 ,LN,KAG     110     12      ,KAW     110     59      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WAI     HTR_WAI1      1 ,WAI     ,HTR_WAI1      ,1 ,LN,WAI     33      101     ,HTR     33      2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_MAT1      1 ,KAW     ,KAW_MAT1      ,1 ,LN,KAW     110     56      ,MAT     110     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_MAT2      1 ,KAW     ,KAW_MAT2      ,1 ,LN,KAW     110     62      ,MAT     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_OHK       1 ,KAW     ,KAW_OHK       ,1 ,LN,KAW     220     16      ,OHK     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_ONU1      1 ,KAW     ,KAW_ONU1      ,1 ,LN,KAW     11      124     ,ONU     11      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_ONU2      1 ,KAW     ,KAW_ONU2      ,1 ,LN,KAW     11      126     ,ONU     11      2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_ONU3      1 ,KAW     ,KAW_ONU3      ,1 ,LN,KAW     11      127     ,ONU     11      3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_ONU4      1 ,KAW     ,KAW_ONU4      ,1 ,LN,KAW     11      128     ,ONU     11      4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAW     KAW_TAM       1 ,KAW     ,KAW_TAM       ,1 ,LN,KAW     11      99      ,TAM     11      3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LFD     KIN_TRK1      2 ,LFD     ,KIN_TRK1      ,2 ,LN,LFD     110     1       ,TRK     110     33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KIN     KIN_TRK1      1 ,KIN     ,KIN_TRK1      ,1 ,LN,KIN     110     11      ,LFD     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LFD     KIN_TRK2      2 ,LFD     ,KIN_TRK2      ,2 ,LN,LFD     110     5       ,TRK     110     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KIN     KIN_TRK2      1 ,KIN     ,KIN_TRK2      ,1 ,LN,KIN     110     18      ,LFD     110     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMI     KMI_TGA1      1 ,KMI     ,KMI_TGA1      ,1 ,LN,KMI     33      3       ,TGA     33      54      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMO     KMO_MTM_TGA2  1 ,KMO     ,KMO_MTM_TGA2  ,1 ,LN,KMO     110     10      ,PIE     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTM     KMO_MTM_TGA2  3 ,MTM     ,KMO_MTM_TGA2  ,3 ,LN,MTM     110     13      ,PIE     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PIE     KMO_MTM_TGA2  2 ,PIE     ,KMO_MTM_TGA2  ,2 ,LN,PIE     110     1       ,TGA     110     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMO     KMO_MTM1      1 ,KMO     ,KMO_MTM1      ,1 ,LN,KMO     110     19      ,MTM     110     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMO     KMO_TGA1      1 ,KMO     ,KMO_TGA1      ,1 ,LN,KMO     110     1       ,TGA     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMO     KMO_TMI1      1 ,KMO     ,KMO_TMI1      ,1 ,LN,KMO     110     16      ,TMI     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMO     KMO_TRK1      1 ,KMO     ,KMO_TRK1      ,1 ,LN,KMO     220     106     ,TRK     220     102     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KMO     KMO_TRK2      1 ,KMO     ,KMO_TRK2      ,1 ,LN,KMO     220     115     ,TRK     220     107     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MOK     MOK_WKM       1 ,MOK     ,MOK_WKM       ,1 ,LN,MOK     110     1       ,WKM     110     51      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTI     MTI_WKM1      1 ,MTI     ,MTI_WKM1      ,1 ,LN,MTI     220     37      ,WKM     220     42      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTI     MTI_WKM2      1 ,MTI     ,MTI_WKM2      ,1 ,LN,MTI     220     40      ,WKM     220     37      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTI     MTI_WPA       1 ,MTI     ,MTI_WPA       ,1 ,LN,MTI     220     43      ,WPA     220     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NAP     NAP_NTM1      1 ,NAP     ,NAP_NTM1      ,1 ,LN,NAP     220     20      ,NTM     220     32      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NAP     NAP_OKI2      1 ,NAP     ,NAP_OKI2      ,1 ,LN,NAP     220     1       ,OKI     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NAP     NAP_RKA1      1 ,NAP     ,NAP_RKA1      ,1 ,LN,NAP     11      8       ,RKA     11      11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NAP     NAP_WRK2      1 ,NAP     ,NAP_WRK2      ,1 ,LN,NAP     220     26      ,WRK     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHK     OHK_WRK       1 ,OHK     ,OHK_WRK       ,1 ,LN,OHK     220     8       ,WRK     220     31      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OKE     OKE_OWH       1 ,OKE     ,OKE_OWH       ,1 ,LN,OKE     110     1       ,OWH     110     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OKE     OKE_TMI       1 ,OKE     ,OKE_TMI       ,1 ,LN,OKE     110     1       ,TMI     110     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OKE     OKE_TRK       1 ,OKE     ,OKE_TRK       ,1 ,LN,OKE     110     1       ,TRK     110     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OKI     OKI_WRK1      1 ,OKI     ,OKI_WRK1      ,1 ,LN,OKI     220     9       ,WRK     220     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PPI     PPI_THI1      1 ,PPI     ,PPI_THI1      ,1 ,LN,PPI     220     3       ,THI     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RKA     RKA_WRK1      1 ,RKA     ,RKA_WRK1      ,1 ,LN,RKA     33      3       ,WRK     33      60      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RKA     RKA_WRK2      1 ,RKA     ,RKA_WRK2      ,1 ,LN,RKA     33      3       ,WRK     33      64      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ROT     ROT_TRK1      1 ,ROT     ,ROT_TRK1      ,1 ,LN,ROT     110     17      ,TRK     110     24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ROT     ROT_TRK2      1 ,ROT     ,ROT_TRK2      ,1 ,LN,ROT     110     10      ,TRK     110     27      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ROT     ROT_WHE1      1 ,ROT     ,ROT_WHE1      ,1 ,LN,ROT     110     7       ,WHE     110     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TAA     TAA_WRK1      1 ,TAA     ,TAA_WRK1      ,1 ,LN,TAA     33      11      ,WRK     33      60      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TAB     TAB_TAC1      1 ,TAB     ,TAB_TAC1      ,1 ,LN,TAB     33      60      ,TAC     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TAB     TAB_WRK1      1 ,TAB     ,TAB_WRK1      ,1 ,LN,TAB     220     4       ,WRK     220     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,THI     THI_WKM1      1 ,THI     ,THI_WKM1      ,1 ,LN,THI     220     7       ,WKM     220     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,THI     THI_WRK1      1 ,THI     ,THI_WRK1      ,1 ,LN,THI     220     13      ,WRK     220     54      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TKU     TKU_WKM1      1 ,TKU     ,TKU_WKM1      ,1 ,LN,TKU     220     35      ,WKM     220     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TKU     TKU_WKM2      1 ,TKU     ,TKU_WKM2      ,1 ,LN,TKU     220     22      ,WKM     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WKM     WKM_TIE1      1 ,WKM     ,WKM_TIE1      ,1 ,LN,WKM     220     93      ,WKM     220     215     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WKM     WKM_TIE2      1 ,WKM     ,WKM_TIE2      ,1 ,LN,WKM     220     91      ,WKM     220     216     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WKM     WKM_WRK1      1 ,WKM     ,WKM_WRK1      ,1 ,LN,WKM     220     217     ,WRK     220     34      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HRP     HRP_RDF1      1 ,HRP     ,HRP_RDF1      ,1 ,LN,HRP     220     6       ,RDF     220     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HRP     HRP_TAB1      1 ,HRP     ,HRP_TAB1      ,1 ,LN,HRP     220     1       ,TAB     220     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,FHL     FHL_RDF1      1 ,FHL     ,FHL_RDF1      ,1 ,LN,FHL     110     30      ,RDF     110     61      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,FHL     FHL_RDF2      1 ,FHL     ,FHL_RDF2      ,1 ,LN,FHL     110     24      ,RDF     110     49      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,FHL     FHL_TUI1      1 ,FHL     ,FHL_TUI1      ,1 ,LN,FHL     110     15      ,TUI     110     37      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,FHL     FHL_WPW1      1 ,FHL     ,FHL_WPW1      ,1 ,LN,FHL     110     33      ,WPW     110     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,FHL     FHL_WPW2      1 ,FHL     ,FHL_WPW2      ,1 ,LN,FHL     110     27      ,WPW     110     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RDF     RDF_TUI1      1 ,RDF     ,RDF_TUI1      ,1 ,LN,RDF     110     58      ,TUI     110     31      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RDF     RDF_TUI2      1 ,RDF     ,RDF_TUI2      ,1 ,LN,RDF     110     46      ,TUI     110     34      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RDF     RDF_WHI1      1 ,RDF     ,RDF_WHI1      ,1 ,LN,RDF     220     12      ,WHI     220     10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RDF     RDF_WTU1      1 ,RDF     ,RDF_WTU1      ,1 ,LN,RDF     220     22      ,WTU     220     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RDF     RDF_WTU2      1 ,RDF     ,RDF_WTU2      ,1 ,LN,RDF     220     19      ,WTU     220     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WHI     WHI_WRK1      1 ,WHI     ,WHI_WRK1      ,1 ,LN,WHI     220     25      ,WRK     220     46      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CST     CST_SFD2      1 ,CST     ,CST_SFD2      ,1 ,LN,CST     110     39      ,SFD     110     104     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRK     BRK_SFD1      1 ,BRK     ,BRK_SFD1      ,1 ,LN,BRK     220     30      ,SFD     220     58      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRK     BRK_SFD2      1 ,BRK     ,BRK_SFD2      ,1 ,LN,BRK     220     20      ,SFD     220     48      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRK     BRK_SFD3      1 ,BRK     ,BRK_SFD3      ,1 ,LN,BRK     220     10      ,SFD     220     38      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CST     CST_HUI1      1 ,CST     ,CST_HUI1      ,1 ,LN,CST     110     27      ,HUI     110     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CST     CST_HUI2      1 ,CST     ,CST_HUI2      ,1 ,LN,CST     110     16      ,HUI     110     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CST     CST_MNI1      1 ,CST     ,CST_MNI1      ,1 ,LN,CST     110     21      ,MNI     110     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HUI     HUI_MNI1      1 ,HUI     ,HUI_MNI1      ,1 ,LN,HUI     110     19      ,MNI     110     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWA     HWA_PTA       1 ,HWA     ,HWA_PTA       ,1 ,LN,HWA     110     25      ,PTA     110     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWA     HWA_SFD1      1 ,HWA     ,HWA_SFD1      ,1 ,LN,HWA     110     102     ,SFD     110     103     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWA     HWA_WAA1      1 ,HWA     ,HWA_WAA1      ,1 ,LN,HWA     110     101     ,WAA     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWA     HWA_WAA2      1 ,HWA     ,HWA_WAA2      ,1 ,LN,HWA     110     20      ,WAA     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWA     HWA_WVY1      1 ,HWA     ,HWA_WVY1      ,1 ,LN,HWA     110     40      ,WVY     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WPP     WPP_WVY1      1 ,WPP     ,WPP_WVY1      ,1 ,LN,WPP     110     1       ,WVY     110     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MKT     MNI_MKE_SFD1  1 ,MKT     ,MNI_MKE_SFD1  ,1 ,LN,MKT     110     1       ,MNI     110     27      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MKT     MNI_MKE_SFD1  2 ,MKT     ,MNI_MKE_SFD1  ,2 ,LN,MKT     110     1       ,SFD     110     95      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MKE     MNI_MKE_SFD1  3 ,MKE     ,MNI_MKE_SFD1  ,3 ,LN,MKE     110     14      ,MKT     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JRT     CST_JRD_SFD1  1 ,JRT     ,CST_JRD_SFD1  ,1 ,LN,JRT     110     1       ,CST     110     33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JRT     CST_JRD_SFD1  2 ,JRT     ,CST_JRD_SFD1  ,2 ,LN,JRT     110     1       ,SFD     110     89      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JRD     CST_JRD_SFD1  3 ,JRD     ,CST_JRD_SFD1  ,3 ,LN,JRD     110     1       ,JRT     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CST     CST_SFD3      1 ,CST     ,CST_SFD3      ,1 ,LN,CST     110     13      ,SFD     110     79      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KPA     OPK_KPI_SFD2  2 ,KPA     ,OPK_KPI_SFD2  ,2 ,LN,KPA     110     1       ,SFD     110     86      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KPA     OPK_KPI_SFD2  3 ,KPA     ,OPK_KPI_SFD2  ,3 ,LN,KPA     110     1       ,KPI     110     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KPA     OPK_KPI_SFD2  1 ,KPA     ,OPK_KPI_SFD2  ,1 ,LN,KPA     110     1       ,OPK     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OPK     OPK_SFD1      1 ,OPK     ,OPK_SFD1      ,1 ,LN,OPK     110     7       ,SFD     110     92      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,SFD     SFD_SPL       1 ,SFD     ,SFD_SPL       ,1 ,LN,SFD     220     122     ,SPL     220     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,SFD     SFD_TMN1      1 ,SFD     ,SFD_TMN1      ,1 ,LN,SFD     220     42      ,TMN     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTR     MTR_R92       1 ,MTR     ,MTR_R92       ,1 ,LN,MTR     110     10      ,MTR     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LTN     LTN_TUR1      1 ,LTN     ,LTN_TUR1      ,1 ,LN,LTN     220     10      ,TUR     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_BRK1      1 ,BPE     ,BPE_BRK1      ,1 ,LN,BPE     220     16      ,BRK     220     36      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_BRK2      1 ,BPE     ,BPE_BRK2      ,1 ,LN,BPE     220     52      ,BRK     220     26      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_LTN2      1 ,BPE     ,BPE_LTN2      ,1 ,LN,BPE     220     58      ,LTN     220     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_MHO1      1 ,BPE     ,BPE_MHO1      ,1 ,LN,BPE     110     104     ,MHO     110     17      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_MHO2      1 ,BPE     ,BPE_MHO2      ,1 ,LN,BPE     110     101     ,MHO     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_MTR1      1 ,BPE     ,BPE_MTR1      ,1 ,LN,BPE     110     86      ,MTR     110     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     BPE_PRM_HAY1  2 ,HAY     ,BPE_PRM_HAY1  ,2 ,LN,HAY     220     26      ,PRT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PRM     BPE_PRM_HAY1  3 ,PRM     ,BPE_PRM_HAY1  ,3 ,LN,PRM     220     50      ,PRT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_PRM_HAY1  1 ,BPE     ,BPE_PRM_HAY1  ,1 ,LN,BPE     220     46      ,PRT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PRM     BPE_PRM_HAY2  3 ,PRM     ,BPE_PRM_HAY2  ,3 ,LN,PRM     220     53      ,PRT     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     BPE_PRM_HAY2  2 ,HAY     ,BPE_PRM_HAY2  ,2 ,LN,HAY     220     20      ,PRT     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_PRM_HAY2  1 ,BPE     ,BPE_PRM_HAY2  ,1 ,LN,BPE     220     21      ,PRT     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_TKU1      1 ,BPE     ,BPE_TKU1      ,1 ,LN,BPE     220     35      ,TKU     220     30      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_TKU2      1 ,BPE     ,BPE_TKU2      ,1 ,LN,BPE     220     30      ,TKU     220     17      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_TNG1      1 ,BPE     ,BPE_TNG1      ,1 ,LN,BPE     220     49      ,TNG     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LTN     BPE_TWC_LTN1  2 ,LTN     ,BPE_TWC_LTN1  ,2 ,LN,LTN     220     6       ,TWT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TWC     BPE_TWC_LTN1  3 ,TWC     ,BPE_TWC_LTN1  ,3 ,LN,TWC     220     7       ,TWT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_TWC_LTN1  1 ,BPE     ,BPE_TWC_LTN1  ,1 ,LN,BPE     220     55      ,TWT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_TWF1      1 ,BPE     ,BPE_TWF1      ,1 ,LN,BPE     33      146     ,TWF     33      3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_TWF2      1 ,BPE     ,BPE_TWF2      ,1 ,LN,BPE     33      149     ,TWF     33      3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_WDV1      1 ,BPE     ,BPE_WDV1      ,1 ,LN,BPE     110     98      ,WDV     110     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_WDV2      1 ,BPE     ,BPE_WDV2      ,1 ,LN,BPE     110     95      ,WDV     110     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTN     BPE_WGN1      2 ,MTN     ,BPE_WGN1      ,2 ,LN,MTN     110     1       ,WGN     110     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_WGN1      1 ,BPE     ,BPE_WGN1      ,1 ,LN,BPE     110     81      ,MTN     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTN     BPE_WGN2      2 ,MTN     ,BPE_WGN2      ,2 ,LN,MTN     110     2       ,WGN     110     10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPE     BPE_WGN2      1 ,BPE     ,BPE_WGN2      ,1 ,LN,BPE     110     78      ,MTN     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DVK     DVK_WDV1      1 ,DVK     ,DVK_WDV1      ,1 ,LN,DVK     110     13      ,WDV     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DVK     DVK_WDV2      1 ,DVK     ,DVK_WDV2      ,1 ,LN,DVK     110     7       ,WDV     110     17      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DVK     DVK_WPW1      2 ,DVK     ,DVK_WPW1      ,2 ,LN,DVK     110     12      ,WPW     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DVK     DVK_WPW2      2 ,DVK     ,DVK_WPW2      ,2 ,LN,DVK     110     6       ,WPW     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LTN     LTN_TWF1      1 ,LTN     ,LTN_TWF1      ,1 ,LN,LTN     33      20      ,TWF     33      6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MTR     MTR_OKN1      1 ,MTR     ,MTR_OKN1      ,1 ,LN,MTR     110     6       ,OKN     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OKN     OKN_ONG1      1 ,OKN     ,OKN_ONG1      ,1 ,LN,OKN     110     7       ,RTR     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NPK     OKN_ONG1      3 ,NPK     ,OKN_ONG1      ,3 ,LN,NPK     110     4       ,RTR     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ONG     OKN_ONG1      2 ,ONG     ,OKN_ONG1      ,2 ,LN,ONG     110     7       ,RTR     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RPO     RPO_TNG1      1 ,RPO     ,RPO_TNG1      ,1 ,LN,RPO     220     13      ,TNG     220     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RPO     RPO_WRK1      1 ,RPO     ,RPO_WRK1      ,1 ,LN,RPO     220     7       ,WRK     220     10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TAP     TAP_WDV1      1 ,TAP     ,TAP_WDV1      ,1 ,LN,TAP     110     1       ,WDV     110     42      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TRH     TRH_TWC1      1 ,TRH     ,TRH_TWC1      ,1 ,LN,TRH     33      2       ,TWC     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,WGN     WGN_WVY1      1 ,WGN     ,WGN_WVY1      ,1 ,LN,WGN     110     7       ,WVY     110     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CPK     CPK_WIL1      1 ,CPK     ,CPK_WIL1      ,1 ,LN,CPK     110     7       ,WIL     110     50      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MHT     CPK_WWD_WIL2  1 ,MHT     ,CPK_WWD_WIL2  ,1 ,LN,MHT     110     1       ,WIL     110     38      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MHT     CPK_WWD_WIL2  3 ,MHT     ,CPK_WWD_WIL2  ,3 ,LN,MHT     110     1       ,WWD     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CPK     CPK_WWD_WIL2  2 ,CPK     ,CPK_WWD_WIL2  ,2 ,LN,CPK     110     8       ,MHT     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MHT     CPK_WWD_WIL3  1 ,MHT     ,CPK_WWD_WIL3  ,1 ,LN,MHT     110     2       ,WIL     110     41      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MHT     CPK_WWD_WIL3  3 ,MHT     ,CPK_WWD_WIL3  ,3 ,LN,MHT     110     2       ,WWD     110     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CPK     CPK_WWD_WIL3  2 ,CPK     ,CPK_WWD_WIL3  ,2 ,LN,CPK     110     3       ,MHT     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GFD     GFD_HAY1      1 ,GFD     ,GFD_HAY1      ,1 ,LN,GFD     110     7       ,HAY     110     114     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GFD     GFD_HAY2      1 ,GFD     ,GFD_HAY2      ,1 ,LN,GFD     110     4       ,HAY     110     109     ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_MLG1      1 ,HAY     ,HAY_MLG1      ,1 ,LN,HAY     110     101     ,MLG     110     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_MLG2      1 ,HAY     ,HAY_MLG2      ,1 ,LN,HAY     110     95      ,MLG     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_TKR1      1 ,HAY     ,HAY_TKR1      ,1 ,LN,HAY     110     75      ,TKR     110     31      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_TKR2      1 ,HAY     ,HAY_TKR2      ,1 ,LN,HAY     110     72      ,TKR     110     10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_UHT1      1 ,HAY     ,HAY_UHT1      ,1 ,LN,HAY     110     98      ,UHT     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_UHT2      1 ,HAY     ,HAY_UHT2      ,1 ,LN,HAY     110     92      ,UHT     110     17      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JFD     HAY_WIL_LTN1  1 ,JFD     ,HAY_WIL_LTN1  ,1 ,LN,JFD     220     2       ,LTN     220     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_WIL_LTN1  2 ,HAY     ,HAY_WIL_LTN1  ,2 ,LN,HAY     220     23      ,JFD     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JFD     HAY_WIL_LTN1  3 ,JFD     ,HAY_WIL_LTN1  ,3 ,LN,JFD     220     2       ,WIL     220     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JFD     HAY_WIL_LTN2  1 ,JFD     ,HAY_WIL_LTN2  ,1 ,LN,JFD     220     1       ,LTN     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HAY     HAY_WIL_LTN2  2 ,HAY     ,HAY_WIL_LTN2  ,2 ,LN,HAY     220     17      ,JFD     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,JFD     HAY_WIL_LTN2  3 ,JFD     ,HAY_WIL_LTN2  ,3 ,LN,JFD     220     1       ,WIL     220     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KWA     KWA_WIL1      1 ,KWA     ,KWA_WIL1      ,1 ,LN,KWA     110     3       ,WIL     110     53      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KWA     KWA_WIL2      1 ,KWA     ,KWA_WIL2      ,1 ,LN,KWA     110     6       ,WIL     110     58      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MCK     MCK_WIL1      1 ,MCK     ,MCK_WIL1      ,1 ,LN,MCK     33      52      ,WIL     33      87      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MCK     MCK_WIL2      1 ,MCK     ,MCK_WIL2      ,1 ,LN,MCK     33      54      ,WIL     33      89      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MGM     MGM_MST1      1 ,MGM     ,MGM_MST1      ,1 ,LN,MGM     110     15      ,MST     110     17      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MGM     MGM_WDV1      1 ,MGM     ,MGM_WDV1      ,1 ,LN,MGM     110     9       ,WDV     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GYT     MST_UHT1      2 ,GYT     ,MST_UHT1      ,2 ,LN,GYT     110     6       ,UHT     110     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GYT     MST_UHT1      1 ,GYT     ,MST_UHT1      ,1 ,LN,GYT     110     8       ,MST     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GYT     MST_UHT2      2 ,GYT     ,MST_UHT2      ,2 ,LN,GYT     110     15      ,UHT     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GYT     MST_UHT2      1 ,GYT     ,MST_UHT2      ,1 ,LN,GYT     110     17      ,MST     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PNI     PNI_TKR1      1 ,PNI     ,PNI_TKR1      ,1 ,LN,PNI     110     4       ,TKR     110     25      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,PNI     PNI_TKR2      1 ,PNI     ,PNI_TKR2      ,1 ,LN,PNI     110     5       ,TKR     110     19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TKR     TKR_WIL1      1 ,TKR     ,TKR_WIL1      ,1 ,LN,TKR     110     34      ,WIL     110     47      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TKR     TKR_WIL2      1 ,TKR     ,TKR_WIL2      ,1 ,LN,TKR     110     13      ,WIL     110     44      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATU     ATU_DOB1      1 ,ATU     ,ATU_DOB1      ,1 ,LN,ATU     110     7       ,DOB     110     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,IGH     ATU_RFN_IGH1  2 ,IGH     ,ATU_RFN_IGH1  ,2 ,LN,IGH     110     22      ,RFN     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ATU     ATU_RFN_IGH1  1 ,ATU     ,ATU_RFN_IGH1  ,1 ,LN,ATU     110     10      ,RFN     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARG     BLN_KIK       2 ,ARG     ,BLN_KIK       ,2 ,LN,ARG     110     3       ,KIK     110     49      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ARG     BLN_KIK       1 ,ARG     ,BLN_KIK       ,1 ,LN,ARG     110     2       ,BLN     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BLN     BLN_STK1      1 ,BLN     ,BLN_STK1      ,1 ,LN,BLN     110     12      ,STK     110     47      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BLN     BLN_STK2      1 ,BLN     ,BLN_STK2      ,1 ,LN,BLN     110     16      ,STK     110     57      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,COB     COB_STK1      1 ,COB     ,COB_STK1      ,1 ,LN,COB     66      3       ,STK     66      79      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,RFC     DOB_RFN_IGH2  3 ,RFC     ,DOB_RFN_IGH2  ,3 ,LN,RFC     110     1       ,RFN     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,IGH     DOB_RFN_IGH2  2 ,IGH     ,DOB_RFN_IGH2  ,2 ,LN,IGH     110     25      ,RFC     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DOB     DOB_RFN_IGH2  1 ,DOB     ,DOB_RFN_IGH2  ,1 ,LN,DOB     110     21      ,RFC     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,IGH     IGH_KIK1      1 ,IGH     ,IGH_KIK1      ,1 ,LN,IGH     110     17      ,MCH     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KIK     IGH_KIK1      2 ,KIK     ,IGH_KIK1      ,2 ,LN,KIK     110     40      ,MCH     110     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,IGH     IGH_KIK2      1 ,IGH     ,IGH_KIK2      ,1 ,LN,IGH     110     11      ,KIK     110     46      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,IGH     IGH_ROB1      1 ,IGH     ,IGH_ROB1      ,1 ,LN,IGH     110     19      ,ORO     110     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ORO     IGH_ROB1      2 ,ORO     ,IGH_ROB1      ,2 ,LN,ORO     110     3       ,ROB     110     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ORO     IGH_ROB2      2 ,ORO     ,IGH_ROB2      ,2 ,LN,ORO     110     4       ,ROB     110     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,IGH     IGH_ROB2      1 ,IGH     ,IGH_ROB2      ,1 ,LN,IGH     110     29      ,ORO     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KIK     KIK_STK1      1 ,KIK     ,KIK_STK1      ,1 ,LN,KIK     220     11      ,STK     220     13      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KIK     KIK_STK2      1 ,KIK     ,KIK_STK2      ,1 ,LN,KIK     220     5       ,STK     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KIK     KIK_STK3      1 ,KIK     ,KIK_STK3      ,1 ,LN,KIK     110     43      ,STK     110     50      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASY     ASY_SBK       1 ,ASY     ,ASY_SBK       ,1 ,LN,ASY     66      15      ,SBK     66      21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASY     ASY_WPR       1 ,ASY     ,ASY_WPR       ,1 ,LN,ASY     66      18      ,WPR     66      10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_KIK1      1 ,ISL     ,ISL_KIK1      ,1 ,LN,ISL     220     38      ,KIK     220     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_KIK2      1 ,ISL     ,ISL_KIK2      ,1 ,LN,ISL     220     210     ,WPR     220     39      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CUL     ISL_KIK2      3 ,CUL     ,ISL_KIK2      ,3 ,LN,CUL     220     41      ,KIK     220     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CUL     ISL_KIK2      2 ,CUL     ,ISL_KIK2      ,2 ,LN,CUL     220     41      ,WPR     220     39      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_KIK3      1 ,ISL     ,ISL_KIK3      ,1 ,LN,ISL     220     35      ,WPR     220     34      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CUL     ISL_KIK3      3 ,CUL     ,ISL_KIK3      ,3 ,LN,CUL     220     22      ,KIK     220     23      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CUL     ISL_KIK3      2 ,CUL     ,ISL_KIK3      ,2 ,LN,CUL     220     22      ,WPR     220     34      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_NWD1      1 ,ISL     ,ISL_NWD1      ,1 ,LN,ISL     220     59      ,NWD     220     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_SBK1      1 ,ISL     ,ISL_SBK1      ,1 ,LN,ISL     66      102     ,SBK     66      27      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_SBK2      1 ,ISL     ,ISL_SBK2      ,1 ,LN,ISL     66      97      ,SBK     66      16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     ISL_TKB       1 ,ISL     ,ISL_TKB       ,1 ,LN,ISL     220     30      ,TKB     220     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAI     KAI_SBK1      1 ,KAI     ,KAI_SBK1      ,1 ,LN,KAI     66      9       ,SBK     66      8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KAI     KAI_SBK2      1 ,KAI     ,KAI_SBK2      ,1 ,LN,KAI     66      6       ,SBK     66      24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,SBK     SBK_WPR       1 ,SBK     ,SBK_WPR       ,1 ,LN,SBK     66      11      ,WPR     66      15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASB     ASB_BRY       1 ,ASB     ,ASB_BRY       ,1 ,LN,ASB     220     11      ,BRY     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASB     ASB_HBK1      1 ,ASB     ,ASB_HBK1      ,1 ,LN,ASB     66      30      ,HBK     66      4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASB     ASB_LAU1      1 ,ASB     ,ASB_LAU1      ,1 ,LN,ASB     66      30      ,LAU     66      2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASB     ASB_ISL1      1 ,ASB     ,ASB_ISL1      ,1 ,LN,ASB     220     18      ,ISL     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OPI     ASB_TIM_TWZ1  2 ,OPI     ,ASB_TIM_TWZ1  ,2 ,LN,OPI     220     1       ,TIM     220     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OPI     ASB_TIM_TWZ1  3 ,OPI     ,ASB_TIM_TWZ1  ,3 ,LN,OPI     220     1       ,TWZ     220     32      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASB     ASB_TIM_TWZ1  1 ,ASB     ,ASB_TIM_TWZ1  ,1 ,LN,ASB     220     6       ,OPI     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OPI     ASB_TIM_TWZ2  3 ,OPI     ,ASB_TIM_TWZ2  ,3 ,LN,OPI     220     2       ,TWZ     220     22      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ASB     ASB_TIM_TWZ2  1 ,ASB     ,ASB_TIM_TWZ2  ,1 ,LN,ASB     220     48      ,OPI     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OPI     ASB_TIM_TWZ2  2 ,OPI     ,ASB_TIM_TWZ2  ,2 ,LN,OPI     220     2       ,TIM     220     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BRY     BRY_ISL       1 ,BRY     ,BRY_ISL       ,1 ,LN,BRY     220     15      ,ISL     220     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,STU     STU_TIM       1 ,STU     ,STU_TIM       ,1 ,LN,STU     110     7       ,TIM     110     33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ABY     TIM_TKA       2 ,ABY     ,TIM_TKA       ,2 ,LN,ABY     110     7       ,TIM     110     42      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ABY     TIM_TKA       1 ,ABY     ,TIM_TKA       ,1 ,LN,ABY     110     4       ,TKA     110     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TIM     TIM_TMK1      1 ,TIM     ,TIM_TMK1      ,1 ,LN,TIM     110     30      ,TMK     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TIM     TIM_TMK2      1 ,TIM     ,TIM_TMK2      ,1 ,LN,TIM     110     39      ,TMK     110     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALD     ALD_DOB       1 ,ALD     ,ALD_DOB       ,1 ,LN,ALD     33      2       ,DOB     33      30      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,AMS     AMS_HKK1      1 ,AMS     ,AMS_HKK1      ,1 ,LN,AMS     33      1       ,HKK     33      29      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,COL     COL_HOR2      1 ,COL     ,COL_HOR2      ,1 ,LN,COL     66      27      ,HOR     66      19      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,COL     COL_HOR3      1 ,COL     ,COL_HOR3      ,1 ,LN,COL     66      33      ,HOR     66      22      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CLH     COL_OTI1      1 ,CLH     ,COL_OTI1      ,1 ,LN,CLH     66      2       ,COL     66      15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,APS     COL_OTI1      3 ,APS     ,COL_OTI1      ,3 ,LN,APS     66      1       ,OTI     66      6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,APS     COL_OTI1      2 ,APS     ,COL_OTI1      ,2 ,LN,APS     66      4       ,CLH     66      4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,COL     COL_OTI2      1 ,COL     ,COL_OTI2      ,1 ,LN,COL     66      9       ,OTI     66      15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,DOB     DOB_GYM       1 ,DOB     ,DOB_GYM       ,1 ,LN,DOB     66      9       ,GYM     66      6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GYM     GYM_KUM       1 ,GYM     ,GYM_KUM       ,1 ,LN,GYM     66      22      ,KUM     66      5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HKK     HKK_KUM1      1 ,HKK     ,HKK_KUM1      ,1 ,LN,HKK     66      6       ,KUM     66      3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HKK     HKK_OTI2      1 ,HKK     ,HKK_OTI2      ,1 ,LN,HKK     66      9       ,OTI     66      18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KBT     HOR_KBY_ISL1  3 ,KBT     ,HOR_KBY_ISL1  ,3 ,LN,KBT     66      1       ,KBY     66      8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     HOR_KBY_ISL1  2 ,ISL     ,HOR_KBY_ISL1  ,2 ,LN,ISL     66      87      ,KBT     66      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HOR     HOR_KBY_ISL1  1 ,HOR     ,HOR_KBY_ISL1  ,1 ,LN,HOR     66      13      ,KBT     66      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KBT     HOR_KBY_ISL2  3 ,KBT     ,HOR_KBY_ISL2  ,3 ,LN,KBT     66      2       ,KBY     66      7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HOR     HOR_KBY_ISL2  1 ,HOR     ,HOR_KBY_ISL2  ,1 ,LN,HOR     66      28      ,KBT     66      2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ISL     HOR_KBY_ISL2  2 ,ISL     ,HOR_KBY_ISL2  ,2 ,LN,ISL     66      92      ,KBT     66      2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,KUM     KUM_OTI       1 ,KUM     ,KUM_OTI       ,1 ,LN,KUM     66      1       ,OTI     66      9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LIV     LIV_NWD1      1 ,LIV     ,LIV_NWD1      ,1 ,LN,LIV     220     11      ,NWD     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,AVI     AVI_BEN1      1 ,AVI     ,AVI_BEN1      ,1 ,LN,AVI     220     23      ,BEN     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,AVI     AVI_BEN2      1 ,AVI     ,AVI_BEN2      ,1 ,LN,AVI     220     18      ,BEN     220     23      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,AVI     AVI_WTK       1 ,AVI     ,AVI_WTK       ,1 ,LN,AVI     220     13      ,WTK     220     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BEN     BEN_OHB       1 ,BEN     ,BEN_OHB       ,1 ,LN,BEN     220     26      ,OHB     220     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BEN     BEN_OHC       1 ,BEN     ,BEN_OHC       ,1 ,LN,BEN     220     29      ,OHC     220     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BEN     BEN_TWZ       1 ,BEN     ,BEN_TWZ       ,1 ,LN,BEN     220     15      ,TWZ     220     45      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CML     CML_FKN1      1 ,CML     ,CML_FKN1      ,1 ,LN,CML     110     23      ,FKN     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CML     CML_FKN2      1 ,CML     ,CML_FKN2      ,1 ,LN,CML     110     27      ,FKN     110     3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CML     CYD_TWZ1      2 ,CML     ,CYD_TWZ1      ,2 ,LN,CML     220     6       ,TWZ     220     30      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CML     CYD_TWZ1      1 ,CML     ,CYD_TWZ1      ,1 ,LN,CML     220     3       ,CYD     220     32      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CML     CYD_TWZ2      2 ,CML     ,CYD_TWZ2      ,2 ,LN,CML     220     4       ,TWZ     220     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CML     CYD_TWZ2      1 ,CML     ,CYD_TWZ2      ,1 ,LN,CML     220     1       ,CYD     220     26      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LIV     LIV_NSY       1 ,LIV     ,LIV_NSY       ,1 ,LN,LIV     220     7       ,NSY     220     10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,LIV     LIV_WTK       1 ,LIV     ,LIV_WTK       ,1 ,LN,LIV     220     10      ,WTK     220     4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NSY     NSY_PRU1      1 ,NSY     ,NSY_PRU1      ,1 ,LN,NSY     33      30      ,PRU     33      3       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NSY     NSY_ROX       1 ,NSY     ,NSY_ROX       ,1 ,LN,NSY     220     5       ,ROX     220     32      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPC     OAM_BPT_WTK1  3 ,BPC     ,OAM_BPT_WTK1  ,3 ,LN,BPC     110     1       ,BPT     110     5       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPC     OAM_BPT_WTK1  2 ,BPC     ,OAM_BPT_WTK1  ,2 ,LN,BPC     110     1       ,WTK     110     28      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPC     OAM_BPT_WTK1  1 ,BPC     ,OAM_BPT_WTK1  ,1 ,LN,BPC     110     1       ,OAM     110     7       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPD     OAM_STU_WTK2  2 ,BPD     ,OAM_STU_WTK2  ,2 ,LN,BPD     110     1       ,WTK     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BPD     OAM_STU_WTK2  4 ,BPD     ,OAM_STU_WTK2  ,4 ,LN,BPD     110     1       ,GNY     110     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GNY     OAM_STU_WTK2  3 ,GNY     ,OAM_STU_WTK2  ,3 ,LN,GNY     110     1       ,STU     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GNY     OAM_STU_WTK2  1 ,GNY     ,OAM_STU_WTK2  ,1 ,LN,GNY     110     1       ,OAM     110     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHA     OHA_TWZ1      1 ,OHA     ,OHA_TWZ1      ,1 ,LN,OHA     220     7       ,TWZ     220     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHA     OHA_TWZ2      1 ,OHA     ,OHA_TWZ2      ,1 ,LN,OHA     220     16      ,TWZ     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHB     OHB_TWZ       1 ,OHB     ,OHB_TWZ       ,1 ,LN,OHB     220     20      ,TWZ     220     51      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,OHC     OHC_TWZ       1 ,OHC     ,OHC_TWZ       ,1 ,LN,OHC     220     20      ,TWZ     220     48      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,TKB     TKB_TWZ       1 ,TKB     ,TKB_TWZ       ,1 ,LN,TKB     220     9       ,TWZ     220     52      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOT     NMA_GOR_TMH2  1 ,GOT     ,NMA_GOR_TMH2  ,1 ,LN,GOT     220     2       ,NMA     220     42      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOT     NMA_GOR_TMH2  2 ,GOT     ,NMA_GOR_TMH2  ,2 ,LN,GOT     220     2       ,TMH     220     21      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOR     NMA_GOR_TMH2  3 ,GOR     ,NMA_GOR_TMH2  ,3 ,LN,GOR     220     63      ,GOT     220     2       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOT     NMA_GOR_TMH1  1 ,GOT     ,NMA_GOR_TMH1  ,1 ,LN,GOT     220     1       ,NMA     220     45      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOT     NMA_GOR_TMH1  2 ,GOT     ,NMA_GOR_TMH1  ,2 ,LN,GOT     220     1       ,TMH     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOR     NMA_GOR_TMH1  3 ,GOR     ,NMA_GOR_TMH1  ,3 ,LN,GOR     220     53      ,GOT     220     1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BAL     BAL_GOR       1 ,BAL     ,BAL_GOR       ,1 ,LN,BAL     110     6       ,GOR     110     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BWK     BAL_HWB       2 ,BWK     ,BAL_HWB       ,2 ,LN,BWK     110     5       ,HWB     110     60      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BAL     BAL_HWB       1 ,BAL     ,BAL_HWB       ,1 ,LN,BAL     110     12      ,BWK     110     8       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BAL     BAL_MSG1      1 ,BAL     ,BAL_MSG1      ,1 ,LN,BAL     33      38      ,MSG     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BAL     BAL_MSG2      1 ,BAL     ,BAL_MSG2      ,1 ,LN,BAL     33      41      ,MSG     33      1       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BDE     BDE_EDN       1 ,BDE     ,BDE_EDN       ,1 ,LN,BDE     110     6       ,EDN     110     6       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BDE     BDE_GOR       1 ,BDE     ,BDE_GOR       ,1 ,LN,BDE     110     11      ,GOR     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,BWK     BWK_WPI       1 ,BWK     ,BWK_WPI       ,1 ,LN,BWK     110     1       ,WPI     110     20      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CYD     CYD_ROX1      1 ,CYD     ,CYD_ROX1      ,1 ,LN,CYD     220     10      ,ROX     220     23      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,CYD     CYD_ROX2      1 ,CYD     ,CYD_ROX2      ,1 ,LN,CYD     220     15      ,ROX     220     18      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,EDN     EDN_INV       1 ,EDN     ,EDN_INV       ,1 ,LN,EDN     110     15      ,INV     110     64      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOR     GOR_ROX       1 ,GOR     ,GOR_ROX       ,1 ,LN,GOR     110     8       ,ROX     110     75      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_ROX1      1 ,HWB     ,HWB_ROX1      ,1 ,LN,HWB     110     56      ,ROX     110     83      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_ROX2      1 ,HWB     ,HWB_ROX2      ,1 ,LN,HWB     110     48      ,ROX     110     78      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_SDN       1 ,HWB     ,HWB_SDN       ,1 ,LN,HWB     220     6       ,SDN     220     16      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_TMH       1 ,HWB     ,HWB_TMH       ,1 ,LN,HWB     220     9       ,TMH     220     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_WPIA      1 ,HWB     ,HWB_WPIA      ,1 ,LN,HWB     33      106     ,WPI     33      10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,GOR     GOR_KWD1      1 ,GOR     ,GOR_KWD1      ,1 ,LN,GOR     33      42      ,KWD     33      10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_WPIB      1 ,HWB     ,HWB_WPIB      ,1 ,LN,HWB     33      108     ,WPI     33      10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,HWB     HWB_WPIC      1 ,HWB     ,HWB_WPIC      ,1 ,LN,HWB     33      95      ,WPI     33      10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,INV     INV_MAN       1 ,INV     ,INV_MAN       ,1 ,LN,INV     220     20      ,MAN     220     35      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,INV     INV_NMA       1 ,INV     ,INV_NMA       ,1 ,LN,INV     220     44      ,NMA     220     14      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,INV     INV_ROX1      1 ,INV     ,INV_ROX1      ,1 ,LN,INV     220     26      ,ROX     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,INV     INV_ROX2      1 ,INV     ,INV_ROX2      ,1 ,LN,INV     220     34      ,ROX     220     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,INV     INV_TWI1      1 ,INV     ,INV_TWI1      ,1 ,LN,INV     220     38      ,TWI     220     24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,INV     INV_TWI2      1 ,INV     ,INV_TWI2      ,1 ,LN,INV     220     14      ,TWI     220     15      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MAH     MAH_WPI1      1 ,MAH     ,MAH_WPI1      ,1 ,LN,MAH     33      1       ,WPI     33      10      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MAN     MAN_NMA1      1 ,MAN     ,MAN_NMA1      ,1 ,LN,MAN     220     8       ,NMA     220     39      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MAN     MAN_NMA2      1 ,MAN     ,MAN_NMA2      ,1 ,LN,MAN     220     17      ,NMA     220     33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,MAN     MAN_NMA3      1 ,MAN     ,MAN_NMA3      ,1 ,LN,MAN     220     26      ,NMA     220     11      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NMA     NMA_TWI1      1 ,NMA     ,NMA_TWI1      ,1 ,LN,NMA     220     36      ,TWI     220     42      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NMA     NMA_TWI2      1 ,NMA     ,NMA_TWI2      ,1 ,LN,NMA     220     30      ,TWI     220     33      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,NMA     NMA_WHL       1 ,NMA     ,NMA_WHL       ,1 ,LN,NMA     33      60      ,WHL     33      4       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ROX     ROX_TMH1      1 ,ROX     ,ROX_TMH1      ,1 ,LN,ROX     220     35      ,TMH     220     12      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ROX     ROX_TMH2      1 ,ROX     ,ROX_TMH2      ,1 ,LN,ROX     220     40      ,TMH     220     9       ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,SDN     SDN_TMH       1 ,SDN     ,SDN_TMH       ,1 ,LN,SDN     220     19      ,TMH     220     24      ,0,0,0,0
+D,NETDATA,BRANCHNODE,1.0,ALB     T3  T3            ,ALB     ,T3  ,T3            ,XF,ALB     220     20      ,ALB     33      94      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ALB     T5  T5            ,ALB     ,T5  ,T5            ,XF,ALB     220     24      ,ALB     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ALB     T5  M5            ,ALB     ,T5  ,M5            ,XF,ALB     110     71      ,ALB     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ALB     T5  L5            ,ALB     ,T5  ,L5            ,XF,ALB     11      110     ,ALB     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ALB     T6  T6            ,ALB     ,T6  ,T6            ,XF,ALB     220     26      ,ALB     33      92      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ALB     T8  T8            ,ALB     ,T8  ,T8            ,XF,ALB     220     35      ,ALB     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRB     T2  T2            ,BRB     ,T2  ,T2            ,XF,BRB     220     7       ,BRB     33      25      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRB     T3  T3            ,BRB     ,T3  ,T3            ,XF,BRB     220     24      ,BRB     33      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T1  T1            ,HEN     ,T1  ,T1            ,XF,HEN     220     28      ,HEN     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T1  M1            ,HEN     ,T1  ,M1            ,XF,HEN     110     38      ,HEN     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T1  L1            ,HEN     ,T1  ,L1            ,XF,HEN     11      500     ,HEN     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T2  T2            ,HEN     ,T2  ,T2            ,XF,HEN     220     26      ,HEN     33      92      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T3  T3            ,HEN     ,T3  ,T3            ,XF,HEN     220     18      ,HEN     33      94      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T5  T5            ,HEN     ,T5  ,T5            ,XF,HEN     220     16      ,HEN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T5  M5            ,HEN     ,T5  ,M5            ,XF,HEN     110     40      ,HEN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEN     T5  L5            ,HEN     ,T5  ,L5            ,XF,HEN     11      110     ,HEN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEP     T1  T1            ,HEP     ,T1  ,T1            ,XF,HEP     110     16      ,HEP     33      45      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEP     T2  T2            ,HEP     ,T2  ,T2            ,XF,HEP     110     22      ,HEP     33      43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HEP     T3  T3            ,HEP     ,T3  ,T3            ,XF,HEP     110     35      ,HEP     33      47      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MDN     T5  T5            ,MDN     ,T5  ,T5            ,XF,MDN     220     22      ,MDN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MDN     T5  M5            ,MDN     ,T5  ,M5            ,XF,MDN     110     53      ,MDN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MDN     T5  L5            ,MDN     ,T5  ,L5            ,XF,MDN     11      100     ,MDN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MDN     T6  T6            ,MDN     ,T6  ,T6            ,XF,MDN     220     24      ,MDN     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MDN     T6  M6            ,MDN     ,T6  ,M6            ,XF,MDN     110     51      ,MDN     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MDN     T6  L6            ,MDN     ,T6  ,L6            ,XF,MDN     11      110     ,MDN     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTO     T1  T1            ,MTO     ,T1  ,T1            ,XF,MTO     110     6       ,MTO     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTO     T2  T2            ,MTO     ,T2  ,T2            ,XF,MTO     110     5       ,MTO     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NGB     T1  T1            ,NGB     ,T1  ,T1            ,XF,NGB     110     5       ,NGB     33      30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NGB     T41 T41           ,NGB     ,T41 ,T41           ,XF,NGB     33      34      ,NGB     11      20      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SVL     T1  T1            ,SVL     ,T1  ,T1            ,XF,SVL     220     3       ,SVL     33      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SVL     T2  T2            ,SVL     ,T2  ,T2            ,XF,SVL     220     12      ,SVL     33      11      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SWN     T2  T2            ,SWN     ,T2  ,T2            ,XF,SWN     220     13      ,SWN     25      38      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WEL     T1  T1            ,WEL     ,T1  ,T1            ,XF,WEL     110     12      ,WEL     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WEL     T2  T2            ,WEL     ,T2  ,T2            ,XF,WEL     110     18      ,WEL     33      19      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRD     T1  T1            ,WRD     ,T1  ,T1            ,XF,WRD     110     103     ,WRD     33      72      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRD     T2  T2            ,WRD     ,T2  ,T2            ,XF,WRD     110     101     ,WRD     33      79      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRD     T3  T3            ,WRD     ,T3  ,T3            ,XF,WRD     110     100     ,WRD     33      81      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRD     T7  T7            ,WRD     ,T7  ,T7            ,XF,WRD     220     15      ,WRD     33      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BOB     T4  T4            ,BOB     ,T4  ,T4            ,XF,BOB     220     68      ,BOB     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BOB     T4  M4            ,BOB     ,T4  ,M4            ,XF,BOB     110     13      ,BOB     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BOB     T4  L4            ,BOB     ,T4  ,L4            ,XF,BOB     11      73      ,BOB     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BOB     T5  T5            ,BOB     ,T5  ,T5            ,XF,BOB     220     62      ,BOB     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BOB     T5  M5            ,BOB     ,T5  ,M5            ,XF,BOB     110     61      ,BOB     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BOB     T5  L5            ,BOB     ,T5  ,L5            ,XF,BOB     11      72      ,BOB     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GLN     T4  T4            ,GLN     ,T4  ,T4            ,XF,GLN     220     10      ,GLN     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GLN     T5  T5            ,GLN     ,T5  ,T5            ,XF,GLN     220     14      ,GLN     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GLN     T6  T6            ,GLN     ,T6  ,T6            ,XF,GLN     220     15      ,GLN     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GLN     TG  TG            ,GLN     ,TG  ,TG            ,XF,GLN     33      39      ,GLN     11      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HOB     T12 T12           ,HOB     ,T12 ,T12           ,XF,HOB     220     218     ,HOB     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HOB     T12 M12           ,HOB     ,T12 ,M12           ,XF,HOB     110     250     ,HOB     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HOB     T12 L12           ,HOB     ,T12 ,L12           ,XF,HOB     11      400     ,HOB     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MNG     T1  T1            ,MNG     ,T1  ,T1            ,XF,MNG     110     19      ,MNG     33      45      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MNG     T2  T2            ,MNG     ,T2  ,T2            ,XF,MNG     110     14      ,MNG     33      43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T3  T3            ,OTA     ,T3  ,T3            ,XF,OTA     220     43      ,OTA     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T3  M3            ,OTA     ,T3  ,M3            ,XF,OTA     110     126     ,OTA     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T3  L3            ,OTA     ,T3  ,L3            ,XF,OTA     11      510     ,OTA     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T4  T4            ,OTA     ,T4  ,T4            ,XF,OTA     220     22      ,OTA     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T4  M4            ,OTA     ,T4  ,M4            ,XF,OTA     110     84      ,OTA     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T4  L4            ,OTA     ,T4  ,L4            ,XF,OTA     11      200     ,OTA     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T5  T5            ,OTA     ,T5  ,T5            ,XF,OTA     220     144     ,OTA     110     145     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T14 T14           ,OTA     ,T14 ,T14           ,XF,OTA     220     36      ,OTA     22      181     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTA     T13 T13           ,OTA     ,T13 ,T13           ,XF,OTA     220     45      ,OTA     22      182     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PAK     T1  T1            ,PAK     ,T1  ,T1            ,XF,PAK     220     109     ,PAK     33      40      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PAK     T2  T2            ,PAK     ,T2  ,T2            ,XF,PAK     220     114     ,PAK     33      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PAK     T3  T3            ,PAK     ,T3  ,T3            ,XF,PAK     220     125     ,PAK     33      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T5  T5            ,PEN     ,T5  ,T5            ,XF,PEN     220     27      ,PEN     25      28      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T6  L6            ,PEN     ,T6  ,L6            ,XF,PEN     11      500     ,PEN     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T6  T6            ,PEN     ,T6  ,T6            ,XF,PEN     220     25      ,PEN     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T6  M6            ,PEN     ,T6  ,M6            ,XF,PEN     110     77      ,PEN     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T7  T7            ,PEN     ,T7  ,T7            ,XF,PEN     220     32      ,PEN     33      127     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T8  T8            ,PEN     ,T8  ,T8            ,XF,PEN     220     13      ,PEN     33      95      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T9  T9            ,PEN     ,T9  ,T9            ,XF,PEN     220     15      ,PEN     33      100     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T10 L10           ,PEN     ,T10 ,L10           ,XF,PEN     11      501     ,PEN     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T10 T10           ,PEN     ,T10 ,T10           ,XF,PEN     220     18      ,PEN     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T10 M10           ,PEN     ,T10 ,M10           ,XF,PEN     110     64      ,PEN     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T11 T11           ,PEN     ,T11 ,T11           ,XF,PEN     220     117     ,PEN     33      118     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T21 T21           ,PEN     ,T21 ,T21           ,XF,PEN     22      111     ,PEN     33      136     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T22 T22           ,PEN     ,T22 ,T22           ,XF,PEN     22      112     ,PEN     33      102     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PEN     T23 T23           ,PEN     ,T23 ,T23           ,XF,PEN     22      115     ,PEN     33      119     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROS     T2  T2            ,ROS     ,T2  ,T2            ,XF,ROS     110     31      ,ROS     22      71      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROS     T3  T3            ,ROS     ,T3  ,T3            ,XF,ROS     110     37      ,ROS     22      74      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROS     T4  T4            ,ROS     ,T4  ,T4            ,XF,ROS     110     56      ,ROS     22      72      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAK     T5  T5            ,TAK     ,T5  ,T5            ,XF,TAK     220     1       ,TAK     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAK     T8  T8            ,TAK     ,T8  ,T8            ,XF,TAK     220     4       ,TAK     33      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIR     T1  T1            ,WIR     ,T1  ,T1            ,XF,WIR     110     6       ,WIR     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIR     T2  T2            ,WIR     ,T2  ,T2            ,XF,WIR     110     9       ,WIR     33      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARI     T1  T1            ,ARI     ,T1  ,T1            ,XF,ARI     110     14      ,ARI     11      101     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARI     T5  T5            ,ARI     ,T5  ,T5            ,XF,ARI     110     31      ,ARI     11      105     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARI     T6  T6            ,ARI     ,T6  ,T6            ,XF,ARI     110     36      ,ARI     11      106     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARI     T7  T7            ,ARI     ,T7  ,T7            ,XF,ARI     110     41      ,ARI     11      107     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARI     T8  T8            ,ARI     ,T8  ,T8            ,XF,ARI     110     46      ,ARI     11      108     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CBG     T3  T3            ,CBG     ,T3  ,T3            ,XF,CBG     110     5       ,CBG     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CBG     T4  T4            ,CBG     ,T4  ,T4            ,XF,CBG     110     9       ,CBG     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T1  T1            ,HAM     ,T1  ,T1            ,XF,HAM     110     131     ,HAM     11      132     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T2  T2            ,HAM     ,T2  ,T2            ,XF,HAM     110     78      ,HAM     11      140     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T4  T4            ,HAM     ,T4  ,T4            ,XF,HAM     220     19      ,HAM     33      93      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T5  T5            ,HAM     ,T5  ,T5            ,XF,HAM     220     24      ,HAM     33      90      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T6  T6            ,HAM     ,T6  ,T6            ,XF,HAM     220     26      ,HAM     110     53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T7  T7            ,HAM     ,T7  ,T7            ,XF,HAM     220     15      ,HAM     55      103     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T8  T8            ,HAM     ,T8  ,T8            ,XF,HAM     220     17      ,HAM     55      105     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAM     T9  T9            ,HAM     ,T9  ,T9            ,XF,HAM     220     31      ,HAM     110     84      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HIN     T1  T1            ,HIN     ,T1  ,T1            ,XF,HIN     110     4       ,HIN     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HIN     T2  T2            ,HIN     ,T2  ,T2            ,XF,HIN     110     6       ,HIN     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T1  T1            ,HLY     ,T1  ,T1            ,XF,HLY     220     61      ,HLY     16.5    81      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T2  T2            ,HLY     ,T2  ,T2            ,XF,HLY     220     48      ,HLY     16.5    82      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T4  T4            ,HLY     ,T4  ,T4            ,XF,HLY     220     17      ,HLY     16.5    83      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T5  T5            ,HLY     ,T5  ,T5            ,XF,HLY     220     52      ,HLY     11      65      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T6  T6            ,HLY     ,T6  ,T6            ,XF,HLY     220     25      ,HLY     11      64      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T21 T21           ,HLY     ,T21 ,T21           ,XF,HLY     220     73      ,HLY     33      200     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T22 T22           ,HLY     ,T22 ,T22           ,XF,HLY     220     92      ,HLY     33      203     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T500T500          ,HLY     ,T500,T500          ,XF,HLY     220     90      ,HLY     18      68      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HLY     T600T600          ,HLY     ,T600,T600          ,XF,HLY     220     71      ,HLY     11      101     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HTI     T1  T1            ,HTI     ,T1  ,T1            ,XF,HTI     110     9       ,HTI     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HTI     T2  T2            ,HTI     ,T2  ,T2            ,XF,HTI     110     15      ,HTI     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T5  T5            ,KIN     ,T5  ,T5            ,XF,KIN     110     32      ,KIN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T5  M5            ,KIN     ,T5  ,M5            ,XF,KIN     33      41      ,KIN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T5  L5            ,KIN     ,T5  ,L5            ,XF,KIN     11      50      ,KIN     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T6  T6            ,KIN     ,T6  ,T6            ,XF,KIN     110     9       ,KIN     11      68      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T7  T7            ,KIN     ,T7  ,T7            ,XF,KIN     110     37      ,KIN     11      67      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T8  T8            ,KIN     ,T8  ,T8            ,XF,KIN     110     36      ,KIN     11      66      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T9  T9            ,KIN     ,T9  ,T9            ,XF,KIN     110     35      ,KIN     100     T9      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T9  M9            ,KIN     ,T9  ,M9            ,XF,KIN     33      43      ,KIN     100     T9      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIN     T9  L9            ,KIN     ,T9  ,L9            ,XF,KIN     11      65      ,KIN     100     T9      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KPO     T1  T1            ,KPO     ,T1  ,T1            ,XF,KPO     110     28      ,KPO     11      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KPO     T2  T2            ,KPO     ,T2  ,T2            ,XF,KPO     110     26      ,KPO     11      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KPO     T3  T3            ,KPO     ,T3  ,T3            ,XF,KPO     110     24      ,KPO     11      43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KPU     T3  T3            ,KPU     ,T3  ,T3            ,XF,KPU     110     5       ,KPU     66      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KPU     T4  T4            ,KPU     ,T4  ,T4            ,XF,KPU     110     8       ,KPU     66      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ONG     T1  T1            ,ONG     ,T1  ,T1            ,XF,ONG     110     13      ,ONG     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMU     T1  T1            ,TMU     ,T1  ,T1            ,XF,TMU     110     7       ,TMU     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMU     T2  T2            ,TMU     ,T2  ,T2            ,XF,TMU     110     10      ,TMU     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TWH     T1  T1            ,TWH     ,T1  ,T1            ,XF,TWH     220     6       ,TWH     33      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TWH     T2  T2            ,TWH     ,T2  ,T2            ,XF,TWH     220     40      ,TWH     33      35      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHU     T1  T1            ,WHU     ,T1  ,T1            ,XF,WHU     110     23      ,WHU     33      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHU     T3  T3            ,WHU     ,T3  ,T3            ,XF,WHU     110     11      ,WHU     33      46      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKO     T1  T1            ,WKO     ,T1  ,T1            ,XF,WKO     110     13      ,WKO     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKO     T2  T2            ,WKO     ,T2  ,T2            ,XF,WKO     110     21      ,WKO     33      37      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ANI     T1  T1            ,ANI     ,T1  ,T1            ,XF,ANI     110     4       ,ANI     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ANI     T1  M1            ,ANI     ,T1  ,M1            ,XF,ANI     33      8       ,ANI     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ANI     T1  L1            ,ANI     ,T1  ,L1            ,XF,ANI     11      6       ,ANI     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ANI     T2  T2            ,ANI     ,T2  ,T2            ,XF,ANI     110     5       ,ANI     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ANI     T2  M2            ,ANI     ,T2  ,M2            ,XF,ANI     33      8       ,ANI     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ANI     T2  L2            ,ANI     ,T2  ,L2            ,XF,ANI     11      7       ,ANI     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARA     T1  T1            ,ARA     ,T1  ,T1            ,XF,ARA     220     3       ,ARA     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARA     T2  T2            ,ARA     ,T2  ,T2            ,XF,ARA     220     5       ,ARA     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARA     T3  T3            ,ARA     ,T3  ,T3            ,XF,ARA     220     7       ,ARA     11      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ATI     T1  T1            ,ATI     ,T1  ,T1            ,XF,ATI     220     30      ,ATI     11      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ATI     T2  T2            ,ATI     ,T2  ,T2            ,XF,ATI     220     25      ,ATI     11      52      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ATI     T3  T3            ,ATI     ,T3  ,T3            ,XF,ATI     220     20      ,ATI     11      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ATI     T4  T4            ,ATI     ,T4  ,T4            ,XF,ATI     220     15      ,ATI     11      54      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDG     T4  T4            ,EDG     ,T4  ,T4            ,XF,EDG     220     22      ,EDG     33      114     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDG     T5  T5            ,EDG     ,T5  ,T5            ,XF,EDG     220     20      ,EDG     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDG     T5  M5            ,EDG     ,T5  ,M5            ,XF,EDG     110     57      ,EDG     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDG     T5  L5            ,EDG     ,T5  ,L5            ,XF,EDG     11      201     ,EDG     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDG     T7  T7            ,EDG     ,T7  ,T7            ,XF,EDG     220     13      ,EDG     33      103     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAG     T1  T1            ,KAG     ,T1  ,T1            ,XF,KAG     110     10      ,KAG     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAG     T2  T2            ,KAG     ,T2  ,T2            ,XF,KAG     110     10      ,KAG     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T5  T5            ,KAW     ,T5  ,T5            ,XF,KAW     110     63      ,KAW     11      92      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T2  T2            ,KAW     ,T2  ,T2            ,XF,KAW     110     48      ,KAW     11      91      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T6  T6            ,KAW     ,T6  ,T6            ,XF,KAW     110     70      ,KAW     11      113     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T7  T7            ,KAW     ,T7  ,T7            ,XF,KAW     110     76      ,KAW     11      114     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T8  T8            ,KAW     ,T8  ,T8            ,XF,KAW     110     79      ,KAW     11      125     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T9  T9            ,KAW     ,T9  ,T9            ,XF,KAW     110     53      ,KAW     11      110     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T12 L12           ,KAW     ,T12 ,L12           ,XF,KAW     11      500     ,KAW     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T12 T12           ,KAW     ,T12 ,T12           ,XF,KAW     220     13      ,KAW     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T12 M12           ,KAW     ,T12 ,M12           ,XF,KAW     110     50      ,KAW     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T14 L14           ,KAW     ,T14 ,L14           ,XF,KAW     11      505     ,KAW     100     T14     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T14 T14           ,KAW     ,T14 ,T14           ,XF,KAW     220     23      ,KAW     100     T14     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAW     T14 M14           ,KAW     ,T14 ,M14           ,XF,KAW     110     67      ,KAW     100     T14     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMI     T1  T1            ,KMI     ,T1  ,T1            ,XF,KMI     33      3       ,KMI     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T1  T1            ,KMO     ,T1  ,T1            ,XF,KMO     110     27      ,KMO     33      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T2  T2            ,KMO     ,T2  ,T2            ,XF,KMO     220     101     ,KMO     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T2  M2            ,KMO     ,T2  ,M2            ,XF,KMO     110     30      ,KMO     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T2  L2            ,KMO     ,T2  ,L2            ,XF,KMO     11      500     ,KMO     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T4  T4            ,KMO     ,T4  ,T4            ,XF,KMO     220     110     ,KMO     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T4  M4            ,KMO     ,T4  ,M4            ,XF,KMO     110     31      ,KMO     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KMO     T4  L4            ,KMO     ,T4  ,L4            ,XF,KMO     11      501     ,KMO     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,LFD     T1  T1            ,LFD     ,T1  ,T1            ,XF,LFD     110     4       ,LFD     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,LFD     T2  T2            ,LFD     ,T2  ,T2            ,XF,LFD     110     8       ,LFD     11      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAT     T1  T1            ,MAT     ,T1  ,T1            ,XF,MAT     110     15      ,MAT     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAT     T2  T2            ,MAT     ,T2  ,T2            ,XF,MAT     110     10      ,MAT     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MOK     T1  T1            ,MOK     ,T1  ,T1            ,XF,MOK     110     3       ,MOK     11      28      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MOK     T2  T2            ,MOK     ,T2  ,T2            ,XF,MOK     110     16      ,MOK     11      27      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MOK     T11 T11           ,MOK     ,T11 ,T11           ,XF,MOK     110     24      ,MOK     11      25      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T1  T1            ,MTI     ,T1  ,T1            ,XF,MTI     220     34      ,MTI     11      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T2  T2            ,MTI     ,T2  ,T2            ,XF,MTI     220     32      ,MTI     11      62      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T3  T3            ,MTI     ,T3  ,T3            ,XF,MTI     220     30      ,MTI     11      63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T4  T4            ,MTI     ,T4  ,T4            ,XF,MTI     220     28      ,MTI     11      64      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T5  T5            ,MTI     ,T5  ,T5            ,XF,MTI     220     26      ,MTI     11      65      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T6  T6            ,MTI     ,T6  ,T6            ,XF,MTI     220     24      ,MTI     11      66      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T7  T7            ,MTI     ,T7  ,T7            ,XF,MTI     220     22      ,MTI     11      67      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T8  T8            ,MTI     ,T8  ,T8            ,XF,MTI     220     20      ,MTI     11      68      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T9  T9            ,MTI     ,T9  ,T9            ,XF,MTI     220     18      ,MTI     11      69      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTI     T10 T10           ,MTI     ,T10 ,T10           ,XF,MTI     220     16      ,MTI     11      70      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTM     T1  T1            ,MTM     ,T1  ,T1            ,XF,MTM     110     10      ,MTM     33      37      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTM     T3  T3            ,MTM     ,T3  ,T3            ,XF,MTM     110     18      ,MTM     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NAP     T1  T1            ,NAP     ,T1  ,T1            ,XF,NAP     220     7       ,NAP     11      8       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NTM     T1  T1            ,NTM     ,T1  ,T1            ,XF,NTM     220     30      ,NTM     11      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NTM     T2  T2            ,NTM     ,T2  ,T2            ,XF,NTM     220     33      ,NTM     11      8       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHK     T1  T1            ,OHK     ,T1  ,T1            ,XF,OHK     220     20      ,OHK     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHK     T2  T2            ,OHK     ,T2  ,T2            ,XF,OHK     220     15      ,OHK     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHK     T3  T3            ,OHK     ,T3  ,T3            ,XF,OHK     220     10      ,OHK     11      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHK     T4  T4            ,OHK     ,T4  ,T4            ,XF,OHK     220     5       ,OHK     11      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OKI     T1  T1            ,OKI     ,T1  ,T1            ,XF,OKI     220     16      ,OKI     13.8    33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OKI     T2  T2            ,OKI     ,T2  ,T2            ,XF,OKI     220     18      ,OKI     13.8    35      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OWH     T1  T1            ,OWH     ,T1  ,T1            ,XF,OWH     110     5       ,OWH     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OWH     T2  T2            ,OWH     ,T2  ,T2            ,XF,OWH     110     10      ,OWH     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PPI     T1  T1            ,PPI     ,T1  ,T1            ,XF,PPI     220     1       ,PPI     11.5    20      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RKA     T1  T1            ,RKA     ,T1  ,T1            ,XF,RKA     33      3       ,RKA     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROT     T2  T2            ,ROT     ,T2  ,T2            ,XF,ROT     110     12      ,ROT     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROT     T3  T3            ,ROT     ,T3  ,T3            ,XF,ROT     110     14      ,ROT     11      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROT     T4  T4            ,ROT     ,T4  ,T4            ,XF,ROT     110     19      ,ROT     11      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROT     T5  T5            ,ROT     ,T5  ,T5            ,XF,ROT     110     21      ,ROT     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAA     T1  T1            ,TAA     ,T1  ,T1            ,XF,TAA     33      10      ,TAA     11      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAB     T1  T1            ,TAB     ,T1  ,T1            ,XF,TAB     220     11      ,TAB     13.8    30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAB     T11 T11           ,TAB     ,T11 ,T11           ,XF,TAB     220     14      ,TAB     33      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAC     T1A T1A           ,TAC     ,T1A ,T1A           ,XF,TAC     33      2       ,TAC     11      3       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TGA     T1  T1            ,TGA     ,T1  ,T1            ,XF,TGA     110     18      ,TGA     11      102     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TGA     T2  T2            ,TGA     ,T2  ,T2            ,XF,TGA     110     15      ,TGA     11      101     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TGA     T3  T3            ,TGA     ,T3  ,T3            ,XF,TGA     110     23      ,TGA     33      55      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TGA     T4  T4            ,TGA     ,T4  ,T4            ,XF,TGA     110     21      ,TGA     33      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,THI     T1  T1            ,THI     ,T1  ,T1            ,XF,THI     220     17      ,THI     11.8    30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,THI     T2  T2            ,THI     ,T2  ,T2            ,XF,THI     220     11      ,THI     11.8    32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMI     T1  T1            ,TMI     ,T1  ,T1            ,XF,TMI     110     11      ,TMI     33      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMI     T2  T2            ,TMI     ,T2  ,T2            ,XF,TMI     110     13      ,TMI     33      55      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T2  T2            ,TRK     ,T2  ,T2            ,XF,TRK     220     81      ,TRK     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T2  M2            ,TRK     ,T2  ,M2            ,XF,TRK     110     82      ,TRK     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T2  L2            ,TRK     ,T2  ,L2            ,XF,TRK     11      512     ,TRK     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T3  T3            ,TRK     ,T3  ,T3            ,XF,TRK     220     91      ,TRK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T3  M3            ,TRK     ,T3  ,M3            ,XF,TRK     110     92      ,TRK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T3  L3            ,TRK     ,T3  ,L3            ,XF,TRK     11      513     ,TRK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TRK     T4  T4            ,TRK     ,T4  ,T4            ,XF,TRK     110     86      ,TRK     11      85      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAI     T1  T1            ,WAI     ,T1  ,T1            ,XF,WAI     11      23      ,WAI     110     22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAI     T2  T2            ,WAI     ,T2  ,T2            ,XF,WAI     110     31      ,WAI     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAI     T2  M2            ,WAI     ,T2  ,M2            ,XF,WAI     33      102     ,WAI     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAI     T2  L2            ,WAI     ,T2  ,L2            ,XF,WAI     11      32      ,WAI     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAI     T5  T5            ,WAI     ,T5  ,T5            ,XF,WAI     50      27      ,WAI     11      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T1  T1            ,WKM     ,T1  ,T1            ,XF,WKM     220     44      ,WKM     11      63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T2  T2            ,WKM     ,T2  ,T2            ,XF,WKM     220     39      ,WKM     11      62      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T3  T3            ,WKM     ,T3  ,T3            ,XF,WKM     220     34      ,WKM     11      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T4  T4            ,WKM     ,T4  ,T4            ,XF,WKM     220     46      ,WKM     11      60      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T8  T8            ,WKM     ,T8  ,T8            ,XF,WKM     220     48      ,WKM     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T8  M8            ,WKM     ,T8  ,M8            ,XF,WKM     110     49      ,WKM     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T8  L8            ,WKM     ,T8  ,L8            ,XF,WKM     33      100     ,WKM     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WKM     T9  T9            ,WKM     ,T9  ,T9            ,XF,WKM     220     82      ,WKM     110     83      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPA     T1  T1            ,WPA     ,T1  ,T1            ,XF,WPA     220     1       ,WPA     11      10      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T1  T1            ,WRK     ,T1  ,T1            ,XF,WRK     220     36      ,WRK     11      81      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T2  T2            ,WRK     ,T2  ,T2            ,XF,WRK     220     47      ,WRK     11      89      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T3  T3            ,WRK     ,T3  ,T3            ,XF,WRK     220     28      ,WRK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T3  M3            ,WRK     ,T3  ,M3            ,XF,WRK     11      92      ,WRK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T3  L3            ,WRK     ,T3  ,L3            ,XF,WRK     11      91      ,WRK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T4  T4            ,WRK     ,T4  ,T4            ,XF,WRK     220     23      ,WRK     11      133     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T29 T29           ,WRK     ,T29 ,T29           ,XF,WRK     220     39      ,WRK     33      63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WRK     T30 T30           ,WRK     ,T30 ,T30           ,XF,WRK     33      132     ,WRK     220     131     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,FHL     T3  T3            ,FHL     ,T3  ,T3            ,XF,FHL     110     20      ,FHL     33      56      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,FHL     T2  T2            ,FHL     ,T2  ,T2            ,XF,FHL     110     21      ,FHL     33      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HRP     T2  T2            ,HRP     ,T2  ,T2            ,XF,HRP     220     7       ,HRP     33      100     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HRP     T1  T1            ,HRP     ,T1  ,T1            ,XF,HRP     220     4       ,HRP     33      100     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RDF     T1  T1            ,RDF     ,T1  ,T1            ,XF,RDF     110     52      ,RDF     33      86      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RDF     T2  T2            ,RDF     ,T2  ,T2            ,XF,RDF     110     55      ,RDF     33      83      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RDF     T3  T3            ,RDF     ,T3  ,T3            ,XF,RDF     220     16      ,RDF     110     43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RDF     T4  T4            ,RDF     ,T4  ,T4            ,XF,RDF     220     14      ,RDF     110     41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T1  T1            ,TUI     ,T1  ,T1            ,XF,TUI     110     64      ,TUI     11      72      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T2  T2            ,TUI     ,T2  ,T2            ,XF,TUI     110     61      ,TUI     11      71      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T3  T3            ,TUI     ,T3  ,T3            ,XF,TUI     110     58      ,TUI     11      70      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T4  T4            ,TUI     ,T4  ,T4            ,XF,TUI     110     24      ,TUI     11      95      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T5  T5            ,TUI     ,T5  ,T5            ,XF,TUI     110     21      ,TUI     11      94      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T6  T6            ,TUI     ,T6  ,T6            ,XF,TUI     110     69      ,TUI     6       99      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUI     T7  T7            ,TUI     ,T7  ,T7            ,XF,TUI     110     66      ,TUI     6       97      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHI     T1  T1            ,WHI     ,T1  ,T1            ,XF,WHI     220     27      ,WHI     11      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHI     T2  T2            ,WHI     ,T2  ,T2            ,XF,WHI     220     22      ,WHI     11      52      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHI     T3  T3            ,WHI     ,T3  ,T3            ,XF,WHI     220     20      ,WHI     11      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHI     T4  T4            ,WHI     ,T4  ,T4            ,XF,WHI     220     18      ,WHI     11      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHI     T5  T5            ,WHI     ,T5  ,T5            ,XF,WHI     220     16      ,WHI     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WHI     T7  T7            ,WHI     ,T7  ,T7            ,XF,WHI     220     12      ,WHI     11      30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTU     T3  T3            ,WTU     ,T3  ,T3            ,XF,WTU     220     4       ,WTU     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTU     T4  T4            ,WTU     ,T4  ,T4            ,XF,WTU     220     6       ,WTU     33      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,JRD     T1  T1            ,JRD     ,T1  ,T1            ,XF,JRD     110     3       ,JRD     11      20      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,JRD     T2  T2            ,JRD     ,T2  ,T2            ,XF,JRD     110     4       ,JRD     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRK     T1  T1            ,BRK     ,T1  ,T1            ,XF,BRK     33      50      ,BRK     220     16      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CST     T2  T2            ,CST     ,T2  ,T2            ,XF,CST     110     30      ,CST     33      63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CST     T4  T4            ,CST     ,T4  ,T4            ,XF,CST     110     18      ,CST     33      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HUI     T5  T5            ,HUI     ,T5  ,T5            ,XF,HUI     110     8       ,HUI     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HUI     T6  T6            ,HUI     ,T6  ,T6            ,XF,HUI     110     13      ,HUI     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWA     T1  T1            ,HWA     ,T1  ,T1            ,XF,HWA     110     10      ,HWA     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWA     T2  T2            ,HWA     ,T2  ,T2            ,XF,HWA     110     12      ,HWA     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWA     T3  T3            ,HWA     ,T3  ,T3            ,XF,HWA     110     27      ,HWA     33      37      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KPI     T1  T1            ,KPI     ,T1  ,T1            ,XF,KPI     110     3       ,KPI     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MKE     T1  T1            ,MKE     ,T1  ,T1            ,XF,MKE     110     10      ,MKE     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MKE     T2  T2            ,MKE     ,T2  ,T2            ,XF,MKE     110     11      ,MKE     11      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MNI     T3  T3            ,MNI     ,T3  ,T3            ,XF,MNI     110     9       ,MNI     11      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MNI     T4  T4            ,MNI     ,T4  ,T4            ,XF,MNI     110     22      ,MNI     11      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OPK     T4  T4            ,OPK     ,T4  ,T4            ,XF,OPK     110     5       ,OPK     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OPK     T5  T5            ,OPK     ,T5  ,T5            ,XF,OPK     110     9       ,OPK     33      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PTA     T1  T1            ,PTA     ,T1  ,T1            ,XF,PTA     110     5       ,PTA     11      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PTA     T2  T2            ,PTA     ,T2  ,T2            ,XF,PTA     110     5       ,PTA     11      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T6  T6            ,SFD     ,T6  ,T6            ,XF,SFD     110     97      ,SFD     33      112     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T8  T8            ,SFD     ,T8  ,T8            ,XF,SFD     110     99      ,SFD     33      115     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T10 T10           ,SFD     ,T10 ,T10           ,XF,SFD     220     51      ,SFD     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T10 L10           ,SFD     ,T10 ,L10           ,XF,SFD     11      500     ,SFD     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T10 M10           ,SFD     ,T10 ,M10           ,XF,SFD     110     83      ,SFD     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T9  T9            ,SFD     ,T9  ,T9            ,XF,SFD     220     11      ,SFD     100     T9      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T9  L9            ,SFD     ,T9  ,L9            ,XF,SFD     11      501     ,SFD     100     T9      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T9  M9            ,SFD     ,T9  ,M9            ,XF,SFD     110     81      ,SFD     100     T9      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T21 T21           ,SFD     ,T21 ,T21           ,XF,SFD     220     66      ,SFD     11.5    203     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SFD     T22 T22           ,SFD     ,T22 ,T22           ,XF,SFD     220     65      ,SFD     11.5    204     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SPL     T10 T10           ,SPL     ,T10 ,T10           ,XF,SPL     220     3       ,SPL     21      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAA     T1  T1            ,WAA     ,T1  ,T1            ,XF,WAA     110     1       ,WAA     11      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAA     T2  T2            ,WAA     ,T2  ,T2            ,XF,WAA     110     10      ,WAA     11      11      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAA     T3  T3            ,WAA     ,T3  ,T3            ,XF,WAA     110     20      ,WAA     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAA     T4  T4            ,WAA     ,T4  ,T4            ,XF,WAA     110     14      ,WAA     11      15      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WAA     T5  T5            ,WAA     ,T5  ,T5            ,XF,WAA     110     5       ,WAA     11      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WVY     MXT1MXT1          ,WVY     ,MXT1,MXT1          ,XF,WVY     110     14      ,WVY     11      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WVY     T1  T1            ,WVY     ,T1  ,T1            ,XF,WVY     110     12      ,WVY     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPP     T1  T1            ,WPP     ,T1  ,T1            ,XF,WPP     110     2       ,WPP     33      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T2  T2            ,BPE     ,T2  ,T2            ,XF,BPE     220     37      ,BPE     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T2  M2            ,BPE     ,T2  ,M2            ,XF,BPE     110     90      ,BPE     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T2  L2            ,BPE     ,T2  ,L2            ,XF,BPE     11      201     ,BPE     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T3  T3            ,BPE     ,T3  ,T3            ,XF,BPE     220     25      ,BPE     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T3  M3            ,BPE     ,T3  ,M3            ,XF,BPE     110     88      ,BPE     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T3  L3            ,BPE     ,T3  ,L3            ,XF,BPE     11      202     ,BPE     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T9  T9            ,BPE     ,T9  ,T9            ,XF,BPE     220     18      ,BPE     33      142     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T10 T10           ,BPE     ,T10 ,T10           ,XF,BPE     220     13      ,BPE     33      144     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T15 T15           ,BPE     ,T15 ,T15           ,XF,BPE     220     43      ,BPE     55      133     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BPE     T16 T16           ,BPE     ,T16 ,T16           ,XF,BPE     220     27      ,BPE     55      135     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DVK     T1  T1            ,DVK     ,T1  ,T1            ,XF,DVK     110     9       ,DVK     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DVK     T2  T2            ,DVK     ,T2  ,T2            ,XF,DVK     110     11      ,DVK     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,LTN     T2  T2            ,LTN     ,T2  ,T2            ,XF,LTN     220     4       ,LTN     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,LTN     T3  T3            ,LTN     ,T3  ,T3            ,XF,LTN     220     5       ,LTN     33      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MHO     T1  T1            ,MHO     ,T1  ,T1            ,XF,MHO     33      32      ,MHO     11      55      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MHO     T3  T3            ,MHO     ,T3  ,T3            ,XF,MHO     110     20      ,MHO     33      35      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MHO     T4  T4            ,MHO     ,T4  ,T4            ,XF,MHO     110     7       ,MHO     33      38      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTN     T1  T1            ,MTN     ,T1  ,T1            ,XF,MTN     110     4       ,MTN     33      9       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTN     T2  T2            ,MTN     ,T2  ,T2            ,XF,MTN     110     6       ,MTN     33      11      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTR     T2  T2            ,MTR     ,T2  ,T2            ,XF,MTR     110     14      ,MTR     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MTR     MXT1MXT1          ,MTR     ,MXT1,MXT1          ,XF,MTR     110     12      ,MTR     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NPK     T1  T1            ,NPK     ,T1  ,T1            ,XF,NPK     110     1       ,NPK     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NPK     MXT1MXT1          ,NPK     ,MXT1,MXT1          ,XF,NPK     110     11      ,NPK     33      30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OKN     T2  T2            ,OKN     ,T2  ,T2            ,XF,OKN     110     13      ,OKN     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OKN     MXT1MXT1          ,OKN     ,MXT1,MXT1          ,XF,OKN     110     12      ,OKN     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RPO     T5  T5            ,RPO     ,T5  ,T5            ,XF,RPO     220     9       ,RPO     11      25      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,RPO     T6  T6            ,RPO     ,T6  ,T6            ,XF,RPO     220     15      ,RPO     11      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TAP     T1  T1            ,TAP     ,T1  ,T1            ,XF,TAP     110     3       ,TAP     22      4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKU     T1  T1            ,TKU     ,T1  ,T1            ,XF,TKU     220     24      ,TKU     11      60      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKU     T2  T2            ,TKU     ,T2  ,T2            ,XF,TKU     220     26      ,TKU     11      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKU     T3  T3            ,TKU     ,T3  ,T3            ,XF,TKU     220     32      ,TKU     11      62      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKU     T4  T4            ,TKU     ,T4  ,T4            ,XF,TKU     220     37      ,TKU     11      63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKU     T21 T21           ,TKU     ,T21 ,T21           ,XF,TKU     33      51      ,TKU     220     19      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKU     T22 T22           ,TKU     ,T22 ,T22           ,XF,TKU     33      52      ,TKU     220     27      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMN     T5  T5            ,TMN     ,T5  ,T5            ,XF,TMN     220     4       ,TMN     55      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMN     T8  T8            ,TMN     ,T8  ,T8            ,XF,TMN     220     10      ,TMN     55      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TNG     T2  T2            ,TNG     ,T2  ,T2            ,XF,TNG     220     4       ,TNG     55      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TNG     T3  T3            ,TNG     ,T3  ,T3            ,XF,TNG     220     18      ,TNG     55      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TNG     T11 T11           ,TNG     ,T11 ,T11           ,XF,TNG     220     6       ,TNG     11      80      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TNG     T12 T12           ,TNG     ,T12 ,T12           ,XF,TNG     220     8       ,TNG     11      82      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUR     T1  T1            ,TUR     ,T1  ,T1            ,XF,TUR     220     1       ,TUR     33      3       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TUR     T2  T2            ,TUR     ,T2  ,T2            ,XF,TUR     220     5       ,TUR     33      10      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TWC     T1  T1            ,TWC     ,T1  ,T1            ,XF,TWC     220     2       ,TWC     33      1       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TWC     T2  T2            ,TWC     ,T2  ,T2            ,XF,TWC     220     3       ,TWC     33      1       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WDV     T1  T1            ,WDV     ,T1  ,T1            ,XF,WDV     110     23      ,WDV     11      35      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WDV     T2  T2            ,WDV     ,T2  ,T2            ,XF,WDV     110     28      ,WDV     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WGN     T1  T1            ,WGN     ,T1  ,T1            ,XF,WGN     110     13      ,WGN     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WGN     T2  T2            ,WGN     ,T2  ,T2            ,XF,WGN     110     16      ,WGN     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPW     T1  T1            ,WPW     ,T1  ,T1            ,XF,WPW     110     14      ,WPW     33      56      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPW     T33 T33           ,WPW     ,T33 ,T33           ,XF,WPW     33      59      ,WPW     11      30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPW     T2  T2            ,WPW     ,T2  ,T2            ,XF,WPW     110     11      ,WPW     33      52      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CPK     T3  T3            ,CPK     ,T3  ,T3            ,XF,CPK     110     15      ,CPK     33      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CPK     T4  T4            ,CPK     ,T4  ,T4            ,XF,CPK     110     10      ,CPK     33      39      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CPK     T5  T5            ,CPK     ,T5  ,T5            ,XF,CPK     110     18      ,CPK     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CPK     T11 T11           ,CPK     ,T11 ,T11           ,XF,CPK     33      47      ,CPK     11      66      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CPK     T12 T12           ,CPK     ,T12 ,T12           ,XF,CPK     33      45      ,CPK     11      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GFD     T5  T5            ,GFD     ,T5  ,T5            ,XF,GFD     110     6       ,GFD     33      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GFD     T6  T6            ,GFD     ,T6  ,T6            ,XF,GFD     110     9       ,GFD     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GYT     T2  T2            ,GYT     ,T2  ,T2            ,XF,GYT     33      32      ,GYT     110     10      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GYT     T3  T3            ,GYT     ,T3  ,T3            ,XF,GYT     33      34      ,GYT     110     14      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T1  T1            ,HAY     ,T1  ,T1            ,XF,HAY     220     12      ,HAY     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T1  M1            ,HAY     ,T1  ,M1            ,XF,HAY     110     79      ,HAY     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T1  L1            ,HAY     ,T1  ,L1            ,XF,HAY     11      130     ,HAY     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T2  T2            ,HAY     ,T2  ,T2            ,XF,HAY     220     14      ,HAY     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T2  M2            ,HAY     ,T2  ,M2            ,XF,HAY     110     81      ,HAY     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T2  L2            ,HAY     ,T2  ,L2            ,XF,HAY     11      133     ,HAY     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T5  T5            ,HAY     ,T5  ,T5            ,XF,HAY     220     28      ,HAY     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T5  M5            ,HAY     ,T5  ,M5            ,XF,HAY     110     116     ,HAY     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T5  L5            ,HAY     ,T5  ,L5            ,XF,HAY     11      135     ,HAY     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T7  T7            ,HAY     ,T7  ,T7            ,XF,HAY     110     77      ,HAY     11      150     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T8  T8            ,HAY     ,T8  ,T8            ,XF,HAY     110     85      ,HAY     11      151     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T9  T9            ,HAY     ,T9  ,T9            ,XF,HAY     110     87      ,HAY     11      152     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T10 T10           ,HAY     ,T10 ,T10           ,XF,HAY     110     89      ,HAY     11      153     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T11 T11           ,HAY     ,T11 ,T11           ,XF,HAY     110     83      ,HAY     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T11 M11           ,HAY     ,T11 ,M11           ,XF,HAY     33      204     ,HAY     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T11 L11           ,HAY     ,T11 ,L11           ,XF,HAY     11      190     ,HAY     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T12 T12           ,HAY     ,T12 ,T12           ,XF,HAY     110     111     ,HAY     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T12 M12           ,HAY     ,T12 ,M12           ,XF,HAY     33      201     ,HAY     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T12 L12           ,HAY     ,T12 ,L12           ,XF,HAY     11      194     ,HAY     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T22 T22           ,HAY     ,T22 ,T22           ,XF,HAY     220     42      ,HAY     11      191     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T23 T23           ,HAY     ,T23 ,T23           ,XF,HAY     220     44      ,HAY     144     44A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T24 T24           ,HAY     ,T24 ,T24           ,XF,HAY     220     302     ,HAY     11      303     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HAY     T25 T25           ,HAY     ,T25 ,T25           ,XF,HAY     220     48      ,HAY     144     48A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KWA     T2  T2            ,KWA     ,T2  ,T2            ,XF,KWA     110     101     ,KWA     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KWA     T3  T3            ,KWA     ,T3  ,T3            ,XF,KWA     110     4       ,KWA     11      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MGM     T2  T2            ,MGM     ,T2  ,T2            ,XF,MGM     110     6       ,MGM     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MGM     T3  T3            ,MGM     ,T3  ,T3            ,XF,MGM     110     12      ,MGM     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MLG     T1  T1            ,MLG     ,T1  ,T1            ,XF,MLG     110     17      ,MLG     11      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MLG     T2  T2            ,MLG     ,T2  ,T2            ,XF,MLG     110     11      ,MLG     11      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MLG     T3  T3            ,MLG     ,T3  ,T3            ,XF,MLG     110     14      ,MLG     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MLG     T4  T4            ,MLG     ,T4  ,T4            ,XF,MLG     110     8       ,MLG     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MST     T2  T2            ,MST     ,T2  ,T2            ,XF,MST     110     14      ,MST     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MST     T3  T3            ,MST     ,T3  ,T3            ,XF,MST     110     22      ,MST     33      38      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PNI     T1  T1            ,PNI     ,T1  ,T1            ,XF,PNI     110     10      ,PNI     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PNI     T2  T2            ,PNI     ,T2  ,T2            ,XF,PNI     110     7       ,PNI     33      27      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PRM     T1  T1            ,PRM     ,T1  ,T1            ,XF,PRM     220     52      ,PRM     33      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PRM     T2  T2            ,PRM     ,T2  ,T2            ,XF,PRM     220     55      ,PRM     33      44      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKR     T1  T1            ,TKR     ,T1  ,T1            ,XF,TKR     110     22      ,TKR     33      43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKR     T2  T2            ,TKR     ,T2  ,T2            ,XF,TKR     110     28      ,TKR     33      46      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,UHT     T1  T1            ,UHT     ,T1  ,T1            ,XF,UHT     110     22      ,UHT     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,UHT     T2  T2            ,UHT     ,T2  ,T2            ,XF,UHT     110     14      ,UHT     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIL     T3  T3            ,WIL     ,T3  ,T3            ,XF,WIL     220     5       ,WIL     33      73      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIL     T5  T5            ,WIL     ,T5  ,T5            ,XF,WIL     220     11      ,WIL     33      76      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIL     T8  T8            ,WIL     ,T8  ,T8            ,XF,WIL     220     14      ,WIL     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIL     T8  M8            ,WIL     ,T8  ,M8            ,XF,WIL     110     55      ,WIL     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WIL     T8  L8            ,WIL     ,T8  ,L8            ,XF,WIL     11      500     ,WIL     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WWD     T1  T1            ,WWD     ,T1  ,T1            ,XF,WWD     110     6       ,WWD     33      8       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WWD     T2  T2            ,WWD     ,T2  ,T2            ,XF,WWD     110     7       ,WWD     33      9       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ARG     T1  T1            ,ARG     ,T1  ,T1            ,XF,ARG     110     7       ,ARG     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BLN     T1  T1            ,BLN     ,T1  ,T1            ,XF,BLN     110     9       ,BLN     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BLN     T2  T2            ,BLN     ,T2  ,T2            ,XF,BLN     110     15      ,BLN     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BLN     T3  T3            ,BLN     ,T3  ,T3            ,XF,BLN     110     20      ,BLN     33      37      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,COB     T1  T1            ,COB     ,T1  ,T1            ,XF,COB     66      8       ,COB     6.6     41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,COB     T2  T2            ,COB     ,T2  ,T2            ,XF,COB     66      15      ,COB     6.6     43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CUL     T1  T1            ,CUL     ,T1  ,T1            ,XF,CUL     66      8       ,CUL     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CUL     T22 T22           ,CUL     ,T22 ,T22           ,XF,CUL     33      38      ,CUL     220     39      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CUL     T23 T23           ,CUL     ,T23 ,T23           ,XF,CUL     33      36      ,CUL     220     20      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     T1  T1            ,KIK     ,T1  ,T1            ,XF,KIK     220     17      ,KIK     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     T1  M1            ,KIK     ,T1  ,M1            ,XF,KIK     110     37      ,KIK     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     T1  L1            ,KIK     ,T1  ,L1            ,XF,KIK     11      65      ,KIK     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     T2  T2            ,KIK     ,T2  ,T2            ,XF,KIK     220     52      ,KIK     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     T2  M2            ,KIK     ,T2  ,M2            ,XF,KIK     110     53      ,KIK     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     T2  L2            ,KIK     ,T2  ,L2            ,XF,KIK     11      66      ,KIK     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KIK     MXT1MXT1          ,KIK     ,MXT1,MXT1          ,XF,KIK     110     56      ,KIK     11      72      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MCH     T1  T1            ,MCH     ,T1  ,T1            ,XF,MCH     110     5       ,MCH     11      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MCH     MXT1MXT1          ,MCH     ,MXT1,MXT1          ,XF,MCH     110     9       ,MCH     11      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T3  T3            ,STK     ,T3  ,T3            ,XF,STK     110     53      ,STK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T3  M3            ,STK     ,T3  ,M3            ,XF,STK     66      76      ,STK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T3  L3            ,STK     ,T3  ,L3            ,XF,STK     11      200     ,STK     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T4  T4            ,STK     ,T4  ,T4            ,XF,STK     110     58      ,STK     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T4  L4            ,STK     ,T4  ,L4            ,XF,STK     11      201     ,STK     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T4  M4            ,STK     ,T4  ,M4            ,XF,STK     66      73      ,STK     100     T4      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T6  T6            ,STK     ,T6  ,T6            ,XF,STK     220     29      ,STK     33      237     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T7  L7            ,STK     ,T7  ,L7            ,XF,STK     11      122     ,STK     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T7  T7            ,STK     ,T7  ,T7            ,XF,STK     220     22      ,STK     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T7  M7            ,STK     ,T7  ,M7            ,XF,STK     110     44      ,STK     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STK     T10 T10           ,STK     ,T10 ,T10           ,XF,STK     220     25      ,STK     33      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ASY     T3  T3            ,ASY     ,T3  ,T3            ,XF,ASY     66      7       ,ASY     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ASY     T5  T5            ,ASY     ,T5  ,T5            ,XF,ASY     66      9       ,ASY     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T1  T1            ,ISL     ,T1  ,T1            ,XF,ISL     220     10      ,ISL     33      174     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T2  T2            ,ISL     ,T2  ,T2            ,XF,ISL     220     12      ,ISL     33      171     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T3  T3            ,ISL     ,T3  ,T3            ,XF,ISL     220     20      ,ISL     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T3  M3            ,ISL     ,T3  ,M3            ,XF,ISL     66      79      ,ISL     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T3  L3            ,ISL     ,T3  ,L3            ,XF,ISL     11      180     ,ISL     100     T3      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T6  T6            ,ISL     ,T6  ,T6            ,XF,ISL     220     150     ,ISL     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T6  M6            ,ISL     ,T6  ,M6            ,XF,ISL     66      151     ,ISL     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T6  L6            ,ISL     ,T6  ,L6            ,XF,ISL     11      152     ,ISL     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T7  T7            ,ISL     ,T7  ,T7            ,XF,ISL     220     32      ,ISL     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T7  M7            ,ISL     ,T7  ,M7            ,XF,ISL     66      71      ,ISL     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T7  L7            ,ISL     ,T7  ,L7            ,XF,ISL     11      200     ,ISL     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T8  T8            ,ISL     ,T8  ,T8            ,XF,ISL     220     221     ,ISL     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T8  M8            ,ISL     ,T8  ,M8            ,XF,ISL     66      160     ,ISL     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ISL     T8  L8            ,ISL     ,T8  ,L8            ,XF,ISL     11      181     ,ISL     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAI     T1  T1            ,KAI     ,T1  ,T1            ,XF,KAI     66      13      ,KAI     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KAI     T2  T2            ,KAI     ,T2  ,T2            ,XF,KAI     66      11      ,KAI     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NWD     T2  T2            ,NWD     ,T2  ,T2            ,XF,NWD     220     6       ,NWD     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NWD     T2  M2            ,NWD     ,T2  ,M2            ,XF,NWD     66      10      ,NWD     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NWD     T2  L2            ,NWD     ,T2  ,L2            ,XF,NWD     11      11      ,NWD     100     T2      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NWD     T1  T1            ,NWD     ,T1  ,T1            ,XF,NWD     220     7       ,NWD     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NWD     T1  M1            ,NWD     ,T1  ,M1            ,XF,NWD     66      8       ,NWD     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NWD     T1  L1            ,NWD     ,T1  ,L1            ,XF,NWD     11      9       ,NWD     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPR     T3  T3            ,WPR     ,T3  ,T3            ,XF,WPR     66      12      ,WPR     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPR     T12 T12           ,WPR     ,T12 ,T12           ,XF,WPR     220     37      ,WPR     66      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WPR     T13 T13           ,WPR     ,T13 ,T13           ,XF,WPR     220     32      ,WPR     66      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ABY     T2  T2            ,ABY     ,T2  ,T2            ,XF,ABY     110     10      ,ABY     11      21      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ABY     MXT1MXT1          ,ABY     ,MXT1,MXT1          ,XF,ABY     110     30      ,ABY     11      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ASB     T8  T8            ,ASB     ,T8  ,T8            ,XF,ASB     220     15      ,ASB     66      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ASB     T9  T9            ,ASB     ,T9  ,T9            ,XF,ASB     220     52      ,ASB     66      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ASB     T10 T10           ,ASB     ,T10 ,T10           ,XF,ASB     220     50      ,ASB     66      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRY     T5  T5            ,BRY     ,T5  ,T5            ,XF,BRY     220     10      ,BRY     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRY     T5  M5            ,BRY     ,T5  ,M5            ,XF,BRY     66      21      ,BRY     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRY     T5  L5            ,BRY     ,T5  ,L5            ,XF,BRY     11      30      ,BRY     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRY     T7  T7            ,BRY     ,T7  ,T7            ,XF,BRY     220     102     ,BRY     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRY     T7  M7            ,BRY     ,T7  ,M7            ,XF,BRY     66      29      ,BRY     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BRY     T7  L7            ,BRY     ,T7  ,L7            ,XF,BRY     11      200     ,BRY     100     T7      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HBK     T5  T5            ,HBK     ,T5  ,T5            ,XF,HBK     11      2       ,HBK     66      3       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T5  T5            ,TIM     ,T5  ,T5            ,XF,TIM     220     6       ,TIM     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T5  L5            ,TIM     ,T5  ,L5            ,XF,TIM     11      58      ,TIM     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T5  M5            ,TIM     ,T5  ,M5            ,XF,TIM     110     10      ,TIM     100     T5      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T3  T3            ,TIM     ,T3  ,T3            ,XF,TIM     110     46      ,TIM     11      51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T8  L8            ,TIM     ,T8  ,L8            ,XF,TIM     11      59      ,TIM     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T8  T8            ,TIM     ,T8  ,T8            ,XF,TIM     220     8       ,TIM     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T8  M8            ,TIM     ,T8  ,M8            ,XF,TIM     110     44      ,TIM     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T4  T4            ,TIM     ,T4  ,T4            ,XF,TIM     110     25      ,TIM     11      53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TIM     T6  T6            ,TIM     ,T6  ,T6            ,XF,TIM     110     34      ,TIM     11      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKA     T1  T1            ,TKA     ,T1  ,T1            ,XF,TKA     11      26      ,TKA     33      44      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKA     T6  T6            ,TKA     ,T6  ,T6            ,XF,TKA     110     1       ,TKA     11      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKA     MXT1MXT1          ,TKA     ,MXT1,MXT1          ,XF,TKA     110     30      ,TKA     33      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMK     T1  T1            ,TMK     ,T1  ,T1            ,XF,TMK     110     4       ,TMK     33      24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TMK     T2  T2            ,TMK     ,T2  ,T2            ,XF,TMK     110     1       ,TMK     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,AMS     T1  T1            ,AMS     ,T1  ,T1            ,XF,AMS     33      4       ,AMS     11      3       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,APS     T1  T1            ,APS     ,T1  ,T1            ,XF,APS     11      52      ,APS     66      6       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CLH     T1  T1            ,CLH     ,T1  ,T1            ,XF,CLH     11      22      ,CLH     66      6       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,COL     T1  T1            ,COL     ,T1  ,T1            ,XF,COL     66      17      ,COL     6.6     18      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,COL     T2  T2            ,COL     ,T2  ,T2            ,XF,COL     66      35      ,COL     6.6     36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,COL     T6  T6            ,COL     ,T6  ,T6            ,XF,COL     66      96      ,COL     11      100     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T1  T1            ,DOB     ,T1  ,T1            ,XF,DOB     66      11      ,DOB     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T2  T2            ,DOB     ,T2  ,T2            ,XF,DOB     66      13      ,DOB     33      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T11 T11           ,DOB     ,T11 ,T11           ,XF,DOB     110     19      ,DOB     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T11 M11           ,DOB     ,T11 ,M11           ,XF,DOB     66      4       ,DOB     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T11 L11           ,DOB     ,T11 ,L11           ,XF,DOB     11      5       ,DOB     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T12 T12           ,DOB     ,T12 ,T12           ,XF,DOB     110     16      ,DOB     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T12 M12           ,DOB     ,T12 ,M12           ,XF,DOB     66      15      ,DOB     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,DOB     T12 L12           ,DOB     ,T12 ,L12           ,XF,DOB     11      200     ,DOB     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GYM     T1  T1            ,GYM     ,T1  ,T1            ,XF,GYM     66      20      ,GYM     11      28      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GYM     T2  T2            ,GYM     ,T2  ,T2            ,XF,GYM     66      21      ,GYM     11      29      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HKK     T1  T1            ,HKK     ,T1  ,T1            ,XF,HKK     66      12      ,HKK     11      14      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HKK     T5  T5            ,HKK     ,T5  ,T5            ,XF,HKK     33      17      ,HKK     11      16      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HKK     T4  T4            ,HKK     ,T4  ,T4            ,XF,HKK     33      17      ,HKK     11      16      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HKK     T2  T2            ,HKK     ,T2  ,T2            ,XF,HKK     66      13      ,HKK     11      15      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HOR     T5  T5            ,HOR     ,T5  ,T5            ,XF,HOR     66      25      ,HOR     33      52      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HOR     T8  T8            ,HOR     ,T8  ,T8            ,XF,HOR     66      35      ,HOR     33      54      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,KUM     T1  T1            ,KUM     ,T1  ,T1            ,XF,KUM     66      8       ,KUM     11      20      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OTI     T6  T6            ,OTI     ,T6  ,T6            ,XF,OTI     66      12      ,OTI     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,AVI     T1  T1            ,AVI     ,T1  ,T1            ,XF,AVI     220     25      ,AVI     11      43      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,AVI     T2  T2            ,AVI     ,T2  ,T2            ,XF,AVI     220     20      ,AVI     11      42      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,AVI     T3  T3            ,AVI     ,T3  ,T3            ,XF,AVI     220     15      ,AVI     11      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,AVI     T4  T4            ,AVI     ,T4  ,T4            ,XF,AVI     220     10      ,AVI     11      40      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T27 T27           ,BEN     ,T27 ,T27           ,XF,BEN     220     41      ,BEN     11      120     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T28 T28           ,BEN     ,T28 ,T28           ,XF,BEN     220     42      ,BEN     144     42A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T29 T29           ,BEN     ,T29 ,T29           ,XF,BEN     220     39      ,BEN     11      121     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T42 T42           ,BEN     ,T42 ,T42           ,XF,BEN     220     20      ,BEN     100     T42     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T42 M42           ,BEN     ,T42 ,M42           ,XF,BEN     16      108     ,BEN     100     T42     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T42 L42           ,BEN     ,T42 ,L42           ,XF,BEN     16      109     ,BEN     100     T42     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T44 T44           ,BEN     ,T44 ,T44           ,XF,BEN     220     12      ,BEN     100     T44     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T44 M44           ,BEN     ,T44 ,M44           ,XF,BEN     16      98      ,BEN     100     T44     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T44 L44           ,BEN     ,T44 ,L44           ,XF,BEN     16      94      ,BEN     100     T44     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T46 T46           ,BEN     ,T46 ,T46           ,XF,BEN     220     43      ,BEN     100     T46     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T46 M46           ,BEN     ,T46 ,M46           ,XF,BEN     16      86      ,BEN     100     T46     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T46 L46           ,BEN     ,T46 ,L46           ,XF,BEN     16      84      ,BEN     100     T46     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BEN     T30 T30           ,BEN     ,T30 ,T30           ,XF,BEN     220     46      ,BEN     144     46A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T5A T5A           ,CML     ,T5A ,T5A           ,XF,CML     220     8       ,CML     100     T5A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T5A M5A           ,CML     ,T5A ,M5A           ,XF,CML     110     20      ,CML     100     T5A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T5A L5A           ,CML     ,T5A ,L5A           ,XF,CML     33      42      ,CML     100     T5A     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T5B T5B           ,CML     ,T5B ,T5B           ,XF,CML     220     8       ,CML     100     T5B     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T5B M5B           ,CML     ,T5B ,M5B           ,XF,CML     110     20      ,CML     100     T5B     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T5B L5B           ,CML     ,T5B ,L5B           ,XF,CML     33      42      ,CML     100     T5B     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T8  T8            ,CML     ,T8  ,T8            ,XF,CML     220     10      ,CML     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T8  M8            ,CML     ,T8  ,M8            ,XF,CML     110     24      ,CML     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CML     T8  L8            ,CML     ,T8  ,L8            ,XF,CML     33      44      ,CML     100     T8      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,FKN     T4  T4            ,FKN     ,T4  ,T4            ,XF,FKN     110     4       ,FKN     33      26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,FKN     T2A T2A           ,FKN     ,T2A ,T2A           ,XF,FKN     110     2       ,FKN     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,FKN     T2B T2B           ,FKN     ,T2B ,T2B           ,XF,FKN     110     2       ,FKN     33      23      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NSY     T1  T1            ,NSY     ,T1  ,T1            ,XF,NSY     220     7       ,NSY     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NSY     T2  T2            ,NSY     ,T2  ,T2            ,XF,NSY     220     9       ,NSY     33      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OAM     T1  T1            ,OAM     ,T1  ,T1            ,XF,OAM     110     4       ,OAM     33      20      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OAM     T2  T2            ,OAM     ,T2  ,T2            ,XF,OAM     110     13      ,OAM     33      22      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHA     T4  T4            ,OHA     ,T4  ,T4            ,XF,OHA     220     9       ,OHA     13.2    24      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHA     T5  T5            ,OHA     ,T5  ,T5            ,XF,OHA     220     11      ,OHA     13.2    25      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHA     T6  T6            ,OHA     ,T6  ,T6            ,XF,OHA     220     13      ,OHA     13.2    26      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHA     T7  T7            ,OHA     ,T7  ,T7            ,XF,OHA     220     18      ,OHA     13.2    27      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHB     T8  T8            ,OHB     ,T8  ,T8            ,XF,OHB     220     11      ,OHB     11      28      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHB     T9  T9            ,OHB     ,T9  ,T9            ,XF,OHB     220     13      ,OHB     11      29      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHB     T10 T10           ,OHB     ,T10 ,T10           ,XF,OHB     220     15      ,OHB     11      30      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHB     T11 T11           ,OHB     ,T11 ,T11           ,XF,OHB     220     17      ,OHB     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHC     T12 T12           ,OHC     ,T12 ,T12           ,XF,OHC     220     11      ,OHC     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHC     T13 T13           ,OHC     ,T13 ,T13           ,XF,OHC     220     13      ,OHC     11      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHC     T14 T14           ,OHC     ,T14 ,T14           ,XF,OHC     220     15      ,OHC     11      34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,OHC     T15 T15           ,OHC     ,T15 ,T15           ,XF,OHC     220     17      ,OHC     11      35      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,PRU     T1  T1            ,PRU     ,T1  ,T1            ,XF,PRU     33      3       ,PRU     11      2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STU     T5  T5            ,STU     ,T5  ,T5            ,XF,STU     11      22      ,STU     110     2       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,STU     T6  T6            ,STU     ,T6  ,T6            ,XF,STU     11      21      ,STU     110     4       ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKB     T2  T2            ,TKB     ,T2  ,T2            ,XF,TKB     220     11      ,TKB     11      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TKB     T3  T3            ,TKB     ,T3  ,T3            ,XF,TKB     220     13      ,TKB     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TWZ     T18 T18           ,TWZ     ,T18 ,T18           ,XF,TWZ     33      73      ,TWZ     220     34      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,TWZ     T19 T19           ,TWZ     ,T19 ,T19           ,XF,TWZ     33      75      ,TWZ     220     36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T21 T21           ,WTK     ,T21 ,T21           ,XF,WTK     220     8       ,WTK     11      40      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T22 T22           ,WTK     ,T22 ,T22           ,XF,WTK     220     18      ,WTK     11      41      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T23 T23           ,WTK     ,T23 ,T23           ,XF,WTK     220     6       ,WTK     100     T23     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T23 M23           ,WTK     ,T23 ,M23           ,XF,WTK     110     22      ,WTK     100     T23     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T23 L23           ,WTK     ,T23 ,L23           ,XF,WTK     11      200     ,WTK     100     T23     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T24 T24           ,WTK     ,T24 ,T24           ,XF,WTK     220     16      ,WTK     100     T24     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T24 M24           ,WTK     ,T24 ,M24           ,XF,WTK     110     30      ,WTK     100     T24     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T24 L24           ,WTK     ,T24 ,L24           ,XF,WTK     11      201     ,WTK     100     T24     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,WTK     T28 T28           ,WTK     ,T28 ,T28           ,XF,WTK     11      42      ,WTK     33      50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BAL     T1  T1            ,BAL     ,T1  ,T1            ,XF,BAL     110     9       ,BAL     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BAL     T2  T2            ,BAL     ,T2  ,T2            ,XF,BAL     110     15      ,BAL     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BDE     T1  T1            ,BDE     ,T1  ,T1            ,XF,BDE     110     8       ,BDE     11      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,BDE     T2  T2            ,BDE     ,T2  ,T2            ,XF,BDE     110     13      ,BDE     11      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CYD     T1  T1            ,CYD     ,T1  ,T1            ,XF,CYD     220     5       ,CYD     15.4    61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CYD     T2  T2            ,CYD     ,T2  ,T2            ,XF,CYD     220     7       ,CYD     15.4    62      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CYD     T3  T3            ,CYD     ,T3  ,T3            ,XF,CYD     220     12      ,CYD     15.4    63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CYD     T4  T4            ,CYD     ,T4  ,T4            ,XF,CYD     220     17      ,CYD     15.4    64      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CYD     T7  T7            ,CYD     ,T7  ,T7            ,XF,CYD     220     29      ,CYD     33      83      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,CYD     T8  T8            ,CYD     ,T8  ,T8            ,XF,CYD     220     35      ,CYD     33      84      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDN     T1  T1            ,EDN     ,T1  ,T1            ,XF,EDN     110     9       ,EDN     33      32      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,EDN     T2  T2            ,EDN     ,T2  ,T2            ,XF,EDN     110     11      ,EDN     33      37      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T11 T11           ,GOR     ,T11 ,T11           ,XF,GOR     220     51      ,GOR     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T11 M11           ,GOR     ,T11 ,M11           ,XF,GOR     110     22      ,GOR     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T11 L11           ,GOR     ,T11 ,L11           ,XF,GOR     11      201     ,GOR     100     T11     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T2  T2            ,GOR     ,T2  ,T2            ,XF,GOR     110     14      ,GOR     33      33      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T12 T12           ,GOR     ,T12 ,T12           ,XF,GOR     220     61      ,GOR     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T12 M12           ,GOR     ,T12 ,M12           ,XF,GOR     110     21      ,GOR     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T12 L12           ,GOR     ,T12 ,L12           ,XF,GOR     11      202     ,GOR     100     T12     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,GOR     T3  T3            ,GOR     ,T3  ,T3            ,XF,GOR     110     17      ,GOR     33      36      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWB     T5  T5            ,HWB     ,T5  ,T5            ,XF,HWB     220     13      ,HWB     33      86      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWB     T3  T3            ,HWB     ,T3  ,T3            ,XF,HWB     220     11      ,HWB     33      102     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWB     T6  T6            ,HWB     ,T6  ,T6            ,XF,HWB     220     16      ,HWB     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWB     T6  M6            ,HWB     ,T6  ,M6            ,XF,HWB     110     43      ,HWB     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,HWB     T6  L6            ,HWB     ,T6  ,L6            ,XF,HWB     11      17      ,HWB     100     T6      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,INV     T1  T1            ,INV     ,T1  ,T1            ,XF,INV     220     10      ,INV     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,INV     T1  M1            ,INV     ,T1  ,M1            ,XF,INV     110     70      ,INV     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,INV     T1  L1            ,INV     ,T1  ,L1            ,XF,INV     11      200     ,INV     100     T1      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,INV     T3  T3            ,INV     ,T3  ,T3            ,XF,INV     220     22      ,INV     33      95      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,INV     T5  T5            ,INV     ,T5  ,T5            ,XF,INV     220     30      ,INV     33      100     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T1  T1            ,MAN     ,T1  ,T1            ,XF,MAN     220     32      ,MAN     13.8    56      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T2  T2            ,MAN     ,T2  ,T2            ,XF,MAN     220     28      ,MAN     13.8    55      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T3  T3            ,MAN     ,T3  ,T3            ,XF,MAN     220     23      ,MAN     13.8    54      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T4  T4            ,MAN     ,T4  ,T4            ,XF,MAN     220     21      ,MAN     13.8    53      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T5  T5            ,MAN     ,T5  ,T5            ,XF,MAN     220     19      ,MAN     13.8    52      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T6  T6            ,MAN     ,T6  ,T6            ,XF,MAN     220     14      ,MAN     13.8    51      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T7  T7            ,MAN     ,T7  ,T7            ,XF,MAN     220     10      ,MAN     13.8    50      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T8  T8            ,MAN     ,T8  ,T8            ,XF,MAN     220     30      ,MAN     11      62      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,MAN     T9  T9            ,MAN     ,T9  ,T9            ,XF,MAN     220     12      ,MAN     11      61      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NMA     T1  T1            ,NMA     ,T1  ,T1            ,XF,NMA     220     16      ,NMA     33      63      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,NMA     T2  T2            ,NMA     ,T2  ,T2            ,XF,NMA     220     24      ,NMA     33      66      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T1  T1            ,ROX     ,T1  ,T1            ,XF,ROX     220     42      ,ROX     11      101     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T2  T2            ,ROX     ,T2  ,T2            ,XF,ROX     220     37      ,ROX     11      102     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T3  T3            ,ROX     ,T3  ,T3            ,XF,ROX     220     29      ,ROX     11      103     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T4  T4            ,ROX     ,T4  ,T4            ,XF,ROX     220     25      ,ROX     11      104     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T5  T5            ,ROX     ,T5  ,T5            ,XF,ROX     220     20      ,ROX     11      105     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T6  T6            ,ROX     ,T6  ,T6            ,XF,ROX     110     85      ,ROX     11      106     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T7  T7            ,ROX     ,T7  ,T7            ,XF,ROX     110     80      ,ROX     11      107     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T8  T8            ,ROX     ,T8  ,T8            ,XF,ROX     110     72      ,ROX     11      108     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T10 T10           ,ROX     ,T10 ,T10           ,XF,ROX     220     27      ,ROX     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T10 M10           ,ROX     ,T10 ,M10           ,XF,ROX     110     70      ,ROX     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,ROX     T10 L10           ,ROX     ,T10 ,L10           ,XF,ROX     11      109     ,ROX     100     T10     ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SDN     T1  T1            ,SDN     ,T1  ,T1            ,XF,SDN     220     10      ,SDN     33      31      ,0,  0.000000,  0.000000,  0.000000
+D,NETDATA,BRANCHNODE,1.0,SDN     T2  T2            ,SDN     ,T2  ,T2            ,XF,SDN     220     12      ,SDN     33      33      ,0,  0.000000,  0.000000,  0.000000

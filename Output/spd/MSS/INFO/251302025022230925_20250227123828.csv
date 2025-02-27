@@ -1,0 +1,2 @@
+"CaseID","CaseName","CaseTypeCode","CaseType","PriceTypeCode","PriceType","StudyModeCode","FirstPeriodDateTime","RunDateTime","FileName","InsertDateTime","InsertedBy"
+"251302025022230925","Auto PRSS 26-FEB-25 11:30 925","PRSS","Price-responsive schedule short","A","Short price-responsive prices","130",2025-02-25 22:30:00,2025-02-25 22:33:10,"/Volumes/ea_dev/sourcefiles/datalake/casefiles/processed//PRSS/MSS_251302025022230925_0X.ZIP",2025-02-26 23:38:28.444718,"Case Splitter Process"

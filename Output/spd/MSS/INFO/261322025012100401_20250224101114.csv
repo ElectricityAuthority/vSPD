@@ -1,0 +1,2 @@
+"CaseID","CaseName","CaseTypeCode","CaseType","PriceTypeCode","PriceType","StudyModeCode","FirstPeriodDateTime","RunDateTime","FileName","InsertDateTime","InsertedBy"
+"261322025012100401","Auto NRSS 27-JAN-25 10:00 401","NRSS","Non-response schedule short","N","Short non-response prices","132",2025-01-26 21:00:00,2025-01-26 21:03:07,"/Volumes/ea_dev/sourcefiles/datalake/casefiles/processed/NRSS//MSS_261322025012100401_0X.zip",2025-02-23 21:11:14.198742,"Case Splitter Process"

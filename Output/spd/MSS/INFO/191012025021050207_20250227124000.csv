@@ -1,0 +1,2 @@
+"CaseID","CaseName","CaseTypeCode","CaseType","PriceTypeCode","PriceType","StudyModeCode","FirstPeriodDateTime","RunDateTime","FileName","InsertDateTime","InsertedBy"
+"191012025021050207","Auto RTD 19-FEB-25 23:50 207","RTD","Real-time dispatch","D","Real-time dispatch prices","101",2025-02-19 10:50:00,2025-02-19 10:49:00,"/Volumes/ea_dev/sourcefiles/datalake/casefiles/processed//RTD/MSS_191012025021050207_0X.ZIP",2025-02-26 23:40:00.756509,"Case Splitter Process"
