@@ -1,2 +1,0 @@
-"CaseID","CaseName","CaseTypeCode","CaseType","PriceTypeCode","PriceType","StudyModeCode","FirstPeriodDateTime","RunDateTime","FileName","InsertDateTime","InsertedBy"
-"251332025022300936","Auto NRSL 26-FEB-25 12:00 936","NRSL","Non-response schedule long","L","Long non-response prices","133",2025-02-25 23:00:00,2025-02-25 23:12:28,"/Volumes/ea_dev/sourcefiles/datalake/casefiles/processed//NRSL/MSS_251332025022300936_0X.ZIP",2025-02-26 23:36:15.990544,"Case Splitter Process"
