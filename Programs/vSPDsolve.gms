@@ -333,7 +333,8 @@ $load mnCnstrRHS = i_dateTimeMNCnstrRHS
 $load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  mnCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
 $load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
 
-$load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharing riskGroupOffer = i_dateTimeRiskGroup
+$load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharing 
+$load riskGroupOffer = i_dateTimeRiskGroup directionalRiskFactor = i_dateTimeRiskGroupBranch
 
 $load scarcityNationalFactor = i_dateTimeScarcityNationalFactor  scarcityResrvLimit = i_dateTimeScarcityResrvLimit
 $load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit
@@ -610,6 +611,8 @@ MnodeConstraintLimit(MnodeConstraint) = mnCnstrRHS(MnodeConstraint,'cnstrLimit')
 
 * Reserve/Risk data
 islandRiskGroup(ca,dt,isl,rg,riskC)             = yes $ sum[ o $ { offerIsland(ca,dt,o,isl) and riskGroupOffer(ca,dt,rg,o,riskC) }, 1 ] ;
+islandLinkRiskGroup(ca,dt,isl,rg,riskC)         = yes $ sum[ branchFrBus(ACbranch(ca,dt,br),b) $ { directionalRiskFactor(ca,dt,rg,br,riskC) and busIsland(ca,dt,b,isl) }, 1 ] ;
+
 HVDCSecRiskEnabled(ca,dt,isl,'HVDCsecRisk')     = islandParameter(ca,dt,isl,'HVDCsecRisk') ; 
 HVDCSecRiskEnabled(ca,dt,isl,'HVDCsecRiskECE')  = islandParameter(ca,dt,isl,'HVDCsecRiskECE') ;
 riskAdjFactor(ca,dt,isl,resC,riskC)             = riskParameter(ca,dt,isl,resC,riskC,'adjustFactor') $ useReserveModel ;
@@ -750,6 +753,28 @@ badPriceFactor(ca,dt) $ { badPriceFactor(ca,dt) = 0 } = 5;
 scarcityResrvIslandLimit(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'limitMW') ;
 scarcityResrvIslandPrice(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'price') ;
 scarcityEnergyPriceMax(ca,dt)                = smax(blk, scarcityNationalFactor(ca,dt,blk,'price')); 
+
+* Data appllied to commissioning risk - SPD changes for 
+  commRiskDoCheckResOffers(ca,dt)   = dtParameter(ca,dt,'CommRiskDoCheckResOffers') ;
+  commRiskDoRiskAdjustment(ca,dt)   = dtParameter(ca,dt,'CommRiskDoRiskAdjustment') ;
+
+* CommRiskDoRiskAdjustment defualt value is 1. If set to Zeor, the following calculation is ignored.  
+  ACSecondaryRiskOffer(ca,dt,o,'genRisk')    $ commRiskDoRiskAdjustment(ca,dt) =  offerParameter(ca,dt,o,'ACSecondaryCERiskMW') ;
+  ACSecondaryRiskOffer(ca,dt,o,'genRiskECE') $ commRiskDoRiskAdjustment(ca,dt) =  offerParameter(ca,dt,o,'ACSecondaryECERiskMW') ;
+  
+* Note that SPD calculate both ACSecondaryRiskMW(rg,rc) and ACSecondaryRiskMW(lr,rc). In vSPD we combine both into one symbol
+  ACSecondaryRiskGroup(ca,dt,rg,GenRisk) = sum[ o $ riskGroupOffer(ca,dt,rg,o,GenRisk), ACSecondaryRiskOffer(ca,dt,o,GenRisk) ] ;
+
+* CommRiskDoCheckResOffers would only be set to 0 for testing (defualt = 1). If it was set to 0 then the Secondary Risk Pre-Processing would be skipped
+$onText
+4.6 Secondary Risk Pre-Processing
+To cover the possibility of reserve inadvertently offered on a secondary risk the reserve offers are set to zero for any generator that has
+all of its capacity modelled as a secondary risk.
+Zero the reserve offers on an offer where isCommissioning = 1 and isPartStation = 0
+$offText
+resrvOfrMW(ca,dt,o,blk,resC,resT) $ { CommRiskDoCheckResOffers(ca,dt) and offerParameter(ca,dt,o,'isCommissioning')
+                                  and (offerParameter(ca,dt,o,'isPartStation') = 0) } = 0 ;
+resOfrBlk(ca,dt,o,blk,resC,resT) $ (resrvOfrMW(ca,dt,o,blk,resC,resT) > 0) = yes ;
 
 
 * TN - Pivot or demand analysis begin
