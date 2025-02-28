@@ -334,7 +334,7 @@ $load mnCstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  mnCnstrResrvFactors = i_
 $load mnCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  mnCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
 
 $load riskParameter = i_dateTimeRiskParameter  reserveSharingParameter = i_dateTimeReserveSharing 
-$load riskGroupOffer = i_dateTimeRiskGroup directionalRiskFactor = i_dateTimeRiskGroupBranch
+$load riskGroupOffer = i_dateTimeRiskGroup 
 
 $load scarcityNationalFactor = i_dateTimeScarcityNationalFactor  scarcityResrvLimit = i_dateTimeScarcityResrvLimit
 $load scarcityNodeFactor = i_dateTimeScarcityNodeFactor  scarcityNodeLimit = i_dateTimeScarcityNodeLimit
@@ -358,6 +358,13 @@ inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
 
 if (inputGDXGDate <= jdate(2023,4,27),
   SPDlossTolerance = 0.005 ;
+);
+
+if (inputGDXGDate < jdate(2025,3,1),
+  directionalRiskFactor(ca,dt,rg,br,riskC) = 0 ;
+else
+  execute_load "%inputPath%\%GDXname%.gdx" directionalRiskFactor = i_dateTimeRiskGroupBranch  
+  
 );
 
 *=====================================================================================
