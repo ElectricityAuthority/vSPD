@@ -1,0 +1,16 @@
+Run: 'RTD_202502261155'
+
+runvSPD started at: 02/27/25 14:00:06
+vSPDsetup started at: 02/27/25 14:00:06
+vSPDreportSetup started at: 02/27/25 14:00:06
+
+Case "RTD_202502261155_251012025022255930_20250226115400" started at: 02/27/25 14:00:07
+ 
+Loop Count: 1
+The caseID: 251012025022255930 (26-FEB-2025 11:55) is solved successfully.
+Objective function value: 83427992.0229
+Violations cost         : 0.5608
+Case: RTD_202502261155_251012025022255930_20250226115400 is complete in   2.2190(secs)
+Case: RTD_202502261155_251012025022255930_20250226115400 is finished in   2.8020(secs)
+
+Total execute time:         3.66(secs)
