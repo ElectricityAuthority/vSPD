@@ -142,6 +142,9 @@ Parameter i_dateTimeOfferParameter(ca,dt,o,offerPar)                 'Generation
 Set dateTimeRiskGroup(gn,ca,dt,rg<,o,riskC)                          'Mapping risk group - generation offer' ;
 Set i_dateTimeRiskGroup(ca,dt,rg,o,riskC)                            'Mapping risk group - generation offer' ;
 
+Parameter dateTimeRiskGroupBranch(gn,ca,dt,rg,br,riskC)              'Mapping risk group - directional branch' ;
+Parameter i_dateTimeRiskGroupBranch(ca,dt,rg,br,riskC)               'Mapping risk group - directional branch' ;
+
 Parameter dateTimeEnergyOffer(gn,ca,dt,o,blk,bidofrCmpnt)            'Generation offer quantity and price' ;
 Parameter i_dateTimeEnergyOffer(ca,dt,o,blk,bidofrCmpnt)             'Generation offer quantity and price' ;
 
@@ -206,7 +209,7 @@ $load dateTimeBranchDefn = i_dateTimeBranchDefn  dateTimeNodeOutageBranch = i_da
 $load dateTimeBranchConstraintRHS = i_dateTimeBranchConstraintRHS  dateTimeBranchConstraintFactors = i_dateTimeBranchConstraintFactors
 $load dateTimeOfferNode = i_dateTimeOfferNode  dateTimeOfferTrader = i_dateTimeOfferTrader
 $load dateTimePrimarySecondaryOffer = i_dateTimePrimarySecondaryOffer   dateTimeOfferParameter = i_dateTimeOfferParameter
-$load dateTimeRiskGroup = i_dateTimeRiskGroup  dateTimeEnergyOffer = i_dateTimeEnergyOffer  dateTimeReserveOffer =  i_dateTimeReserveOffer
+$load dateTimeRiskGroup = i_dateTimeRiskGroup  dateTimeRiskGroupBranch = i_dateTimeRiskGroupBranch  dateTimeEnergyOffer = i_dateTimeEnergyOffer  dateTimeReserveOffer =  i_dateTimeReserveOffer
 $load dateTimeBidNode = i_dateTimeBidNode  dateTimeBidTrader = i_dateTimeBidTrader  dateTimeBidParameter = i_dateTimeBidParameter  dateTimeEnergyBid = i_dateTimeEnergyBid
 $load dateTimeMNCnstrRHS = i_dateTimeMNCnstrRHS  dateTimeMNCnstrEnrgFactors = i_dateTimeMNCnstrEnrgFactors  dateTimeMNCnstrResrvFactors = i_dateTimeMNCnstrResrvFactors
 $load dateTimeMNCnstrEnrgBidFactors = i_dateTimeMNCnstrEnrgBidFactors  dateTimeMNCnstrResrvBidFactors = i_dateTimeMNCnstrResrvBidFactors
@@ -266,6 +269,8 @@ i_dateTimeOfferParameter(ca,dt,o,offerPar) = sum[ (gn,tp) $ {i_dateTimeTradePeri
 
 i_dateTimeRiskGroup(ca,dt,rg,o,riskC) = yes $ sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) and dateTimeRiskGroup(gn,ca,dt,rg,o,riskC) }, 1] ;
 
+i_dateTimeRiskGroupBranch(ca,dt,rg,br,riskC) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeRiskGroupBranch(gn,ca,dt,rg,br,riskC)] ;
+
 i_dateTimeEnergyOffer(ca,dt,o,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeEnergyOffer(gn,ca,dt,o,blk,bidofrCmpnt)] ;
 
 i_dateTimeReserveOffer(ca,dt,o,resC,resT,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeReserveOffer(gn,ca,dt,o,resC,resT,blk,bidofrCmpnt)] ;
@@ -310,7 +315,7 @@ execute_unload "%inputPath%\Pricing_%yyyymmdd%.gdx"
     i_dateTimeBranchDefn, i_dateTimeNodeOutageBranch, i_dateTimeBranchParameter
     i_dateTimeBranchConstraintRHS, i_dateTimeBranchConstraintFactors
     i_dateTimeOfferNode, i_dateTimeOfferTrader, i_dateTimePrimarySecondaryOffer, i_dateTimeOfferParameter
-    i_dateTimeRiskGroup, i_dateTimeEnergyOffer, i_dateTimeReserveOffer
+    i_dateTimeRiskGroup, i_dateTimeRiskGroupBranch, i_dateTimeEnergyOffer, i_dateTimeReserveOffer
     i_dateTimeBidNode, i_dateTimeBidTrader, i_dateTimeBidParameter, i_dateTimeEnergyBid
     i_dateTimeMNCnstrRHS, i_dateTimeMNCnstrEnrgFactors, i_dateTimeMNCnstrResrvFactors
     i_dateTimeMNCnstrEnrgBidFactors, i_dateTimeMNCnstrResrvBidFactors
