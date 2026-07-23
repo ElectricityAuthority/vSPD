@@ -4,7 +4,7 @@
 *                       overrides.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       https://www.emi.ea.govt.nz/Tools/vSPD
+*                       https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
 * Last modified on:     10 November 2023

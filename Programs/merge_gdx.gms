@@ -8,7 +8,7 @@ Sets
   los(*)              'Loss segments available for loss modelling'              / ls1*ls13 /
   fd(*)               'Directional flow definition used in the SPD formulation' / forward, backward /
   resC(*)             'Definition of fast and sustained instantaneous reserve'  / FIR, SIR /
-  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE /
+  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE, ACCELink, ACECELink /
   resT(*)             'Definition of reserve types (PLSR, TWDR, ILR)'           / PLRO, TWRO, ILRO /
 
   casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
@@ -191,10 +191,13 @@ Parameter dateTimeScarcityResrvLimit(gn,ca,dt,isl,resC,blk,bidofrCmpnt) 'Island 
 Parameter i_dateTimeScarcityResrvLimit(ca,dt,isl,resC,blk,bidofrCmpnt)  'Island limit MW for reserve scarcity' ;
 
 Parameter dateTimeScarcityNodeFactor(gn,ca,dt,n,blk,bidofrCmpnt)        'Nodal energy scarcity factor parameters' ;
-Parameter i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt)         'Nodal energy scarcity factor parameters'
+Parameter i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt)         'Nodal energy scarcity factor parameters' ;
   
 Parameter dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)         'Nodal energy scarcity limit parameters' ;
 Parameter i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt)          'Nodal energy scarcity limit parameters' ;
+
+Parameter busUnitAndKey3Match(gn,ca,dt,n1,n2)                           'Node to Node mapping where the Key3 of the first pnode is contained within the second pnode';
+Parameter i_busUnitAndKey3Match(ca,dt,n1,n2)                            'Node to Node mapping where the Key3 of the first pnode is contained within the second pnode';
 
 
 *Load the input data form merged GDX file
@@ -218,6 +221,7 @@ $load dateTimeScarcityNationalFactor = i_dateTimeScarcityNationalFactor
 $load dateTimeScarcityResrvLimit = i_dateTimeScarcityResrvLimit
 $load dateTimeScarcityNodeFactor = i_dateTimeScarcityNodeFactor
 $load dateTimeScarcityNodeLimit = i_dateTimeScarcityNodeLimit
+$load busUnitAndKey3Match = i_busUnitAndKey3Match
 $gdxin
 $offMulti
 
@@ -305,6 +309,7 @@ i_dateTimeScarcityNodeFactor(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTi
   
 i_dateTimeScarcityNodeLimit(ca,dt,n,blk,bidofrCmpnt) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, dateTimeScarcityNodeLimit(gn,ca,dt,n,blk,bidofrCmpnt)] ;
   
+i_busUnitAndKey3Match(ca,dt,n1,n2) = sum[ (gn,tp) $ {i_dateTimeTradePeriodMap(ca,dt,tp) and priceCaseFilesPublishedSecs(ca,tp) }, busUnitAndKey3Match(gn,ca,dt,n1,n2)] ; 
     
 execute_unload "%inputPath%/Pricing_%yyyymmdd%.gdx"
     i_gdxDate, i_caseDefn, i_runMode
@@ -322,6 +327,7 @@ execute_unload "%inputPath%/Pricing_%yyyymmdd%.gdx"
     i_dateTimeRiskParameter, i_dateTimeReserveSharing
     i_dateTimeScarcityNationalFactor, i_dateTimeScarcityResrvLimit
     i_dateTimeScarcityNodeFactor, i_dateTimeScarcityNodeLimit
+    i_busUnitAndKey3Match
     priceCaseFilesPublishedSecs = i_priceCaseFilesPublishedSecs
 ;
 

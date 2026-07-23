@@ -3,7 +3,7 @@
 * Function:             Mathematical formulation - based on the SPD formulation v9.0
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://www.emi.ea.govt.nz/Tools/vSPD
+*                       https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
 * Modified on:          1 Oct 2019
@@ -13,9 +13,13 @@
 * Modified on:          24 Feb 2021
 *                       Correcting the excess reserve sharing penalty
 *                       by adding RESERVESHAREEFFECTIVE_CE and ECE variables
-* Last modified on:     18 March 2022
+* Modified on:          18 March 2022
 *                       Rename/remove primary sets to tidy up the code and
 *                       Assign value for constant sets such as ils, blk,resC, etc...
+* Last modified on:     02 July 2026
+*                       New features added: Tie breaker changes, 
+*                       prevention of non-physical BESS dispatch, 
+*                       assigning link risk to the ACCELink, ACECELink risk classes
 *
 *=====================================================================================
 
@@ -46,12 +50,13 @@ Sets
   los(*)              'Loss segments available for loss modelling'              / ls1*ls13 /
   fd(*)               'Directional flow definition used in the SPD formulation' / forward, backward /
   resC(*)             'Definition of fast and sustained instantaneous reserve'  / FIR, SIR /
-  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE /
+  riskC(*)            'Different risks that could set the reserve requirements' / genRisk, genRiskECE, DCCE, DCECE, manual, manualECE, HVDCsecRisk, HVDCsecRiskECE, ACCELink, ACECELink /
   resT(*)             'Definition of reserve types (PLSR, TWDR, ILR)'           / PLRO, TWRO, ILRO /
 
 * Risk/Reserve subset
   GenRisk(riskC)      'Subset containing generator risks'                       / genRisk, genRiskECE /
   ManualRisk(riskC)   'Subset containting manual risks'                         / manual, manualECE /
+  LinkRisk(riskC)     'Subset containing ACCE and ACECE link risk'              / ACCELink, ACECELink /
   HVDCrisk(riskC)     'Subset containing DCCE and DCECE risks'                  / DCCE, DCECE /
   HVDCSecRisk(riskC)  'Subset containing DCCE and DCECE secondary risk'         / HVDCsecRisk, HVDCsecRiskECE /
 
@@ -60,8 +65,8 @@ Sets
   ILRO(resT)          'ILR reserve type'                                        / ILRO /
 
 * Definition of CE and ECE events to support different CE and ECE CVPs
-  ContingentEvents(riskC)          'Subset of Risk Classes containing contigent event risks'           / genRisk, DCCE, manual, HVDCsecRisk /
-  ExtendedContingentEvent(riskC)   'Subset of Risk Classes containing extended contigent event risk'   / genRiskECE, DCECE, manualECE, HVDCsecRiskECE /
+  ContingentEvents(riskC)          'Subset of Risk Classes containing contigent event risks'           / genRisk, DCCE, manual, HVDCsecRisk, ACCELink /
+  ExtendedContingentEvent(riskC)   'Subset of Risk Classes containing extended contigent event risk'   / genRiskECE, DCECE, manualECE, HVDCsecRiskECE, ACECELink /
 
   casePar(*)          'Different information about a case and datetime' /studyMode, intervalLength/
 
@@ -141,6 +146,9 @@ Sets
 
 * Risk sets
   riskGroupOffer(ca,dt,rg<,o,riskC)     'Mapping of risk group to offers in current trading period for each risk class - SPD version 11.0 update'
+
+* Battery pair sets - Added SPD version 16.0
+  busUnitAndKey3Match(ca,dt,n,n)        'Pairs of nodes which both share the same "bus unit name" and the key3 code of the first node is within the key3 of the second node'
   ;
 
 
@@ -208,6 +216,10 @@ Scalars
   nonPhysicalLossTolerance
   useBranchFlowMIPtolerance
   useReserveModel                          'Use the reserve model (1 = Yes)'
+  tieBreak_v16                             'Use tie break constraints (1 = Yes). Effective from 2026-06-23.'
+  batteryPair_v16                          'Use battery pair constraints (1 = Yes). Effective from 2026-06-23'
+  reservePricing_v16                       'Use reserve price extraction improvements (1 = Yes). Effective from 2026-06-23'
+  badPrice_v16                             'Use updated scarcity factor (1 = Yes). Effective from 2026-06-23'
   mixedMIPtolerance
   LPtimeLimit                              'CPU seconds allowed for LP solves'
   LPiterationLimit                         'Iteration limit allowed for LP solves'
@@ -225,6 +237,9 @@ Scalars
   lossCoeff_E                       / 0.46742 /
   lossCoeff_F                       / 0.82247 /
   maxFlowSegment                    / 10000 /
+
+* Tie break slack price fom Transpower SPD v16
+  TieBreakSlackPrice                        'Slack price used to ensure tie break constraints only used if negligible impact on cost' / 0.0001 /
 
   ;
 
@@ -276,6 +291,9 @@ Sets
   genOfrBlk(ca,dt,o,blk)                 'Valid trade blocks for the respective generation offers'
   posEnrgOfr(ca,dt,o)                    'Postive energy offers defined for the current trading period'
   resOfrBlk(ca,dt,o,blk,resC,resT)       'Valid trade blocks for the respective reserve offers by class and type'
+  offerBus(ca,dt,o,b)                    'Mapping of offers to buses (SPD v16)'
+  samePrice(ca,dt,o,blk,o,blk)           'Pairs of offer tranches with the same offer price (SPD v16)'
+  samePriceSameBus(ca,dt,o,blk,o,blk)    'Pairs of offer tranches that occur at the same bus and have the same offer price (SPD v16)'
 
 * Bid
   Bid(ca,dt,bd)                          'Bids defined for the current trading period'
@@ -286,13 +304,21 @@ Sets
   MNodeConstraint(ca,dt,MnodeCstr)       'Set of market node constraints defined for the current trading period'
 
 * Reserve/Risk
-  islandRiskGroup(ca,dt,isl,rg,riskC)    'Mappimg of risk group to island in current trading period for each risk class - SPD version 11.0 update'
-  islandLinkRiskGroup(ca,dt,isl,rg,riskC)'Mappimg of link risk group to island in current trading period for each risk class - SPD version 15.0 update'
+  islandRiskGroup(ca,dt,isl,rg,riskC)    'Mapping of risk group to island in current trading period for each risk class - SPD version 11.0 update'
+  islandLinkRiskGroup(ca,dt,isl,rg,riskC)'Mapping of link risk group to island in current trading period for each risk class - SPD version 15.0 update'
 
 * Reserve Sharing
   rampingConstraint(ca,dt,brCstr)         'Subset of branch constraints that limit total HVDC sent from an island due to ramping (5min schedule only)'
   bipoleConstraint(ca,dt,isl,brCstr)      'Subset of branch constraints that limit total HVDC sent from an island'
   monopoleConstraint(ca,dt,isl,brCstr,br) 'Subset of branch constraints that limit the flow on HVDC pole sent from an island'
+
+* Battery pair sets - Added SPD version 16.0
+  loadLikeNode(ca,dt,n)                 'There is a bid or IL offer at n'
+  genNode(ca,dt,n)                      'There is a generation offer at n'
+  bidNodeTrader(ca,dt,n,trdr)           'Map of nodes with bids (or IL offers) to traders'
+  offerNodeTrader(ca,dt,n,trdr)         'Map of nodes with offers to traders'
+  sameTrader(ca,dt,n,n)                 'Pairs of nodes where the bid and offer correspond to the same trader'
+  batteryMappingOverride(*,*)           'Pairs of nodes which both share the same "bus unit name" do not have to satisfy the key3 condition to be a battery pair'
   ;
 
 Alias (t,t1,t2);
@@ -351,6 +377,9 @@ Parameters
   priceResponsive(ca,dt,o)                'Flag to indicate if wind offer is price responsive (1 = Yes)'
   potentialMW(ca,dt,o)                    'Potential max output of Wind offer'
   reserveMaxFactor(ca,dt,o,resC)          'Factor to adjust the maximum reserve of the different classes for the different offers'
+  cumulativeEnrgOfrMW(ca,dt,o,blk)        'Raw cumulative generation offer block total - used to calculate cappedEnrgOfrMW (MW) - SPD v16'
+  cappedEnrgOfrMW(ca,dt,o,blk)            'Generation offer block adjusted by reserveGenMax, potentialMW, and rampRateUp (MW) - SPD v16 .'
+  cappedGenMax(ca,dt,o)                   'Maximum generation adjusted by reserveGenMax, potentialMW, and rampRateUp (MW) - SPD v16.'
 
 * Primary-secondary offer parameters
   primaryOffer(ca,dt,o)                   'Flag to indicate if offer is a primary offer (1 = Yes)'
@@ -460,6 +489,8 @@ Parameters
 * Post-processing
   useBranchFlowMIP(ca,dt)                             'Flag to indicate if integer constraints are needed in the branch flow model: 1 = Yes'
 
+* Battery pair parameters - Added SPD version 16.0
+  BatteryPair(ca,dt,n,n)                              'Binary parameter used to map a bid and offer that represents the same physical battery'
 
   ;
 
@@ -585,6 +616,8 @@ Positive variables
   SURPLUSBRANCHFLOW(ca,dt,br)                         'Surplus branch flow in MW'
   DEFICITMNODECONSTRAINT(ca,dt,MnodeCstr)             'Deficit market node constraint in MW'
   SURPLUSMNODECONSTRAINT(ca,dt,MnodeCstr)             'Surplus market node constraint in MW'
+  TIEBREAKSLACK1(ca,dt,o,blk,o,blk)                   'Positive part of tie-break violation (SPD v16)'
+  TIEBREAKSLACK2(ca,dt,o,blk,o,blk)                   'Negative part of tie-break violation (SPD v16)'
 * Seperate CE and ECE violation variables to support different CVPs for CE and ECE
   DEFICITRESERVE_CE(ca,dt,isl,resC)                   'Deficit CE reserve generation in each island for each reserve class in MW'
   DEFICITRESERVE_ECE(ca,dt,isl,resC)                  'Deficit ECE reserve generation in each island for each reserve class in MW'
@@ -600,6 +633,8 @@ Binary variables
   PURCHASEBLOCKBINARY(ca,dt,bd,blk)                   'Binary variable to decide if a purchase block is cleared either fully or nothing at all'
 * HVDC Secondary risk should not be covered if HVDC sending is zero. The following binary variable is to enforced that (Update from RTP phase 4)
   HVDCSENDZERO(ca,dt,isl)                              'Binary variable indicating if island is NOT the sending energy through HVDC flow. 1 = Yes.'
+* Enforce mutual exclusivity between charging and discharging for the pnodes that are paired by parameter BatteryPair
+  BATTERYCHARGINGMODE(ca,dt,n,n)                      'Binary variable indicating if the BatteryPair is in charging or discharging mode. 1 = Charging mode'
   ;
 
 SOS1 Variables
@@ -632,6 +667,10 @@ Equations
   DemBidDiscrete(ca,dt,bd,blk)                        'Definition of discrete purchase mode (6.1.1.7)'
   DemBidDefintion(ca,dt,bd)                           'Definition of purchase provided by a bid (6.1.1.8)'
   EnergyScarcityDefinition(ca,dt,n)                   'Definition of bus energy scarcity (6.1.1.10)'
+  TieBreakViolationDefinition(ca,dt,o,blk,o,blk)      'Definition of tie-break violation (6.1.1.11) - SPD version 16.0'
+  BatteryChargingModeDefinition(ca,dt,n,n)            'If nodes are part of BatteryPair, then only allows charging and IL offer if in battery charging mode (6.1.1.12) - SPD version 16.0'
+  BatteryDischargingModeDefinition(ca,dt,n,n)         'If nodes are part of BatteryPair, then only allows generation offer if NOT in battery charging mode (6.1.1.12) - SPD version 16.0'
+
 
 * Ramping constraints
   GenerationRampUp(ca,dt,o)                           'Maximum movement of the generator upwards due to up ramp rate (6.2.1.1)'
@@ -689,7 +728,7 @@ Equations
   GenIslandRiskGroupCalculation_1(ca,dt,isl,rg,resC,riskC)     '6.5.1.11: Calculation of the island risk of risk group.'
   AClineRiskGroupCalculation(ca,dt,isl,rg,resC,riskC)          '6.5.1.12: Calculation of the island risk of link risk group.'
   AClineRiskGroupCalculation_1(ca,dt,isl,rg,resC,riskC)        '6.5.1.12: Calculation of the island risk of link risk group.'
-
+  
 * General NMIR equations
   EffectiveReserveShareCalculation(ca,dt,isl,resC,riskC)                           '6.5.2.1 : Calculation of effective shared reserve'
   SharedReserveLimitByClearedReserve(ca,dt,isl,resC)                               '6.5.2.2 : Shared offered reserve is limited by cleared reserved'
@@ -733,16 +772,18 @@ Equations
   EnergyAndReserveMaximum(ca,dt,o,resC)                                            '6.5.3.5: Definition of maximum energy and reserves from each generator'
 
 * Reserve scarcity/shortfall
-  HVDCRiskReserveShortFallCalculation(ca,dt,isl,resC,RiskC)                        '6.5.4.2: Total Reserve Shortfall for DCCE risk'
-  ManualRiskReserveShortFallCalculation(ca,dt,isl,resC,RiskC)                      '6.5.4.2: Total Reserve Shortfall for Manual risk'
-  GenRiskReserveShortFallCalculation(ca,dt,isl,o,resC,RiskC)                       '6.5.4.2: Total Reserve Shortfall for generation risk unit'
-  HVDCsecRiskReserveShortFallCalculation(ca,dt,isl,o,resC,RiskC)                   '6.5.4.2: Total Reserve Shortfall for generation unit + HVDC risk'
-  HVDCsecManualRiskReserveShortFallCalculation(ca,dt,isl,resC,RiskC)                '6.5.4.2: Total Reserve Shortfall for Manual risk + HVDC risk'
-  RiskGroupReserveShortFallCalculation(ca,dt,isl,rg,resC,RiskC)                     '6.5.4.2: Total Reserve Shortfall for Risk Group'
+  HVDCRiskReserveShortFallCalculation(ca,dt,isl,resC,riskC)                        '6.5.4.2: Total Reserve Shortfall for DCCE risk'
+  ManualRiskReserveShortFallCalculation(ca,dt,isl,resC,riskC)                      '6.5.4.2: Total Reserve Shortfall for Manual risk'
+  GenRiskReserveShortFallCalculation(ca,dt,isl,o,resC,riskC)                       '6.5.4.2: Total Reserve Shortfall for generation risk unit'
+  HVDCsecRiskReserveShortFallCalculation(ca,dt,isl,o,resC,riskC)                   '6.5.4.2: Total Reserve Shortfall for generation unit + HVDC risk'
+  HVDCsecManualRiskReserveShortFallCalculation(ca,dt,isl,resC,riskC)               '6.5.4.2: Total Reserve Shortfall for Manual risk + HVDC risk'
+  RiskGroupReserveShortFallCalculation(ca,dt,isl,rg,resC,riskC)                    '6.5.4.2: Total Reserve Shortfall for Risk Group'
+
 
 * Matching of reserve requirement and availability
   IslandReserveCalculation(ca,dt,isl,resC)                                         '6.5.5.1: Calculate total island cleared reserve'
   SupplyDemandReserveRequirement(ca,dt,isl,resC,riskC)                             '6.5.5.2&3: Matching of reserve supply and demand'
+  SupplyDemandReserveRequirement_v16(ca,dt,isl,resC,riskC)                         '6.5.5.2 - 6.5.5.5: Matching of reserve supply and demand (SPD version 16.0)'
 
 * Branch security constraints
   BranchSecurityConstraintLE(ca,dt,brCstr)                                         '6.6.1.5: Branch security constraint with LE sense'
@@ -807,9 +848,13 @@ SystemPenaltyCostDefinition(t)..
      + surplusMnodeCstrPenalty * SURPLUSMNODECONSTRAINT(MNodeConstraint) ]
 
 + sum[ (isl,resC)
-       , [DeficitReservePenalty_CE  * DEFICITRESERVE_CE(t,isl,resC) ]
+       , [DeficitReservePenalty_CE  * DEFICITRESERVE_CE(t,isl,resC) ] $ {not reservePricing_v16}
        + [DeficitReservePenalty_ECE * DEFICITRESERVE_ECE(t,isl,resC)]
      ]
+
++ TieBreakSlackPrice * 
+  sum[ samePriceSameBus(t,o1,blk1,o2,blk2) $ tieBreak_v16
+       , TIEBREAKSLACK1(t,o1,blk1,o2,blk2) + TIEBREAKSLACK2(t,o1,blk1,o2,blk2)]     
 
 + sum[ o $ { (StudyMode(t) = 101) or (StudyMode(t) = 201) }
          , 0.0005 * ( GENERATIONUPDELTA(t,o) + GENERATIONDNDELTA(t,o) )
@@ -820,7 +865,7 @@ SystemPenaltyCostDefinition(t)..
 TotalViolationCostDefinition..
   TOTALPENALTYCOST =e= sum[ t, SYSTEMPENALTYCOST(t) ] ;
 
-* Deined as the sume of scarcity cost
+* Defined as the sum of scarcity cost
 TotalScarcityCostDefinition(t)..
   SCARCITYCOST(t)
 =e=
@@ -849,6 +894,11 @@ TotalScarcityCostDefinition(t)..
      * RESERVESHORTFALLBLK(t,isl,resC,riskC,blk) ]
 
 +  sum[ (isl,rg,resC,riskC,blk) $ GenRisk(riskC)
+     , ScarcityResrvIslandPrice(t,isl,resC,blk)
+     * RESERVESHORTFALLGROUPBLK(t,isl,rg,resC,riskC,blk) ]
+* LinkRisk added in SPD version 16.0
++  sum[ (isl,rg,resC,riskC,blk) $ { LinkRisk(riskC) 
+                                and reservePricing_v16 }
      , ScarcityResrvIslandPrice(t,isl,resC,blk)
      * RESERVESHORTFALLGROUPBLK(t,isl,rg,resC,riskC,blk) ]
 ;
@@ -888,6 +938,30 @@ EnergyScarcityDefinition(t,n)..
   ENERGYSCARCITYNODE(t,n)
 =e=
   sum[ blk, ENERGYSCARCITYBLK(t,n,blk) ]
+  ;
+
+* Definition of tie-break violation (6.1.1.11) - SPD version 16.0
+TieBreakViolationDefinition(t,o1,blk1,o2,blk2) $ { samePriceSameBus(t,o1,blk1,o2,blk2) and tieBreak_v16 }..
+  GENERATIONBLOCK(t,o1,blk1) / cappedEnrgOfrMW(t,o1,blk1)  
+- GENERATIONBLOCK(t,o2,blk2) / cappedEnrgOfrMW(t,o2,blk2)  
+=e=
+  TIEBREAKSLACK1(t,o1,blk1,o2,blk2) - TIEBREAKSLACK2(t,o1,blk1,o2,blk2)
+  ;
+
+* If nodes are part of BatteryPair, then only allows charging and IL offer if in battery charging mode (6.1.1.12) - SPD version 16.0
+BatteryChargingModeDefinition(t,n1,n2) $ { (BatteryPair(t,n1,n2) = 1) and batteryPair_v16 }..
+  sum[ bidNode(bid(t,bd),n1), PURCHASE(t,bd) ] 
++ sum[ (resC, offerNode(offer(t,o),n1)), RESERVE(t,o,resC,'ILRO')] 
+=l= 
+  BATTERYCHARGINGMODE(t,n1,n2) * BigM
+  ;
+  
+
+* If nodes are part of BatteryPair, then only allows generation offer if NOT in battery charging mode (6.1.1.13) - SPD version 16.0
+BatteryDischargingModeDefinition(t,n1,n2) $ { (BatteryPair(t,n1,n2) = 1) and batteryPair_v16 }..
+  sum[ offerNode(offer(t,o),n2), GENERATION(t,o) ]  
+=l=
+  (1 - BATTERYCHARGINGMODE(t,n1,n2)) * BigM
   ;
 
 *======= GENERATION AND LOAD CONSTRAINTS END ===================================
@@ -1192,6 +1266,7 @@ HVDCRecCalculation(t,isl)..
   ;
 
 * 6.5.1.5 : Calculation of the island risk for a DCCE and DCECE.
+* Reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
 HVDCIslandRiskCalculation(t,isl,resC,HVDCrisk)..
   ISLANDRISK(t,isl,resC,HVDCrisk)
 =e=
@@ -1201,10 +1276,11 @@ HVDCIslandRiskCalculation(t,isl,resC,HVDCrisk)..
     + modulationRiskClass(t,HVDCrisk)
     ]
 * Scarcity reserve (only applied for CE risk)
-  - RESERVESHORTFALL(t,isl,resC,HVDCrisk) $ ContingentEvents(HVDCrisk)
+  - RESERVESHORTFALL(t,isl,resC,HVDCrisk) $ { ContingentEvents(HVDCrisk) and not reservePricing_v16 }
   ;
 
 * 6.5.1.6 : Calculation of the risk of risk setting generators
+* Effective reserve share and reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
 GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
   $ islandRiskGenerator(t,isl,o) ..
   GENISLANDRISK(t,isl,o,resC,GenRisk)
@@ -1219,9 +1295,9 @@ GenIslandRiskCalculation_1(t,isl,o,resC,GenRisk)
          , sum[ resT, RESERVE(t,o1,resC,resT) ] + GENERATION(t,o1) ]
     ]
 * NMIR update
-- RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk)$reserveShareEnabled(t,resC)
+- RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk) $ { reserveShareEnabled(t,resC) and not reservePricing_v16 }
 * Scarcity reserve (only applied for CE risk)
-- RESERVESHORTFALLUNIT(t,isl,o,resC,GenRisk) $ ContingentEvents(GenRisk)
+- RESERVESHORTFALLUNIT(t,isl,o,resC,GenRisk) $ { ContingentEvents(GenRisk) and not reservePricing_v16 }
   ;
 
 * 6.5.1.6 : Calculation of the island risk for risk setting generators
@@ -1232,6 +1308,7 @@ GenIslandRiskCalculation(t,isl,o,resC,GenRisk)
   GENISLANDRISK(t,isl,o,resC,GenRisk) ;
 
 * 6.5.1.7 : Calculation of the island risk based on manual specifications
+* Effective reserve share and reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
 ManualIslandRiskCalculation(t,isl,resC,ManualRisk)..
   ISLANDRISK(t,isl,resC,ManualRisk)
 =e=
@@ -1239,10 +1316,10 @@ ManualIslandRiskCalculation(t,isl,resC,ManualRisk)..
   * [ riskParameter(t,isl,resC,ManualRisk,'minRisk')
     - FreeReserve(t,isl,resC,ManualRisk)
     ]
-* NMIR update
-- RESERVESHAREEFFECTIVE(t,isl,resC,ManualRisk)$reserveShareEnabled(t,resC)
+* NMIR update 
+- RESERVESHAREEFFECTIVE(t,isl,resC,ManualRisk) $ { reserveShareEnabled(t,resC) and not reservePricing_v16 }
 * Scarcity reserve (only applied for CE risk)
-- RESERVESHORTFALL(t,isl,resC,ManualRisk) $ ContingentEvents(ManualRisk)
+- RESERVESHORTFALL(t,isl,resC,ManualRisk) $ { ContingentEvents(ManualRisk) and not reservePricing_v16 }
   ;
 
 * 6.5.1.8: Define a flag to show if HVDC sending zero MW flow from an island
@@ -1251,6 +1328,7 @@ HVDCSendMustZeroBinaryDefinition(t,isl).. HVDCSENT(t,isl) =l= BigM * [ 1 - HVDCS
 
 * 6.5.1.9 : Calculation of the island risk for an HVDC secondary generation risk
 * HVDC secondary risk includes HVDC risk and Generation of both primary and secondary generation unit + cleared reserve + the FKBand for generator primary risk
+* Reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
 HVDCIslandSecRiskCalculation_GEN_1(t,isl,o,resC,HVDCSecRisk)
   $ { islandRiskGenerator(t,isl,o)  and
       HVDCSecRiskEnabled(t,isl,HVDCSecRisk) }..
@@ -1268,7 +1346,7 @@ HVDCIslandSecRiskCalculation_GEN_1(t,isl,o,resC,HVDCSecRisk)
     + modulationRiskClass(t,HVDCSecRisk)
     ]
 * Scarcity reserve (only applied for CE risk)
-  - RESERVESHORTFALLUNIT(t,isl,o,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+  - RESERVESHORTFALLUNIT(t,isl,o,resC,HVDCSecRisk) $ { ContingentEvents(HVDCSecRisk) and not reservePricing_v16 }
 * HVDC secondary risk not applied if HVDC sent is zero
   - BigM * sum[ isl1 $ (not sameas(isl1,isl)), HVDCSENDZERO(t,isl) ]
   ;
@@ -1283,6 +1361,7 @@ HVDCIslandSecRiskCalculation_GEN(t,isl,o,resC,HVDCSecRisk)
   ;
 
 * 6.5.1.10: Calculation of the island risk for an HVDC secondary manual risk
+* Reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
 HVDCIslandSecRiskCalculation_Manu_1(t,isl,resC,HVDCSecRisk)
   $ HVDCSecRiskEnabled(t,isl,HVDCSecRisk)..
   HVDCMANISLANDRISK(t,isl,resC,HVDCSecRisk)
@@ -1295,7 +1374,7 @@ HVDCIslandSecRiskCalculation_Manu_1(t,isl,resC,HVDCSecRisk)
     + modulationRiskClass(t,HVDCSecRisk)
     ]
 * Scarcity reserve (only applied for CE risk)
-  - RESERVESHORTFALL(t,isl,resC,HVDCSecRisk) $ ContingentEvents(HVDCSecRisk)
+  - RESERVESHORTFALL(t,isl,resC,HVDCSecRisk) $ { ContingentEvents(HVDCSecRisk) and not reservePricing_v16 }
 * HVDC secondary risk not applied if HVDC sent is zero
   - BigM * sum[ isl1 $ (not sameas(isl1,isl)), HVDCSENDZERO(t,isl) ]
   ;
@@ -1309,6 +1388,7 @@ HVDCIslandSecRiskCalculation_Manual(t,isl,resC,HVDCSecRisk)
   ;
 
 * 6.5.1.11: Calculation of the risk of risk group
+* Effective reserve share and reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
 GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
   $ {islandRiskGroup(t,isl,rg,GenRisk) and (not islandLinkRiskGroup(t,isl,rg,GenRisk))}..
   GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
@@ -1322,13 +1402,13 @@ GenIslandRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
     - ACSecondaryRiskGroup(t,rg,GenRisk)
     - FreeReserve(t,isl,resC,GenRisk)
     ]
-* NMIR update
-- RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk)$reserveShareEnabled(t,resC)
+* NMIR update (removed in SPD v16)
+- RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk) $ { reserveShareEnabled(t,resC) and not reservePricing_v16 }
 * Scarcity reserve (only applied for CE risk)
-- RESERVESHORTFALLGROUP(t,isl,rg,resC,GenRisk) $ ContingentEvents(GenRisk)
+- RESERVESHORTFALLGROUP(t,isl,rg,resC,GenRisk) $ { ContingentEvents(GenRisk) and not reservePricing_v16 }
   ;
 
-* 6.5.1.11: Calculation of the island risk for risk group
+* 6.5.1.11: Calculation of the island risk for risk group  
 GenIslandRiskGroupCalculation(t,isl,rg,resC,GenRisk)
   $ islandRiskGroup(t,isl,rg,GenRisk)..
   ISLANDRISK(t,isl,resC,GenRisk)
@@ -1337,33 +1417,42 @@ GenIslandRiskGroupCalculation(t,isl,rg,resC,GenRisk)
   ;
 
 * 6.5.1.12: Calculation of the island risk of link risk group.
-AClineRiskGroupCalculation_1(t,isl,rg,resC,GenRisk)
-  $ islandLinkRiskGroup(t,isl,rg,GenRisk)..
-  GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
+* Attributed to the risk types ACCELink and ACECELink (LinkRisk) in SPD version 16.0
+* Effective reserve share and reserve shortfall moved to 6.5.5.2 - 6.5.5.5 in SPD version 16.0
+AClineRiskGroupCalculation_1(t,isl,rg,resC,riskC)
+  $ { islandLinkRiskGroup(t,isl,rg,riskC) and (
+        (GenRisk(riskC) and not reservePricing_v16) or
+        (LinkRisk(riskC) and reservePricing_v16) 
+      ) }..
+  GENISLANDRISKGROUP(t,isl,rg,resC,riskC)
 =e=
-  riskAdjFactor(t,isl,resC,GenRisk)
-  * [ sum[ br $ directionalRiskFactor(t,rg,br,GenRisk)
-              , ACBRANCHFLOW(t,br) * directionalRiskFactor(t,rg,br,GenRisk)]
+  riskAdjFactor(t,isl,resC,riskC)
+  * [ sum[ br $ directionalRiskFactor(t,rg,br,riskC)
+              , ACBRANCHFLOW(t,br) * directionalRiskFactor(t,rg,br,riskC)]
 
     + sum[ (o,resT) $ { offerIsland(t,o,isl)
-                    and riskGroupOffer(t,rg,o,GenRisk)
+                    and riskGroupOffer(t,rg,o,riskC)
                       } , RESERVE(t,o,resC,resT)
          ]
-    - ACSecondaryRiskGroup(t,rg,GenRisk)
-    - FreeReserve(t,isl,resC,GenRisk)
+    - ACSecondaryRiskGroup(t,rg,riskC)
+    - FreeReserve(t,isl,resC,riskC)
     ]
 * NMIR update
-- RESERVESHAREEFFECTIVE(t,isl,resC,GenRisk)$reserveShareEnabled(t,resC)
-* Scarcity reserve (only applied for CE risk)
-- RESERVESHORTFALLGROUP(t,isl,rg,resC,GenRisk) $ ContingentEvents(GenRisk)
+- RESERVESHAREEFFECTIVE(t,isl,resC,riskC) $ { reserveShareEnabled(t,resC) and not reservePricing_v16 }
+* Scarcity reserve (only applied for CE risk) 
+- RESERVESHORTFALLGROUP(t,isl,rg,resC,riskC) $ { ContingentEvents(riskC) and not reservePricing_v16 }   
   ;
 
 * 6.5.1.12: Calculation of the island risk of link risk group.
-AClineRiskGroupCalculation(t,isl,rg,resC,GenRisk)
-  $ islandLinkRiskGroup(t,isl,rg,GenRisk)..
-  ISLANDRISK(t,isl,resC,GenRisk)
+* Risk types ACCELink and ACECELink (LinkRisk) used for link risk in SPD version 16.0
+AClineRiskGroupCalculation(t,isl,rg,resC,riskC)
+  $ { islandLinkRiskGroup(t,isl,rg,riskC) and ( 
+        ( GenRisk(riskC) and not reservePricing_v16 ) or
+        ( LinkRisk(riskC) and reservePricing_v16)
+      ) } ..
+  ISLANDRISK(t,isl,resC,riskC)
 =g=
-  GENISLANDRISKGROUP(t,isl,rg,resC,GenRisk)
+  GENISLANDRISKGROUP(t,isl,rg,resC,riskC)
   ;
 
 *======= RISK EQUATIONS END ====================================================
@@ -1374,9 +1463,10 @@ AClineRiskGroupCalculation(t,isl,rg,resC,GenRisk)
 * General NMIR equations start -------------------------------------------------
 
 * Calculation of effective shared reserve - (6.5.2.1)
+* LinkRisk added in SPD version 16.0
 EffectiveReserveShareCalculation(t,isl,resC,riskC)
   $ { reserveShareEnabled(t,resC)
-  and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+  and ( GenRisk(riskC) or ManualRisk(riskC) or LinkRisk(riskC) and reservePricing_v16 ) }..
   RESERVESHAREEFFECTIVE(t,isl,resC,riskC)
 =l=
   Sum[ rd , RESERVESHARERECEIVED(t,isl,resC,rd)
@@ -1596,9 +1686,10 @@ HVDCSentReserveLossesDefinition(t,isl,resC,rd)
 
 * Tuong Nguyen added on 24 Feb 2021 to correct the calculation
 * Calculate max effective shared reserve for CE risk received at island (6.5.2.31)
+* LinkRisk added in SPD version 16.0
 ReserveShareEffective_CE_Calculation(t,isl,resC,riskC)
   $ { reserveShareEnabled(t,resC) and ContingentEvents(riskC)
-  and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+  and ( GenRisk(riskC) or ManualRisk(riskC) or LinkRisk(riskC) and reservePricing_v16 ) }..
   RESERVESHAREEFFECTIVE_CE(t,isl,resC)
 =g=
   RESERVESHAREEFFECTIVE(t,isl,resC,riskC)
@@ -1606,9 +1697,10 @@ ReserveShareEffective_CE_Calculation(t,isl,resC,riskC)
 
 * Tuong Nguyen added on 24 Feb 2021 to correct the calculation
 * Calculate max effective shared reserve for CE risk received at island (6.5.2.31)
+* LinkRisk added in SPD version 16.0
 ReserveShareEffective_ECE_Calculation(t,isl,resC,riskC)
   $ { reserveShareEnabled(t,resC) and ExtendedContingentEvent(riskC)
-  and ( GenRisk(riskC) or ManualRisk(riskC) ) }..
+  and ( GenRisk(riskC) or ManualRisk(riskC) or LinkRisk(riskC) and reservePricing_v16 ) }..
   RESERVESHAREEFFECTIVE_ECE(t,isl,resC)
 =g=
   RESERVESHAREEFFECTIVE(t,isl,resC,riskC)
@@ -1670,7 +1762,7 @@ EnergyAndReserveMaximum(offer(t,o),resC)..
 
 *======= RESERVE SCARCITY ======================================================
 * 6.5.4.2: Total Reserve Shortfall for DCCE risk
-HVDCRiskReserveShortFallCalculation(t,isl,resC,HVDCrisk(RiskC))
+HVDCRiskReserveShortFallCalculation(t,isl,resC,HVDCrisk(riskC))
   $ ContingentEvents(riskC)..
   RESERVESHORTFALL(t,isl,resC,riskC)
 =e=
@@ -1678,7 +1770,7 @@ HVDCRiskReserveShortFallCalculation(t,isl,resC,HVDCrisk(RiskC))
   ;
 
 * 6.5.4.2: Total Reserve Shortfall for Manual risk
-ManualRiskReserveShortFallCalculation(t,isl,resC,ManualRisk(RiskC))
+ManualRiskReserveShortFallCalculation(t,isl,resC,ManualRisk(riskC))
   $ ContingentEvents(riskC)..
   RESERVESHORTFALL(t,isl,resC,riskC)
 =e=
@@ -1686,23 +1778,23 @@ ManualRiskReserveShortFallCalculation(t,isl,resC,ManualRisk(RiskC))
   ;
 
 * 6.5.4.2: Total Reserve Shortfall for generation risk unit
-GenRiskReserveShortFallCalculation(t,isl,o,resC,GenRisk(RiskC))
-  $ { ContingentEvents(riskC) and  islandRiskGenerator(t,isl,o)  }..
+GenRiskReserveShortFallCalculation(t,isl,o,resC,GenRisk(riskC))
+  $ { ContingentEvents(riskC) and  islandRiskGenerator(t,isl,o) }..
   RESERVESHORTFALLUNIT(t,isl,o,resC,riskC)
 =e=
   sum[ blk, RESERVESHORTFALLUNITBLK(t,isl,o,resC,riskC,blk) ]
   ;
 
 * 6.5.4.2: Total Reserve Shortfall for generation unit + HVDC risk
-HVDCsecRiskReserveShortFallCalculation(t,isl,o,resC,HVDCsecRisk(RiskC))
-  $ { ContingentEvents(riskC) and  islandRiskGenerator(t,isl,o)  }..
+HVDCsecRiskReserveShortFallCalculation(t,isl,o,resC,HVDCsecRisk(riskC))
+  $ { ContingentEvents(riskC) and islandRiskGenerator(t,isl,o) }..
   RESERVESHORTFALLUNIT(t,isl,o,resC,riskC)
 =e=
   sum[ blk, RESERVESHORTFALLUNITBLK(t,isl,o,resC,riskC,blk) ]
   ;
 
 * 6.5.4.2: Total Reserve Shortfall for Manual risk + HVDC risk
-HVDCsecManualRiskReserveShortFallCalculation(t,isl,resC,HVDCsecRisk(RiskC))
+HVDCsecManualRiskReserveShortFallCalculation(t,isl,resC,HVDCsecRisk(riskC))
   $ ContingentEvents(riskC)..
   RESERVESHORTFALL(t,isl,resC,riskC)
 =e=
@@ -1710,8 +1802,11 @@ HVDCsecManualRiskReserveShortFallCalculation(t,isl,resC,HVDCsecRisk(RiskC))
   ;
 
 * 6.5.4.2: Total Reserve Shortfall for risk group
-RiskGroupReserveShortFallCalculation(t,isl,rg,resC,GenRisk(RiskC))
-  $ { ContingentEvents(riskC) and islandRiskGroup(t,isl,rg,RiskC)}..
+* Link risk group added in SPD version 16.0
+RiskGroupReserveShortFallCalculation(t,isl,rg,resC,riskC)
+  $ { ContingentEvents(riskC) and islandRiskGroup(t,isl,rg,riskC) and (
+    GenRisk(riskC) or ( LinkRisk(riskC) and reservePricing_v16 ) 
+  ) }..
   RESERVESHORTFALLGROUP(t,isl,rg,resC,riskC)
 =e=
   sum[ blk, RESERVESHORTFALLGROUPBLK(t,isl,rg,resC,riskC,blk) ]
@@ -1733,13 +1828,34 @@ IslandReserveCalculation(t,isl,resC)..
   ;
 
 * 6.5.5.2 & 6.5.5.3: Matching of reserve supply and demand
-SupplyDemandReserveRequirement(t,isl,resC,riskC) $ useReserveModel..
+SupplyDemandReserveRequirement(t,isl,resC,riskC) $ { useReserveModel and not reservePricing_v16 and not LinkRisk(riskC)}..
   ISLANDRISK(t,isl,resC,riskC)
 - DEFICITRESERVE_CE(t,isl,resC)   $ ContingentEvents(riskC)
 - DEFICITRESERVE_ECE(t,isl,resC)  $ ExtendedContingentEvent(riskC)
 =l=
   ISLANDRESERVE(t,isl,resC)
   ;
+
+* 6.5.5.2 - 6.5.5.5 - Matching of reserve supply and demand (SPD version 16.0)
+* 6.5.5.2 - AC contingient events
+* 6.5.5.3 - DC contingient events
+* 6.5.5.4 - AC extended contingient events
+* 6.5.5.5 - DC extended contingient events
+SupplyDemandReserveRequirement_v16(t,isl,resC,riskC) $ {useReserveModel and reservePricing_v16}..
+  ISLANDRISK(t,isl,resC,riskC)
+- RESERVESHAREEFFECTIVE(t,isl,resC,riskC) $ { reserveShareEnabled(t,resC) and (GenRisk(riskC) or ManualRisk(riskC) or LinkRisk(riskC)) }
+- RESERVESHORTFALL(t,isl,resC,riskC)      $ { ContingentEvents(riskC) and not (GenRisk(riskC) or LinkRisk(riskC)) }
+- sum[o $ { ContingentEvents(riskC) and 
+          GenRisk(riskC) and 
+          islandRiskGenerator(t,isl,o) } 
+      , RESERVESHORTFALLUNIT(t,isl,o,resC,riskC)]
+- sum[rg $ { ContingentEvents(riskC) and 
+          (GenRisk(riskC) or LinkRisk(riskC)) and 
+          islandRiskGroup(t,isl,rg,riskC) } 
+      , RESERVESHORTFALLGROUP(t,isl,rg,resC,riskC)]
+- DEFICITRESERVE_ECE(t,isl,resC)          $ ExtendedContingentEvent(riskC)
+=l=
+  ISLANDRESERVE(t,isl,resC);
 
 *======= RISK AND RESERVE BALANCE EQUATIONS END ================================
 
@@ -1857,6 +1973,8 @@ Model vSPD /
 * Offer and purchase definitions
   GenerationOfferDefintion, DemBidDefintion
   EnergyScarcityDefinition,
+  TieBreakViolationDefinition,
+  BatteryChargingModeDefinition, BatteryDischargingModeDefinition 
   GenerationRampUp, GenerationRampDown
 * Network
   HVDClinkMaximumFlow, HVDClinkLossDefinition
@@ -1883,7 +2001,7 @@ Model vSPD /
   HVDCsecManualRiskReserveShortFallCalculation
   RiskGroupReserveShortFallCalculation
 * Matching of reserve requirement and availability
-  SupplyDemandReserveRequirement, IslandReserveCalculation
+  SupplyDemandReserveRequirement, SupplyDemandReserveRequirement_v16, IslandReserveCalculation
 * Risk Offset calculation
   RiskOffsetCalculation_DCCE
   RiskOffsetCalculation_DCECE
@@ -1910,6 +2028,8 @@ Model vSPD_NMIR /
 * Offer and purchase definitions
   GenerationOfferDefintion, DemBidDiscrete,
   DemBidDefintion, EnergyScarcityDefinition,
+  TieBreakViolationDefinition,
+  BatteryChargingModeDefinition, BatteryDischargingModeDefinition 
   GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
 * Network
   HVDClinkMaximumFlow, HVDClinkLossDefinition
@@ -1939,7 +2059,7 @@ Model vSPD_NMIR /
   HVDCsecManualRiskReserveShortFallCalculation
   RiskGroupReserveShortFallCalculation
 * Matching of reserve requirement and availability
-  SupplyDemandReserveRequirement, IslandReserveCalculation
+  SupplyDemandReserveRequirement, SupplyDemandReserveRequirement_v16, IslandReserveCalculation
 * Branch security constraints
   BranchSecurityConstraintLE
   BranchSecurityConstraintGE
@@ -1989,6 +2109,8 @@ Model vSPD_MIP /
 * Offer and purchase definitions
   GenerationOfferDefintion, DemBidDiscrete, DemBidDefintion
   EnergyScarcityDefinition,
+  TieBreakViolationDefinition,
+  BatteryChargingModeDefinition, BatteryDischargingModeDefinition 
   GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
 * Network
   HVDClinkMaximumFlow, HVDClinkLossDefinition
@@ -2020,7 +2142,7 @@ Model vSPD_MIP /
   HVDCsecManualRiskReserveShortFallCalculation
   RiskGroupReserveShortFallCalculation
 * Matching of reserve requirement and availability
-  SupplyDemandReserveRequirement, IslandReserveCalculation
+  SupplyDemandReserveRequirement, SupplyDemandReserveRequirement_v16, IslandReserveCalculation
 * Branch security constraints
   BranchSecurityConstraintLE
   BranchSecurityConstraintGE
@@ -2073,6 +2195,8 @@ Model vSPD_BranchFlowMIP /
 * Offer and purchase definitions
   GenerationOfferDefintion, DemBidDefintion
   EnergyScarcityDefinition,
+  TieBreakViolationDefinition,
+  BatteryChargingModeDefinition, BatteryDischargingModeDefinition 
   GenerationRampUp, GenerationRampDown, GenerationChangeUpDown
 * Network
   HVDClinkMaximumFlow, HVDClinkLossDefinition
@@ -2103,7 +2227,7 @@ Model vSPD_BranchFlowMIP /
   HVDCsecManualRiskReserveShortFallCalculation
   RiskGroupReserveShortFallCalculation
 * Matching of reserve requirement and availability
-  SupplyDemandReserveRequirement, IslandReserveCalculation
+  SupplyDemandReserveRequirement, SupplyDemandReserveRequirement_v16, IslandReserveCalculation
 * Branch security constraints
   BranchSecurityConstraintLE
   BranchSecurityConstraintGE

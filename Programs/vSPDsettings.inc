@@ -3,7 +3,7 @@ $inlinecom ## ##
 $eolcom !
 
 *+++ Paths +++
-$setglobal runName                       RTD_202502261155_DPS
+$setglobal runName                       PRSS_202607030130
 
 $setglobal programPath                   '%system.fp%' 
 $setglobal inputPath                     '%system.fp%../Input/'
@@ -13,7 +13,7 @@ $setglobal ovrdPath                      '%system.fp%../Override/'
 $setglobal vSPDinputOvrdData             ''   !Name of override file 
 
 *+++ Model +++
-Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: Yes <-> i_SequentialSolve: 0
+Scalar sequentialSolve                   / 0 / ;   ! Vectorisation: 1 <-> i_SequentialSolve: 0
 Scalar dailymode                         / 1 / ;   ! Solving quickly by using RTD pre-calculated demand or PRSS solved initial MW
 
 *+++ Network +++
@@ -44,4 +44,4 @@ $setglobal licenseMode                     1
 
 
 *+++ Various switches +++
-$setglobal opMode                          DPS      ! SPD for normal SPD run;
+$setglobal opMode                          SPD      ! SPD for normal SPD run;

@@ -4,10 +4,18 @@ Name:                 vSPDsolve.gms
 Function:             Establish base case and override data, prepare data, and solve the model
 Developed by:         Electricity Authority, New Zealand
 Source:               https://github.com/ElectricityAuthority/vSPD
-                      http://www.emi.ea.govt.nz/Tools/vSPD
+                      https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 Contact:              Forum: http://www.emi.ea.govt.nz/forum/
                       Email: emi@ea.govt.nz
-Created on:           1st November 2022 for Real Time Pricing
+Created on:           1st November 2022 
+                      Real Time Pricing
+Last modified on:     02 July 2026
+                      New features added: 
+                      Tie breaker changes, 
+                      prevention of non-physical BESS dispatch, 
+                      update to reserve pricing,
+                      assigning link risk to the ACCELink, ACECELink risk classes,
+                      changed default badPriceFactor value from 5 to 3
 
 *=====================================================================================
 
@@ -111,6 +119,8 @@ Parameters
   numberofbusSOSinvalid(ca,dt)                           'Number of buses with invalid bus prices after SOS1 solve --> used to check if invalid prices can be improved (numberofbusSOSinvalid reduces after each iteration)'
   badPriceFactor(ca,dt)                                  'A multiplier applied to the maximum energy scarcity price to identify invalid prices af SOS1 solve.'
   scarcityEnergyPriceMax(ca,dt)                          'Maximum energy scarcity price used to set the bounds for SOS1 valid price'
+
+* Intermediate
  ;
 
 * Extra sets and parameters used for energy shortfall check
@@ -196,6 +206,7 @@ Parameters
   o_HVDCRiskPrice_TP(ca,dt,isl,resC,riskC)               'Output HVDC risk marginal prices'
   o_ManualRiskPrice_TP(ca,dt,isl,resC,riskC)             'Output Manual risk marginal prices'
   o_HVDCSecManualRiskPrice_TP(ca,dt,isl,resC,riskC)      'Output HVDC risk marginal prices'
+  o_LinkRiskGroupPrice_TP(ca,dt,isl,rg,resC,riskC)       'Output Link risk group marginal prices'
 
   o_GenRiskShortfall_TP(ca,dt,isl,o,resC,riskC)          'Output Gen risk shortfall'
   o_HVDCSecRiskShortfall_TP(ca,dt,isl,o,resC,riskC)      'Output HVDC risk shortfall'
@@ -203,6 +214,7 @@ Parameters
   o_HVDCRiskShortfall_TP(ca,dt,isl,resC,riskC)           'Output HVDC risk shortfall'
   o_ManualRiskShortfall_TP(ca,dt,isl,resC,riskC)         'Output Manual risk shortfall'
   o_HVDCSecManualRiskShortfall_TP(ca,dt,isl,resC,riskC)  'Output HVDC risk shortfall'
+  o_LinkRiskGroupShortfall_TP(ca,dt,isl,rg,resC,riskC)   'Output Link risk group shortfall'
 
   o_ResViolation_TP(ca,dt,isl,resC)                      'Violation MW for each reserve classes for each trade period'
   o_FIRviolation_TP(ca,dt,isl)                           'Violation MW for FIR reserve classes for each trade period'
@@ -269,6 +281,7 @@ Parameters
   o_genHVDCriskLevel(ca,dt,isl,o,resC,riskC)                       'Audit - generation + HVDC secondary risk'
   o_manuHVDCriskLevel(ca,dt,isl,resC,riskC)                        'Audit - manual + HVDC secondary'
   o_generationRiskGroupLevel(ca,dt,isl,rg,resC,riskC)              'Audit - generation group risk'
+  o_linkRiskGroupLevel(ca,dt,isl,rg,resC,riskC)                    'Audit - link group risk'
 
 * TN - output parameters added for NMIR project --------------------------------
   o_FirSent_TP(ca,dt,isl)                        'FIR export from an island for each trade period'
@@ -352,7 +365,8 @@ $gdxin
 * GDX time to check if we can load that data (set) from gdx.
 
 * Gregorian date of when symbols have been included into the GDX files
-Scalars inputGDXGDate                     'Gregorian date of input GDX file' ;
+Scalars inputGDXGDate                     'Gregorian date of input GDX file' 
+;
 
 inputGDXGDate = jdate(gdxDate('year'),gdxDate('month'),gdxDate('day'));
 
@@ -366,6 +380,27 @@ else
   execute_load "%inputPath%/%GDXname%.gdx" directionalRiskFactor = i_dateTimeRiskGroupBranch  
   
 );
+
+* Use SPD v16 modified constraints and changes
+if (inputGDXGDate >= jdate(2026,6,23),
+  tieBreak_v16 = 1 ;
+  batteryPair_v16 = 1 ;
+  reservePricing_v16 = 1 ;
+  badPrice_v16 = 1 ;
+else
+  tieBreak_v16 = 0 ;
+  batteryPair_v16 = 0 ;
+  reservePricing_v16 = 0 ;
+  badPrice_v16 = 0;
+);
+
+if ( batteryPair_v16,
+  execute_load "%inputPath%/%GDXname%.gdx" busUnitAndKey3Match = i_busUnitAndKey3Match
+else
+  busUnitAndKey3Match(ca,dt,n,n) = no;
+
+);
+
 
 *=====================================================================================
 * 4. Input data overrides - declare and apply (include vSPDoverrides.gms)
@@ -654,7 +689,7 @@ modulationRiskClass(ca,dt,'DCCE')           = reserveSharingParameter(ca,dt,'MRC
 modulationRiskClass(ca,dt,'DCECE')          = reserveSharingParameter(ca,dt,'MRECE') ;
 modulationRiskClass(ca,dt,'HVDCsecRisk')    = reserveSharingParameter(ca,dt,'MRCE') ;
 modulationRiskClass(ca,dt,'HVDCsecRiskECE') = reserveSharingParameter(ca,dt,'MRECE') ;
-modulationRisk(ca,dt)                       = smax[ riskC, modulationRiskClass(ca,dt,RiskC) ];
+modulationRisk(ca,dt)                       = smax[ riskC, modulationRiskClass(ca,dt,riskC) ];
 
 roundPower2MonoLevel(ca,dt) = reserveSharingParameter(ca,dt,'roundPwr2Mono') ;
 bipole2MonoLevel(ca,dt)     = reserveSharingParameter(ca,dt,'biPole2Mono') ;
@@ -757,20 +792,26 @@ energyScarcityEnabled(ca,dt)                 = dtParameter(ca,dt,'enrgScarcity')
 reserveScarcityEnabled(ca,dt)                = dtParameter(ca,dt,'resrvScarcity') ;
 badPriceFactor(ca,dt)                        = dtParameter(ca,dt,'badPriceFactor') ;
 badPriceFactor(ca,dt) $ { badPriceFactor(ca,dt) = 0 } = 5;
+badPriceFactor(ca,dt) $ { (badPriceFactor(ca,dt) = 0) and badPrice_v16} = 3;
 scarcityResrvIslandLimit(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'limitMW') ;
 scarcityResrvIslandPrice(ca,dt,isl,resC,blk) = scarcityResrvLimit(ca,dt,isl,resC,blk,'price') ;
 scarcityEnergyPriceMax(ca,dt)                = smax(blk, scarcityNationalFactor(ca,dt,blk,'price')); 
 
-* Data appllied to commissioning risk - SPD changes for 
+* Data applied to commissioning risk - SPD changes for 
   commRiskDoCheckResOffers(ca,dt)   = dtParameter(ca,dt,'CommRiskDoCheckResOffers') ;
   commRiskDoRiskAdjustment(ca,dt)   = dtParameter(ca,dt,'CommRiskDoRiskAdjustment') ;
 
-* CommRiskDoRiskAdjustment defualt value is 1. If set to Zeor, the following calculation is ignored.  
-  ACSecondaryRiskOffer(ca,dt,o,'genRisk')    $ commRiskDoRiskAdjustment(ca,dt) =  offerParameter(ca,dt,o,'ACSecondaryCERiskMW') ;
-  ACSecondaryRiskOffer(ca,dt,o,'genRiskECE') $ commRiskDoRiskAdjustment(ca,dt) =  offerParameter(ca,dt,o,'ACSecondaryECERiskMW') ;
+* CommRiskDoRiskAdjustment defualt value is 1. If set to Zero, the following calculation is ignored. 
+  ACSecondaryRiskOffer(ca,dt,o,'genRisk')    $ commRiskDoRiskAdjustment(ca,dt)                              =  offerParameter(ca,dt,o,'ACSecondaryCERiskMW') ;
+  ACSecondaryRiskOffer(ca,dt,o,'genRiskECE') $ commRiskDoRiskAdjustment(ca,dt)                              =  offerParameter(ca,dt,o,'ACSecondaryECERiskMW') ;
+* LinkRisk added in SPD version 16.0
+  ACSecondaryRiskOffer(ca,dt,o,'ACCELink')    $ { commRiskDoRiskAdjustment(ca,dt) and reservePricing_v16 }  =  offerParameter(ca,dt,o,'ACSecondaryCERiskMW') ;
+  ACSecondaryRiskOffer(ca,dt,o,'ACECELink')   $ { commRiskDoRiskAdjustment(ca,dt) and reservePricing_v16 }  =  offerParameter(ca,dt,o,'ACSecondaryECERiskMW') ;
   
 * Note that SPD calculate both ACSecondaryRiskMW(rg,rc) and ACSecondaryRiskMW(lr,rc). In vSPD we combine both into one symbol
-  ACSecondaryRiskGroup(ca,dt,rg,GenRisk) = sum[ o $ riskGroupOffer(ca,dt,rg,o,GenRisk), ACSecondaryRiskOffer(ca,dt,o,GenRisk) ] ;
+  ACSecondaryRiskGroup(ca,dt,rg,GenRisk)                        = sum[ o $ riskGroupOffer(ca,dt,rg,o,GenRisk),  ACSecondaryRiskOffer(ca,dt,o,GenRisk)  ] ;
+* LinkRisk added in SPD version 16.0  
+  ACSecondaryRiskGroup(ca,dt,rg,LinkRisk) $ reservePricing_v16  = sum[ o $ riskGroupOffer(ca,dt,rg,o,LinkRisk), ACSecondaryRiskOffer(ca,dt,o,LinkRisk) ] ;
 
 * CommRiskDoCheckResOffers would only be set to 0 for testing (defualt = 1). If it was set to 0 then the Secondary Risk Pre-Processing would be skipped
 $onText
@@ -782,7 +823,84 @@ $offText
 resrvOfrMW(ca,dt,o,blk,resC,resT) $ { CommRiskDoCheckResOffers(ca,dt) and offerParameter(ca,dt,o,'isCommissioning')
                                   and (offerParameter(ca,dt,o,'isPartStation') = 0) } = 0 ;
 resOfrBlk(ca,dt,o,blk,resC,resT) $ (resrvOfrMW(ca,dt,o,blk,resC,resT) > 0) = yes ;
+*-------------------------------------------------------------------------------
 
+* SPD v16 Pre-processing
+
+* Generation Tie-Break Pre-Processing 
+* (4.9.1.1) - SPD version 16.0 
+
+* The cumulative MW quantity of block 'blk' for grouped by each offer 'o'
+cumulativeEnrgOfrMW(case2dt(ca,dt),o,blk) = sum(blk1$(ord(blk1) <= ord(blk)), enrgOfrMW(ca,dt,o,blk1));
+
+* Upper MW limit on total offer 'o' given limits on generation capability and ramping
+cappedGenMax(case2dt(ca,dt),o) = min(reserveGenMax(ca,dt,o), 
+                            potentialMW(ca,dt,o),
+                            generationStart(ca,dt,o) + rampRateUp(ca,dt,o) * (intervalDuration(ca,dt) / 60)
+                            );
+
+* The MW quantity of block 'blk' of offer 'o' capped to account for any limits that may prevent the block from fully clearing.
+cappedEnrgOfrMW(genOfrBlk(case2dt(ca,dt),o,blk))$ {
+    cumulativeEnrgOfrMW(ca,dt,o,blk) - enrgOfrMW(ca,dt,o,blk) < cappedGenMax(ca,dt,o) } 
+    = min(enrgOfrMW(ca,dt,o,blk), 
+          max(0,
+          cappedGenMax(ca,dt,o) - (cumulativeEnrgOfrMW(ca,dt,o,blk) - enrgOfrMW(ca,dt,o,blk)))
+          );
+
+* Map of offers to buses
+offerBus(case2dt(ca,dt),o,b) = sum(n, offerNode(ca,dt,o,n) and nodeBus(ca,dt,n,b));
+
+* Pairs of offer tranches made by seperate units with the same price
+samePrice(case2dt(ca,dt),o1,blk1,o2,blk2)$ { genOfrBlk(ca,dt,o1,blk1) and genOfrBlk(ca,dt,o2,blk2) } = yes$[ (enrgOfrPrice(ca,dt,o1,blk1) = enrgOfrPrice(ca,dt,o2,blk2)) and (ord(o1) < ord(o2))];
+
+* Pairs of offer tranches made by seperate units with the same price that are on the same bus
+samePriceSameBus(case2dt(ca,dt),o1,blk1,o2,blk2)$ { samePrice(ca,dt,o1,blk1,o2,blk2) } =  yes$[ sum(b, offerBus(ca,dt,o1,b) * offerBus(ca,dt,o2,b)) ];
+
+
+
+* Battery Pre-Processing 
+* (4.10.1) - SPD version 16.0
+
+* 1. There is a bid or IL offer at n1
+loadLikeNode(case2dt(ca,dt),n) = sum((blk,bidNode(ca,dt,bd,n)), demBidBlk(ca,dt,bd,blk)) or 
+                         sum((blk,resC,offerNode(ca,dt,o,n)), resOfrBlk(ca,dt,o,blk,resC,'ILRO'));
+
+* 2. There is a generation offer at n2
+genNode(case2dt(ca,dt),n) = sum((offerNode(ca,dt,o,n)), posEnrgOfr(ca,dt,o));
+
+* 3. The bd in bid(ca,dt,bd) and o in offer(ca,dt,o) map to the same trdr within offerTrader(ca,dt,o,trdr<) and bidTrader(ca,dt,bd,trdr<) respectively
+bidNodeTrader(case2dt(ca,dt),n,trdr) = yes$[ sum(bidNode(ca,dt,bd,n), bidTrader(ca,dt,bd,trdr)) + 
+                                             sum((blk,resC,o)$offerNode(ca,dt,o,n), offerTrader(ca,dt,o,trdr) * resOfrBlk(ca,dt,o,blk,resC,'ILRO')) ];
+
+offerNodeTrader(case2dt(ca,dt),n,trdr) = yes$[ sum(offerNode(ca,dt,o,n), offerTrader(ca,dt,o,trdr)) ];
+
+sameTrader(case2dt(ca,dt),n1,n2) = sum(trdr, bidNodeTrader(ca,dt,n1,trdr) * offerNodeTrader(ca,dt,n2,trdr));
+
+* 4. The poc codes and unit names (i.e. excluding the unit number) for n1 and n2 match.
+* 5a. The key3 of n1 is contained within the key3 of n2.
+* busUnitAndKey3Match(ca,dt,n1,n2) combines 4 and 5a.
+
+* 5b. n1 and n2 belong to one of the exceptions for 5a
+* batteryMappingOverride(n1,n2) are these exceptions which all satisfy condition 4.
+if (batteryPair_v16,
+    batteryMappingOverride('BRB0331 RUK99','BRB0331 RUK0') = yes;
+    batteryMappingOverride('HLY0331 RHO99','HLY0331 RHO0') = yes;
+    batteryMappingOverride('GLN0332 GLB99','GLN0332 GLB0') = yes;                                    
+);
+
+* BatteryPair(ca,dt,n1,n2) = 1 when conditions 1 to 4 and one of 5a and 5b are met
+BatteryPair(case2dt(ca,dt),n1,n2)${
+    loadLikeNode(ca,dt,n1)
+    and 
+    genNode(ca,dt,n2)
+    and 
+    sameTrader(ca,dt,n1,n2) 
+    and
+    (busUnitAndKey3Match(ca,dt,n1,n2) or batteryMappingOverride(n1,n2))
+} = 1;
+
+
+*-------------------------------------------------------------------------------
 
 * TN - Pivot or demand analysis begin
 $Ifi %opMode%=='PVT' $include "Pivot/vSPDSolvePivot_1.gms"
@@ -978,7 +1096,7 @@ While ( sum[ (ca,dt) $ {unsolvedDT(ca,dt) and case2dt(ca,dt)} , 1 ],
 
     sharedNFRMax(t,isl) = Min{ RMTReserveLimit(t,isl,'FIR'), sharedNFRFactor(t)*sharedNFRLoad(t,isl) } ;
     FreeReserve(t,isl,resC,riskC) = riskParameter(t,isl,resC,riskC,'freeReserve')
-                                  - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) ) } ;
+                                  - sum[ isl1 $ (not sameas(isl,isl1)),sharedNFRMax(t,isl1) ] $ { (ord(resC)=1) and ( (GenRisk(riskC)) or (ManualRisk(riskC)) or (LinkRisk(riskC) and reservePricing_v16) ) } ;
 
 
 *   7c. Updating the variable bounds before model solve ------------------------
@@ -989,6 +1107,9 @@ $Ifi %opMode%=='DPS' $include "Demand/vSPDSolveDPS_2.gms"
 * TN - Pivot or Demand Analysis - revise input data end
 
 *======= GENERATION, DEMAND AND LOAD FORECAST EQUATIONS ========================
+*     BATTERYCHARGINGMODE.fx(t,n1,n2) $ {BatteryPair(t,n1,n2) = 1} = 0;
+*     GENERATION.fx(t,'HLY2201 HLY11') = 79.138 ;
+
 *   Constraint 6.1.1.1 - Offer blocks
     GENERATIONBLOCK.up(genOfrBlk(t,o,blk)) = enrgOfrMW(genOfrBlk) ;
     GENERATIONBLOCK.fx(t,o,blk) $ (not genOfrBlk(t,o,blk)) = 0 ;
@@ -1378,7 +1499,7 @@ $offtext
     loop( (t,isl) $ { not unsolvedDT(t) and ( studyMode(t) = 101 or studyMode(t) = 201 )
                 and ( abs( SPDLoadCalcLosses(t,isl) - LoadCalcLosses(t,isl) ) > SPDlossTolerance )
                     },
-        putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5') and SPD (' SPDLoadCalcLosses(t,isl):<10:5').' ;        
+        putclose rep 'Recalulated losses for ' isl.tl ' are different between vSPD (' LoadCalcLosses(t,isl):<10:5 ') and SPD (' SPDLoadCalcLosses(t,isl):<10:5 ').' ;        
 
     );
     
@@ -1528,6 +1649,10 @@ $offtext
         o_groupFKband_TP(t,rg,GenRisk)   = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), FKBand(t,o) ];
         o_groupRes_TP(t,rg,resC,GenRisk) = sum[ o $ riskGroupOffer(t,rg,o,GenRisk), o_offerRes_TP(t,o,resC)];
 
+        o_groupEnergy_TP(t,rg,LinkRisk)     $ reservePricing_v16 = sum[ o $ riskGroupOffer(t,rg,o,LinkRisk), o_offerEnergy_TP(t,o) ];
+        o_groupFKband_TP(t,rg,LinkRisk)     $ reservePricing_v16 = sum[ o $ riskGroupOffer(t,rg,o,LinkRisk), FKBand(t,o) ];
+        o_groupRes_TP(t,rg,resC,LinkRisk)   $ reservePricing_v16 = sum[ o $ riskGroupOffer(t,rg,o,LinkRisk), o_offerRes_TP(t,o,resC)];
+
 *       Bus level output
         o_busGeneration_TP(t,b) $ bus(t,b) = busGeneration(t,b) ;
         o_busLoad_TP(t,b)       $ bus(t,b) = busLoad(t,b) + sum[ (bd,n) $ { bidNode(t,bd,n) and NodeBus(t,n,b) }, PURCHASE.l(t,bd) ];
@@ -1625,6 +1750,9 @@ $offtext
         o_HVDCSecManualRiskPrice_TP(t,isl,resC,HVDCSecRisk)     = -HVDCIslandSecRiskCalculation_Manu_1.m(t,isl,resC,HVDCSecRisk);
         o_HVDCSecManualRiskShortfall_TP(t,isl,resC,HVDCSecRisk) = RESERVESHORTFALL.l(t,isl,resC,HVDCSecRisk) ;
 
+        o_LinkRiskGroupPrice_TP(t,isl,rg,resC,LinkRisk)     $ reservePricing_v16 = -AClineRiskGroupCalculation_1.m(t,isl,rg,resC,LinkRisk) ;
+        o_LinkRiskGroupShortfall_TP(t,isl,rg,resC,LinkRisk) $ reservePricing_v16 = RESERVESHORTFALLGROUP.l(t,isl,rg,resC,LinkRisk) ;
+
 *       Security constraint data
         o_brConstraintSense_TP(t,brCstr) $ branchConstraint(t,brCstr) = branchConstraintSense(t,brCstr) ;
         o_brConstraintRHS_TP(t,brCstr) $ branchConstraint(t,brCstr)   = branchConstraintLimit(t,brCstr) ;
@@ -1645,6 +1773,7 @@ $offtext
                                                                               + [ MnodeSecurityConstraintEQ.m(t,MnodeCstr) $ (MnodeConstraintSense(t,MnodeCstr) = 0)  ] ;
 *       Island output
         o_ResPrice_TP(t,isl,resC)   = IslandReserveCalculation.m(t,isl,resC);
+        o_ResPrice_TP(t,isl,resC) $ { reservePricing_v16 and (ISLANDRESERVE.l(t,isl,resC) = 0) } = sum[ riskC, SupplyDemandReserveRequirement_v16.m(t,isl,resC,riskC) ];
         o_FIRprice_TP(t,isl)        = sum[ resC $ (ord(resC) = 1), o_ResPrice_TP(t,isl,resC) ];
         o_SIRprice_TP(t,isl)        = sum[ resC $ (ord(resC) = 2), o_ResPrice_TP(t,isl,resC) ];
         o_islandGen_TP(t,isl)       = sum[ b $ busIsland(t,b,isl), busGeneration(t,b) ] ;
@@ -1676,7 +1805,7 @@ $offtext
             o_SirEffectiveECE_TP(t,isl) = smax[ (resC,riskC) $ { (ord(resC) = 2) and ExtendedContingentEvent(riskC) }, RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
             o_SirEffReport_TP(t,isl)    = smax[ (resC,riskC) $ (ord(resC)=2), RESERVESHAREEFFECTIVE.l(t,isl,resC,riskC) ];
         ) ;
-        o_TotalIslandReserve(t,isl,resC,riskC) = o_ResCleared_TP(t,isl,resC) + o_EffectiveRes_TP(t,isl,resC,riskC);
+        o_TotalIslandReserve(t,isl,resC,riskC) $ { reservePricing_v16 or not LinkRisk(riskC) } = o_ResCleared_TP(t,isl,resC) + o_EffectiveRes_TP(t,isl,resC,riskC);
 
 
 *       Additional output for audit reporting
@@ -1709,22 +1838,27 @@ $offtext
         o_ILbus_FIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and offerNode(t,o,n) }, o_ILRO_FIR_TP(t,o) ] ;
         o_ILbus_SIR_TP(t,b) = sum[ (o,n) $ { NodeBus(t,n,b) and offerNode(t,o,n) }, o_ILRO_SIR_TP(t,o) ] ;
 
-        o_generationRiskLevel(t,isl,o,resC,GenRisk) = GENISLANDRISK.l(t,isl,o,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) ;
-        o_HVDCriskLevel(t,isl,resC,HVDCrisk)        = ISLANDRISK.l(t,isl,resC,HVDCrisk) ;
-        o_manuRiskLevel(t,isl,resC,ManualRisk)      = ISLANDRISK.l(t,isl,resC,ManualRisk)   + RESERVESHAREEFFECTIVE.l(t,isl,resC,ManualRisk) ;
-        o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk)= HVDCGENISLANDRISK.l(t,isl,o,resC,HVDCsecRisk) ;
-        o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk) = HVDCMANISLANDRISK.l(t,isl,resC,HVDCsecRisk);
-        o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk) $ islandRiskGroup(t,isl,rg,GenRisk) = GENISLANDRISKGROUP.l(t,isl,rg,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) ;
+*       Reserve sharing removed from risk definition in SPD version 16.0 (so it does not need to be added back)
+*       Link risk set added in SPD version 16.0
+        o_generationRiskLevel(t,isl,o,resC,GenRisk)                                                                             = GENISLANDRISK.l(t,isl,o,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) $ { not reservePricing_v16 } ;
+        o_HVDCriskLevel(t,isl,resC,HVDCrisk)                                                                                    = ISLANDRISK.l(t,isl,resC,HVDCrisk) ;
+        o_manuRiskLevel(t,isl,resC,ManualRisk)                                                                                  = ISLANDRISK.l(t,isl,resC,ManualRisk)   + RESERVESHAREEFFECTIVE.l(t,isl,resC,ManualRisk) $ { not reservePricing_v16 } ;
+        o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk)                                                                            = HVDCGENISLANDRISK.l(t,isl,o,resC,HVDCsecRisk) ;
+        o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)                                                                             = HVDCMANISLANDRISK.l(t,isl,resC,HVDCsecRisk);
+        o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk)   $ islandRiskGroup(t,isl,rg,GenRisk)                                 = GENISLANDRISKGROUP.l(t,isl,rg,resC,GenRisk) + RESERVESHAREEFFECTIVE.l(t,isl,resC,GenRisk) $ { not reservePricing_v16 } ;
+        o_linkRiskGroupLevel(t,isl,rg,resC,LinkRisk)        $ { islandLinkRiskGroup(t,isl,rg,LinkRisk) and reservePricing_v16 } = GENISLANDRISKGROUP.l(t,isl,rg,resC,LinkRisk) ;
 
 *       FIR and SIR required based on calculations of the island risk to overcome reporting issues of the risk setter under degenerate conditions when reserve price = 0 - See below
+*       Link risk set added in SPD version 16.0
         o_ReserveReqd_TP(t,isl,resC)
             = Max[ 0,
-                   smax[(o,GenRisk)     , o_generationRiskLevel(t,isl,o,resC,GenRisk)],
-                   smax[ HVDCrisk       , o_HVDCriskLevel(t,isl,resC,HVDCrisk) ] ,
-                   smax[ ManualRisk     , o_manuRiskLevel(t,isl,resC,ManualRisk) ] ,
-                   smax[ (o,HVDCsecRisk), o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk) ] ,
-                   smax[ HVDCsecRisk    , o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)  ] ,
-                   smax[ (rg,GenRisk)   , o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk)  ]
+                   smax[ (o,GenRisk)                        , o_generationRiskLevel(t,isl,o,resC,GenRisk)],
+                   smax[ HVDCrisk                           , o_HVDCriskLevel(t,isl,resC,HVDCrisk) ] ,
+                   smax[ ManualRisk                         , o_manuRiskLevel(t,isl,resC,ManualRisk) ] ,
+                   smax[ (o,HVDCsecRisk)                    , o_genHVDCriskLevel(t,isl,o,resC,HVDCsecRisk) ] ,
+                   smax[ HVDCsecRisk                        , o_manuHVDCriskLevel(t,isl,resC,HVDCsecRisk)  ] ,
+                   smax[ (rg,GenRisk)                       , o_generationRiskGroupLevel(t,isl,rg,resC,GenRisk) ],
+                   smax[ (rg,LinkRisk) $ reservePricing_v16 , o_linkRiskGroupLevel(t,isl,rg,resC,LinkRisk) ] 
                  ] ;
 
         o_FIRreqd_TP(t,isl) = sum[ resC $ (ord(resC)=1), o_ReserveReqd_TP(t,isl,resC) ] ;

@@ -3,7 +3,7 @@
 * Function:             Creates the detailed reports for EA Data warehouse mode
 * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://www.emi.ea.govt.nz/Tools/vSPD
+*                       https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 * Contact:              Forum: http://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
 * Last modified on:     23 Sept 2016

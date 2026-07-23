@@ -3,7 +3,7 @@
 * Function:             Collect and store results for demand sensitivity analysis
 * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       http://www.emi.ea.govt.nz/Tools/vSPD
+*                       https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 * Contact:              emi@ea.govt.nz
 * Last modified on:     23 Sept 2016
 * Note:                 This code will be included to the end of period report

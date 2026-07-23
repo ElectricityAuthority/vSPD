@@ -3,10 +3,11 @@
 * Function:             Creates the detailed reports for normal SPD mode
 * Developed by:         Tuong Nguyen - Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       https://www.emi.ea.govt.nz/Tools/vSPD
+*                       https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     1 Oct 2019
+* Last modified on:     7 July 2026
+*                       Added reporting of link risk as separate from gen group risk
 *
 *=====================================================================================
 
@@ -200,6 +201,21 @@ loop( (ca,dt,tp,isl,rg,resC,GenRisk) $ { case2dt2tp(ca,dt,tp) and (o_GenRiskGrou
         o_GenRiskGroupPrice_TP(ca,dt,isl,rg,resC,GenRisk)  / ;
 );
 
+loop( (ca,dt,tp,isl,rg,resC,LinkRisk) $ { case2dt2tp(ca,dt,tp) and (o_LinkRiskGroupPrice_TP(ca,dt,isl,rg,resC,LinkRisk) <> 0) and reservePricing_v16},
+    put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl ;
+    if (ContingentEvents(LinkRisk),
+         put 'CE', 'LINK';
+    else
+         put 'ECE','LINK';
+    );
+    put rg.tl, o_groupEnergy_TP(ca,dt,rg,LinkRisk),o_groupRes_TP(ca,dt,rg,resC,LinkRisk)
+        o_groupFKband_TP(ca,dt,rg,LinkRisk), FreeReserve(ca,dt,isl,resC,LinkRisk)
+        o_TotalIslandReserve(ca,dt,isl,resC,LinkRisk)
+        o_LinkRiskGroupShortfall_TP(ca,dt,isl,rg,resC,LinkRisk)
+        o_ResViolation_TP(ca,dt,isl,resC), o_ResPrice_TP(ca,dt,isl,resC)
+        o_LinkRiskGroupPrice_TP(ca,dt,isl,rg,resC,LinkRisk)  / ;
+);
+
 * Trading period branch result
 File
 BranchResults_TP  / "%outputPath%/%runName%/%runName%_BranchResults_TP.csv" / ;
@@ -283,7 +299,7 @@ busResults_Audit.pw = 9999 ;
 BusResults_Audit.ap = 1 ;
 BusResults_Audit.nd = 5 ;
 put BusResults_Audit ;
-loop( (ca,dt,tp,b,isl) $ { case2dt2tp(ca,dt,tp) and  o_bus(ca,dt,b) and busIsland(ca,dt,b,isl) },
+loop( (ca,dt,tp,b,isl) $ { case2dt2tp(ca,dt,tp) and bus(ca,dt,b) and busIsland(ca,dt,b,isl) },
     put ca.tl, dt.tl, tp.tl, isl.tl, b.tl, o_ACBusAngle(ca,dt,b)
         o_busPrice_TP(ca,dt,b), o_busLoad_TP(ca,dt,b)
         o_ILBus_FIR_TP(ca,dt,b), o_ILBus_SIR_TP(ca,dt,b) / ;
@@ -402,13 +418,27 @@ loop( (ca,dt,tp,isl,resC) $case2dt2tp(ca,dt,tp),
         ) ;
 
     loop( (rg,riskC) $ { GenRisk(riskC)
-                    and ( o_generationRiskGroupLevel(ca,dt,isl,rg,resC,RiskC) > 0 )
-                    and ( abs[ o_generationRiskGroupLevel(ca,dt,isl,rg,resC,RiskC)
+                    and ( o_generationRiskGroupLevel(ca,dt,isl,rg,resC,riskC) > 0 )
+                    and ( abs[ o_generationRiskGroupLevel(ca,dt,isl,rg,resC,riskC)
                              - o_ReserveReqd_TP(ca,dt,isl,resC)
                              ] <= ZeroTolerance )
                       },
         put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, rg.tl, riskC.tl
-            o_generationRiskGroupLevel(ca,dt,isl,rg,resC,RiskC)
+            o_generationRiskGroupLevel(ca,dt,isl,rg,resC,riskC)
+            o_ResCleared_TP(ca,dt,isl,resC), o_EffectiveRes_TP(ca,dt,isl,resC,riskC)
+            o_ResViolation_TP(ca,dt,isl,resC)
+            o_ResPrice_TP(ca,dt,isl,resC) / ;
+        ) ;
+*   Link risk set added in SPD version 16.0
+    loop( (rg,riskC) $ { LinkRisk(riskC)
+                    and ( o_linkRiskGroupLevel(ca,dt,isl,rg,resC,riskC) > 0 )
+                    and ( abs[ o_linkRiskGroupLevel(ca,dt,isl,rg,resC,riskC)
+                             - o_ReserveReqd_TP(ca,dt,isl,resC)
+                             ] <= ZeroTolerance )
+                    and reservePricing_v16
+                      },
+        put ca.tl, dt.tl, tp.tl, isl.tl, resC.tl, rg.tl, riskC.tl
+            o_linkRiskGroupLevel(ca,dt,isl,rg,resC,riskC)
             o_ResCleared_TP(ca,dt,isl,resC), o_EffectiveRes_TP(ca,dt,isl,resC,riskC)
             o_ResViolation_TP(ca,dt,isl,resC)
             o_ResPrice_TP(ca,dt,isl,resC) / ;
@@ -439,6 +469,4 @@ loop( (ca,dt,tp) $ case2dt2tp(ca,dt,tp),
 execute_unload '%outputPath%/%runName%/%GDXname%_AllData.gdx' ;
 $endif.AuditReport
 *===============================================================================
-*execute_unload '%outputPath%/%runName%/%GDXname%_AllData.gdx' ;
-
-
+* execute_unload '%outputPath%/%runName%/%GDXname%_AllData.gdx' ;

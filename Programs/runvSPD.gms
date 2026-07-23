@@ -3,10 +3,10 @@
 * Function:             This file is invoked to control the entire operation of vSPD.
 * Developed by:         Electricity Authority, New Zealand
 * Source:               https://github.com/ElectricityAuthority/vSPD
-*                       https://www.emi.ea.govt.nz/Tools/vSPD
+*                       https://www.ea.govt.nz/data-and-insights/tools-and-apis/#vspd
 * Contact:              Forum: https://www.emi.ea.govt.nz/forum/
 *                       Email: emi@ea.govt.nz
-* Last modified on:     1 Oct 2019
+* Last modified on:     7 July 2026
 *=====================================================================================
 
 $ifThen %system.Platform% == 'LEX'
@@ -87,7 +87,7 @@ $endIf
 $ifthen.ovrd exist "%ovrdPath%%vSPDinputOvrdData%.gdx"
 $ifThen.sys %system.Platform% == 'LEX'
     execute 'mkdir -p "%outputPath%/%runName%/Override"'
-    execute 'cp "%ovrdPath%/%vSPDinputOvrdData%.gdx" 
+    execute 'cp "%ovrdPath%/%vSPDinputOvrdData%.gdx"'
 $else.sys
     execute 'mkdir  "%outputPath%%runName%/Override"'
     execute 'copy /y "%ovrdPath%%vSPDinputOvrdData%.gdx" "%outputPath%%runName%/Override"'
@@ -160,7 +160,7 @@ loop(i_fileName,
 $ifThen %system.Platform% == 'LEX'
    put_utility temp 'shell' / 'cp vSPDsolve.lst "%programPath%"/lst/', i_fileName.tl:0, '.lst' ;
 $else
-    put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"/lst/', i_fileName.tl:0, '.lst' ;
+    put_utility temp 'shell' / 'copy vSPDsolve.lst "%programPath%"\lst\', i_fileName.tl:0, '.lst' ;
 $endif
 ) ;
 rep.ap = 1 ;
@@ -186,7 +186,7 @@ $endif.mode
     execute 'if ls *.lxi 1> /dev/null 2>&1; then rm -f *.lxi; fi';
     execute 'if ls *.log 1> /dev/null 2>&1; then rm -f *.log; fi';
     execute 'if ls *.put 1> /dev/null 2>&1; then rm -f *.put; fi';
-    execute 'if ls *.gdx 1> /dev/null 2>&1; then rm -f *.gdx; fi';
+    execute 'if ls *.gdx 1> /dev/null 2>&1; then rm -f *.gdx; fi';    
     execute 'if ls temp.* 1> /dev/null 2>&1; then rm -f temp.*; fi';
 
 $else.sys
@@ -208,5 +208,3 @@ $endif
     execute 'if exist temp.*  erase /q temp.*';
 
 $endif.sys
-
-
